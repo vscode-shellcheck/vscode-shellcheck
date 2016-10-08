@@ -32,4 +32,4 @@ By default the linter will lint as you type. Alternatively, set `shellcheck.run`
 
 ## Acknowledgements
 
-This extension is based on [hoovercj's vscode-haskell-linter](https://github.com/hoovercj/vscode-haskell-linter).
+This extension is based on [hoovercj's Haskell Linter](https://github.com/hoovercj/vscode-haskell-linter).
