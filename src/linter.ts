@@ -3,7 +3,6 @@ import { spawn } from 'child_process';
 import * as vscode from 'vscode';
 
 import { ThrottledDelayer } from './utils/async';
-import { LineDecoder } from './utils/line_decoder';
 
 
 enum RunTrigger {
@@ -229,18 +228,16 @@ export default class ShellCheckProvider {
                     childProcess.stdin.end();
                 }
 
-                let decoder = new LineDecoder();
-                let decoded = [];
-
+                let output = [];
                 childProcess.stdout
                     .on('data', (data: Buffer) => {
-                        decoded = decoded.concat(decoder.write(data));
+                        output.push(data.toString());
                     })
                     .on('end', () => {
-                        let output = decoded.concat(decoder.end()).join('');
-                        if (output) {
-                            JSON.parse(output).forEach(processLine);
+                        if (output.length) {
+                            JSON.parse(output.join('')).forEach(processLine);
                         }
+
                         this.diagnosticCollection.set(textDocument.uri, diagnostics);
                         resolve();
                     });
