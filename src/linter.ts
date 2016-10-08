@@ -42,15 +42,6 @@ interface ShellCheckItem {
     message: string;
 }
 
-function asDiagnosticSeverity(level: string): vscode.DiagnosticSeverity {
-    switch (level.toLowerCase()) {
-        case 'warning':
-            return vscode.DiagnosticSeverity.Warning;
-        default:
-            return vscode.DiagnosticSeverity.Error;
-    }
-}
-
 function escapeRegexp(s: string): string {
   // Shamelessly stolen from https://github.com/atom/underscore-plus/blob/130913c179fe1d718a14034f4818adaf8da4db12/src/underscore-plus.coffee#L138
   return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -61,21 +52,38 @@ const WORD_REGEXP = new RegExp(`^[\t ]*$|[^\\s${NON_WORD_CHARACTERS}]+`);
 
 function asDiagnostic(textDocument: vscode.TextDocument, item: ShellCheckItem): vscode.Diagnostic {
     let pos = new vscode.Position(item.line - 1, item.column - 1);
-    let textLine = textDocument.lineAt(pos);
-    let colEnd = textLine.range.end.character;
     let range = textDocument.getWordRangeAtPosition(pos);
     if (!range) {
+        // Guess word range (code stolen from atom-linter)
+        let textLine = textDocument.lineAt(pos);
+        let colEnd = textLine.range.end.character;
         let match = WORD_REGEXP.exec(textLine.text.substr(pos.character));
         if (match) {
             colEnd = pos.character + match.index + match[0].length;
         }
         range = new vscode.Range(pos, pos.with({character: colEnd}));
     }
+
     let severity = asDiagnosticSeverity(item.level);
     let diagnostic = new vscode.Diagnostic(range, `${item.message} [SC${item.code}]`, severity);
     diagnostic.source = 'shellcheck';
     diagnostic.code = item.code;
     return diagnostic;
+}
+
+function asDiagnosticSeverity(level: string): vscode.DiagnosticSeverity {
+    switch (level) {
+        case 'error':
+            return vscode.DiagnosticSeverity.Error;
+        case 'style':
+            /* falls through */
+        case 'info':
+            return vscode.DiagnosticSeverity.Information;
+        case 'warning':
+            /* falls through */
+        default:
+            return vscode.DiagnosticSeverity.Warning;
+    }
 }
 
 export default class ShellCheckProvider {
@@ -214,6 +222,8 @@ export default class ShellCheckProvider {
             });
 
             if (childProcess.pid) {
+                childProcess.stdout.setEncoding('utf-8');
+
                 if (this.trigger === RunTrigger.onType) {
                     childProcess.stdin.write(textDocument.getText());
                     childProcess.stdin.end();

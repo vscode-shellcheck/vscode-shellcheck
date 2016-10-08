@@ -1,6 +1,7 @@
 {
     "rules": {
         "eofline": true,
+        "curly": true,
         "class-name": true,
         "comment-format": [
             true,
@@ -12,6 +13,7 @@
         ],
         "no-duplicate-variable": true,
         "no-eval": true,
+        "no-switch-case-fall-through": true,
         "no-internal-module": true,
         "no-trailing-whitespace": true,
         "no-var-keyword": true,
