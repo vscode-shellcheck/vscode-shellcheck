@@ -1,6 +1,6 @@
 {
-    "name": "vscode-shellcheck",
-    "displayName": "vscode-shellcheck",
+    "name": "shellcheck",
+    "displayName": "shellcheck",
     "description": "An extension to use shellcheck in vscode",
     "version": "0.0.1",
     "publisher": "timonwong",
