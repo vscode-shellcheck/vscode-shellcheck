@@ -209,7 +209,7 @@ export default class ShellCheckProvider {
 
                 let message: string = null;
                 if ((<any>error).code === 'ENOENT') {
-                    message = `Cannot shellcheck the shell script. The shellcheck program was not found. Use the 'shellscript.shellcheck.executablePath' setting to configure the location of 'shellcheck'`;
+                    message = `Cannot shellcheck the shell script. The shellcheck program was not found. Use the 'shellcheck.executablePath' setting to configure the location of 'shellcheck'`;
                 } else if (error.message) {
                     message = error.message;
                 } else {
