@@ -24,6 +24,11 @@
         "configuration": {
             "title": "ShellCheck",
             "properties": {
+                "shellcheck.enable": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Whether shellcheck is enabled or not."
+                },
                 "shellcheck.executablePath": {
                     "type": "string",
                     "default": "shellcheck",
@@ -33,11 +38,10 @@
                     "type": "string",
                     "enum": [
                         "onSave",
-                        "onType",
-                        "never"
+                        "onType"
                     ],
                     "default": "onType",
-                    "description": "Whether shellcheck is run on save or on type or disabled."
+                    "description": "Whether shellcheck is run on save or on type."
                 },
                 "shellcheck.exclude": {
                     "type": "array",

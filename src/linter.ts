@@ -7,15 +7,13 @@ import { ThrottledDelayer } from './utils/async';
 
 enum RunTrigger {
     onSave,
-    onType,
-    never
+    onType
 }
 
 namespace RunTrigger {
     export const strings = {
         onSave: 'onSave',
-        onType: 'onType',
-        never: 'never'
+        onType: 'onType'
     };
 
     export let from = function (value: string): RunTrigger {
@@ -24,10 +22,6 @@ namespace RunTrigger {
                 return RunTrigger.onSave;
             case strings.onType:
                 return RunTrigger.onType;
-            case strings.never:
-                return RunTrigger.never;
-            default:
-                return RunTrigger.never;
         }
     };
 }
@@ -88,6 +82,7 @@ function asDiagnosticSeverity(level: string): vscode.DiagnosticSeverity {
 export default class ShellCheckProvider {
 
     private static languageId = 'shellscript';
+    private enabled: boolean;
     private trigger: RunTrigger;
     private executable: string;
     private executableNotFound: boolean;
@@ -97,6 +92,7 @@ export default class ShellCheckProvider {
     private delayers: { [key: string]: ThrottledDelayer<void> };
 
     constructor() {
+        this.enabled = true;
         this.trigger = null;
         this.executable = null;
         this.executableNotFound = false;
@@ -126,9 +122,10 @@ export default class ShellCheckProvider {
     }
 
     private loadConfiguration(): void {
-        let section = vscode.workspace.getConfiguration('shellcheck');
         let oldExecutable = this.executable;
+        let section = vscode.workspace.getConfiguration('shellcheck');
         if (section) {
+            this.enabled = section.get('enable', true);
             this.trigger = RunTrigger.from(section.get('run', RunTrigger.strings.onType));
             this.executable = section.get('executablePath', 'shellcheck');
             this.exclude = section.get('exclude', []);
@@ -144,12 +141,15 @@ export default class ShellCheckProvider {
             this.documentListener.dispose();
         }
 
-        if (this.trigger === RunTrigger.onType) {
-            this.documentListener = vscode.workspace.onDidChangeTextDocument((e) => {
-                this.triggerLint(e.document);
-            });
-        } else if (this.trigger === RunTrigger.onSave) {
-            this.documentListener = vscode.workspace.onDidSaveTextDocument(this.triggerLint, this);
+        this.diagnosticCollection.clear();
+        if (this.enabled) {
+            if (this.trigger === RunTrigger.onType) {
+                this.documentListener = vscode.workspace.onDidChangeTextDocument((e) => {
+                    this.triggerLint(e.document);
+                });
+            } else if (this.trigger === RunTrigger.onSave) {
+                this.documentListener = vscode.workspace.onDidSaveTextDocument(this.triggerLint, this);
+            }
         }
 
         // Configuration has changed. Re-evaluate all documents
@@ -161,7 +161,7 @@ export default class ShellCheckProvider {
             return;
         }
 
-        if (this.trigger === RunTrigger.never) {
+        if (!this.enabled) {
             this.diagnosticCollection.set(textDocument.uri, null);
             return;
         }

@@ -14,6 +14,7 @@ Default options are:
 
 ```json
 {
+    "shellcheck.enable": true,
     "shellcheck.run": "onType",
     "shellcheck.executablePath": "shellcheck",
     "shellcheck.exclude": []
@@ -22,11 +23,11 @@ Default options are:
 
 ### Lint onType or onSave
 
-By default the linter will lint as you type. Alternatively, set `shellcheck.run` to `onSave` or `never` if you want to lint only when the file is saved (works best if auto-save is on) or disable it for a workspace or entirely.
+By default the linter will lint as you type. Alternatively, set `shellcheck.run` to `onSave` if you want to lint only when the file is saved (works best if auto-save is on).
 
 ```javascript
 {
-    "shellcheck.run": "onType" // also: "onSave", "never"
+    "shellcheck.run": "onType" // also: "onSave"
 }
 ```
 
