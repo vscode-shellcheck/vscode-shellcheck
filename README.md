@@ -1,5 +1,8 @@
 # vscode-shellcheck
 
+[![Current Version](http://vsmarketplacebadge.apphb.com/version/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
+[![Install Count](http://vsmarketplacebadge.apphb.com/installs/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
+
 ## Requirements
 
 1. Ensure `shellcheck` is [installed](https://github.com/koalaman/shellcheck#installing).
