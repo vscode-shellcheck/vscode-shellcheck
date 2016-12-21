@@ -47,6 +47,11 @@
                     "type": "array",
                     "default": [],
                     "description": "Exclude types of warnings, for example [\"SC1090\"]."
+                },
+                "shellcheck.customArgs": {
+                    "type": "array",
+                    "default": [],
+                    "description": "Custom arguments to shellcheck"
                 }
             }
         }

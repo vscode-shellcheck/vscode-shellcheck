@@ -87,6 +87,7 @@ export default class ShellCheckProvider {
     private executable: string;
     private executableNotFound: boolean;
     private exclude: string[];
+    private customArgs: string[];
     private documentListener: vscode.Disposable;
     private diagnosticCollection: vscode.DiagnosticCollection;
     private delayers: { [key: string]: ThrottledDelayer<void> };
@@ -97,6 +98,7 @@ export default class ShellCheckProvider {
         this.executable = null;
         this.executableNotFound = false;
         this.exclude = [];
+        this.customArgs = [];
     }
 
     public activate(subscriptions: vscode.Disposable[]): void {
@@ -129,6 +131,7 @@ export default class ShellCheckProvider {
             this.trigger = RunTrigger.from(section.get('run', RunTrigger.strings.onType));
             this.executable = section.get('executablePath', 'shellcheck');
             this.exclude = section.get('exclude', []);
+            this.customArgs = section.get('customArgs', []);
         }
 
         this.delayers = Object.create(null);
@@ -191,6 +194,10 @@ export default class ShellCheckProvider {
 
             if (this.exclude.length) {
                 args = args.concat(['-e', this.exclude.join(',')]);
+            }
+
+            if (this.customArgs.length) {
+                args = args.concat(this.customArgs);
             }
 
             if (this.trigger === RunTrigger.onSave) {

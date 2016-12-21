@@ -20,7 +20,8 @@ Default options are:
     "shellcheck.enable": true,
     "shellcheck.run": "onType",
     "shellcheck.executablePath": "shellcheck",
-    "shellcheck.exclude": []
+    "shellcheck.exclude": [],
+    "shellcheck.customArgs": []
 }
 ```
 
