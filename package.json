@@ -9,12 +9,13 @@
         "Linters"
     ],
     "homepage": "https://github.com/timonwong/vscode-shellcheck",
+    "private": true,
     "repository": {
         "type": "git",
         "url": "https://github.com/timonwong/vscode-shellcheck.git"
     },
     "engines": {
-        "vscode": "^1.5.0"
+        "vscode": "^1.13.0"
     },
     "activationEvents": [
         "onLanguage:shellscript"
@@ -62,10 +63,10 @@
         "postinstall": "node ./node_modules/vscode/bin/install"
     },
     "devDependencies": {
-        "typescript": "^2.0.3",
-        "vscode": "^1.0.0",
-        "mocha": "^2.3.3",
-        "@types/node": "^6.0.40",
-        "@types/mocha": "^2.2.32"
+        "@types/node": "^6.0.50",
+        "@types/mocha": "^2.2.32",
+        "typescript": "^2.1.5",
+        "vscode": "^1.1.5",
+        "mocha": "^2.3.3"
     }
 }
