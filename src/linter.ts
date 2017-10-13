@@ -29,7 +29,9 @@ namespace RunTrigger {
 interface ShellCheckItem {
     file: string;
     line: number;
+    endLine: number | undefined;
     column: number;
+    endColumn: number | undefined;
     level: string;
     code: number;
     message: string;
@@ -44,17 +46,24 @@ const NON_WORD_CHARACTERS = escapeRegexp('/\\()"\':,.;<>~!@#$%^&*|+=[]{}`?-…')
 const WORD_REGEXP = new RegExp(`^[\t ]*$|[^\\s${NON_WORD_CHARACTERS}]+`);
 
 function asDiagnostic(textDocument: vscode.TextDocument, item: ShellCheckItem): vscode.Diagnostic {
-    let pos = new vscode.Position(item.line - 1, item.column - 1);
-    let range = textDocument.getWordRangeAtPosition(pos);
+    let startPos = new vscode.Position(item.line - 1, item.column - 1);
+    let range: vscode.Range;
+    if (item.endLine && item.endColumn) {
+        let endPos = new vscode.Position(item.endLine - 1, item.endColumn - 1);
+        range = new vscode.Range(startPos, endPos);
+    } else {
+        range = textDocument.getWordRangeAtPosition(startPos);
+    }
+
     if (!range) {
         // Guess word range (code stolen from atom-linter)
-        let textLine = textDocument.lineAt(pos);
+        let textLine = textDocument.lineAt(startPos);
         let colEnd = textLine.range.end.character;
-        let match = WORD_REGEXP.exec(textLine.text.substr(pos.character));
+        let match = WORD_REGEXP.exec(textLine.text.substr(startPos.character));
         if (match) {
-            colEnd = pos.character + match.index + match[0].length;
+            colEnd = startPos.character + match.index + match[0].length;
         }
-        range = new vscode.Range(pos, pos.with({character: colEnd}));
+        range = new vscode.Range(startPos, startPos.with({character: colEnd}));
     }
 
     let severity = asDiagnosticSeverity(item.level);
@@ -165,7 +174,7 @@ export default class ShellCheckProvider {
         }
 
         if (!this.enabled) {
-            this.diagnosticCollection.set(textDocument.uri, null);
+            this.diagnosticCollection.delete(textDocument.uri);
             return;
         }
 
