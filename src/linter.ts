@@ -1,5 +1,4 @@
 import { spawn } from 'child_process';
-
 import * as vscode from 'vscode';
 
 import { ThrottledDelayer } from './utils/async';
@@ -38,8 +37,8 @@ interface ShellCheckItem {
 }
 
 function escapeRegexp(s: string): string {
-  // Shamelessly stolen from https://github.com/atom/underscore-plus/blob/130913c179fe1d718a14034f4818adaf8da4db12/src/underscore-plus.coffee#L138
-  return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    // Shamelessly stolen from https://github.com/atom/underscore-plus/blob/130913c179fe1d718a14034f4818adaf8da4db12/src/underscore-plus.coffee#L138
+    return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
 const NON_WORD_CHARACTERS = escapeRegexp('/\\()"\':,.;<>~!@#$%^&*|+=[]{}`?-…');
@@ -63,7 +62,7 @@ function asDiagnostic(textDocument: vscode.TextDocument, item: ShellCheckItem): 
         if (match) {
             colEnd = startPos.character + match.index + match[0].length;
         }
-        range = new vscode.Range(startPos, startPos.with({character: colEnd}));
+        range = new vscode.Range(startPos, startPos.with({ character: colEnd }));
     }
 
     let severity = asDiagnosticSeverity(item.level);
@@ -78,15 +77,17 @@ function asDiagnosticSeverity(level: string): vscode.DiagnosticSeverity {
         case 'error':
             return vscode.DiagnosticSeverity.Error;
         case 'style':
-            /* falls through */
+        /* falls through */
         case 'info':
             return vscode.DiagnosticSeverity.Information;
         case 'warning':
-            /* falls through */
+        /* falls through */
         default:
             return vscode.DiagnosticSeverity.Warning;
     }
 }
+
+
 
 export default class ShellCheckProvider {
 
@@ -128,8 +129,15 @@ export default class ShellCheckProvider {
     }
 
     public dispose(): void {
+        this.disposeDocumentListener();
         this.diagnosticCollection.clear();
         this.diagnosticCollection.dispose();
+    }
+
+    private disposeDocumentListener(): void {
+        if (this.documentListener) {
+            this.documentListener.dispose();
+        }
     }
 
     private loadConfiguration(): void {
@@ -149,10 +157,7 @@ export default class ShellCheckProvider {
             this.executableNotFound = oldExecutable === this.executable;
         }
 
-        if (this.documentListener) {
-            this.documentListener.dispose();
-        }
-
+        this.disposeDocumentListener();
         this.diagnosticCollection.clear();
         if (this.enabled) {
             if (this.trigger === RunTrigger.onType) {
@@ -168,8 +173,17 @@ export default class ShellCheckProvider {
         vscode.workspace.textDocuments.forEach(this.triggerLint, this);
     }
 
+    private isAllowedTextDocument(textDocument: vscode.TextDocument): boolean {
+        if (textDocument.languageId !== ShellCheckProvider.languageId) {
+            return false;
+        }
+
+        const scheme = textDocument.uri.scheme;
+        return (scheme === 'file' || scheme === 'untitled');
+    }
+
     private triggerLint(textDocument: vscode.TextDocument): void {
-        if (textDocument.languageId !== ShellCheckProvider.languageId || this.executableNotFound) {
+        if (this.executableNotFound || !this.isAllowedTextDocument(textDocument)) {
             return;
         }
 
