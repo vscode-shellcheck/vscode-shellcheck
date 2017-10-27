@@ -2,7 +2,7 @@
     "name": "shellcheck",
     "displayName": "shellcheck",
     "description": "An extension to use shellcheck in vscode",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "publisher": "timonwong",
     "categories": [
         "Languages",
