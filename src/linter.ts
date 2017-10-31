@@ -202,6 +202,24 @@ export default class ShellCheckProvider {
         delayer.trigger(() => this.runLint(textDocument));
     }
 
+    private getSystemSpecificDocumentFileName(documentFileName: string): string{
+        if (process.platform == "win32"){
+            return "/mnt/" + documentFileName.substr(0, 1).toLowerCase() + documentFileName.substr("X:".length).split("\\").join("/");
+        }
+        else {
+            return documentFileName;
+        }
+    }
+
+    private spawnSystemSpecific(executable: string, args: string[], options){
+        if (process.platform == "win32"){
+            return spawn("C:\\Windows\\sysnative\\bash.exe", ["-c", executable + " \"" + args.join("\" \"") + "\"" ] , options);
+        }
+        else {
+            return spawn(executable, args, options);
+        }
+    }
+
     private runLint(textDocument: vscode.TextDocument): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             let executable = this.executable || 'shellcheck';
@@ -224,12 +242,12 @@ export default class ShellCheckProvider {
             }
 
             if (this.trigger === RunTrigger.onSave) {
-                args.push(textDocument.fileName);
+                args.push(this.getSystemSpecificDocumentFileName(textDocument.fileName));
             } else {
                 args.push('-');
             }
 
-            let childProcess = spawn(executable, args, options);
+            let childProcess = this.spawnSystemSpecific(executable, args, options);
             childProcess.on('error', (error: Error) => {
                 if (this.executableNotFound) {
                     resolve();
