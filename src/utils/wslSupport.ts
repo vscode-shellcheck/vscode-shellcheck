@@ -27,7 +27,7 @@ export function windowsPathToWSLPath(windowsPath: string): string {
     }
 }
 
-export interface ILaunchArgs {
+interface ILaunchArgs {
     cwd: string;
     executable: string;
     args: string[];
@@ -36,7 +36,7 @@ export interface ILaunchArgs {
     remoteRoot?: string;
 }
 
-export function createLaunchArg(useSubsytemLinux: boolean | undefined, useExternalConsole: boolean, cwd: string | undefined, executable: string, args?: string[], program?: string): ILaunchArgs {
+function createLaunchArg(useSubsytemLinux: boolean | undefined, useExternalConsole: boolean, cwd: string | undefined, executable: string, args?: string[], program?: string): ILaunchArgs {
     if (useSubsytemLinux && subsystemForLinuxPresent()) {
         const bashPath32bitApp = path.join(process.env['SystemRoot'], 'Sysnative', 'bash.exe');
         const bashPath64bitApp = path.join(process.env['SystemRoot'], 'System32', 'bash.exe');
@@ -70,9 +70,4 @@ export function createLaunchArg(useSubsytemLinux: boolean | undefined, useExtern
 export function spawn(useWSL: boolean, executable: string, args?: string[], options?: child_process.SpawnOptions) {
     const launchArgs = createLaunchArg(useWSL, false, undefined, executable, args);
     return child_process.spawn(launchArgs.executable, launchArgs.args, options);
-}
-
-export function spawnSync(useWSL: boolean, executable: string, args?: string[], options?: child_process.SpawnSyncOptions) {
-    const launchArgs = createLaunchArg(useWSL, false, undefined, executable, args);
-    return child_process.spawnSync(launchArgs.executable, launchArgs.args, options);
 }
