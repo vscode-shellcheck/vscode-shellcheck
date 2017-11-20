@@ -1,5 +1,6 @@
 import { spawn } from 'child_process';
 import * as vscode from 'vscode';
+import * as wsl from './utils/wslSupport';
 
 import { ThrottledDelayer } from './utils/async';
 
@@ -101,6 +102,7 @@ export default class ShellCheckProvider {
     private documentListener: vscode.Disposable;
     private diagnosticCollection: vscode.DiagnosticCollection;
     private delayers: { [key: string]: ThrottledDelayer<void> };
+    private useWSL: boolean;
 
     constructor() {
         this.enabled = true;
@@ -109,6 +111,7 @@ export default class ShellCheckProvider {
         this.executableNotFound = false;
         this.exclude = [];
         this.customArgs = [];
+        this.useWSL = false;
     }
 
     public activate(subscriptions: vscode.Disposable[]): void {
@@ -149,6 +152,7 @@ export default class ShellCheckProvider {
             this.executable = section.get('executablePath', 'shellcheck');
             this.exclude = section.get('exclude', []);
             this.customArgs = section.get('customArgs', []);
+            this.useWSL = section.get('useWSL', false);
         }
 
         this.delayers = Object.create(null);
@@ -202,26 +206,13 @@ export default class ShellCheckProvider {
         delayer.trigger(() => this.runLint(textDocument));
     }
 
-    private getSystemSpecificDocumentFileName(documentFileName: string): string{
-        if (process.platform == "win32"){
-            return "/mnt/" + documentFileName.substr(0, 1).toLowerCase() + documentFileName.substr("X:".length).split("\\").join("/");
-        }
-        else {
-            return documentFileName;
-        }
-    }
-
-    private spawnSystemSpecific(executable: string, args: string[], options){
-        if (process.platform == "win32"){
-            return spawn("C:\\Windows\\sysnative\\bash.exe", ["-c", executable + " \"" + args.join("\" \"") + "\"" ] , options);
-        }
-        else {
-            return spawn(executable, args, options);
-        }
-    }
-
     private runLint(textDocument: vscode.TextDocument): Promise<void> {
         return new Promise<void>((resolve, reject) => {
+            if (this.useWSL && !wsl.subsystemForLinuxPresent()) {
+                vscode.window.showErrorMessage("Got told to use WSL, but cannot find installation. Bailing out.");
+                return;
+            }
+
             let executable = this.executable || 'shellcheck';
             let diagnostics: vscode.Diagnostic[] = [];
             let processLine = (item: ShellCheckItem) => {
@@ -242,12 +233,12 @@ export default class ShellCheckProvider {
             }
 
             if (this.trigger === RunTrigger.onSave) {
-                args.push(this.getSystemSpecificDocumentFileName(textDocument.fileName));
+                args.push(this.useWSL ? wsl.windowsPathToWSLPath(textDocument.fileName) : textDocument.fileName);
             } else {
                 args.push('-');
             }
 
-            let childProcess = this.spawnSystemSpecific(executable, args, options);
+            let childProcess = wsl.spawn(this.useWSL, executable, args, options);
             childProcess.on('error', (error: Error) => {
                 if (this.executableNotFound) {
                     resolve();
