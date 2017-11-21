@@ -278,7 +278,7 @@ export default class ShellCheckProvider {
     private showError(error: any, executable: string): void {
         let message: string = null;
         if (error.code === 'ENOENT') {
-            message = `Cannot shellcheck the shell script. The shellcheck program was not found. Use the 'shellcheck.executablePath' setting to configure the location of 'shellcheck'`;
+            message = `Cannot shellcheck the shell script. The shellcheck program was not found. Use the 'shellcheck.executablePath' setting to configure the location of 'shellcheck' or enable WSL integration with 'shellcheck.useWSL'`;
         } else {
             message = error.message ? error.message : `Failed to run shellcheck using path: ${executable}. Reason is unknown.`;
         }
