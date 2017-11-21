@@ -17,7 +17,7 @@ export function subsystemForLinuxPresent(): boolean {
     return fs.existsSync(bashPathHost);
 }
 
-export function windowsPathToWSLPath(windowsPath: string): string {
+function windowsPathToWSLPath(windowsPath: string): string {
     if (!isWindows || !windowsPath) {
         return undefined;
     } else if (path.isAbsolute(windowsPath)) {

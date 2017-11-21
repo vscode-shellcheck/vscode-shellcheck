@@ -232,11 +232,7 @@ export default class ShellCheckProvider {
                 args = args.concat(this.customArgs);
             }
 
-            if (this.trigger === RunTrigger.onSave) {
-                args.push(this.useWSL ? wsl.windowsPathToWSLPath(textDocument.fileName) : textDocument.fileName);
-            } else {
-                args.push('-');
-            }
+            args.push('-');
 
             let childProcess = wsl.spawn(this.useWSL, executable, args, options);
             childProcess.on('error', (error: Error) => {
@@ -253,10 +249,12 @@ export default class ShellCheckProvider {
             if (childProcess.pid) {
                 childProcess.stdout.setEncoding('utf-8');
 
-                if (this.trigger === RunTrigger.onType) {
-                    childProcess.stdin.write(textDocument.getText());
-                    childProcess.stdin.end();
+                let script = textDocument.getText();
+                if (this.useWSL) {
+                   script = script.replace(/\r\n/g, '\n'); // shellcheck doesn't likes CRLF, although this is caused by a git checkout on Windows.
                 }
+                childProcess.stdin.write(script);
+                childProcess.stdin.end();
 
                 let output = [];
                 childProcess.stdout
