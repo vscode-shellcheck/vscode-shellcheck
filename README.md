@@ -21,7 +21,8 @@ Default options are:
     "shellcheck.run": "onType",
     "shellcheck.executablePath": "shellcheck",
     "shellcheck.exclude": [],
-    "shellcheck.customArgs": []
+    "shellcheck.customArgs": [],
+    "shellcheck.useWSL": false
 }
 ```
 

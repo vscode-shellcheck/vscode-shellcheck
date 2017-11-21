@@ -210,6 +210,7 @@ export default class ShellCheckProvider {
         return new Promise<void>((resolve, reject) => {
             if (this.useWSL && !wsl.subsystemForLinuxPresent()) {
                 vscode.window.showErrorMessage("Got told to use WSL, but cannot find installation. Bailing out.");
+                resolve();
                 return;
             }
 
