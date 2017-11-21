@@ -144,7 +144,6 @@ export default class ShellCheckProvider {
     }
 
     private loadConfiguration(): void {
-        let oldExecutable = this.executable;
         let section = vscode.workspace.getConfiguration('shellcheck');
         if (section) {
             this.enabled = section.get('enable', true);
@@ -156,10 +155,6 @@ export default class ShellCheckProvider {
         }
 
         this.delayers = Object.create(null);
-
-        if (this.executableNotFound) {
-            this.executableNotFound = oldExecutable === this.executable;
-        }
 
         this.disposeDocumentListener();
         this.diagnosticCollection.clear();
