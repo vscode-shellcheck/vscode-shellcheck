@@ -174,6 +174,7 @@ export default class ShellCheckProvider {
         }
 
         // Configuration has changed. Re-evaluate all documents
+        this.executableNotFound = false;
         vscode.workspace.textDocuments.forEach(this.triggerLint, this);
     }
 
@@ -209,7 +210,10 @@ export default class ShellCheckProvider {
     private runLint(textDocument: vscode.TextDocument): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             if (this.useWSL && !wsl.subsystemForLinuxPresent()) {
-                vscode.window.showErrorMessage("Got told to use WSL, but cannot find installation. Bailing out.");
+                if (!this.executableNotFound) {
+                    vscode.window.showErrorMessage("Got told to use WSL, but cannot find installation. Bailing out.");
+                }
+                this.executableNotFound = true;
                 resolve();
                 return;
             }
@@ -237,14 +241,13 @@ export default class ShellCheckProvider {
 
             let childProcess = wsl.spawn(this.useWSL, executable, args, options);
             childProcess.on('error', (error: Error) => {
-                if (this.executableNotFound) {
-                    resolve();
-                    return;
+                if (!this.executableNotFound) {
+                    this.showError(error, executable);
                 }
 
-                this.showError(error, executable);
                 this.executableNotFound = true;
                 resolve();
+                return;
             });
 
             if (childProcess.pid) {
