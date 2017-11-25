@@ -1,5 +1,6 @@
 import { spawn } from 'child_process';
 import * as vscode from 'vscode';
+import * as wsl from './utils/wslSupport';
 
 import { ThrottledDelayer } from './utils/async';
 
@@ -101,6 +102,7 @@ export default class ShellCheckProvider {
     private documentListener: vscode.Disposable;
     private diagnosticCollection: vscode.DiagnosticCollection;
     private delayers: { [key: string]: ThrottledDelayer<void> };
+    private useWSL: boolean;
 
     constructor() {
         this.enabled = true;
@@ -109,6 +111,7 @@ export default class ShellCheckProvider {
         this.executableNotFound = false;
         this.exclude = [];
         this.customArgs = [];
+        this.useWSL = false;
     }
 
     public activate(subscriptions: vscode.Disposable[]): void {
@@ -141,7 +144,6 @@ export default class ShellCheckProvider {
     }
 
     private loadConfiguration(): void {
-        let oldExecutable = this.executable;
         let section = vscode.workspace.getConfiguration('shellcheck');
         if (section) {
             this.enabled = section.get('enable', true);
@@ -149,13 +151,10 @@ export default class ShellCheckProvider {
             this.executable = section.get('executablePath', 'shellcheck');
             this.exclude = section.get('exclude', []);
             this.customArgs = section.get('customArgs', []);
+            this.useWSL = section.get('useWSL', false);
         }
 
         this.delayers = Object.create(null);
-
-        if (this.executableNotFound) {
-            this.executableNotFound = oldExecutable === this.executable;
-        }
 
         this.disposeDocumentListener();
         this.diagnosticCollection.clear();
@@ -170,6 +169,7 @@ export default class ShellCheckProvider {
         }
 
         // Configuration has changed. Re-evaluate all documents
+        this.executableNotFound = false;
         vscode.workspace.textDocuments.forEach(this.triggerLint, this);
     }
 
@@ -204,6 +204,15 @@ export default class ShellCheckProvider {
 
     private runLint(textDocument: vscode.TextDocument): Promise<void> {
         return new Promise<void>((resolve, reject) => {
+            if (this.useWSL && !wsl.subsystemForLinuxPresent()) {
+                if (!this.executableNotFound) {
+                    vscode.window.showErrorMessage("Got told to use WSL, but cannot find installation. Bailing out.");
+                }
+                this.executableNotFound = true;
+                resolve();
+                return;
+            }
+
             let executable = this.executable || 'shellcheck';
             let diagnostics: vscode.Diagnostic[] = [];
             let processLine = (item: ShellCheckItem) => {
@@ -223,31 +232,28 @@ export default class ShellCheckProvider {
                 args = args.concat(this.customArgs);
             }
 
-            if (this.trigger === RunTrigger.onSave) {
-                args.push(textDocument.fileName);
-            } else {
-                args.push('-');
-            }
+            args.push('-');
 
-            let childProcess = spawn(executable, args, options);
+            let childProcess = wsl.spawn(this.useWSL, executable, args, options);
             childProcess.on('error', (error: Error) => {
-                if (this.executableNotFound) {
-                    resolve();
-                    return;
+                if (!this.executableNotFound) {
+                    this.showError(error, executable);
                 }
 
-                this.showError(error, executable);
                 this.executableNotFound = true;
                 resolve();
+                return;
             });
 
             if (childProcess.pid) {
                 childProcess.stdout.setEncoding('utf-8');
 
-                if (this.trigger === RunTrigger.onType) {
-                    childProcess.stdin.write(textDocument.getText());
-                    childProcess.stdin.end();
+                let script = textDocument.getText();
+                if (this.useWSL) {
+                   script = script.replace(/\r\n/g, '\n'); // shellcheck doesn't likes CRLF, although this is caused by a git checkout on Windows.
                 }
+                childProcess.stdin.write(script);
+                childProcess.stdin.end();
 
                 let output = [];
                 childProcess.stdout
@@ -271,7 +277,7 @@ export default class ShellCheckProvider {
     private showError(error: any, executable: string): void {
         let message: string = null;
         if (error.code === 'ENOENT') {
-            message = `Cannot shellcheck the shell script. The shellcheck program was not found. Use the 'shellcheck.executablePath' setting to configure the location of 'shellcheck'`;
+            message = `Cannot shellcheck the shell script. The shellcheck program was not found. Use the 'shellcheck.executablePath' setting to configure the location of 'shellcheck' or enable WSL integration with 'shellcheck.useWSL'`;
         } else {
             message = error.message ? error.message : `Failed to run shellcheck using path: ${executable}. Reason is unknown.`;
         }

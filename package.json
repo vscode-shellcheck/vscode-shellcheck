@@ -53,6 +53,11 @@
                     "type": "array",
                     "default": [],
                     "description": "Custom arguments to shellcheck"
+                },
+                "shellcheck.useWSL": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Whether to use a shellcheck installation in the Windows Subsystem for Linux."
                 }
             }
         }
