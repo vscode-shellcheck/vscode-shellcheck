@@ -11,3 +11,10 @@ indent_style = space
 [Makefile]
 indent_size = 4
 indent_style = tab
+
+[package.json]
+indent_size = 4
+indent_style = tab
+
+[*.yml]
+indent_size = 2
