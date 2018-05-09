@@ -8,3 +8,5 @@ scripts/**
 .gitignore
 tsconfig.json
 tslint.json
+.editorconfig
+.travis.yml
