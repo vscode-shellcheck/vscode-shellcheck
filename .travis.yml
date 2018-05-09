@@ -1,5 +1,9 @@
 # https://code.visualstudio.com/docs/extensions/testing-extensions#_running-tests-automatically-on-travis-ci-build-machines
+language: node_js
 sudo: false
+
+node_js:
+  - "8"
 
 os:
   - osx
@@ -17,12 +21,8 @@ install:
   - npm run vscode:prepublish
 
 script:
-  # - tslint --project . -t stylish
+  - npm run tslint
   - npm test --silent
-
-branches:
-  only:
-    - master
 
 notifications:
   email: false

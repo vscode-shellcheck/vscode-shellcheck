@@ -29,9 +29,9 @@ namespace RunTrigger {
 interface ShellCheckItem {
     file: string;
     line: number;
-    endLine: number | undefined;
+    endLine: number;
     column: number;
-    endColumn: number | undefined;
+    endColumn: number;
     level: string;
     code: number;
     message: string;
@@ -45,26 +45,25 @@ function escapeRegexp(s: string): string {
 const NON_WORD_CHARACTERS = escapeRegexp('/\\()"\':,.;<>~!@#$%^&*|+=[]{}`?-…');
 const WORD_REGEXP = new RegExp(`^[\t ]*$|[^\\s${NON_WORD_CHARACTERS}]+`);
 
-function asDiagnostic(textDocument: vscode.TextDocument, item: ShellCheckItem): vscode.Diagnostic {
-    let startPos = new vscode.Position(item.line - 1, item.column - 1);
-    let range: vscode.Range;
-    if (item.endLine && item.endColumn) {
-        let endPos = new vscode.Position(item.endLine - 1, item.endColumn - 1);
-        range = new vscode.Range(startPos, endPos);
-    } else {
-        range = textDocument.getWordRangeAtPosition(startPos);
+function fixPosition(textDocument: vscode.TextDocument, pos: vscode.Position): vscode.Position {
+    // Since json format treats tabs as **8** characters, we need to offset it.
+    let charPos = pos.character;
+    const s = textDocument.getText(new vscode.Range(pos.with({character: 0}), pos));
+    for (const ch of s) {
+        if (ch === '\t') {
+            charPos -= 7;
+        }
     }
 
-    if (!range) {
-        // Guess word range (code stolen from atom-linter)
-        let textLine = textDocument.lineAt(startPos);
-        let colEnd = textLine.range.end.character;
-        let match = WORD_REGEXP.exec(textLine.text.substr(startPos.character));
-        if (match) {
-            colEnd = startPos.character + match.index + match[0].length;
-        }
-        range = new vscode.Range(startPos, startPos.with({ character: colEnd }));
-    }
+    return pos.with({character: charPos});
+}
+
+function asDiagnostic(textDocument: vscode.TextDocument, item: ShellCheckItem): vscode.Diagnostic {
+    let startPos = new vscode.Position(item.line - 1, item.column - 1);
+    let endPos = new vscode.Position(item.endLine - 1, item.endColumn - 1);
+    startPos = fixPosition(textDocument, startPos);
+    endPos = fixPosition(textDocument, endPos);
+    let range = new vscode.Range(startPos, endPos);
 
     let severity = asDiagnosticSeverity(item.level);
     let diagnostic = new vscode.Diagnostic(range, `${item.message} [SC${item.code}]`, severity);
@@ -87,7 +86,6 @@ function asDiagnosticSeverity(level: string): vscode.DiagnosticSeverity {
             return vscode.DiagnosticSeverity.Warning;
     }
 }
-
 
 
 export default class ShellCheckProvider {
@@ -206,7 +204,7 @@ export default class ShellCheckProvider {
         return new Promise<void>((resolve, reject) => {
             if (this.useWSL && !wsl.subsystemForLinuxPresent()) {
                 if (!this.executableNotFound) {
-                    vscode.window.showErrorMessage("Got told to use WSL, but cannot find installation. Bailing out.");
+                    vscode.window.showErrorMessage('Got told to use WSL, but cannot find installation. Bailing out.');
                 }
                 this.executableNotFound = true;
                 resolve();
@@ -215,7 +213,7 @@ export default class ShellCheckProvider {
 
             let executable = this.executable || 'shellcheck';
             let diagnostics: vscode.Diagnostic[] = [];
-            let processLine = (item: ShellCheckItem) => {
+            let processShellCheckItem = (item: ShellCheckItem) => {
                 if (item) {
                     diagnostics.push(asDiagnostic(textDocument, item));
                 }
@@ -262,7 +260,7 @@ export default class ShellCheckProvider {
                     })
                     .on('end', () => {
                         if (output.length) {
-                            JSON.parse(output.join('')).forEach(processLine);
+                            JSON.parse(output.join('')).forEach(processShellCheckItem);
                         }
 
                         this.diagnosticCollection.set(textDocument.uri, diagnostics);
