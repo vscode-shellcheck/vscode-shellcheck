@@ -1,77 +1,83 @@
 {
-    "name": "shellcheck",
-    "displayName": "shellcheck",
-    "description": "An extension to use shellcheck in vscode",
-    "version": "0.3.0",
-    "publisher": "timonwong",
-    "categories": [
-        "Languages",
-        "Linters"
-    ],
-    "homepage": "https://github.com/timonwong/vscode-shellcheck",
-    "private": true,
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/timonwong/vscode-shellcheck.git"
-    },
-    "engines": {
-        "vscode": "^1.13.0"
-    },
-    "activationEvents": [
-        "onLanguage:shellscript"
-    ],
-    "main": "./out/src/extension",
-    "contributes": {
-        "configuration": {
-            "title": "ShellCheck",
-            "properties": {
-                "shellcheck.enable": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Whether shellcheck is enabled or not."
-                },
-                "shellcheck.executablePath": {
-                    "type": "string",
-                    "default": "shellcheck",
-                    "description": "Path to the shellcheck executable."
-                },
-                "shellcheck.run": {
-                    "type": "string",
-                    "enum": [
-                        "onSave",
-                        "onType"
-                    ],
-                    "default": "onType",
-                    "description": "Whether shellcheck is run on save or on type."
-                },
-                "shellcheck.exclude": {
-                    "type": "array",
-                    "default": [],
-                    "description": "Exclude types of warnings, for example [\"SC1090\"]."
-                },
-                "shellcheck.customArgs": {
-                    "type": "array",
-                    "default": [],
-                    "description": "Custom arguments to shellcheck"
-                },
-                "shellcheck.useWSL": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Whether to use a shellcheck installation in the Windows Subsystem for Linux."
-                }
-            }
-        }
-    },
-    "scripts": {
-        "vscode:prepublish": "tsc -p ./",
-        "compile": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install"
-    },
-    "devDependencies": {
-        "@types/node": "^6.0.50",
-        "@types/mocha": "^2.2.32",
-        "typescript": "^2.1.5",
-        "vscode": "^1.1.5",
-        "mocha": "^2.3.3"
-    }
+	"name": "shellcheck",
+	"displayName": "shellcheck",
+	"description": "An extension to use shellcheck in vscode",
+	"version": "0.3.0",
+	"publisher": "timonwong",
+	"categories": [
+		"Programming Languages",
+		"Linters"
+	],
+	"homepage": "https://github.com/timonwong/vscode-shellcheck",
+	"private": true,
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/timonwong/vscode-shellcheck.git"
+	},
+	"engines": {
+		"vscode": "^1.13.0"
+	},
+	"activationEvents": [
+		"onLanguage:shellscript"
+	],
+	"main": "./out/src/extension",
+	"contributes": {
+		"configuration": {
+			"title": "ShellCheck",
+			"properties": {
+				"shellcheck.enable": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether shellcheck is enabled or not."
+				},
+				"shellcheck.executablePath": {
+					"type": "string",
+					"default": "shellcheck",
+					"description": "Path to the shellcheck executable."
+				},
+				"shellcheck.run": {
+					"type": "string",
+					"enum": [
+						"onSave",
+						"onType"
+					],
+					"default": "onType",
+					"description": "Whether shellcheck is run on save or on type."
+				},
+				"shellcheck.exclude": {
+					"type": "array",
+					"default": [],
+					"description": "Exclude types of warnings, for example [\"SC1090\"]."
+				},
+				"shellcheck.customArgs": {
+					"type": "array",
+					"default": [],
+					"description": "Custom arguments to shellcheck"
+				},
+				"shellcheck.useWSL": {
+					"type": "boolean",
+					"default": false,
+					"description": "Whether to use a shellcheck installation in the Windows Subsystem for Linux."
+				}
+			}
+		}
+	},
+	"scripts": {
+		"test": "node ./node_modules/vscode/bin/test",
+		"vscode:prepublish": "tsc -p ./",
+		"compile": "tsc -watch -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install"
+	},
+	"devDependencies": {
+		"@types/mocha": "^2.2.48",
+		"@types/node": "^6.0.109",
+		"mocha": "^2.3.3",
+		"typescript": "^2.8.3",
+		"vscode": "^1.1.17"
+	},
+	"__metadata": {
+		"id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",
+		"publisherDisplayName": "Timon Wong",
+		"publisherId": "04757770-dd50-443e-aae4-e1c7cf9c24f5"
+	}
 }
