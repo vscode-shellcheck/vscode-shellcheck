@@ -29,9 +29,9 @@ namespace RunTrigger {
 interface ShellCheckItem {
     file: string;
     line: number;
-    endLine: number;
+    endLine: number | undefined;
     column: number;
-    endColumn: number;
+    endColumn: number | undefined;
     level: string;
     code: number;
     message: string;
@@ -48,25 +48,32 @@ const WORD_REGEXP = new RegExp(`^[\t ]*$|[^\\s${NON_WORD_CHARACTERS}]+`);
 function fixPosition(textDocument: vscode.TextDocument, pos: vscode.Position): vscode.Position {
     // Since json format treats tabs as **8** characters, we need to offset it.
     let charPos = pos.character;
-    const s = textDocument.getText(new vscode.Range(pos.with({character: 0}), pos));
+    const s = textDocument.getText(new vscode.Range(pos.with({ character: 0 }), pos));
     for (const ch of s) {
         if (ch === '\t') {
             charPos -= 7;
         }
     }
 
-    return pos.with({character: charPos});
+    return pos.with({ character: charPos });
 }
 
 function asDiagnostic(textDocument: vscode.TextDocument, item: ShellCheckItem): vscode.Diagnostic {
     let startPos = new vscode.Position(item.line - 1, item.column - 1);
-    let endPos = new vscode.Position(item.endLine - 1, item.endColumn - 1);
-    startPos = fixPosition(textDocument, startPos);
-    endPos = fixPosition(textDocument, endPos);
-    let range = new vscode.Range(startPos, endPos);
+    const endLine = item.endLine ? item.endLine - 1 : startPos.line;
+    const endCharacter = item.endColumn ? item.endColumn - 1 : startPos.character;
+    let endPos = new vscode.Position(endLine, endCharacter);
+    if (startPos.isEqual(endPos)) {
+        startPos = fixPosition(textDocument, startPos);
+        endPos = startPos;
+    } else {
+        startPos = fixPosition(textDocument, startPos);
+        endPos = fixPosition(textDocument, endPos);
+    }
+    const range = new vscode.Range(startPos, endPos);
 
-    let severity = asDiagnosticSeverity(item.level);
-    let diagnostic = new vscode.Diagnostic(range, `${item.message} [SC${item.code}]`, severity);
+    const severity = asDiagnosticSeverity(item.level);
+    const diagnostic = new vscode.Diagnostic(range, `${item.message} [SC${item.code}]`, severity);
     diagnostic.source = 'shellcheck';
     diagnostic.code = item.code;
     return diagnostic;
@@ -142,7 +149,7 @@ export default class ShellCheckProvider {
     }
 
     private loadConfiguration(): void {
-        let section = vscode.workspace.getConfiguration('shellcheck');
+        const section = vscode.workspace.getConfiguration('shellcheck');
         if (section) {
             this.enabled = section.get('enable', true);
             this.trigger = RunTrigger.from(section.get('run', RunTrigger.strings.onType));
@@ -190,7 +197,7 @@ export default class ShellCheckProvider {
             return;
         }
 
-        let key = textDocument.uri.toString();
+        const key = textDocument.uri.toString();
         let delayer = this.delayers[key];
         if (!delayer) {
             delayer = new ThrottledDelayer<void>(this.trigger === RunTrigger.onType ? 250 : 0);
@@ -211,15 +218,15 @@ export default class ShellCheckProvider {
                 return;
             }
 
-            let executable = this.executable || 'shellcheck';
-            let diagnostics: vscode.Diagnostic[] = [];
+            const executable = this.executable || 'shellcheck';
+            const diagnostics: vscode.Diagnostic[] = [];
             let processShellCheckItem = (item: ShellCheckItem) => {
                 if (item) {
                     diagnostics.push(asDiagnostic(textDocument, item));
                 }
             };
 
-            let options = vscode.workspace.rootPath ? { cwd: vscode.workspace.rootPath } : undefined;
+            const options = vscode.workspace.rootPath ? { cwd: vscode.workspace.rootPath } : undefined;
             let args = ['-f', 'json'];
 
             if (this.exclude.length) {
@@ -232,7 +239,7 @@ export default class ShellCheckProvider {
 
             args.push('-');
 
-            let childProcess = wsl.spawn(this.useWSL, executable, args, options);
+            const childProcess = wsl.spawn(this.useWSL, executable, args, options);
             childProcess.on('error', (error: Error) => {
                 if (!this.executableNotFound) {
                     this.showError(error, executable);
@@ -248,12 +255,12 @@ export default class ShellCheckProvider {
 
                 let script = textDocument.getText();
                 if (this.useWSL) {
-                   script = script.replace(/\r\n/g, '\n'); // shellcheck doesn't likes CRLF, although this is caused by a git checkout on Windows.
+                    script = script.replace(/\r\n/g, '\n'); // shellcheck doesn't likes CRLF, although this is caused by a git checkout on Windows.
                 }
                 childProcess.stdin.write(script);
                 childProcess.stdin.end();
 
-                let output = [];
+                const output = [];
                 childProcess.stdout
                     .on('data', (data: Buffer) => {
                         output.push(data.toString());
