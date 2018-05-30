@@ -2,7 +2,7 @@
     "name": "shellcheck",
     "displayName": "shellcheck",
     "description": "An extension to use shellcheck in vscode",
-    "version": "0.4.0",
+    "version": "0.4.1",
     "publisher": "timonwong",
     "categories": [
         "Programming Languages",
@@ -64,8 +64,8 @@
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "node ./node_modules/vscode/bin/test",
         "tslint": "tslint --project tsconfig.json"
