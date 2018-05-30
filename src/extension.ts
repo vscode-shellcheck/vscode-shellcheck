@@ -8,6 +8,6 @@ import ShellCheckProvider from './linter';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext): void {
-    let linter = new ShellCheckProvider();
+    const linter = new ShellCheckProvider();
     linter.activate(context.subscriptions);
 }
