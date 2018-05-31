@@ -1,7 +1,8 @@
-import { spawn } from 'child_process';
+import * as child_process from 'child_process';
 
 import * as vscode from 'vscode';
 import * as _ from 'lodash';
+import * as semver from 'semver';
 
 import * as wsl from './utils/wslSupport';
 import { ThrottledDelayer } from './utils/async';
@@ -9,6 +10,7 @@ import { FileMatcher, FileSettings } from './utils/filematcher';
 
 
 const EXTENSION_NAME = 'shellcheck';
+const BEST_TOOL_VERSION = '0.4.7';
 
 interface ShellCheckSettings {
     enabled: boolean;
@@ -113,19 +115,13 @@ export default class ShellCheckProvider {
 
     private static LANGUAGE_ID = 'shellscript';
     private settings: ShellCheckSettings;
-    // private enabled: boolean;
-    // private trigger: RunTrigger;
-    // private executable: string;
     private executableNotFound: boolean;
-    // private exclude: string[];
-    // private customArgs: string[];
-    // private useWSL: boolean;
     private documentListener: vscode.Disposable;
     private diagnosticCollection: vscode.DiagnosticCollection;
     private delayers: { [key: string]: ThrottledDelayer<void> };
     private fileMatcher: FileMatcher;
 
-    constructor() {
+    constructor(private context: vscode.ExtensionContext) {
         this.settings = <ShellCheckSettings>{
             enabled: true,
             trigger: null,
@@ -137,20 +133,30 @@ export default class ShellCheckProvider {
         };
         this.executableNotFound = false;
         this.fileMatcher = new FileMatcher();
-    }
-
-    public activate(subscriptions: vscode.Disposable[]): void {
         this.diagnosticCollection = vscode.languages.createDiagnosticCollection();
-        subscriptions.push(this);
 
-        vscode.workspace.onDidChangeConfiguration(this.loadConfiguration, this, subscriptions);
+        vscode.workspace.onDidChangeConfiguration(this.loadConfiguration, this, context.subscriptions);
         this.loadConfiguration();
 
-        vscode.workspace.onDidOpenTextDocument(this.triggerLint, this, subscriptions);
+        const disableVersionCheckUpdateSetting = new DisableVersionCheckUpdateSetting();
+        if (!disableVersionCheckUpdateSetting.isDisabled) {
+            // Check tool version
+            getToolVersion(this.settings.useWSL, this.settings.executable).then((toolVersion) => {
+                if (!toolVersion) {
+                    return;
+                }
+
+                if (semver.lt(toolVersion, BEST_TOOL_VERSION)) {
+                    promptForUpdatingTool(toolVersion, disableVersionCheckUpdateSetting);
+                }
+            });
+        }
+
+        vscode.workspace.onDidOpenTextDocument(this.triggerLint, this, context.subscriptions);
         vscode.workspace.onDidCloseTextDocument((textDocument) => {
             this.diagnosticCollection.delete(textDocument.uri);
             delete this.delayers[textDocument.uri.toString()];
-        }, null, subscriptions);
+        }, null, context.subscriptions);
 
         // Shellcheck all open shell documents
         vscode.workspace.textDocuments.forEach(this.triggerLint, this);
@@ -190,9 +196,9 @@ export default class ShellCheckProvider {
             if (settings.trigger === RunTrigger.onType) {
                 this.documentListener = vscode.workspace.onDidChangeTextDocument((e) => {
                     this.triggerLint(e.document);
-                });
+                }, this, this.context.subscriptions);
             } else if (settings.trigger === RunTrigger.onSave) {
-                this.documentListener = vscode.workspace.onDidSaveTextDocument(this.triggerLint, this);
+                this.documentListener = vscode.workspace.onDidSaveTextDocument(this.triggerLint, this, this.context.subscriptions);
             }
         }
 
@@ -254,9 +260,7 @@ export default class ShellCheckProvider {
                 }
             };
 
-            const options = vscode.workspace.rootPath ? { cwd: vscode.workspace.rootPath } : undefined;
             let args = ['-f', 'json'];
-
             if (settings.exclude.length) {
                 args = args.concat(['-e', settings.exclude.join(',')]);
             }
@@ -265,12 +269,13 @@ export default class ShellCheckProvider {
                 args = args.concat(settings.customArgs);
             }
 
-            args.push('-');
+            args.push('-'); // Use stdin for shellcheck
 
+            const options = vscode.workspace.rootPath ? { cwd: vscode.workspace.rootPath } : undefined;
             const childProcess = wsl.spawn(settings.useWSL, executable, args, options);
             childProcess.on('error', (error: Error) => {
                 if (!this.executableNotFound) {
-                    this.showError(error, executable);
+                    this.showShellCheckError(error, executable);
                 }
 
                 this.executableNotFound = true;
@@ -307,7 +312,7 @@ export default class ShellCheckProvider {
         });
     }
 
-    private showError(error: any, executable: string): void {
+    private showShellCheckError(error: any, executable: string): void {
         let message: string = null;
         if (error.code === 'ENOENT') {
             message = `Cannot shellcheck the shell script. The shellcheck program was not found. Use the 'shellcheck.executablePath' setting to configure the location of 'shellcheck' or enable WSL integration with 'shellcheck.useWSL'`;
@@ -316,5 +321,54 @@ export default class ShellCheckProvider {
         }
 
         vscode.window.showInformationMessage(message);
+    }
+}
+
+function getToolVersion(useWSL: boolean, executable: string): Thenable<semver.SemVer> {
+    return new Promise<semver.SemVer>((resolve, reject) => {
+        const launchArgs = wsl.createLaunchArg(useWSL, false, undefined, executable, ['-V']);
+        child_process.execFile(launchArgs.executable, launchArgs.args, { timeout: 2000 }, (err, stdout, stderr) => {
+            const matches = /version: ((?:\d+)\.(?:\d+)(?:\.\d+)*)/.exec(stdout);
+            if (matches) {
+                const ver = semver.parse(matches[1]);
+                resolve(ver);
+            } else {
+                resolve(null);
+            }
+        });
+    });
+}
+
+async function promptForUpdatingTool(currentVersion: semver.SemVer | string, disableVersionCheckUpdateSetting: DisableVersionCheckUpdateSetting) {
+    let currentVersionString: string;
+    if (currentVersion instanceof semver.SemVer) {
+        currentVersionString = currentVersion.format();
+    } else {
+        currentVersionString = currentVersion;
+    }
+    const selected = await vscode.window.showInformationMessage(`The vscode-shellcheck extension is better with newer version of "shellcheck" (You got v${currentVersionString}, v${BEST_TOOL_VERSION} or better is recommended)`, 'Don\'t Show Again', 'Update');
+    switch (selected) {
+        case 'Don\'t Show Again':
+            disableVersionCheckUpdateSetting.persist();
+            break;
+        case 'Update':
+            vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://github.com/koalaman/shellcheck#installing'));
+            break;
+    }
+}
+
+class DisableVersionCheckUpdateSetting {
+
+    private static KEY = 'disableVersionCheck';
+    private config: vscode.WorkspaceConfiguration;
+    readonly isDisabled: boolean;
+
+    constructor() {
+        this.config = vscode.workspace.getConfiguration('shellcheck');
+        this.isDisabled = this.config.get(DisableVersionCheckUpdateSetting.KEY) || false;
+    }
+
+    persist() {
+        this.config.update(DisableVersionCheckUpdateSetting.KEY, true, true);
     }
 }
