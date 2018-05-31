@@ -1,6 +1,6 @@
 // A launch configuration that compiles the extension and then opens it inside a new window
 {
-    "version": "0.1.0",
+    "version": "0.2.0",
     "configurations": [
         {
             "type": "extensionHost",
@@ -15,7 +15,7 @@
             ],
             "stopOnEntry": false,
             "sourceMaps": true,
-            "preLaunchTask": "npm"
+            "preLaunchTask": "build"
         },
         {
             "type": "extensionHost",
@@ -31,7 +31,7 @@
             "outFiles": [
                 "${workspaceRoot}/out/**/*.js"
             ],
-            "preLaunchTask": "npm"
+            "preLaunchTask": "build"
         }
     ]
 }
