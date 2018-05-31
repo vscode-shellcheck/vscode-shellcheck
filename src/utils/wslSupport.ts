@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as child_process from 'child_process';
 
+
 const isWindows = process.platform === 'win32';
 const is64bit = process.arch === 'x64';
 
@@ -36,7 +37,7 @@ interface ILaunchArgs {
     remoteRoot?: string;
 }
 
-function createLaunchArg(useSubsytemLinux: boolean | undefined, useExternalConsole: boolean, cwd: string | undefined, executable: string, args?: string[], program?: string): ILaunchArgs {
+export function createLaunchArg(useSubsytemLinux: boolean | undefined, useExternalConsole: boolean, cwd: string | undefined, executable: string, args?: string[], program?: string): ILaunchArgs {
     if (useSubsytemLinux && subsystemForLinuxPresent()) {
         const bashPath32bitApp = path.join(process.env['SystemRoot'], 'Sysnative', 'bash.exe');
         const bashPath64bitApp = path.join(process.env['SystemRoot'], 'System32', 'bash.exe');

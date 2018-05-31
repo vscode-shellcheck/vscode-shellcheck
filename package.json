@@ -63,6 +63,14 @@
 					"type": "boolean",
 					"default": false,
 					"description": "Whether to use a shellcheck installation in the Windows Subsystem for Linux."
+				},
+				"shellcheck.disableVersionCheck": {
+					"type": [
+						"boolean",
+						"null"
+					],
+					"default": null,
+					"description": "Whether to diable shellcheck binary version check, which prompt for updating when outdated version found."
 				}
 			}
 		}
@@ -77,13 +85,15 @@
 	},
 	"dependencies": {
 		"lodash": "^4.17.10",
-		"minimatch": "^3.0.4"
+		"minimatch": "^3.0.4",
+		"semver": "^5.5.0"
 	},
 	"devDependencies": {
 		"@types/lodash": "^4.14.109",
 		"@types/minimatch": "^3.0.3",
 		"@types/mocha": "^2.2.48",
 		"@types/node": "^6.0.109",
+		"@types/semver": "^5.5.0",
 		"mocha": "^2.3.3",
 		"tslint": "^5.10.0",
 		"typescript": "^2.8.3",
