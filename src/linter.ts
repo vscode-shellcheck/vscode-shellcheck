@@ -1,9 +1,24 @@
 import { spawn } from 'child_process';
+
 import * as vscode from 'vscode';
+import * as _ from 'lodash';
+
 import * as wsl from './utils/wslSupport';
-
 import { ThrottledDelayer } from './utils/async';
+import { FileMatcher, FileSettings } from './utils/filematcher';
 
+
+const EXTENSION_NAME = 'shellcheck';
+
+interface ShellCheckSettings {
+    enabled: boolean;
+    executable: string;
+    trigger: RunTrigger;
+    exclude: string[];
+    customArgs: string[];
+    ignorePatterns: FileSettings;
+    useWSL: boolean;
+}
 
 enum RunTrigger {
     onSave,
@@ -58,7 +73,7 @@ function fixPosition(textDocument: vscode.TextDocument, pos: vscode.Position): v
     return pos.with({ character: charPos });
 }
 
-function asDiagnostic(textDocument: vscode.TextDocument, item: ShellCheckItem): vscode.Diagnostic {
+function makeDiagnostic(textDocument: vscode.TextDocument, item: ShellCheckItem): vscode.Diagnostic {
     let startPos = new vscode.Position(item.line - 1, item.column - 1);
     const endLine = item.endLine ? item.endLine - 1 : startPos.line;
     const endCharacter = item.endColumn ? item.endColumn - 1 : startPos.character;
@@ -72,14 +87,14 @@ function asDiagnostic(textDocument: vscode.TextDocument, item: ShellCheckItem): 
     }
     const range = new vscode.Range(startPos, endPos);
 
-    const severity = asDiagnosticSeverity(item.level);
+    const severity = getDiagnosticSeverity(item.level);
     const diagnostic = new vscode.Diagnostic(range, `${item.message} [SC${item.code}]`, severity);
-    diagnostic.source = 'shellcheck';
+    diagnostic.source = EXTENSION_NAME;
     diagnostic.code = item.code;
     return diagnostic;
 }
 
-function asDiagnosticSeverity(level: string): vscode.DiagnosticSeverity {
+function getDiagnosticSeverity(level: string): vscode.DiagnosticSeverity {
     switch (level) {
         case 'error':
             return vscode.DiagnosticSeverity.Error;
@@ -94,29 +109,34 @@ function asDiagnosticSeverity(level: string): vscode.DiagnosticSeverity {
     }
 }
 
-
 export default class ShellCheckProvider {
 
-    private static languageId = 'shellscript';
-    private enabled: boolean;
-    private trigger: RunTrigger;
-    private executable: string;
+    private static LANGUAGE_ID = 'shellscript';
+    private settings: ShellCheckSettings;
+    // private enabled: boolean;
+    // private trigger: RunTrigger;
+    // private executable: string;
     private executableNotFound: boolean;
-    private exclude: string[];
-    private customArgs: string[];
+    // private exclude: string[];
+    // private customArgs: string[];
+    // private useWSL: boolean;
     private documentListener: vscode.Disposable;
     private diagnosticCollection: vscode.DiagnosticCollection;
     private delayers: { [key: string]: ThrottledDelayer<void> };
-    private useWSL: boolean;
+    private fileMatcher: FileMatcher;
 
     constructor() {
-        this.enabled = true;
-        this.trigger = null;
-        this.executable = null;
+        this.settings = <ShellCheckSettings>{
+            enabled: true,
+            trigger: null,
+            executable: null,
+            exclude: [],
+            customArgs: [],
+            ignorePatterns: null,
+            useWSL: false,
+        };
         this.executableNotFound = false;
-        this.exclude = [];
-        this.customArgs = [];
-        this.useWSL = false;
+        this.fileMatcher = new FileMatcher();
     }
 
     public activate(subscriptions: vscode.Disposable[]): void {
@@ -150,25 +170,28 @@ export default class ShellCheckProvider {
 
     private loadConfiguration(): void {
         const section = vscode.workspace.getConfiguration('shellcheck');
-        if (section) {
-            this.enabled = section.get('enable', true);
-            this.trigger = RunTrigger.from(section.get('run', RunTrigger.strings.onType));
-            this.executable = section.get('executablePath', 'shellcheck');
-            this.exclude = section.get('exclude', []);
-            this.customArgs = section.get('customArgs', []);
-            this.useWSL = section.get('useWSL', false);
-        }
+        const settings = <ShellCheckSettings>{
+            enabled: section.get('enable', true),
+            trigger: RunTrigger.from(section.get('run', RunTrigger.strings.onType)),
+            executable: section.get('executablePath', 'shellcheck'),
+            exclude: section.get('exclude', []),
+            customArgs: section.get('customArgs', []),
+            ignorePatterns: _.assign<Object, FileSettings>({}, section.get('ignorePatterns', {})),
+            useWSL: section.get('useWSL', false),
+        };
+        this.settings = settings;
 
+        this.fileMatcher.configure(settings.ignorePatterns);
         this.delayers = Object.create(null);
 
         this.disposeDocumentListener();
         this.diagnosticCollection.clear();
-        if (this.enabled) {
-            if (this.trigger === RunTrigger.onType) {
+        if (settings.enabled) {
+            if (settings.trigger === RunTrigger.onType) {
                 this.documentListener = vscode.workspace.onDidChangeTextDocument((e) => {
                     this.triggerLint(e.document);
                 });
-            } else if (this.trigger === RunTrigger.onSave) {
+            } else if (settings.trigger === RunTrigger.onSave) {
                 this.documentListener = vscode.workspace.onDidSaveTextDocument(this.triggerLint, this);
             }
         }
@@ -179,7 +202,7 @@ export default class ShellCheckProvider {
     }
 
     private isAllowedTextDocument(textDocument: vscode.TextDocument): boolean {
-        if (textDocument.languageId !== ShellCheckProvider.languageId) {
+        if (textDocument.languageId !== ShellCheckProvider.LANGUAGE_ID) {
             return false;
         }
 
@@ -192,15 +215,19 @@ export default class ShellCheckProvider {
             return;
         }
 
-        if (!this.enabled) {
+        if (!this.settings.enabled) {
             this.diagnosticCollection.delete(textDocument.uri);
+            return;
+        }
+
+        if (this.fileMatcher.excludes(textDocument.uri.fsPath, vscode.workspace.rootPath)) {
             return;
         }
 
         const key = textDocument.uri.toString();
         let delayer = this.delayers[key];
         if (!delayer) {
-            delayer = new ThrottledDelayer<void>(this.trigger === RunTrigger.onType ? 250 : 0);
+            delayer = new ThrottledDelayer<void>(this.settings.trigger === RunTrigger.onType ? 250 : 0);
             this.delayers[key] = delayer;
         }
 
@@ -209,7 +236,8 @@ export default class ShellCheckProvider {
 
     private runLint(textDocument: vscode.TextDocument): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            if (this.useWSL && !wsl.subsystemForLinuxPresent()) {
+            const settings = this.settings;
+            if (settings.useWSL && !wsl.subsystemForLinuxPresent()) {
                 if (!this.executableNotFound) {
                     vscode.window.showErrorMessage('Got told to use WSL, but cannot find installation. Bailing out.');
                 }
@@ -218,28 +246,28 @@ export default class ShellCheckProvider {
                 return;
             }
 
-            const executable = this.executable || 'shellcheck';
+            const executable = settings.executable || 'shellcheck';
             const diagnostics: vscode.Diagnostic[] = [];
             let processShellCheckItem = (item: ShellCheckItem) => {
                 if (item) {
-                    diagnostics.push(asDiagnostic(textDocument, item));
+                    diagnostics.push(makeDiagnostic(textDocument, item));
                 }
             };
 
             const options = vscode.workspace.rootPath ? { cwd: vscode.workspace.rootPath } : undefined;
             let args = ['-f', 'json'];
 
-            if (this.exclude.length) {
-                args = args.concat(['-e', this.exclude.join(',')]);
+            if (settings.exclude.length) {
+                args = args.concat(['-e', settings.exclude.join(',')]);
             }
 
-            if (this.customArgs.length) {
-                args = args.concat(this.customArgs);
+            if (settings.customArgs.length) {
+                args = args.concat(settings.customArgs);
             }
 
             args.push('-');
 
-            const childProcess = wsl.spawn(this.useWSL, executable, args, options);
+            const childProcess = wsl.spawn(settings.useWSL, executable, args, options);
             childProcess.on('error', (error: Error) => {
                 if (!this.executableNotFound) {
                     this.showError(error, executable);
@@ -254,7 +282,7 @@ export default class ShellCheckProvider {
                 childProcess.stdout.setEncoding('utf-8');
 
                 let script = textDocument.getText();
-                if (this.useWSL) {
+                if (settings.useWSL) {
                     script = script.replace(/\r\n/g, '\n'); // shellcheck doesn't likes CRLF, although this is caused by a git checkout on Windows.
                 }
                 childProcess.stdin.write(script);
