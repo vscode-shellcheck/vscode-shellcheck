@@ -1,6 +1,6 @@
 // Stolen from vscode-jshint.
-import * as minimatch from 'minimatch';
 import * as _ from 'lodash';
+import * as minimatch from 'minimatch';
 
 
 export interface FileSettings {

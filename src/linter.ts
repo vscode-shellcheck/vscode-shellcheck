@@ -1,12 +1,10 @@
 import * as child_process from 'child_process';
-
-import * as vscode from 'vscode';
-import * as _ from 'lodash';
+import * as path from 'path';
 import * as semver from 'semver';
-
-import * as wsl from './utils/wslSupport';
+import * as vscode from 'vscode';
 import { ThrottledDelayer } from './utils/async';
 import { FileMatcher, FileSettings } from './utils/filematcher';
+import * as wsl from './utils/wslSupport';
 
 
 const EXTENSION_NAME = 'shellcheck';
@@ -182,7 +180,7 @@ export default class ShellCheckProvider {
             executable: section.get('executablePath', 'shellcheck'),
             exclude: section.get('exclude', []),
             customArgs: section.get('customArgs', []),
-            ignorePatterns: _.assign<Object, FileSettings>({}, section.get('ignorePatterns', {})),
+            ignorePatterns: section.get('ignorePatterns', {}),
             useWSL: section.get('useWSL', false),
         };
         this.settings = settings;
@@ -226,7 +224,7 @@ export default class ShellCheckProvider {
             return;
         }
 
-        if (this.fileMatcher.excludes(textDocument.uri.fsPath, vscode.workspace.rootPath)) {
+        if (this.fileMatcher.excludes(textDocument.fileName, vscode.workspace.rootPath)) {
             return;
         }
 
@@ -271,7 +269,8 @@ export default class ShellCheckProvider {
 
             args.push('-'); // Use stdin for shellcheck
 
-            const options = vscode.workspace.rootPath ? { cwd: vscode.workspace.rootPath } : undefined;
+            const cwd = textDocument.isUntitled ? vscode.workspace.rootPath : path.dirname(textDocument.fileName);
+            const options = cwd ? { cwd: cwd } : undefined;
             const childProcess = wsl.spawn(settings.useWSL, executable, args, options);
             childProcess.on('error', (error: Error) => {
                 if (!this.executableNotFound) {
