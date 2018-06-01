@@ -1,7 +1,7 @@
 // Shamelessly stolen from https://github.com/Microsoft/vscode-node-debug2/blob/master/src/wslSupport.ts
-import * as path from 'path';
-import * as fs from 'fs';
 import * as child_process from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
 
 
 const isWindows = process.platform === 'win32';
