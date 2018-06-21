@@ -37,6 +37,16 @@ By default the linter will lint as you type. Alternatively, set `shellcheck.run`
 }
 ```
 
+### Excluding Checks
+
+By default all shellcheck checks are performed and reported on as necessary. To globally ignore certain checks in all files, add the "SC identifiers" to `shellcheck.exclude`. For example, to exclude SC1017:
+
+```javascript
+{
+    "shellcheck.exclude": [1017],
+}
+```
+
 ## Acknowledgements
 
 This extension is based on [hoovercj's Haskell Linter](https://github.com/hoovercj/vscode-haskell-linter).
