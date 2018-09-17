@@ -59,6 +59,11 @@
 					"default": {},
 					"description": "Mathing files and directories are being ignored by shellcheck. Glob patterns are interpreted relative to the workspace's root folder."
 				},
+				"shellcheck.useWorkspaceRootAsCwd": {
+					"type": "boolean",
+					"default": false,
+					"description": "Whether to use the workspace root directory as the current working directory when launching ShellCheck."
+				},
 				"shellcheck.useWSL": {
 					"type": "boolean",
 					"default": false,
