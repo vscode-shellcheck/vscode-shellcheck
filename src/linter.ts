@@ -17,6 +17,7 @@ interface ShellCheckSettings {
     exclude: string[];
     customArgs: string[];
     ignorePatterns: FileSettings;
+    useWorkspaceRootAsCwd: boolean;
     useWSL: boolean;
 }
 
@@ -127,6 +128,7 @@ export default class ShellCheckProvider {
             exclude: [],
             customArgs: [],
             ignorePatterns: null,
+            useWorkspaceRootAsCwd: false,
             useWSL: false,
         };
         this.executableNotFound = false;
@@ -181,6 +183,7 @@ export default class ShellCheckProvider {
             exclude: section.get('exclude', []),
             customArgs: section.get('customArgs', []),
             ignorePatterns: section.get('ignorePatterns', {}),
+            useWorkspaceRootAsCwd: section.get('useWorkspaceRootAsCwd', false),
             useWSL: section.get('useWSL', false),
         };
         this.settings = settings;
@@ -269,7 +272,13 @@ export default class ShellCheckProvider {
 
             args.push('-'); // Use stdin for shellcheck
 
-            const cwd = textDocument.isUntitled ? vscode.workspace.rootPath : path.dirname(textDocument.fileName);
+            let cwd: string = null;
+            if (settings.useWorkspaceRootAsCwd) {
+                cwd = vscode.workspace.rootPath;
+            } else {
+                cwd = textDocument.isUntitled ? vscode.workspace.rootPath : path.dirname(textDocument.fileName);
+            }
+
             const options = cwd ? { cwd: cwd } : undefined;
             const childProcess = wsl.spawn(settings.useWSL, executable, args, options);
             childProcess.on('error', (error: Error) => {
