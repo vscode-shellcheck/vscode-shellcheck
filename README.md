@@ -2,7 +2,7 @@
 
 [![https://travis-ci.com/timonwong/vscode-shellcheck](https://travis-ci.com/timonwong/vscode-shellcheck.svg?branch=master)](https://travis-ci.com/timonwong/vscode-shellcheck)
 [![Current Version](https://vsmarketplacebadge.apphb.com/version/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
-[![Install Count](https://vsmarketplacebadge.apphb.com/installs-short/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
+[![Install Count](https://vsmarketplacebadge.apphb.com/installs-short/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck) [![Greenkeeper badge](https://badges.greenkeeper.io/timonwong/vscode-shellcheck.svg)](https://greenkeeper.io/)
 
 ## Requirements
 
