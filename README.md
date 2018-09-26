@@ -1,5 +1,6 @@
 # vscode-shellcheck
 
+[![https://travis-ci.com/timonwong/vscode-shellcheck](https://travis-ci.com/timonwong/vscode-shellcheck.svg?branch=master)](https://travis-ci.com/timonwong/vscode-shellcheck)
 [![Current Version](https://vsmarketplacebadge.apphb.com/version/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
 [![Install Count](https://vsmarketplacebadge.apphb.com/installs-short/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
 
@@ -39,7 +40,7 @@ By default the linter will lint as you type. Alternatively, set `shellcheck.run`
 
 ### Excluding Checks
 
-By default all shellcheck checks are performed and reported on as necessary. To globally ignore certain checks in all files, add the "SC identifiers" to `shellcheck.exclude`. For example, to exclude SC1017:
+By default all shellcheck checks are performed and reported on as necessary. To globally ignore certain checks in all files, add the "SC identifiers" to `shellcheck.exclude`. For example, to exclude [SC1017](https://github.com/koalaman/shellcheck/wiki/SC1017):
 
 ```javascript
 {

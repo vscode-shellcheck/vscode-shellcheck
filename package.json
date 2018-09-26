@@ -15,7 +15,7 @@
 		"url": "https://github.com/timonwong/vscode-shellcheck.git"
 	},
 	"engines": {
-		"vscode": "^1.13.0"
+		"vscode": "^1.25.0"
 	},
 	"activationEvents": [
 		"onLanguage:shellscript"
@@ -99,10 +99,10 @@
 		"@types/mocha": "^2.2.48",
 		"@types/node": "^6.0.109",
 		"@types/semver": "^5.5.0",
-		"mocha": "^2.3.3",
-		"tslint": "^5.10.0",
-		"typescript": "^2.8.3",
-		"vscode": "^1.1.17"
+		"mocha": "^5.2.0",
+		"tslint": "^5.11.0",
+		"typescript": "^3.0.3",
+		"vscode": "^1.1.21"
 	},
 	"__metadata": {
 		"id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",
