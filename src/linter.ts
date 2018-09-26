@@ -53,14 +53,6 @@ interface ShellCheckItem {
     message: string;
 }
 
-function escapeRegexp(s: string): string {
-    // Shamelessly stolen from https://github.com/atom/underscore-plus/blob/130913c179fe1d718a14034f4818adaf8da4db12/src/underscore-plus.coffee#L138
-    return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-}
-
-const NON_WORD_CHARACTERS = escapeRegexp('/\\()"\':,.;<>~!@#$%^&*|+=[]{}`?-…');
-const WORD_REGEXP = new RegExp(`^[\t ]*$|[^\\s${NON_WORD_CHARACTERS}]+`);
-
 function fixPosition(textDocument: vscode.TextDocument, pos: vscode.Position): vscode.Position {
     // Since json format treats tabs as **8** characters, we need to offset it.
     let charPos = pos.character;
@@ -72,6 +64,30 @@ function fixPosition(textDocument: vscode.TextDocument, pos: vscode.Position): v
     }
 
     return pos.with({ character: charPos });
+}
+
+function levelToDiagnosticSeverity(level: string): vscode.DiagnosticSeverity {
+    switch (level) {
+        case 'error':
+            return vscode.DiagnosticSeverity.Error;
+        case 'style':
+        /* falls through */
+        case 'info':
+            return vscode.DiagnosticSeverity.Information;
+        case 'warning':
+        /* falls through */
+        default:
+            return vscode.DiagnosticSeverity.Warning;
+    }
+}
+
+function scCodeToDiagnosticTags(code: number): vscode.DiagnosticTag[] | undefined {
+    // SC2034 - https://github.com/koalaman/shellcheck/wiki/SC2034
+    if (code === 2034) {
+        return [vscode.DiagnosticTag.Unnecessary];
+    }
+
+    return undefined;
 }
 
 function makeDiagnostic(textDocument: vscode.TextDocument, item: ShellCheckItem): vscode.Diagnostic {
@@ -86,28 +102,15 @@ function makeDiagnostic(textDocument: vscode.TextDocument, item: ShellCheckItem)
         startPos = fixPosition(textDocument, startPos);
         endPos = fixPosition(textDocument, endPos);
     }
-    const range = new vscode.Range(startPos, endPos);
 
-    const severity = getDiagnosticSeverity(item.level);
-    const diagnostic = new vscode.Diagnostic(range, `${item.message} [SC${item.code}]`, severity);
+    const range = new vscode.Range(startPos, endPos);
+    const severity = levelToDiagnosticSeverity(item.level);
+    const message = `${item.message} [SC${item.code}]`;
+    const diagnostic = new vscode.Diagnostic(range, message, severity);
     diagnostic.source = EXTENSION_NAME;
     diagnostic.code = item.code;
+    diagnostic.tags = scCodeToDiagnosticTags(item.code);
     return diagnostic;
-}
-
-function getDiagnosticSeverity(level: string): vscode.DiagnosticSeverity {
-    switch (level) {
-        case 'error':
-            return vscode.DiagnosticSeverity.Error;
-        case 'style':
-        /* falls through */
-        case 'info':
-            return vscode.DiagnosticSeverity.Information;
-        case 'warning':
-        /* falls through */
-        default:
-            return vscode.DiagnosticSeverity.Warning;
-    }
 }
 
 export default class ShellCheckProvider {
