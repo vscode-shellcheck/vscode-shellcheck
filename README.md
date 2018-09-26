@@ -47,6 +47,18 @@ By default all shellcheck checks are performed and reported on as necessary. To 
 }
 ```
 
+### Using Docker version of shellcheck
+
+In order to get it work, you need a "shim" script, and then, just remember, do not try to construct command line arguments for shellcheck yourself.
+
+Here is a simple "shim" script to get start with ([#24](https://github.com/timonwong/vscode-shellcheck/issues/24)):
+
+```shell
+#!/bin/bash
+
+exec docker run --rm -i -v "$PWD:/mnt:ro" koalaman/shellcheck:v0.5.0 "$@"
+```
+
 ## Acknowledgements
 
 This extension is based on [hoovercj's Haskell Linter](https://github.com/hoovercj/vscode-haskell-linter).
