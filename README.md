@@ -52,7 +52,7 @@ By default all shellcheck checks are performed and reported on as necessary. To 
 
 In order to get it work, you need a "shim" script, and then, just remember, do not try to construct command line arguments for shellcheck yourself.
 
-Here is a simple "shim" script to get start with ([#24](https://github.com/timonwong/vscode-shellcheck/issues/24)):
+Here is a simple "shim" script to get start with (See discussion: [#24](https://github.com/timonwong/vscode-shellcheck/issues/24)):
 
 ```shell
 #!/bin/bash

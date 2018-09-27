@@ -13,11 +13,11 @@ export class FileMatcher {
     private excludeCache: { [key: string]: any };
 
     constructor() {
-        this.excludePatterns = null;
+        this.excludePatterns = [];
         this.excludeCache = {};
     }
 
-    private pickTrueKeys(obj: FileSettings): string[] {
+    private pickTrueKeys(obj?: FileSettings): string[] {
         return _.keys(_.pickBy(obj, (value) => {
             return value === true;
         }));
@@ -41,11 +41,6 @@ export class FileMatcher {
             return fsPath.substr(cuttingPoint);
         }
         return fsPath;
-    }
-
-    private folderOf(fsPath: string): string {
-        const index = fsPath.lastIndexOf('/');
-        return index > -1 ? fsPath.substr(0, index) : fsPath;
     }
 
     private match(excludePatterns: string[], path: string, root: string): boolean {

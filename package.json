@@ -8,6 +8,13 @@
 		"Programming Languages",
 		"Linters"
 	],
+	"keywords": [
+		"shell",
+		"shellscript",
+		"bash",
+		"linter",
+		"lint"
+	],
 	"homepage": "https://github.com/timonwong/vscode-shellcheck",
 	"private": true,
 	"repository": {
@@ -24,58 +31,71 @@
 	"contributes": {
 		"configuration": {
 			"title": "ShellCheck",
+			"type": "object",
 			"properties": {
 				"shellcheck.enable": {
+					"description": "Whether shellcheck is enabled or not.",
 					"type": "boolean",
-					"default": true,
-					"description": "Whether shellcheck is enabled or not."
+					"scope": "resource",
+					"default": true
 				},
 				"shellcheck.executablePath": {
+					"description": "Path to the shellcheck executable.",
 					"type": "string",
-					"default": "shellcheck",
-					"description": "Path to the shellcheck executable."
+					"scope": "resource",
+					"default": "shellcheck"
 				},
 				"shellcheck.run": {
+					"description": "Whether shellcheck is run on save or on type.",
 					"type": "string",
 					"enum": [
 						"onSave",
 						"onType"
 					],
-					"default": "onType",
-					"description": "Whether shellcheck is run on save or on type."
+					"scope": "resource",
+					"default": "onType"
 				},
 				"shellcheck.exclude": {
+					"description": "Exclude types of warnings, for example [\"SC1090\"].",
 					"type": "array",
-					"default": [],
-					"description": "Exclude types of warnings, for example [\"SC1090\"]."
+					"scope": "resource",
+					"default": []
 				},
 				"shellcheck.customArgs": {
+					"description": "Custom arguments to shellcheck.",
 					"type": "array",
-					"default": [],
-					"description": "Custom arguments to shellcheck."
+					"items": {
+						"type": "string"
+					},
+					"scope": "resource",
+					"default": []
 				},
 				"shellcheck.ignorePatterns": {
+					"description": "Mathing files and directories are being ignored by shellcheck. Glob patterns are interpreted relative to the workspace's root folder.",
 					"type": "object",
-					"default": {},
-					"description": "Mathing files and directories are being ignored by shellcheck. Glob patterns are interpreted relative to the workspace's root folder."
+					"scope": "resource",
+					"default": {}
 				},
 				"shellcheck.useWorkspaceRootAsCwd": {
+					"description": "Whether to use the workspace root directory as the current working directory when launching ShellCheck.",
 					"type": "boolean",
-					"default": false,
-					"description": "Whether to use the workspace root directory as the current working directory when launching ShellCheck."
+					"scope": "resource",
+					"default": false
 				},
 				"shellcheck.useWSL": {
+					"description": "Whether to use a shellcheck installation in the Windows Subsystem for Linux.",
 					"type": "boolean",
-					"default": false,
-					"description": "Whether to use a shellcheck installation in the Windows Subsystem for Linux."
+					"scope": "resource",
+					"default": false
 				},
 				"shellcheck.disableVersionCheck": {
+					"description": "Whether to diable shellcheck binary version check, which prompt for updating when outdated version found.",
 					"type": [
 						"boolean",
 						"null"
 					],
-					"default": null,
-					"description": "Whether to diable shellcheck binary version check, which prompt for updating when outdated version found."
+					"scope": "application",
+					"default": null
 				}
 			}
 		}

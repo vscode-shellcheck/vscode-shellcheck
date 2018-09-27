@@ -32,14 +32,16 @@ namespace RunTrigger {
         onType: 'onType'
     };
 
-    export let from = function (value: string): RunTrigger {
+    export function from(value: string): RunTrigger {
         switch (value) {
             case strings.onSave:
                 return RunTrigger.onSave;
             case strings.onType:
+                /* falls through */
+            default:
                 return RunTrigger.onType;
         }
-    };
+    }
 }
 
 interface ShellCheckItem {
@@ -124,22 +126,12 @@ export default class ShellCheckProvider {
     private fileMatcher: FileMatcher;
 
     constructor(private context: vscode.ExtensionContext) {
-        this.settings = <ShellCheckSettings>{
-            enabled: true,
-            trigger: null,
-            executable: null,
-            exclude: [],
-            customArgs: [],
-            ignorePatterns: null,
-            useWorkspaceRootAsCwd: false,
-            useWSL: false,
-        };
         this.executableNotFound = false;
         this.fileMatcher = new FileMatcher();
         this.diagnosticCollection = vscode.languages.createDiagnosticCollection();
 
         vscode.workspace.onDidChangeConfiguration(this.loadConfiguration, this, context.subscriptions);
-        this.loadConfiguration();
+        this.loadConfiguration(); // populate this.settings
 
         const disableVersionCheckUpdateSetting = new DisableVersionCheckUpdateSetting();
         if (!disableVersionCheckUpdateSetting.isDisabled) {
@@ -230,7 +222,7 @@ export default class ShellCheckProvider {
             return;
         }
 
-        if (this.fileMatcher.excludes(textDocument.fileName, vscode.workspace.rootPath)) {
+        if (vscode.workspace.rootPath && this.fileMatcher.excludes(textDocument.fileName, vscode.workspace.rootPath)) {
             return;
         }
 
@@ -275,7 +267,7 @@ export default class ShellCheckProvider {
 
             args.push('-'); // Use stdin for shellcheck
 
-            let cwd: string = null;
+            let cwd: string | undefined;
             if (settings.useWorkspaceRootAsCwd) {
                 cwd = vscode.workspace.rootPath;
             } else {
@@ -304,7 +296,7 @@ export default class ShellCheckProvider {
                 childProcess.stdin.write(script);
                 childProcess.stdin.end();
 
-                const output = [];
+                const output: string[] = [];
                 childProcess.stdout
                     .on('data', (data: Buffer) => {
                         output.push(data.toString());
@@ -324,7 +316,7 @@ export default class ShellCheckProvider {
     }
 
     private showShellCheckError(error: any, executable: string): void {
-        let message: string = null;
+        let message: string;
         if (error.code === 'ENOENT') {
             message = `Cannot shellcheck the shell script. The shellcheck program was not found. Use the 'shellcheck.executablePath' setting to configure the location of 'shellcheck' or enable WSL integration with 'shellcheck.useWSL'`;
         } else {
@@ -336,7 +328,7 @@ export default class ShellCheckProvider {
 }
 
 function getToolVersion(useWSL: boolean, executable: string): Thenable<semver.SemVer> {
-    return new Promise<semver.SemVer>((resolve, reject) => {
+    return new Promise<semver.SemVer | null>((resolve, reject) => {
         const launchArgs = wsl.createLaunchArg(useWSL, false, undefined, executable, ['-V']);
         child_process.execFile(launchArgs.executable, launchArgs.args, { timeout: 2000 }, (err, stdout, stderr) => {
             const matches = /version: ((?:\d+)\.(?:\d+)(?:\.\d+)*)/.exec(stdout);
