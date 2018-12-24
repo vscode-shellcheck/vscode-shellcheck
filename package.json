@@ -89,7 +89,7 @@
 					"default": false
 				},
 				"shellcheck.disableVersionCheck": {
-					"description": "Whether to diable shellcheck binary version check, which prompt for updating when outdated version found.",
+					"description": "Whether to disable shellcheck binary version check, which prompt for updating when outdated version found.",
 					"type": [
 						"boolean",
 						"null"
