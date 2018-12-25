@@ -56,7 +56,7 @@
 					"default": "onType"
 				},
 				"shellcheck.exclude": {
-					"description": "Exclude types of warnings, for example [\"SC1090\"].",
+					"description": "Exclude types of warnings, for example [1090].",
 					"type": "array",
 					"scope": "resource",
 					"default": []
