@@ -3,3 +3,4 @@
 /.vscode-test
 
 *.vsix
+*.orig

@@ -47,9 +47,9 @@ namespace RunTrigger {
 interface ShellCheckItem {
     file: string;
     line: number;
-    endLine: number | undefined;
+    endLine?: number;
     column: number;
-    endColumn: number | undefined;
+    endColumn?: number;
     level: string;
     code: number;
     message: string;
@@ -107,10 +107,9 @@ function makeDiagnostic(textDocument: vscode.TextDocument, item: ShellCheckItem)
 
     const range = new vscode.Range(startPos, endPos);
     const severity = levelToDiagnosticSeverity(item.level);
-    const message = `${item.message} [SC${item.code}]`;
-    const diagnostic = new vscode.Diagnostic(range, message, severity);
+    const diagnostic = new vscode.Diagnostic(range, item.message, severity);
     diagnostic.source = EXTENSION_NAME;
-    diagnostic.code = item.code;
+    diagnostic.code = `SC${item.code}`;
     diagnostic.tags = scCodeToDiagnosticTags(item.code);
     return diagnostic;
 }
@@ -118,14 +117,14 @@ function makeDiagnostic(textDocument: vscode.TextDocument, item: ShellCheckItem)
 export default class ShellCheckProvider {
 
     private static LANGUAGE_ID = 'shellscript';
-    private settings: ShellCheckSettings;
+    private settings!: ShellCheckSettings;
     private executableNotFound: boolean;
-    private documentListener: vscode.Disposable;
-    private diagnosticCollection: vscode.DiagnosticCollection;
-    private delayers: { [key: string]: ThrottledDelayer<void> };
-    private fileMatcher: FileMatcher;
+    private documentListener!: vscode.Disposable;
+    private delayers!: { [key: string]: ThrottledDelayer<void> };
+    private readonly fileMatcher: FileMatcher;
+    private readonly diagnosticCollection: vscode.DiagnosticCollection;
 
-    constructor(private context: vscode.ExtensionContext) {
+    constructor(private readonly context: vscode.ExtensionContext) {
         this.executableNotFound = false;
         this.fileMatcher = new FileMatcher();
         this.diagnosticCollection = vscode.languages.createDiagnosticCollection();
@@ -142,7 +141,7 @@ export default class ShellCheckProvider {
                 }
 
                 if (semver.lt(toolVersion, BEST_TOOL_VERSION)) {
-                    promptForUpdatingTool(toolVersion, disableVersionCheckUpdateSetting);
+                    promptForUpdatingTool(toolVersion.format(), disableVersionCheckUpdateSetting);
                 }
             });
         }
@@ -170,7 +169,7 @@ export default class ShellCheckProvider {
     }
 
     private loadConfiguration(): void {
-        const section = vscode.workspace.getConfiguration('shellcheck');
+        const section = vscode.workspace.getConfiguration('shellcheck', null);
         const settings = <ShellCheckSettings>{
             enabled: section.get('enable', true),
             trigger: RunTrigger.from(section.get('run', RunTrigger.strings.onType)),
@@ -327,7 +326,7 @@ export default class ShellCheckProvider {
     }
 }
 
-function getToolVersion(useWSL: boolean, executable: string): Thenable<semver.SemVer> {
+function getToolVersion(useWSL: boolean, executable: string): Thenable<semver.SemVer | null> {
     return new Promise<semver.SemVer | null>((resolve, reject) => {
         const launchArgs = wsl.createLaunchArg(useWSL, false, undefined, executable, ['-V']);
         child_process.execFile(launchArgs.executable, launchArgs.args, { timeout: 2000 }, (err, stdout, stderr) => {
@@ -342,14 +341,8 @@ function getToolVersion(useWSL: boolean, executable: string): Thenable<semver.Se
     });
 }
 
-async function promptForUpdatingTool(currentVersion: semver.SemVer | string, disableVersionCheckUpdateSetting: DisableVersionCheckUpdateSetting) {
-    let currentVersionString: string;
-    if (currentVersion instanceof semver.SemVer) {
-        currentVersionString = currentVersion.format();
-    } else {
-        currentVersionString = currentVersion;
-    }
-    const selected = await vscode.window.showInformationMessage(`The vscode-shellcheck extension is better with newer version of "shellcheck" (You got v${currentVersionString}, v${BEST_TOOL_VERSION} or better is recommended)`, 'Don\'t Show Again', 'Update');
+async function promptForUpdatingTool(currentVersion: string, disableVersionCheckUpdateSetting: DisableVersionCheckUpdateSetting) {
+    const selected = await vscode.window.showInformationMessage(`The vscode-shellcheck extension is better with newer version of "shellcheck" (You got v${currentVersion}, v${BEST_TOOL_VERSION} or better is recommended)`, 'Don\'t Show Again', 'Update');
     switch (selected) {
         case 'Don\'t Show Again':
             disableVersionCheckUpdateSetting.persist();
@@ -367,7 +360,7 @@ class DisableVersionCheckUpdateSetting {
     readonly isDisabled: boolean;
 
     constructor() {
-        this.config = vscode.workspace.getConfiguration('shellcheck');
+        this.config = vscode.workspace.getConfiguration('shellcheck', null);
         this.isDisabled = this.config.get(DisableVersionCheckUpdateSetting.KEY) || false;
     }
 

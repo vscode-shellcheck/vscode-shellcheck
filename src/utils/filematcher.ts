@@ -1,10 +1,11 @@
 // Stolen from vscode-jshint.
+// https://github.com/Microsoft/vscode-jshint/blob/ab784c08de7bbc6bac5b5c3fe1c1fbaa3fea110f/jshint-server/src/server.ts#L258
 import * as _ from 'lodash';
 import * as minimatch from 'minimatch';
 
 
 export interface FileSettings {
-    [pattern: string]: boolean;
+    readonly [pattern: string]: boolean;
 }
 
 export class FileMatcher {
