@@ -114,6 +114,10 @@ function makeDiagnostic(textDocument: vscode.TextDocument, item: ShellCheckItem)
     return diagnostic;
 }
 
+function substitutePath(s: string): string {
+    return s.replace(/\${workspaceRoot}/g, vscode.workspace.rootPath || '');
+}
+
 export default class ShellCheckProvider {
 
     private static LANGUAGE_ID = 'shellscript';
@@ -173,7 +177,7 @@ export default class ShellCheckProvider {
         const settings = <ShellCheckSettings>{
             enabled: section.get('enable', true),
             trigger: RunTrigger.from(section.get('run', RunTrigger.strings.onType)),
-            executable: section.get('executablePath', 'shellcheck'),
+            executable: substitutePath(section.get('executablePath', 'shellcheck')),
             exclude: section.get('exclude', []),
             customArgs: section.get('customArgs', []),
             ignorePatterns: section.get('ignorePatterns', {}),

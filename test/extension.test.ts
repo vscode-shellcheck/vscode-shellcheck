@@ -10,9 +10,6 @@ import * as assert from 'assert';
 // as well as import your extension to test it
 import * as vscode from 'vscode';
 
-function timeout(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 suite('Shellcheck extension', () => {
     const ext = <vscode.Extension<any>>vscode.extensions.getExtension('timonwong.shellcheck');
@@ -34,9 +31,8 @@ suite('Shellcheck extension', () => {
             language: 'shellscript',
         });
 
-        await vscode.window.showTextDocument(shellscriptDocument);
-        await timeout(1000);
-        const diagnostics = vscode.languages.getDiagnostics(shellscriptDocument.uri);
+        const editor = await vscode.window.showTextDocument(shellscriptDocument);
+        const diagnostics = vscode.languages.getDiagnostics(editor.document.uri);
         assert.equal(diagnostics.length, 1);
         assert.equal(diagnostics[0].code, 'SC2034');
     });
