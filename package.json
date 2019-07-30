@@ -2,7 +2,7 @@
 	"name": "shellcheck",
 	"displayName": "shellcheck",
 	"description": "An extension to use shellcheck in vscode",
-	"version": "0.6.0",
+	"version": "0.7.0",
 	"publisher": "timonwong",
 	"categories": [
 		"Programming Languages",
@@ -22,7 +22,7 @@
 		"url": "https://github.com/timonwong/vscode-shellcheck.git"
 	},
 	"engines": {
-		"vscode": "^1.25.0"
+		"vscode": "^1.30.0"
 	},
 	"activationEvents": [
 		"onLanguage:shellscript"
@@ -74,7 +74,17 @@
 					"description": "Mathing files and directories are being ignored by shellcheck. Glob patterns are interpreted relative to the workspace's root folder.",
 					"type": "object",
 					"scope": "resource",
-					"default": {}
+					"additionalProperties": {
+						"anyOf": [
+							{
+								"type": "boolean",
+								"description": "The glob pattern to match file paths against. Set to true or false to enable or disable the pattern."
+							}
+						]
+					},
+					"default": {
+						"**/*.zsh": true
+					}
 				},
 				"shellcheck.useWorkspaceRootAsCwd": {
 					"description": "Whether to use the workspace root directory as the current working directory when launching ShellCheck.",

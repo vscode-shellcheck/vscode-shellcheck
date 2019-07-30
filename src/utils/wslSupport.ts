@@ -7,18 +7,26 @@ import * as path from 'path';
 const isWindows = process.platform === 'win32';
 const is64bit = process.arch === 'x64';
 
+function envSafeGet(key: string): string {
+    const v = process.env[key];
+    if (typeof (v) === 'undefined') {
+        return '';
+    }
+    return v;
+}
+
 export function subsystemForLinuxPresent(): boolean {
     if (!isWindows) {
         return false;
     }
 
-    const bashPath32bitApp = path.join(process.env['SystemRoot'], 'Sysnative', 'bash.exe');
-    const bashPath64bitApp = path.join(process.env['SystemRoot'], 'System32', 'bash.exe');
+    const bashPath32bitApp = path.join(envSafeGet('SystemRoot'), 'Sysnative', 'bash.exe');
+    const bashPath64bitApp = path.join(envSafeGet('SystemRoot'), 'System32', 'bash.exe');
     const bashPathHost = is64bit ? bashPath64bitApp : bashPath32bitApp;
     return fs.existsSync(bashPathHost);
 }
 
-function windowsPathToWSLPath(windowsPath: string): string {
+function windowsPathToWSLPath(windowsPath: string | null | undefined): string | undefined {
     if (!isWindows || !windowsPath) {
         return undefined;
     } else if (path.isAbsolute(windowsPath)) {
@@ -29,7 +37,7 @@ function windowsPathToWSLPath(windowsPath: string): string {
 }
 
 interface ILaunchArgs {
-    cwd: string;
+    cwd?: string;
     executable: string;
     args: string[];
     combined: string[];
@@ -37,10 +45,10 @@ interface ILaunchArgs {
     remoteRoot?: string;
 }
 
-export function createLaunchArg(useSubsytemLinux: boolean | undefined, useExternalConsole: boolean, cwd: string | undefined, executable: string, args?: string[], program?: string): ILaunchArgs {
+export function createLaunchArg(useSubsytemLinux: boolean, useExternalConsole: boolean, cwd: string | undefined, executable: string, args?: string[], program?: string): ILaunchArgs {
     if (useSubsytemLinux && subsystemForLinuxPresent()) {
-        const bashPath32bitApp = path.join(process.env['SystemRoot'], 'Sysnative', 'bash.exe');
-        const bashPath64bitApp = path.join(process.env['SystemRoot'], 'System32', 'bash.exe');
+        const bashPath32bitApp = path.join(envSafeGet('SystemRoot'), 'Sysnative', 'bash.exe');
+        const bashPath64bitApp = path.join(envSafeGet('SystemRoot'), 'System32', 'bash.exe');
         const bashPathHost = is64bit ? bashPath64bitApp : bashPath32bitApp;
         const subsystemLinuxPath = useExternalConsole ? bashPath64bitApp : bashPathHost;
 
