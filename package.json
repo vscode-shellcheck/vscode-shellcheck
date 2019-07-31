@@ -27,7 +27,7 @@
 	"activationEvents": [
 		"onLanguage:shellscript"
 	],
-	"main": "./out/src/extension",
+	"main": "./dist/extension",
 	"contributes": {
 		"configuration": {
 			"title": "ShellCheck",
@@ -111,11 +111,12 @@
 		}
 	},
 	"scripts": {
-		"vscode:prepublish": "tsc -p ./",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
 		"postinstall": "node ./node_modules/vscode/bin/install",
+		"vscode:prepublish": "webpack --mode production",
+		"compile": "webpack --mode none",
+		"watch": "webpack --mode none --watch",
 		"test": "node ./node_modules/vscode/bin/test",
+		"test-compile": "tsc -p ./",
 		"tslint": "tslint --project tsconfig.json"
 	},
 	"dependencies": {
@@ -130,9 +131,12 @@
 		"@types/node": "^10.11.0",
 		"@types/semver": "^5.5.0",
 		"mocha": "^5.2.0",
+		"ts-loader": "^6.0.4",
 		"tslint": "^5.18.0",
 		"typescript": "^3.0.3",
-		"vscode": "^1.1.35"
+		"vscode": "^1.1.35",
+		"webpack": "^4.38.0",
+		"webpack-cli": "^3.3.6"
 	},
 	"__metadata": {
 		"id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",

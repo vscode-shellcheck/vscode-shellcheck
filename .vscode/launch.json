@@ -11,11 +11,11 @@
                 "--extensionDevelopmentPath=${workspaceFolder}"
             ],
             "outFiles": [
-                "${workspaceFolder}/out/**/*.js"
+                "${workspaceFolder}/dist/*"
             ],
             "stopOnEntry": false,
             "sourceMaps": true,
-            "preLaunchTask": "build"
+            "preLaunchTask": "npm: compile"
         },
         {
             "type": "extensionHost",
@@ -31,7 +31,7 @@
             "outFiles": [
                 "${workspaceRoot}/out/**/*.js"
             ],
-            "preLaunchTask": "build"
+            "preLaunchTask": "npm: test-compile"
         }
     ]
 }
