@@ -253,7 +253,7 @@ export default class ShellCheckProvider {
 
             const executable = settings.executable || 'shellcheck';
             const diagnostics: vscode.Diagnostic[] = [];
-            let processShellCheckItem = (item: ShellCheckItem) => {
+            const processShellCheckItem = (item: ShellCheckItem) => {
                 if (item) {
                     diagnostics.push(makeDiagnostic(textDocument, item));
                 }
@@ -262,6 +262,14 @@ export default class ShellCheckProvider {
             let args = ['-f', 'json'];
             if (settings.exclude.length) {
                 args = args.concat(['-e', settings.exclude.join(',')]);
+            }
+
+            // https://github.com/timonwong/vscode-shellcheck/issues/43
+            // We should explicit set shellname based on file extension name
+            const fileExt = path.extname(textDocument.fileName);
+            if (fileExt === '.bash' || fileExt === '.ksh' || fileExt === '.dash') {
+                // shellcheck args: specify dialect (sh, bash, dash, ksh)
+                args = args.concat(['-s', fileExt.substr(1)]);
             }
 
             if (settings.customArgs.length) {
