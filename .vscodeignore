@@ -1,6 +1,7 @@
 .vscode/**
 .vscode-test/**
-out/test/**
+node_modules/**
+out/**
 test/**
 src/**
 scripts/**
@@ -10,3 +11,4 @@ tsconfig.json
 tslint.json
 .editorconfig
 .travis.yml
+webpack.config.js
