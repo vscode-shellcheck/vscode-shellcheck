@@ -5,9 +5,16 @@ out/**
 src/**
 test/**
 scripts/**
+dist/test/**
 .gitignore
 tsconfig.json
 tslint.json
+.eslintrc
 .editorconfig
 .travis.yml
-webpack.config.js
+.azure-pipelines
+webpack.config*
+*.ts
+*.zip
+*.tgz
+**/*.map
