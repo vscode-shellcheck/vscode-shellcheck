@@ -17,6 +17,7 @@ interface ShellCheckSettings {
     exclude: string[];
     customArgs: string[];
     ignorePatterns: FileSettings;
+    ignoreFileSchemes: Set<string>;
     useWorkspaceRootAsCwd: boolean;
     useWSL: boolean;
 }
@@ -184,6 +185,7 @@ export default class ShellCheckProvider {
             exclude: section.get('exclude', []),
             customArgs: section.get('customArgs', []),
             ignorePatterns: section.get('ignorePatterns', {}),
+            ignoreFileSchemes: new Set(section.get('ignoreFileSchemes', ['git'])),
             useWorkspaceRootAsCwd: section.get('useWorkspaceRootAsCwd', false),
             useWSL: section.get('useWSL', false),
         };
@@ -215,7 +217,7 @@ export default class ShellCheckProvider {
         }
 
         const scheme = textDocument.uri.scheme;
-        return (scheme === 'file' || scheme === 'untitled');
+        return !this.settings.ignoreFileSchemes.has(scheme);
     }
 
     private triggerLint(textDocument: vscode.TextDocument): void {
