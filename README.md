@@ -6,7 +6,7 @@
 
 ## Requirements
 
-1. Ensure `shellcheck` is [installed](https://github.com/koalaman/shellcheck#installing) (`v0.4.7` or better is recommended to use).
+1. Ensure `shellcheck` is [installed](https://github.com/koalaman/shellcheck#installing) (`v0.6.0` or better is recommended to use).
 2. Run [`Install Extension`](https://code.visualstudio.com/docs/editor/extension-gallery#_install-an-extension) command from [Command Palette](https://code.visualstudio.com/Docs/editor/codebasics#_command-palette).
 3. Search and choose `shellcheck`.
 
