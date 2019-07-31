@@ -22,7 +22,7 @@
 		"url": "https://github.com/timonwong/vscode-shellcheck.git"
 	},
 	"engines": {
-		"vscode": "^1.30.0"
+		"vscode": "^1.36.0"
 	},
 	"activationEvents": [
 		"onLanguage:shellscript"
