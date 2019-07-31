@@ -30,7 +30,7 @@
 	"main": "./dist/extension",
 	"contributes": {
 		"commands": [{
-			"command": "shellcheck.runlint",
+			"command": "shellcheck.runLint",
 			"title": "ShellCheck: Run Linting"
 		}],
 		"configuration": {
