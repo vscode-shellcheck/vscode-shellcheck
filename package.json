@@ -29,6 +29,10 @@
 	],
 	"main": "./dist/extension",
 	"contributes": {
+		"commands": [{
+			"command": "shellcheck.runlint",
+			"title": "ShellCheck: Run Linting"
+		}],
 		"configuration": {
 			"title": "ShellCheck",
 			"type": "object",
@@ -50,7 +54,8 @@
 					"type": "string",
 					"enum": [
 						"onSave",
-						"onType"
+						"onType",
+						"manual"
 					],
 					"scope": "resource",
 					"default": "onType"

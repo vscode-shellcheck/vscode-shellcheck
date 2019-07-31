@@ -23,13 +23,15 @@ interface ShellCheckSettings {
 
 enum RunTrigger {
     onSave,
-    onType
+    onType,
+    manual,
 }
 
 namespace RunTrigger {
     export const strings = {
         onSave: 'onSave',
-        onType: 'onType'
+        onType: 'onType',
+        manual: 'manual',
     };
 
     export function from(value: string): RunTrigger {
@@ -37,9 +39,9 @@ namespace RunTrigger {
             case strings.onSave:
                 return RunTrigger.onSave;
             case strings.onType:
-                /* falls through */
-            default:
                 return RunTrigger.onType;
+            default:
+                return RunTrigger.manual;
         }
     }
 }
@@ -134,6 +136,7 @@ export default class ShellCheckProvider {
         this.diagnosticCollection = vscode.languages.createDiagnosticCollection();
 
         vscode.workspace.onDidChangeConfiguration(this.loadConfiguration, this, context.subscriptions);
+        vscode.commands.registerTextEditorCommand('shellcheck.runlint', async (editor) => this.runLint(editor.document));
         this.loadConfiguration(); // populate this.settings
 
         const disableVersionCheckUpdateSetting = new DisableVersionCheckUpdateSetting();
