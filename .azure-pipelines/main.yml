@@ -3,7 +3,6 @@
     vmImage: ubuntu-16.04
   steps:
   - template: common/build.yml
-  - template: common/publish-vsix.yml # Only publish vsix from linux build since we use this to release and want to stay consistent
   - template: common/lint.yml
   - template: common/test.yml
 
