@@ -1,0 +1,3 @@
+steps:
+- script: brew install shellcheck
+  displayName: 'Install shellcheck'

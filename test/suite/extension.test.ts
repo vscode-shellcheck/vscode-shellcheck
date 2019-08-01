@@ -26,7 +26,7 @@ suite('Shellcheck extension', () => {
         });
         const editor = await vscode.window.showTextDocument(document);
 
-        await sleep(800);
+        await sleep(1500);
         const diagnostics = vscode.languages.getDiagnostics(editor.document.uri);
         assert.equal(ext.isActive, true, 'Extension should be activated');
         assert.equal(diagnostics.length, 1);
