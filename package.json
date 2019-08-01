@@ -21,18 +21,17 @@
 		"type": "git",
 		"url": "https://github.com/timonwong/vscode-shellcheck.git"
 	},
-	"engines": {
-		"vscode": "^1.36.0"
-	},
 	"activationEvents": [
 		"onLanguage:shellscript"
 	],
-	"main": "./dist/extension",
+	"main": "./main",
 	"contributes": {
-		"commands": [{
-			"command": "shellcheck.runLint",
-			"title": "ShellCheck: Run Linting"
-		}],
+		"commands": [
+			{
+				"command": "shellcheck.runLint",
+				"title": "ShellCheck: Run Linting"
+			}
+		],
 		"configuration": {
 			"title": "ShellCheck",
 			"type": "object",
@@ -98,7 +97,9 @@
 						"type": "string"
 					},
 					"scope": "application",
-					"default": ["git"]
+					"default": [
+						"git"
+					]
 				},
 				"shellcheck.useWorkspaceRootAsCwd": {
 					"description": "Whether to use the workspace root directory as the current working directory when launching ShellCheck.",
@@ -125,13 +126,16 @@
 		}
 	},
 	"scripts": {
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"vscode:prepublish": "webpack --mode production",
-		"compile": "webpack --mode none",
-		"watch": "webpack --mode none --watch",
-		"test": "node ./node_modules/vscode/bin/test",
-		"test-compile": "tsc -p ./",
-		"tslint": "tslint --project tsconfig.json"
+		"vscode:prepublish": "npm run webpack-prod",
+		"build": "tsc -p ./",
+		"compile": "tsc -watch -p ./",
+		"package": "vsce package",
+		"lint": "tslint --project tsconfig.json -t verbose",
+		"lint-fix": "tslint --project tsconfig.json -t verbose --fix",
+		"pretest": "npm run webpack",
+		"test": "node ./out/test/runTest.js",
+		"webpack": "npm run build && webpack --mode none",
+		"webpack-prod": "npm run build && webpack --mode production"
 	},
 	"dependencies": {
 		"lodash": "^4.17.13",
@@ -139,18 +143,26 @@
 		"semver": "^5.5.0"
 	},
 	"devDependencies": {
+		"@types/glob": "^7.1.1",
 		"@types/lodash": "^4.14.109",
 		"@types/minimatch": "^3.0.3",
 		"@types/mocha": "^5.2.5",
 		"@types/node": "^10.11.0",
 		"@types/semver": "^5.5.0",
+		"@types/vscode": "^1.36.0",
+		"filemanager-webpack-plugin": "^2.0.5",
+		"glob": "^7.1.4",
 		"mocha": "^5.2.0",
+		"terser-webpack-plugin": "^1.4.1",
 		"ts-loader": "^6.0.4",
 		"tslint": "^5.18.0",
 		"typescript": "^3.0.3",
-		"vscode": "^1.1.35",
+		"vscode-test": "^1.0.2",
 		"webpack": "^4.38.0",
 		"webpack-cli": "^3.3.6"
+	},
+	"engines": {
+		"vscode": "^1.36.0"
 	},
 	"__metadata": {
 		"id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",

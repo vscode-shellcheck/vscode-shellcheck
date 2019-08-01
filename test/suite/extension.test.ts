@@ -11,28 +11,24 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 
 
-suite('Shellcheck extension', () => {
-    const ext = <vscode.Extension<any>>vscode.extensions.getExtension('timonwong.shellcheck');
-
-    test('Extension should not be activated', async () => {
-        const plaintextDocument = await vscode.workspace.openTextDocument({
-            content: 'hello',
-            language: 'plaintext',
-        });
-
-        await vscode.window.showTextDocument(plaintextDocument);
-
-        assert.equal(ext.isActive, false, 'should not be activated when file type is not shell script.');
+export function sleep(ms: number): Promise<void> {
+    return new Promise(resolve => {
+        setTimeout(resolve, ms);
     });
+}
 
+suite('Shellcheck extension', () => {
     test('Extension should be activated on shell script files', async () => {
-        const shellscriptDocument = await vscode.workspace.openTextDocument({
+        const ext = <vscode.Extension<any>>vscode.extensions.getExtension('timonwong.shellcheck');
+        const document = await vscode.workspace.openTextDocument({
             content: '#!/bin/bash\nx=1',
             language: 'shellscript',
         });
+        const editor = await vscode.window.showTextDocument(document);
 
-        const editor = await vscode.window.showTextDocument(shellscriptDocument);
+        await sleep(800);
         const diagnostics = vscode.languages.getDiagnostics(editor.document.uri);
+        assert.equal(ext.isActive, true, 'Extension should be activated');
         assert.equal(diagnostics.length, 1);
         assert.equal(diagnostics[0].code, 'SC2034');
     });

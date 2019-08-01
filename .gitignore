@@ -4,4 +4,5 @@
 /.vscode-test
 
 *.vsix
+*.zip
 *.orig
