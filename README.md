@@ -6,7 +6,7 @@
 
 ## Requirements
 
-1. Ensure `shellcheck` is [installed](https://github.com/koalaman/shellcheck#installing) (`v0.6.0` or better is recommended to use).
+1. Ensure `shellcheck` is [installed](https://github.com/koalaman/shellcheck#installing) (`v0.7.0` or better is recommended to use).
 2. Run [`Install Extension`](https://code.visualstudio.com/docs/editor/extension-gallery#_install-an-extension) command from [Command Palette](https://code.visualstudio.com/Docs/editor/codebasics#_command-palette).
 3. Search and choose `shellcheck`.
 
@@ -19,6 +19,7 @@ Default options are:
 ```json
 {
     "shellcheck.enable": true,
+    "shellcheck.enableQuickFix": false,
     "shellcheck.run": "onType",
     "shellcheck.executablePath": "shellcheck",
     "shellcheck.exclude": [],
@@ -28,6 +29,16 @@ Default options are:
     "shellcheck.useWSL": false
 }
 ```
+
+### Experimental Quick Fix
+
+#### Prerequisite
+
+In order to enable the "auto fix" feature, [shellcheck] **v0.7.0** or better is required.
+
+#### Configuration
+
+Since this feature is still in experimental, additionally, `shellcheck.enableQuickFix` should be `true`.
 
 ### Lint onType or onSave
 
@@ -58,9 +69,11 @@ Here is a simple "shim" script to get start with (See discussion: [#24](https://
 ```shell
 #!/bin/bash
 
-exec docker run --rm -i -v "$PWD:/mnt:ro" koalaman/shellcheck:v0.6.0 "$@"
+exec docker run --rm -i -v "$PWD:/mnt:ro" koalaman/shellcheck:v0.7.0 "$@"
 ```
 
 ## Acknowledgements
 
 This extension is based on [hoovercj's Haskell Linter](https://github.com/hoovercj/vscode-haskell-linter).
+
+[shellcheck]: https://github.com/koalaman/shellcheck
