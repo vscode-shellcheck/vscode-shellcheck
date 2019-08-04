@@ -16,7 +16,7 @@
             ],
             "stopOnEntry": false,
             "sourceMaps": true,
-            "preLaunchTask": "npm: compile",
+            "preLaunchTask": "npm: build",
             "env": {
                 "SCPLUGIN_IGNORE_BUNDLE": "1",
                 "DEBUGTELEMETRY": "1",
@@ -57,7 +57,7 @@
             "outFiles": [
                 "${workspaceFolder}/out/test/**/*.js"
             ],
-            "preLaunchTask": "npm: compile",
+            "preLaunchTask": "npm: build",
             "env": {
                 "SCPLUGIN_IGNORE_BUNDLE": "1",
                 "DEBUGTELEMETRY": "1",

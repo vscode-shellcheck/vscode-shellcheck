@@ -264,7 +264,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
             return;
         }
 
-        if (vscode.workspace.rootPath && this.fileMatcher.excludes(textDocument.fileName, vscode.workspace.rootPath)) {
+        if (this.fileMatcher.excludes(textDocument.fileName, vscode.workspace.rootPath)) {
             return;
         }
 

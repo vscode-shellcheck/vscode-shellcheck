@@ -33,7 +33,7 @@ export class FileMatcher {
         this.excludeCache = {};
     }
 
-    private relativeTo(fsPath: string, folder: string): string {
+    private relativeTo(fsPath: string, folder?: string): string {
         if (folder && fsPath.indexOf(folder) === 0) {
             let cuttingPoint = folder.length;
             if (cuttingPoint < fsPath.length && fsPath.charAt(cuttingPoint) === '/') {
@@ -44,14 +44,14 @@ export class FileMatcher {
         return fsPath;
     }
 
-    private match(excludePatterns: string[], path: string, root: string): boolean {
+    private match(excludePatterns: string[], path: string, root?: string): boolean {
         const relativePath = this.relativeTo(path, root);
         return _.some(excludePatterns, (pattern) => {
             return minimatch(relativePath, pattern, { dot: true });
         });
     }
 
-    public excludes(fsPath: string, root: string): boolean {
+    public excludes(fsPath: string, root?: string): boolean {
         if (fsPath) {
             if (this.excludeCache.hasOwnProperty(fsPath)) {
                 return this.excludeCache[fsPath];
