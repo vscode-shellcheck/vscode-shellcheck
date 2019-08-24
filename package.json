@@ -26,6 +26,7 @@
 	"bugs": {
 		"url": "https://github.com/timonwong/vscode-shellcheck/issues"
 	},
+	"icon": "shellcheck_icon.png",
 	"activationEvents": [
 		"onLanguage:shellscript"
 	],
