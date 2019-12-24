@@ -154,7 +154,7 @@
 		"filemanager-webpack-plugin": "^2.0.5",
 		"glob": "^7.1.4",
 		"mocha": "^5.2.0",
-		"terser-webpack-plugin": "^1.4.1",
+		"terser-webpack-plugin": "^1.4.3",
 		"ts-loader": "^6.0.4",
 		"tslint": "^5.18.0",
 		"typescript": "^3.0.3",
