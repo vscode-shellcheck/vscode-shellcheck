@@ -1,9 +1,6 @@
 steps:
-- task: Npm@1
+- script: yarn run package
   displayName: 'Package'
-  inputs:
-    command: custom
-    customCommand: run package
 
 - task: CopyFiles@2
   displayName: 'Copy vsix to staging directory'

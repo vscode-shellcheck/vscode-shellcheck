@@ -4,6 +4,8 @@
 	"description": "An extension to use shellcheck in vscode",
 	"version": "0.8.2",
 	"publisher": "timonwong",
+	"author": "Timon Wong <timon86.wang@gmail.com>",
+	"license": "MIT",
 	"categories": [
 		"Programming Languages",
 		"Linters"
@@ -20,6 +22,9 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/timonwong/vscode-shellcheck.git"
+	},
+	"bugs": {
+		"url": "https://github.com/timonwong/vscode-shellcheck/issues"
 	},
 	"activationEvents": [
 		"onLanguage:shellscript"
@@ -127,16 +132,17 @@
 		}
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run webpack-prod",
+		"vscode:prepublish": "yarn run webpack-prod",
 		"build": "tsc -p ./",
 		"compile": "tsc -watch -p ./",
-		"package": "vsce package",
+		"package": "vsce package --yarn",
+		"deploy": "vsce publish --yarn",
 		"lint": "tslint --project tsconfig.json -t verbose",
 		"lint-fix": "tslint --project tsconfig.json -t verbose --fix",
-		"pretest": "npm run webpack",
+		"pretest": "yarn run webpack",
 		"test": "node ./out/test/runTest.js",
-		"webpack": "npm run build && webpack --mode none",
-		"webpack-prod": "npm run build && webpack --mode production"
+		"webpack": "yarn run build && webpack --mode none",
+		"webpack-prod": "yarn run build && webpack --mode production"
 	},
 	"dependencies": {
 		"lodash": "^4.17.13",

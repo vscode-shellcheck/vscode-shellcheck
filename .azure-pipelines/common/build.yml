@@ -4,11 +4,8 @@ steps:
     versionSpec: '10.15.1'
   displayName: 'Use Node.js 10.15.1'
 
-- task: Npm@1
-  displayName: 'npm install'
+- script: yarn install
+  displayName: 'yarn install'
 
-- task: Npm@1
+- script: yarn run build
   displayName: 'Build'
-  inputs:
-    command: custom
-    customCommand: run build
