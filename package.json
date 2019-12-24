@@ -2,7 +2,7 @@
 	"name": "shellcheck",
 	"displayName": "shellcheck",
 	"description": "An extension to use shellcheck in vscode",
-	"version": "0.8.1",
+	"version": "0.8.2",
 	"publisher": "timonwong",
 	"categories": [
 		"Programming Languages",
@@ -98,7 +98,8 @@
 					},
 					"scope": "application",
 					"default": [
-						"git"
+						"git",
+						"gitfs"
 					]
 				},
 				"shellcheck.useWorkspaceRootAsCwd": {

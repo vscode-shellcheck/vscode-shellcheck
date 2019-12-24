@@ -196,7 +196,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
             exclude: section.get('exclude', []),
             customArgs: section.get('customArgs', []),
             ignorePatterns: section.get('ignorePatterns', {}),
-            ignoreFileSchemes: new Set(section.get('ignoreFileSchemes', ['git'])),
+            ignoreFileSchemes: new Set(section.get('ignoreFileSchemes', ['git', 'gitfs'])),
             useWorkspaceRootAsCwd: section.get('useWorkspaceRootAsCwd', false),
             useWSL: section.get('useWSL', false),
         };
