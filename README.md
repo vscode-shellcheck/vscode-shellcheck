@@ -24,6 +24,7 @@ Default options are:
     "shellcheck.exclude": [],
     "shellcheck.customArgs": [],
     "shellcheck.ignorePatterns": {},
+    "shellcheck.ignoreFileSchemes": ["git", "gitfs"],
     "shellcheck.useWSL": false
 }
 ```
@@ -57,7 +58,7 @@ Here is a simple "shim" script to get start with (See discussion: [#24](https://
 ```shell
 #!/bin/bash
 
-exec docker run --rm -i -v "$PWD:/mnt:ro" koalaman/shellcheck:v0.5.0 "$@"
+exec docker run --rm -i -v "$PWD:/mnt:ro" koalaman/shellcheck:v0.6.0 "$@"
 ```
 
 ## Acknowledgements
