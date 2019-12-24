@@ -1,6 +1,8 @@
 trigger:
   tags:
     include: ['*']
+  branches:
+    include: ['*']
 
 jobs:
 - job: Linux
