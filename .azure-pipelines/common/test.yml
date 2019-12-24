@@ -7,10 +7,7 @@ steps:
   displayName: 'Start X Virtual Frame Buffer'
   condition: eq(variables['Agent.OS'], 'Linux')
 
-- task: Npm@1
+- script: yarn test
   displayName: 'Test'
-  inputs:
-    command: custom
-    customCommand: test
   env:
     DISPLAY: :10 # Only necessary for linux tests
