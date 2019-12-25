@@ -2,7 +2,7 @@
 	"name": "shellcheck",
 	"displayName": "shellcheck",
 	"description": "An extension to use shellcheck in vscode",
-	"version": "0.8.2",
+	"version": "0.9.0-alpha",
 	"publisher": "timonwong",
 	"author": "Timon Wong <timon86.wang@gmail.com>",
 	"license": "MIT",
@@ -46,6 +46,12 @@
 					"type": "boolean",
 					"scope": "resource",
 					"default": true
+				},
+				"shellcheck.enableQuickFix": {
+					"description": "Whether to enable experimental \"Quick Fix\" feature.",
+					"type": "boolean",
+					"scope": "resource",
+					"default": false
 				},
 				"shellcheck.executablePath": {
 					"description": "Path to the shellcheck executable.",
@@ -122,11 +128,10 @@
 				"shellcheck.disableVersionCheck": {
 					"description": "Whether to diable shellcheck binary version check, which prompt for updating when outdated version found.",
 					"type": [
-						"boolean",
-						"null"
+						"boolean"
 					],
 					"scope": "application",
-					"default": null
+					"default": false
 				}
 			}
 		}

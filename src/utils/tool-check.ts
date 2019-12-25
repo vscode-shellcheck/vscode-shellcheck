@@ -4,24 +4,22 @@ import * as vscode from 'vscode';
 import * as wsl from './wslSupport';
 
 
-const BEST_TOOL_VERSION = '0.4.7';
+export const BEST_TOOL_VERSION = '0.7.0';
 
-export async function checkTool(useWSL: boolean, executable: string) {
+export function tryPromptForUpdatingTool(version: semver.SemVer | null) {
+    if (!version) {
+        return;
+    }
+
     const disableVersionCheckUpdateSetting = new DisableVersionCheckUpdateSetting();
     if (!disableVersionCheckUpdateSetting.isDisabled) {
-        // Check tool version
-        const toolVersion = await getToolVersion(useWSL, executable);
-        if (!toolVersion) {
-            return;
-        }
-
-        if (semver.lt(toolVersion, BEST_TOOL_VERSION)) {
-            promptForUpdatingTool(toolVersion.format(), disableVersionCheckUpdateSetting);
+        if (semver.lt(version, BEST_TOOL_VERSION)) {
+            promptForUpdatingTool(version.format(), disableVersionCheckUpdateSetting);
         }
     }
 }
 
-async function getToolVersion(useWSL: boolean, executable: string): Promise<semver.SemVer | null> {
+export async function getToolVersion(useWSL: boolean, executable: string): Promise<semver.SemVer | null> {
     return new Promise<semver.SemVer | null>((resolve, reject) => {
         const launchArgs = wsl.createLaunchArg(useWSL, false, undefined, executable, ['-V']);
         child_process.execFile(launchArgs.executable, launchArgs.args, { timeout: 2000 }, (err, stdout, stderr) => {
