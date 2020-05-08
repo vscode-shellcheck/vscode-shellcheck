@@ -134,7 +134,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         const settings = <ShellCheckSettings>{
             enabled: section.get('enable', true),
             trigger: RunTrigger.from(section.get('run', RunTrigger.strings.onType)),
-            executable: substitutePath(section.get('executablePath', 'shellcheck')),
+            executable: section.get('executablePath', '') ? substitutePath(section.get('executablePath', '')) : this.context.asAbsolutePath(`./binaries/${process.platform}/${process.arch}/shellcheck${process.platform === 'win32' ? '.exe' : ''}`),
             exclude: section.get('exclude', []),
             customArgs: section.get('customArgs', []),
             ignorePatterns: section.get('ignorePatterns', {}),

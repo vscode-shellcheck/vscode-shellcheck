@@ -55,10 +55,12 @@
 					"default": false
 				},
 				"shellcheck.executablePath": {
-					"description": "Path to the shellcheck executable.",
+					"description": "Path to the shellcheck executable (builtin binaries will be used if empty).",
+					"examples": [
+						"shellcheck"
+					],
 					"type": "string",
-					"scope": "resource",
-					"default": "shellcheck"
+					"scope": "resource"
 				},
 				"shellcheck.run": {
 					"description": "Whether shellcheck is run on save or on type.",
@@ -150,6 +152,8 @@
 		"vscode:prepublish": "yarn run webpack-prod",
 		"build": "tsc -p ./",
 		"compile": "tsc -watch -p ./",
+		"download-binaries": "bindl",
+		"prepackage": "npm run download-binaries",
 		"package": "vsce package --yarn",
 		"deploy": "vsce publish --yarn",
 		"lint": "tslint --project tsconfig.json -t verbose",
@@ -172,6 +176,7 @@
 		"@types/node": "^10.11.0",
 		"@types/semver": "^5.5.0",
 		"@types/vscode": "^1.36.0",
+		"bindl": "^1.0.0",
 		"filemanager-webpack-plugin": "^2.0.5",
 		"glob": "^7.1.4",
 		"mocha": "^5.2.0",
