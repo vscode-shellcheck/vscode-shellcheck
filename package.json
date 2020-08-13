@@ -72,8 +72,11 @@
 					"default": "onType"
 				},
 				"shellcheck.exclude": {
-					"description": "Exclude types of warnings, for example [1090].",
+					"description": "Exclude types of warnings, for example [\"1017\"].",
 					"type": "array",
+					"items": {
+						"type": "string"
+					},
 					"scope": "resource",
 					"default": []
 				},
@@ -87,7 +90,15 @@
 					"default": []
 				},
 				"shellcheck.ignorePatterns": {
-					"description": "Matching files and directories are being ignored by shellcheck. Glob patterns are interpreted relative to the workspace's root folder.",
+					"markdownDescription": "Configure glob patterns for excluding files and folders by shellcheck. Glob patterns are interpreted relative to the workspace's root folder. Read more about glob patterns [here](https://code.visualstudio.com/docs/editor/codebasics#_advanced-search-options).",
+					"examples": [
+						{
+							"**/*.zsh": true,
+							"**/*.zsh*": true,
+							"**/.git/*.sh": true,
+							"**/folder/**/*.sh": true
+						}
+					],
 					"type": "object",
 					"scope": "resource",
 					"additionalProperties": {
@@ -121,16 +132,14 @@
 					"default": false
 				},
 				"shellcheck.useWSL": {
-					"description": "Whether to use a shellcheck installation in the Windows Subsystem for Linux.",
+					"description": "(Windows Only) Whether to use a shellcheck installation in the Windows Subsystem for Linux.",
 					"type": "boolean",
 					"scope": "resource",
 					"default": false
 				},
 				"shellcheck.disableVersionCheck": {
 					"description": "Whether to disable shellcheck binary version check, which prompt for updating when outdated version found.",
-					"type": [
-						"boolean"
-					],
+					"type": "boolean",
 					"scope": "application",
 					"default": false
 				}

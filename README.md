@@ -30,6 +30,23 @@ Default options are:
 }
 ```
 
+### `shellcheck.ignorePatterns`
+
+The `shellcheck.ignorePatterns` works exactly the same as `search.exclude`, read more about glob patterns [here](https://code.visualstudio.com/docs/editor/codebasics#_advanced-search-options)
+
+For example:
+
+```javascript
+{
+    "shellcheck.ignorePatterns": {
+        "**/*.zsh": true,
+        "**/*.zsh*": true,
+        "**/.git/*.sh": true,
+        "**/folder/**/*.sh": true
+    }
+}
+```
+
 ### Experimental Quick Fix
 
 #### Prerequisite
@@ -56,7 +73,7 @@ By default all shellcheck checks are performed and reported on as necessary. To 
 
 ```javascript
 {
-    "shellcheck.exclude": [1017],
+    "shellcheck.exclude": ["1017"],
 }
 ```
 
