@@ -3,6 +3,7 @@
 /node_modules
 /.vscode-test
 /binaries
+/yarn-error.log
 
 *.vsix
 *.zip
