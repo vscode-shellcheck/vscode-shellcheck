@@ -179,6 +179,7 @@
 		"bindl": "^1.0.0",
 		"filemanager-webpack-plugin": "^2.0.5",
 		"glob": "^7.1.4",
+		"kind-of": "^6.0.3",
 		"mocha": "^5.2.0",
 		"terser-webpack-plugin": "^1.4.3",
 		"ts-loader": "^6.0.4",

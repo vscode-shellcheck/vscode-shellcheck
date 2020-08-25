@@ -76,7 +76,7 @@ export function createLaunchArg(useSubsytemLinux: boolean, useExternalConsole: b
     }
 }
 
-export function spawn(useWSL: boolean, executable: string, args?: string[], options?: child_process.SpawnOptions) {
+export function spawn(useWSL: boolean, executable: string, args?: string[], options?: child_process.SpawnOptions): child_process.ChildProcess {
     const launchArgs = createLaunchArg(useWSL, false, undefined, executable, args);
     return child_process.spawn(launchArgs.executable, launchArgs.args, options);
 }
