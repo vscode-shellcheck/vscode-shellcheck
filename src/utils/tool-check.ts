@@ -1,8 +1,11 @@
 import * as child_process from 'child_process';
 import * as semver from 'semver';
+import { promisify } from 'util';
 import * as vscode from 'vscode';
 import * as wsl from './wslSupport';
 
+
+const execFile = promisify(child_process.execFile);
 
 export const BEST_TOOL_VERSION = '0.7.0';
 
@@ -20,18 +23,15 @@ export function tryPromptForUpdatingTool(version: semver.SemVer | null) {
 }
 
 export async function getToolVersion(useWSL: boolean, executable: string): Promise<semver.SemVer | null> {
-    return new Promise<semver.SemVer | null>((resolve, reject) => {
-        const launchArgs = wsl.createLaunchArg(useWSL, false, undefined, executable, ['-V']);
-        child_process.execFile(launchArgs.executable, launchArgs.args, { timeout: 2000 }, (err, stdout, stderr) => {
-            const matches = /version: ((?:\d+)\.(?:\d+)(?:\.\d+)*)/.exec(stdout);
-            if (matches) {
-                const ver = semver.parse(matches[1]);
-                resolve(ver);
-            } else {
-                resolve(null);
-            }
-        });
-    });
+    const launchArgs = wsl.createLaunchArg(useWSL, false, undefined, executable, ['-V']);
+
+    const { stdout } = await execFile(launchArgs.executable, launchArgs.args, { timeout: 2000 });
+    const matches = /version: ((?:\d+)\.(?:\d+)(?:\.\d+)*)/.exec(stdout);
+    if (matches && matches[1]) {
+        return semver.parse(matches[1]);
+    }
+
+    return null;
 }
 
 async function promptForUpdatingTool(currentVersion: string, disableVersionCheckUpdateSetting: DisableVersionCheckUpdateSetting) {

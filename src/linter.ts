@@ -131,10 +131,21 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
     private async loadConfiguration() {
         const section = vscode.workspace.getConfiguration('shellcheck', null);
+        let executablePath = section.get('executablePath', '');
+        let isBundled = false;
+        if (executablePath) {
+            executablePath = substitutePath(executablePath);
+        } else {
+            // Use bundled binaries
+            const suffix = process.platform === 'win32' ? '.exe' : '';
+            executablePath = this.context.asAbsolutePath(`./binaries/${process.platform}/${process.arch}/shellcheck${suffix}`);
+            isBundled = true;
+        }
+
         const settings = <ShellCheckSettings>{
             enabled: section.get('enable', true),
             trigger: RunTrigger.from(section.get('run', RunTrigger.strings.onType)),
-            executable: section.get('executablePath', '') ? substitutePath(section.get('executablePath', '')) : this.context.asAbsolutePath(`./binaries/${process.platform}/${process.arch}/shellcheck${process.platform === 'win32' ? '.exe' : ''}`),
+            executable: executablePath,
             exclude: section.get('exclude', []),
             customArgs: section.get('customArgs', []),
             ignorePatterns: section.get('ignorePatterns', {}),
@@ -159,13 +170,25 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
             } else if (settings.trigger === RunTrigger.onSave) {
                 this.documentListener = vscode.workspace.onDidSaveTextDocument(this.triggerLint, this, this.context.subscriptions);
             }
+
+            // Prompt user to update shellcheck binary when necessary
+            try {
+                this.toolVersion = await getToolVersion(settings.useWSL, settings.executable);
+                this.executableNotFound = false;
+            } catch (error) {
+                this.showShellCheckError(error);
+                this.executableNotFound = true;
+            }
+
+            if (isBundled) {
+                this.channel.appendLine(`[INFO] shellcheck (bundled) version: ${this.toolVersion}`);
+            } else {
+                this.channel.appendLine(`[INFO] shellcheck version: ${this.toolVersion}`);
+                tryPromptForUpdatingTool(this.toolVersion);
+            }
         }
 
         // Configuration has changed. Re-evaluate all documents
-        this.executableNotFound = false;
-        this.toolVersion = await getToolVersion(this.settings.useWSL, this.settings.executable);
-        this.channel.appendLine(`[INFO] shellcheck version: ${this.toolVersion}`);
-        tryPromptForUpdatingTool(this.toolVersion);
         vscode.workspace.textDocuments.forEach(this.triggerLint, this);
     }
 
@@ -289,7 +312,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
             const childProcess = wsl.spawn(settings.useWSL, executable, args, options);
             childProcess.on('error', (error: Error) => {
                 if (!this.executableNotFound) {
-                    this.showShellCheckError(error, executable);
+                    this.showShellCheckError(error);
                 }
 
                 this.executableNotFound = true;
@@ -339,12 +362,13 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         this.codeActionCollection.set(uri.toString(), results);
     }
 
-    private showShellCheckError(error: any, executable: string): void {
+    private showShellCheckError(error: any): void {
         let message: string;
         if (error.code === 'ENOENT') {
-            message = `Cannot shellcheck the shell script. The shellcheck program was not found. Use the 'shellcheck.executablePath' setting to configure the location of 'shellcheck' or enable WSL integration with 'shellcheck.useWSL'`;
+            message = `The shellcheck program was not found. Use the 'shellcheck.executablePath' setting to configure the location of 'shellcheck' or enable WSL integration with 'shellcheck.useWSL'`;
         } else {
-            message = error.message ? error.message : `Failed to run shellcheck using path: ${executable}. Reason is unknown.`;
+            const executable = this.settings.executable;
+            message = error.message ? error.message : `Failed to run shellcheck '${executable}'. Reason is unknown.`;
         }
 
         vscode.window.showInformationMessage(message);
