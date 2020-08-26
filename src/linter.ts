@@ -149,8 +149,8 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
                 }
                 suffix = '.exe';
             }
-            const executable = this.context.asAbsolutePath(`./binaries/${process.platform}/${osarch}/shellcheck${suffix}`);
-            if (fs.existsSync(executable)) {
+            executablePath = this.context.asAbsolutePath(`./binaries/${process.platform}/${osarch}/shellcheck${suffix}`);
+            if (fs.existsSync(executablePath)) {
                 isBundled = true;
             }
         }
