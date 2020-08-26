@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
@@ -9,10 +10,15 @@ import * as wsl from './utils/wslSupport';
 import { getWorkspaceFolderPath } from './utils/path';
 
 
+interface Executable {
+    path: string;
+    bundled: boolean;
+}
+
 interface ShellCheckSettings {
     enabled: boolean;
     enableQuickFix: boolean;
-    executable: string;
+    executable: Executable;
     trigger: RunTrigger;
     exclude: string[];
     customArgs: string[];
@@ -129,23 +135,37 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         }
     }
 
-    private async loadConfiguration() {
-        const section = vscode.workspace.getConfiguration('shellcheck', null);
+    private getExecutable(section: vscode.WorkspaceConfiguration): Executable {
         let executablePath = section.get('executablePath', '');
         let isBundled = false;
         if (executablePath) {
             executablePath = substitutePath(executablePath);
         } else {
-            // Use bundled binaries
+            // Use bundled binaries (maybe)
             const suffix = process.platform === 'win32' ? '.exe' : '';
-            executablePath = this.context.asAbsolutePath(`./binaries/${process.platform}/${process.arch}/shellcheck${suffix}`);
-            isBundled = true;
+            const executable = this.context.asAbsolutePath(`./binaries/${process.platform}/${process.arch}/shellcheck${suffix}`);
+            if (fs.existsSync(executable)) {
+                isBundled = true;
+            }
         }
 
+        // Fallback to default shellcheck path
+        if (!executablePath) {
+            executablePath = 'shellcheck';
+        }
+
+        return {
+            path: executablePath,
+            bundled: isBundled,
+        };
+    }
+
+    private async loadConfiguration() {
+        const section = vscode.workspace.getConfiguration('shellcheck', null);
         const settings = <ShellCheckSettings>{
             enabled: section.get('enable', true),
             trigger: RunTrigger.from(section.get('run', RunTrigger.strings.onType)),
-            executable: executablePath,
+            executable: this.getExecutable(section),
             exclude: section.get('exclude', []),
             customArgs: section.get('customArgs', []),
             ignorePatterns: section.get('ignorePatterns', {}),
@@ -173,14 +193,14 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
             // Prompt user to update shellcheck binary when necessary
             try {
-                this.toolVersion = await getToolVersion(settings.useWSL, settings.executable);
+                this.toolVersion = await getToolVersion(settings.useWSL, settings.executable.path);
                 this.executableNotFound = false;
             } catch (error) {
                 this.showShellCheckError(error);
                 this.executableNotFound = true;
             }
 
-            if (isBundled) {
+            if (settings.executable.bundled) {
                 this.channel.appendLine(`[INFO] shellcheck (bundled) version: ${this.toolVersion}`);
             } else {
                 this.channel.appendLine(`[INFO] shellcheck version: ${this.toolVersion}`);
@@ -309,7 +329,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
             const options = cwd ? { cwd: cwd } : undefined;
             // this.channel.appendLine(`[DEBUG] Spawn: ${executable} ${args.join(' ')}`);
-            const childProcess = wsl.spawn(settings.useWSL, executable, args, options);
+            const childProcess = wsl.spawn(settings.useWSL, executable.path, args, options);
             childProcess.on('error', (error: Error) => {
                 if (!this.executableNotFound) {
                     this.showShellCheckError(error);
