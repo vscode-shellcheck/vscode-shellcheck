@@ -336,7 +336,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
             const options = cwd ? { cwd: cwd } : undefined;
             // this.channel.appendLine(`[DEBUG] Spawn: ${executable} ${args.join(' ')}`);
             const childProcess = wsl.spawn(settings.useWSL, executable.path, args, options);
-            childProcess.on('error', (error: Error) => {
+            childProcess.on('error', (error: NodeJS.ErrnoException) => {
                 if (!this.executableNotFound) {
                     this.showShellCheckError(error);
                 }
@@ -388,15 +388,19 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         this.codeActionCollection.set(uri.toString(), results);
     }
 
-    private showShellCheckError(error: any): void {
+    private async showShellCheckError(error: NodeJS.ErrnoException): Promise<void> {
         let message: string;
+        let items: string[] = [];
         if (error.code === 'ENOENT') {
-            message = `The shellcheck program was not found. Use the 'shellcheck.executablePath' setting to configure the location of 'shellcheck' or enable WSL integration with 'shellcheck.useWSL'`;
+            message = `The shellcheck program was not found (not installed?). Use the 'shellcheck.executablePath' setting to configure the location of 'shellcheck' or enable WSL integration with 'shellcheck.useWSL'`;
+            items = ['OK', 'Installation Guide'];
         } else {
-            const executable = this.settings.executable;
-            message = error.message ? error.message : `Failed to run shellcheck '${executable}'. Reason is unknown.`;
+            message = `Failed to run shellcheck: [${error.code}] ${error.message}`;
         }
 
-        vscode.window.showInformationMessage(message);
+        const selected = await vscode.window.showErrorMessage(message, ...items);
+        if (selected === 'Installation Guide') {
+            vscode.env.openExternal(vscode.Uri.parse('https://github.com/koalaman/shellcheck#installing'));
+        }
     }
 }

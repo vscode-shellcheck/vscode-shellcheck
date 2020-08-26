@@ -41,7 +41,7 @@ async function promptForUpdatingTool(currentVersion: string, disableVersionCheck
             disableVersionCheckUpdateSetting.persist();
             break;
         case 'Update':
-            vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://github.com/koalaman/shellcheck#installing'));
+            vscode.env.openExternal(vscode.Uri.parse('https://github.com/koalaman/shellcheck#installing'));
             break;
     }
 }
