@@ -6,7 +6,7 @@
 
 ## Disclaimer
 
-vscode-shellcheck (this "plugin"), requires [shellcheck] (the awesome static analysis tool for shell scripts) to work.
+vscode-shellcheck (this "extension"), requires [shellcheck] (the awesome static analysis tool for shell scripts) to work.
 
 Since v0.10.0, precompiled [shellcheck] binaries are bundled for these platforms:
 - Linux (x86_64)
@@ -102,5 +102,17 @@ exec docker run --rm -i -v "$PWD:/mnt:ro" koalaman/shellcheck:v0.7.0 "$@"
 ## Acknowledgements
 
 This extension is based on [hoovercj's Haskell Linter](https://github.com/hoovercj/vscode-haskell-linter).
+
+### Contributors
+
+- [@felipecrs](https://github.com/felipecrs)
+- [@sylveon](https://github.com/sylveon)
+- [@ralish](https://github.com/ralish)
+
+## LICENSE
+
+This extension is licensed under the [MIT LICENSE](https://github.com/timonwong/vscode-shellcheck/blob/master/LICENSE).
+
+Bundled [shellcheck] binaries are licensed under [GPLv3](https://github.com/koalaman/shellcheck/blob/master/LICENSE).
 
 [shellcheck]: https://github.com/koalaman/shellcheck
