@@ -7,7 +7,6 @@
 	"author": "Timon Wong <timon86.wang@gmail.com>",
 	"license": "MIT",
 	"categories": [
-		"Programming Languages",
 		"Linters"
 	],
 	"keywords": [
@@ -203,10 +202,5 @@
 	},
 	"engines": {
 		"vscode": "^1.36.0"
-	},
-	"__metadata": {
-		"id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",
-		"publisherDisplayName": "Timon Wong",
-		"publisherId": "04757770-dd50-443e-aae4-e1c7cf9c24f5"
 	}
 }
