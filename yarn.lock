@@ -169,10 +169,10 @@
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-5.5.0.tgz#146c2a29ee7d3bae4bf2fcb274636e264c813c45"
   integrity sha512-41qEJgBH/TWgo5NFSvBCJ1qkoi3Q6ONSF2avrHq1LVEZfYpdHmj0y9SuTK+u9ZhG1sYQKBL1AWXKyLWP4RaUoQ==
 
-"@types/vscode@^1.36.0":
-  version "1.48.0"
-  resolved "https://registry.yarnpkg.com/@types/vscode/-/vscode-1.48.0.tgz#c1841ccf80086d53b35a9d7f2eb3b4d949bd2d2f"
-  integrity sha512-sZJKzsJz1gSoFXcOJWw3fnKl2sseUgZmvB4AJZS+Fea+bC/jfGPVhmFL/FfQHld/TKtukVONsmoD3Pkyx9iadg==
+"@types/vscode@1.38.0":
+  version "1.38.0"
+  resolved "https://registry.yarnpkg.com/@types/vscode/-/vscode-1.38.0.tgz#1e53953406ef662354e2e62451c3c71c9ff19a6d"
+  integrity sha512-aGo8LQ4J1YF0T9ORuCO+bhQ5sGR1MXa7VOyOdEP685se3wyQWYUExcdiDi6rvaK61KUwfzzA19JRLDrUbDl7BQ==
 
 "@webassemblyjs/ast@1.9.0":
   version "1.9.0"
@@ -4986,7 +4986,7 @@ vm-browserify@^1.0.1:
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.2.tgz#78641c488b8e6ca91a75f511e7a3b32a86e5dda0"
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
 
-vsce@^1.66.0:
+vsce@^1.79.3:
   version "1.79.3"
   resolved "https://registry.yarnpkg.com/vsce/-/vsce-1.79.3.tgz#1211479af2d690d707862c28fb02e64bb3e1e36b"
   integrity sha512-TZb0XrLPDAm/Ns8McayGS2S8XCCMuQPwdUOluKC/0LopyEH7/NnTkM09hF4kOzfvIITuFWy4PT2R1apeLQw3kQ==
