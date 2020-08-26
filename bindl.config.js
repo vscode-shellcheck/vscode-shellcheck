@@ -15,28 +15,6 @@ module.exports = {
             ],
         },
         {
-            platform: "linux",
-            arch: "arm",
-            url: `${commonUrl}.linux.armv6hf.tar.xz`,
-            files: [
-                {
-                    source: `shellcheck-${version}/shellcheck`,
-                    target: "shellcheck",
-                },
-            ],
-        },
-        {
-            platform: "linux",
-            arch: "arm64",
-            url: `${commonUrl}.linux.aarch64.tar.xz`,
-            files: [
-                {
-                    source: `shellcheck-${version}/shellcheck`,
-                    target: "shellcheck",
-                },
-            ],
-        },
-        {
             platform: "darwin",
             arch: "x64",
             url: `${commonUrl}.darwin.x86_64.tar.xz`,

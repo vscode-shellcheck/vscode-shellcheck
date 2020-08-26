@@ -135,15 +135,19 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         }
     }
 
-    private getExecutable(section: vscode.WorkspaceConfiguration): Executable {
-        let executablePath = section.get('executablePath', '');
+    private getExecutable(executablePath: string): Executable {
         let isBundled = false;
         if (executablePath) {
             executablePath = substitutePath(executablePath);
         } else {
             // Use bundled binaries (maybe)
-            const suffix = process.platform === 'win32' ? '.exe' : '';
-            const executable = this.context.asAbsolutePath(`./binaries/${process.platform}/${process.arch}/shellcheck${suffix}`);
+            let suffix = '';
+            let osarch = process.arch;
+            if (process.platform === 'win32') {
+                osarch = 'x32';
+                suffix = '.exe';
+            }
+            const executable = this.context.asAbsolutePath(`./binaries/${process.platform}/${osarch}/shellcheck${suffix}`);
             if (fs.existsSync(executable)) {
                 isBundled = true;
             }
@@ -165,7 +169,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         const settings = <ShellCheckSettings>{
             enabled: section.get('enable', true),
             trigger: RunTrigger.from(section.get('run', RunTrigger.strings.onType)),
-            executable: this.getExecutable(section),
+            executable: this.getExecutable(section.get('executablePath', '')),
             exclude: section.get('exclude', []),
             customArgs: section.get('customArgs', []),
             ignorePatterns: section.get('ignorePatterns', {}),
