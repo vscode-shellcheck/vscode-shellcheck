@@ -4,11 +4,19 @@
 [![Current Version](https://vsmarketplacebadge.apphb.com/version/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
 [![Install Count](https://vsmarketplacebadge.apphb.com/installs-short/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
 
+## Disclaimer
+
+vscode-shellcheck (this "plugin"), requires [shellcheck] (the awesome static analysis tool for shell scripts) to work.
+
+Since v0.10.0, precompiled [shellcheck] binaries are bundled for these platforms:
+- Linux (x86_64)
+- macOS (x86_64)
+- Windows (x86_64)
+
 ## Requirements
 
-1. Ensure `shellcheck` is [installed](https://github.com/koalaman/shellcheck#installing) (`v0.7.0` or better is recommended to use).
-2. Run [`Install Extension`](https://code.visualstudio.com/docs/editor/extension-gallery#_install-an-extension) command from [Command Palette](https://code.visualstudio.com/Docs/editor/codebasics#_command-palette).
-3. Search and choose `shellcheck`.
+1. Run [`Install Extension`](https://code.visualstudio.com/docs/editor/extension-gallery#_install-an-extension) command from [Command Palette](https://code.visualstudio.com/Docs/editor/codebasics#_command-palette).
+2. Search and choose `shellcheck`.
 
 ## Options
 
@@ -49,13 +57,15 @@ For example:
 
 ### Experimental Quick Fix
 
-#### Prerequisite
-
 In order to enable the "auto fix" feature, [shellcheck] **v0.7.0** or better is required.
 
-#### Configuration
+Since this feature is still in experimental, additionally, `shellcheck.enableQuickFix` should be `true`:
 
-Since this feature is still in experimental, additionally, `shellcheck.enableQuickFix` should be `true`.
+```javascript
+{
+    "shellcheck.enableQuickFix": true
+}
+```
 
 ### Lint onType or onSave
 
