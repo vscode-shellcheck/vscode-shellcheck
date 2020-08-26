@@ -25,4 +25,4 @@ jobs:
   steps:
   - template: common/build.yml
   - template: common/lint.yml
-  # - template: common/test.yml
+  - template: common/test.yml
