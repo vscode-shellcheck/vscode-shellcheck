@@ -144,7 +144,9 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
             let suffix = '';
             let osarch = process.arch;
             if (process.platform === 'win32') {
-                osarch = 'x32';
+                if (process.arch === 'x64') {
+                    osarch = 'x32';
+                }
                 suffix = '.exe';
             }
             const executable = this.context.asAbsolutePath(`./binaries/${process.platform}/${osarch}/shellcheck${suffix}`);
