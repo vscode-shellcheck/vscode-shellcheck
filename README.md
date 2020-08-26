@@ -24,15 +24,28 @@ There are various options that can be configured by making changes to your user 
 
 Default options are:
 
-```json
+```javascript
 {
     "shellcheck.enable": true,
     "shellcheck.enableQuickFix": false,
     "shellcheck.run": "onType",
-    "shellcheck.executablePath": "shellcheck",
+    "shellcheck.executablePath": "",  // Priority: user defined > bundled shellcheck binary > "shellcheck"
     "shellcheck.exclude": [],
     "shellcheck.customArgs": [],
-    "shellcheck.ignorePatterns": {},
+    "shellcheck.ignorePatterns": {
+        "**/*.zsh": true,
+        "**/*.zshrc": true,
+        "**/zshrc": true,
+        "**/*.zprofile": true,
+        "**/zprofile": true,
+        "**/*.zlogin": true,
+        "**/zlogin": true,
+        "**/*.zlogout": true,
+        "**/zlogout": true,
+        "**/*.zshenv": true,
+        "**/zshenv": true,
+        "**/*.zsh-theme": true
+    },
     "shellcheck.ignoreFileSchemes": ["git", "gitfs"],
     "shellcheck.useWSL": false
 }
