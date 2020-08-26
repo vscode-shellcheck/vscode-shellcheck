@@ -1,6 +1,6 @@
 # vscode-shellcheck
 
-[![https://travis-ci.com/timonwong/vscode-shellcheck](https://travis-ci.com/timonwong/vscode-shellcheck.svg?branch=master)](https://travis-ci.com/timonwong/vscode-shellcheck)
+[![Build Status](https://timonwong.visualstudio.com/vscode-shellcheck/_apis/build/status/timonwong.vscode-shellcheck?branchName=master)](https://timonwong.visualstudio.com/vscode-shellcheck/_build/latest?definitionId=1&branchName=master)
 [![Current Version](https://vsmarketplacebadge.apphb.com/version/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
 [![Install Count](https://vsmarketplacebadge.apphb.com/installs-short/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
 
