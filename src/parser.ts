@@ -180,13 +180,18 @@ function convertSeverity(level: string): vscode.DiagnosticSeverity {
     }
 }
 
-function scCodeToDiagnosticTags(code: number): vscode.DiagnosticTag[] | undefined {
-    // SC2034 - https://github.com/koalaman/shellcheck/wiki/SC2034
-    if (code === 2034) {
-        return [vscode.DiagnosticTag.Unnecessary];
-    }
+// https://github.com/koalaman/shellcheck/wiki
+const codeToTags: { [name: number]: vscode.DiagnosticTag[] } = {
+    2006: [vscode.DiagnosticTag.Deprecated],
+    2007: [vscode.DiagnosticTag.Deprecated],
+    2034: [vscode.DiagnosticTag.Unnecessary],
+    2186: [vscode.DiagnosticTag.Deprecated],
+    2196: [vscode.DiagnosticTag.Deprecated],
+    2197: [vscode.DiagnosticTag.Deprecated],
+};
 
-    return undefined;
+function scCodeToDiagnosticTags(code: number): vscode.DiagnosticTag[] | undefined {
+    return codeToTags[code];
 }
 
 export function createParser(textDocument: vscode.TextDocument, options?: ParserOptions): Parser {
