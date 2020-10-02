@@ -3,13 +3,13 @@
     "files.exclude": {
         "out": false
     },
-    "files.associations": {
-        "**/.azure-pipelines/**/*.yml": "azure-pipelines"
-    },
     "search.exclude": {
         "**/node_modules": true,
         "**/bower_components": true,
         "out": true
     },
-    "typescript.tsdk": "./node_modules/typescript/lib"
+    "typescript.tsdk": "./node_modules/typescript/lib",
+    "[typescript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    }
 }

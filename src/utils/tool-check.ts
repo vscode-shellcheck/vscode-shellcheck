@@ -1,13 +1,8 @@
-import * as child_process from 'child_process';
 import * as semver from 'semver';
-import { promisify } from 'util';
 import * as vscode from 'vscode';
-import * as wsl from './wslSupport';
+import * as execa from 'execa';
 
-
-const execFile = promisify(child_process.execFile);
-
-export const BEST_TOOL_VERSION = '0.7.0';
+export const BEST_TOOL_VERSION = '0.7.1';
 
 export function tryPromptForUpdatingTool(version: semver.SemVer | null) {
     if (!version) {
@@ -22,10 +17,10 @@ export function tryPromptForUpdatingTool(version: semver.SemVer | null) {
     }
 }
 
-export async function getToolVersion(useWSL: boolean, executable: string): Promise<semver.SemVer | null> {
-    const launchArgs = wsl.createLaunchArg(useWSL, false, undefined, executable, ['-V']);
+export async function getToolVersion(executable: string): Promise<semver.SemVer | null> {
 
-    const { stdout } = await execFile(launchArgs.executable, launchArgs.args, { timeout: 2000 });
+    const { stdout } = await execa(executable, ['-V'], { timeout: 2000 });
+
     const matches = /version: ((?:\d+)\.(?:\d+)(?:\.\d+)*)/.exec(stdout);
     if (matches && matches[1]) {
         return semver.parse(matches[1]);
@@ -35,7 +30,7 @@ export async function getToolVersion(useWSL: boolean, executable: string): Promi
 }
 
 async function promptForUpdatingTool(currentVersion: string, disableVersionCheckUpdateSetting: DisableVersionCheckUpdateSetting) {
-    const selected = await vscode.window.showInformationMessage(`The vscode-shellcheck extension is better with newer version of "shellcheck" (You got v${currentVersion}, v${BEST_TOOL_VERSION} or better is recommended)`, 'Don\'t Show Again', 'Update');
+    const selected = await vscode.window.showInformationMessage(`The vscode-shellcheck extension is better with a newer version of "shellcheck" (You got v${currentVersion}, v${BEST_TOOL_VERSION} or newer is recommended)`, 'Don\'t Show Again', 'Update');
     switch (selected) {
         case 'Don\'t Show Again':
             disableVersionCheckUpdateSetting.persist();
