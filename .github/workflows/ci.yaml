@@ -42,5 +42,5 @@ jobs:
             - run: yarn install
             - run: yarn run release
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GH_TOKEN: ${{ secrets.GH_TOKEN }}
                   VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
