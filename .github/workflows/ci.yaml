@@ -33,6 +33,8 @@ jobs:
 
         steps:
             - uses: actions/checkout@v2
+              with:
+                  persist-credentials: false
             - name: Use Node.js 12
               uses: actions/setup-node@v1
               with:
