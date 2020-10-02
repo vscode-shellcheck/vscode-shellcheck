@@ -18,15 +18,19 @@ module.exports = {
         ],
         "@semantic-release/release-notes-generator",
         "@semantic-release/changelog",
-        ["@felipecrs/semantic-release-vsce", {
-            packageVsix: true,
-            yarn: true
-        }],
+        [
+            "@felipecrs/semantic-release-vsce",
+            {
+                packageVsix: true,
+                yarn: true,
+            },
+        ],
         "@semantic-release/git",
         [
             "@semantic-release/github",
             {
                 assets: "*.vsix",
+                addReleases: "bottom"
             },
         ],
     ],
