@@ -159,19 +159,23 @@
 		}
 	},
 	"scripts": {
-		"vscode:prepublish": "yarn run webpack-prod",
-		"build": "tsc -p ./",
-		"compile": "tsc -watch -p ./",
+		"compile": "tsc -p ./",
+		"compile:dev": "tsc --watch -p ./",
+		"bundle": "webpack --mode none",
+		"bundle:prod": "webpack --mode production",
+		"bundle:dev": "webpack --watch --mode none",
 		"download-binaries": "bindl",
-		"prepackage": "yarn run download-binaries",
+		"build": "yarn run bundle && yarn run download-binaries",
+		"build:prod": "yarn run bundle:prod && yarn run download-binaries",
+		"vscode:prepublish": "yarn run build:prod",
 		"package": "vsce package --yarn",
-		"deploy": "vsce publish --yarn",
+		"publish": "vsce publish --yarn",
 		"lint": "tslint --project tsconfig.json -t verbose",
-		"lint-fix": "tslint --project tsconfig.json -t verbose --fix",
-		"pretest": "yarn run webpack",
+		"lint:fix": "tslint --project tsconfig.json -t verbose --fix",
+		"pretest": "yarn run compile && yarn run build",
 		"test": "node ./out/test/runTest.js",
-		"webpack": "yarn run build && webpack --mode none",
-		"webpack-prod": "yarn run build && webpack --mode production"
+		"posttest": "yarn run lint",
+		"release": "semantic-release"
 	},
 	"dependencies": {
 		"lodash": "^4.17.19",
@@ -179,6 +183,9 @@
 		"semver": "^5.5.0"
 	},
 	"devDependencies": {
+		"@felipecrs/semantic-release-vsce": "^3.1.0",
+		"@semantic-release/changelog": "^5.0.1",
+		"@semantic-release/git": "^9.0.0",
 		"@types/glob": "^7.1.1",
 		"@types/lodash": "^4.14.109",
 		"@types/minimatch": "^3.0.3",
@@ -191,6 +198,7 @@
 		"glob": "^7.1.4",
 		"kind-of": "^6.0.3",
 		"mocha": "^5.2.0",
+		"semantic-release": "^17.1.1",
 		"terser-webpack-plugin": "^1.4.3",
 		"ts-loader": "^6.0.4",
 		"tslint": "^5.18.0",
@@ -202,5 +210,10 @@
 	},
 	"engines": {
 		"vscode": "^1.38.0"
+	},
+	"__metadata": {
+		"id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",
+		"publisherDisplayName": "Timon Wong",
+		"publisherId": "04757770-dd50-443e-aae4-e1c7cf9c24f5"
 	}
 }

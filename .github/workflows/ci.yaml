@@ -1,0 +1,44 @@
+name: ci
+
+on:
+    push:
+        branches: [master]
+    pull_request:
+        branches: [master]
+
+jobs:
+    test:
+        strategy:
+            matrix:
+                os: [ubuntu-latest, macos-latest]
+
+        runs-on: ${{ matrix.os }}
+
+        steps:
+            - uses: actions/checkout@v2
+            - name: Use Node.js 12
+              uses: actions/setup-node@v1
+              with:
+                  node-version: 12
+            - run: yarn install
+            - name: Test
+              uses: GabrielBB/xvfb-action@v1
+              with:
+                  run: yarn test
+
+    release:
+        needs: test
+
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v2
+            - name: Use Node.js 12
+              uses: actions/setup-node@v1
+              with:
+                  node-version: 12
+            - run: yarn install
+            - run: yarn run release
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
