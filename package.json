@@ -202,7 +202,7 @@
 		"mocha": "^5.2.0",
 		"semantic-release": "^17.1.1",
 		"terser-webpack-plugin": "^1.4.3",
-		"ts-loader": "^6.0.4",
+		"ts-loader": "^8.0.4",
 		"tslint": "^5.18.0",
 		"typescript": "^3.0.3",
 		"vsce": "^1.81.0",
