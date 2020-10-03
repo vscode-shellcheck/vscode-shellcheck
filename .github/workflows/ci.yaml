@@ -34,7 +34,7 @@ jobs:
         steps:
             - uses: actions/checkout@v2
               with:
-                  persist-credentials: false
+                  token: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE }}
             - name: Use Node.js 12
               uses: actions/setup-node@v1
               with:
@@ -42,5 +42,5 @@ jobs:
             - run: yarn install
             - run: yarn run release
               env:
-                  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
