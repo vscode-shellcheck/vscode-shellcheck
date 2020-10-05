@@ -4,3 +4,6 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    ignore:
+      - dependency-name: "@types/node"
+      - dependency-name: "@types/vscode"
