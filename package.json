@@ -181,7 +181,7 @@
 		"bl": "^4.0.3",
 		"lodash": "^4.17.19",
 		"minimatch": "^3.0.4",
-		"semver": "^5.5.0"
+		"semver": "^7.3.2"
 	},
 	"devDependencies": {
 		"@felipecrs/semantic-release-vsce": "^3.1.0",
