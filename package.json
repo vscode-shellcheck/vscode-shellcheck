@@ -200,7 +200,7 @@
 		"glob": "^7.1.4",
 		"kind-of": "^6.0.3",
 		"mocha": "^5.2.0",
-		"semantic-release": "^17.1.1",
+		"semantic-release": "^17.2.3",
 		"terser-webpack-plugin": "^1.4.3",
 		"ts-loader": "^8.0.4",
 		"tslint": "^5.18.0",
