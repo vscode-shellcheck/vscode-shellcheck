@@ -2,7 +2,7 @@
 	"name": "shellcheck",
 	"displayName": "shellcheck",
 	"description": "An extension to use shellcheck in vscode",
-	"version": "0.12.1",
+	"version": "0.12.2",
 	"publisher": "timonwong",
 	"author": "Timon Wong <timon86.wang@gmail.com>",
 	"license": "MIT",
