@@ -1,3 +1,10 @@
+### [0.12.3](https://github.com/timonwong/vscode-shellcheck/compare/v0.12.2...v0.12.3) (2020-12-28)
+
+
+### Dependencies
+
+* **deps:** bump semver from 5.7.1 to 7.3.4 ([#149](https://github.com/timonwong/vscode-shellcheck/issues/149)) ([c77bde2](https://github.com/timonwong/vscode-shellcheck/commit/c77bde2d65191de2833df3105b7c4ff4c780919f))
+
 ### [0.12.2](https://github.com/timonwong/vscode-shellcheck/compare/v0.12.1...v0.12.2) (2020-12-12)
 
 ### [0.12.1](https://github.com/timonwong/vscode-shellcheck/compare/v0.12.0...v0.12.1) (2020-10-16)
