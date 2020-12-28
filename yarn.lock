@@ -1813,10 +1813,10 @@ conventional-changelog-angular@^5.0.0:
     compare-func "^2.0.0"
     q "^1.5.1"
 
-conventional-changelog-conventionalcommits@^4.4.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/conventional-changelog-conventionalcommits/-/conventional-changelog-conventionalcommits-4.4.0.tgz#8d96687141c9bbd725a89b95c04966d364194cd4"
-  integrity sha512-ybvx76jTh08tpaYrYn/yd0uJNLt5yMrb1BphDe4WBredMlvPisvMghfpnJb6RmRNcqXeuhR6LfGZGewbkRm9yA==
+conventional-changelog-conventionalcommits@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/conventional-changelog-conventionalcommits/-/conventional-changelog-conventionalcommits-4.5.0.tgz#a02e0b06d11d342fdc0f00c91d78265ed0bc0a62"
+  integrity sha512-buge9xDvjjOxJlyxUnar/+6i/aVEVGA7EEh4OafBCXPlLUQPGbRUBhBUveWRxzvR8TEjhKEP4BdepnpG2FSZXw==
   dependencies:
     compare-func "^2.0.0"
     lodash "^4.17.15"
@@ -6805,10 +6805,10 @@ seek-bzip@^1.0.5:
   dependencies:
     commander "^2.8.1"
 
-semantic-release@^17.2.3:
-  version "17.2.3"
-  resolved "https://registry.yarnpkg.com/semantic-release/-/semantic-release-17.2.3.tgz#11f10b851d4e75b1015b17515c433049b3df994c"
-  integrity sha512-MY1MlowGQrkOR7+leOD8ICkVOC6i1szbwDODdbJ0UdshtMx8Ms0bhpRQmEEliqYKEb5PLv/dqs6zKKuHT7UxTg==
+semantic-release@^17.3.0:
+  version "17.3.0"
+  resolved "https://registry.yarnpkg.com/semantic-release/-/semantic-release-17.3.0.tgz#121252b5bb6acc1048d7657111173b03d47502c5"
+  integrity sha512-enhDayMZRP4nWcWAMBFHHB7THRaIcRdUAZv3lxd65pXs2ttzay7IeCvRRrGayRWExtnY0ulwRz5Ycp88Dv/UeQ==
   dependencies:
     "@semantic-release/commit-analyzer" "^8.0.0"
     "@semantic-release/error" "^2.2.0"
