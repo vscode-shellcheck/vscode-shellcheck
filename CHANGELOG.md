@@ -1,3 +1,10 @@
+## [0.13.0](https://github.com/timonwong/vscode-shellcheck/compare/v0.12.3...v0.13.0) (2021-02-04)
+
+
+### Features
+
+* remove `useWSL` option ([#121](https://github.com/timonwong/vscode-shellcheck/issues/121)) ([9967218](https://github.com/timonwong/vscode-shellcheck/commit/99672183b9916142e9fc55f7e586810de9cd174d))
+
 ### [0.12.3](https://github.com/timonwong/vscode-shellcheck/compare/v0.12.2...v0.12.3) (2020-12-28)
 
 
