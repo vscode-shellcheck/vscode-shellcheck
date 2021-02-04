@@ -1,3 +1,10 @@
+### [0.13.1](https://github.com/timonwong/vscode-shellcheck/compare/v0.13.0...v0.13.1) (2021-02-04)
+
+
+### Bug Fixes
+
+* downgrade recommended shellcheck version from 0.7.1 to 0.7.0 ([#163](https://github.com/timonwong/vscode-shellcheck/issues/163)) ([83cf71e](https://github.com/timonwong/vscode-shellcheck/commit/83cf71e7441b01144d28a7edd732ddac033ab519))
+
 ## [0.13.0](https://github.com/timonwong/vscode-shellcheck/compare/v0.12.3...v0.13.0) (2021-02-04)
 
 
