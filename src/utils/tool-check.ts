@@ -2,7 +2,7 @@ import * as semver from 'semver';
 import * as vscode from 'vscode';
 import * as execa from 'execa';
 
-export const BEST_TOOL_VERSION = '0.7.1';
+export const BEST_TOOL_VERSION = '0.7.0';
 
 export function tryPromptForUpdatingTool(version: semver.SemVer | null) {
     if (!version) {
