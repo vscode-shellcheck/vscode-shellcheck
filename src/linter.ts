@@ -2,13 +2,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
+import * as execa from 'execa';
 import { createParser, ParseResult } from './parser';
 import { ThrottledDelayer } from './utils/async';
 import { FileMatcher, FileSettings } from './utils/filematcher';
 import { getToolVersion, tryPromptForUpdatingTool } from './utils/tool-check';
-import * as wsl from './utils/wslSupport';
 import { getWorkspaceFolderPath } from './utils/path';
-
 
 interface Executable {
     path: string;
@@ -25,7 +24,6 @@ interface ShellCheckSettings {
     ignorePatterns: FileSettings;
     ignoreFileSchemes: Set<string>;
     useWorkspaceRootAsCwd: boolean;
-    useWSL: boolean;
 }
 
 enum RunTrigger {
@@ -177,7 +175,6 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
             ignorePatterns: section.get('ignorePatterns', {}),
             ignoreFileSchemes: new Set(section.get('ignoreFileSchemes', ['git', 'gitfs'])),
             useWorkspaceRootAsCwd: section.get('useWorkspaceRootAsCwd', false),
-            useWSL: section.get('useWSL', false),
             enableQuickFix: section.get('enableQuickFix', false),
         };
         this.settings = settings;
@@ -199,7 +196,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
             // Prompt user to update shellcheck binary when necessary
             try {
-                this.toolVersion = await getToolVersion(settings.useWSL, settings.executable.path);
+                this.toolVersion = await getToolVersion(settings.executable.path);
                 this.executableNotFound = false;
             } catch (error) {
                 this.showShellCheckError(error);
@@ -293,14 +290,6 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     private runLint(textDocument: vscode.TextDocument): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const settings = this.settings;
-            if (settings.useWSL && !wsl.subsystemForLinuxPresent()) {
-                if (!this.executableNotFound) {
-                    vscode.window.showErrorMessage('Got told to use WSL, but cannot find installation. Bailing out.');
-                }
-                this.executableNotFound = true;
-                resolve();
-                return;
-            }
 
             const executable = settings.executable || 'shellcheck';
             const parser = createParser(textDocument, {
@@ -335,7 +324,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
             const options = cwd ? { cwd: cwd } : undefined;
             // this.channel.appendLine(`[DEBUG] Spawn: ${executable} ${args.join(' ')}`);
-            const childProcess = wsl.spawn(settings.useWSL, executable.path, args, options);
+            const childProcess = execa(executable.path, args, options);
             childProcess.on('error', (error: NodeJS.ErrnoException) => {
                 if (!this.executableNotFound) {
                     this.showShellCheckError(error);
@@ -350,9 +339,6 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
                 childProcess.stdout.setEncoding('utf-8');
 
                 let script = textDocument.getText();
-                if (settings.useWSL) {
-                    script = script.replace(/\r\n/g, '\n'); // shellcheck doesn't likes CRLF, although this is caused by a git checkout on Windows.
-                }
                 childProcess.stdin.write(script);
                 childProcess.stdin.end();
 
@@ -392,7 +378,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         let message: string;
         let items: string[] = [];
         if (error.code === 'ENOENT') {
-            message = `The shellcheck program was not found (not installed?). Use the 'shellcheck.executablePath' setting to configure the location of 'shellcheck' or enable WSL integration with 'shellcheck.useWSL'`;
+            message = `The shellcheck program was not found (not installed?). Use the 'shellcheck.executablePath' setting to configure the location of 'shellcheck'`;
             items = ['OK', 'Installation Guide'];
         } else {
             message = `Failed to run shellcheck: [${error.code}] ${error.message}`;

@@ -147,12 +147,6 @@
 					"scope": "resource",
 					"default": false
 				},
-				"shellcheck.useWSL": {
-					"description": "(Windows Only) Whether to use a shellcheck installation in the Windows Subsystem for Linux.",
-					"type": "boolean",
-					"scope": "resource",
-					"default": false
-				},
 				"shellcheck.disableVersionCheck": {
 					"description": "Whether to disable shellcheck binary version check, which prompt for updating when outdated version found.",
 					"type": "boolean",
@@ -183,6 +177,7 @@
 	},
 	"dependencies": {
 		"bl": "^4.0.3",
+		"execa": "^5.0.0",
 		"lodash": "^4.17.19",
 		"minimatch": "^3.0.4",
 		"semver": "^7.3.4"
