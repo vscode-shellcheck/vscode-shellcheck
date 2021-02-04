@@ -56,10 +56,9 @@ module.exports = {
         ],
         "@semantic-release/changelog",
         [
-            "@felipecrs/semantic-release-vsce",
+            "semantic-release-vsce",
             {
                 packageVsix: true,
-                yarn: true,
             },
         ],
         "@semantic-release/git",
