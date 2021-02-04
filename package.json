@@ -1,13 +1,17 @@
 {
 	"name": "shellcheck",
-	"displayName": "shellcheck",
-	"description": "An extension to use shellcheck in vscode",
+	"displayName": "ShellCheck",
+	"description": "Integrates ShellCheck into VS Code, a linter for Shell scripts.",
 	"version": "0.12.3",
 	"publisher": "timonwong",
-	"author": "Timon Wong <timon86.wang@gmail.com>",
+	"author": "Timon Wong <timon86.wang@gmail.com> (https://github.com/timonwong)",
+	"contributors": [
+		"Felipe Santos (https://github.com/felipecrs)"
+	],
 	"license": "MIT",
 	"categories": [
-		"Linters"
+		"Linters",
+		"Programming Languages"
 	],
 	"keywords": [
 		"shell",
@@ -16,7 +20,7 @@
 		"linter",
 		"lint"
 	],
-	"homepage": "https://github.com/timonwong/vscode-shellcheck",
+	"homepage": "https://github.com/timonwong/vscode-shellcheck#readme",
 	"private": true,
 	"repository": {
 		"type": "git",
