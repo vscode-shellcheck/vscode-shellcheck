@@ -1,8 +1,14 @@
-# vscode-shellcheck
+# ShellCheck for Visual Studio Code
 
-[![Build Status](https://timonwong.visualstudio.com/vscode-shellcheck/_apis/build/status/timonwong.vscode-shellcheck?branchName=master)](https://timonwong.visualstudio.com/vscode-shellcheck/_build/latest?definitionId=1&branchName=master)
+Integrates ShellCheck into VS Code, a linter for Shell scripts.
+
+[![ci](https://github.com/timonwong/vscode-shellcheck/workflows/ci/badge.svg)](https://github.com/timonwong/vscode-shellcheck/actions?query=workflow%3Aci)
 [![Current Version](https://vsmarketplacebadge.apphb.com/version/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
 [![Install Count](https://vsmarketplacebadge.apphb.com/installs-short/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
+
+## Quick start
+
+![Extension GIF](https://user-images.githubusercontent.com/29582865/106907134-c299c000-66b2-11eb-8d8b-ea1bd898cb3a.gif)
 
 ## Disclaimer
 
