@@ -1,6 +1,6 @@
 # ShellCheck for Visual Studio Code
 
-Integrates ShellCheck into VS Code, a linter for Shell scripts.
+Integrates [ShellCheck](https://github.com/koalaman/shellcheck) into VS Code, a linter for Shell scripts.
 
 [![ci](https://github.com/timonwong/vscode-shellcheck/workflows/ci/badge.svg)](https://github.com/timonwong/vscode-shellcheck/actions?query=workflow%3Aci)
 [![Current Version](https://vsmarketplacebadge.apphb.com/version/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
