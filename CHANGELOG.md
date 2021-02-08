@@ -1,3 +1,10 @@
+### [0.13.2](https://github.com/timonwong/vscode-shellcheck/compare/v0.13.1...v0.13.2) (2021-02-08)
+
+
+### Bug Fixes
+
+* shellcheck command failed ([2a88284](https://github.com/timonwong/vscode-shellcheck/commit/2a882845bc28874df984aa080eebf9c429b74618)), closes [#144](https://github.com/timonwong/vscode-shellcheck/issues/144)
+
 ### [0.13.1](https://github.com/timonwong/vscode-shellcheck/compare/v0.13.0...v0.13.1) (2021-02-04)
 
 
