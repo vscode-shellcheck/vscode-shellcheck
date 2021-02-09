@@ -3,89 +3,39 @@
 'use strict';
 
 const path = require('path');
-const TerserPlugin = require('terser-webpack-plugin');
-const FileManagerPlugin = require('filemanager-webpack-plugin');
-
-
-const projectRoot = __dirname;
 
 /**@type {import('webpack').Configuration}*/
 const config = {
-    context: projectRoot,
+  target: 'node', // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
+	mode: 'none', // this leaves the source code as close as possible to the original (when packaging we set this to 'production')
 
-    // vscode extensions run in a Node.js context, see https://webpack.js.org/configuration/node/
-    target: 'node',
-    node: {
-        // For __dirname and __filename, let Node.js use its default behavior (i.e., gives the path to the packed extension.bundle.js file, not the original source file)
-        __filename: false,
-        __dirname: false
-    },
-
-    entry: {
-        'extension.bundle': './extension.bundle.ts',
-    },
-
-    output: {
-        // The bundles are stored in the 'dist' folder (check package.json), see https://webpack.js.org/configuration/output/
-        path: path.resolve(projectRoot, 'dist'),
-        filename: '[name].js',
-        libraryTarget: 'commonjs2',
-        devtoolModuleFilenameTemplate: '../[resource-path]'
-    },
-
-    // Create .map.js files for debugging
-    devtool: 'source-map',
-
-    externals: {
-        // Modules that cannot be webpack'ed, see https://webpack.js.org/configuration/externals/
-
-        // The vscode-module is created on-the-fly so must always be excluded.
-        vscode: 'commonjs vscode'
-    },
-    optimization: {
-        minimizer: [
-            new TerserPlugin({
-                terserOptions: {
-                    // https://github.com/webpack-contrib/terser-webpack-plugin/
-
-                    // Don't mangle class names.  Otherwise parseError() will not recognize user cancelled errors (because their constructor name
-                    // will match the mangled name, not UserCancelledError).  Also makes debugging easier in minified code.
-                    keep_classnames: true
-                }
-            })
+  entry: './src/extension.ts', // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
+  output: {
+    // the bundle is stored in the 'dist' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'extension.js',
+    libraryTarget: 'commonjs2'
+  },
+  devtool: 'nosources-source-map',
+  externals: {
+    vscode: 'commonjs vscode' // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
+  },
+  resolve: {
+    // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
+    extensions: ['.ts', '.js']
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'ts-loader'
+          }
         ]
-    },
-    plugins: [
-        // Copy files to dist folder where the runtime can find them
-        new FileManagerPlugin({
-            onEnd: {
-                copy: [
-                    // Test files -> dist/test (these files are ignored during packaging)
-                    {
-                        source: path.join(projectRoot, 'out', 'test'),
-                        destination: path.join(projectRoot, 'dist', 'test')
-                    }
-                ]
-            }
-        }),
-    ],
-
-    resolve: {
-        extensions: ['.ts', '.js']
-    },
-    module: {
-        rules: [
-            {
-                test: /\.ts$/,
-                exclude: /node_modules/,
-                use: [
-                    {
-                        loader: 'ts-loader'
-                    }
-                ]
-            }
-        ]
-    }
+      }
+    ]
+  }
 };
-
 module.exports = config;

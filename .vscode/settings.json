@@ -1,15 +1,11 @@
 // Place your settings in this file to overwrite default and user settings.
 {
     "files.exclude": {
-        "out": false
+        "out": false // set this to true to hide the "out" folder with the compiled JS files
     },
     "search.exclude": {
-        "**/node_modules": true,
-        "**/bower_components": true,
-        "out": true
+        "out": true // set this to false to include "out" folder in search results
     },
-    "typescript.tsdk": "./node_modules/typescript/lib",
-    "[typescript]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
-    }
+    // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
+    "typescript.tsc.autoDetect": "off"
 }
