@@ -157,14 +157,14 @@
 		}
 	},
 	"scripts": {
+		"prepare": "bindl",
 		"compile": "tsc -p ./",
 		"compile:dev": "tsc --watch -p ./",
 		"bundle": "webpack --mode none",
 		"bundle:prod": "webpack --mode production",
 		"bundle:dev": "webpack --watch --mode none",
-		"download-binaries": "bindl",
-		"build": "yarn run bundle && yarn run download-binaries",
-		"build:prod": "yarn run bundle:prod && yarn run download-binaries",
+		"build": "yarn run bundle",
+		"build:prod": "yarn run bundle:prod",
 		"vscode:prepublish": "yarn run build:prod",
 		"package": "vsce package --yarn",
 		"publish": "vsce publish --yarn",
