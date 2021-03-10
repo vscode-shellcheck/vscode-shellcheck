@@ -1,3 +1,10 @@
+### [0.13.3](https://github.com/timonwong/vscode-shellcheck/compare/v0.13.2...v0.13.3) (2021-03-10)
+
+
+### Dependencies
+
+* **deps:** bump elliptic from 6.5.3 to 6.5.4 ([#178](https://github.com/timonwong/vscode-shellcheck/issues/178)) ([f15a1e7](https://github.com/timonwong/vscode-shellcheck/commit/f15a1e71f1515db1a92e22fc806d1b5d1f163c73))
+
 ### [0.13.2](https://github.com/timonwong/vscode-shellcheck/compare/v0.13.1...v0.13.2) (2021-02-08)
 
 
