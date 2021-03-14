@@ -1,3 +1,10 @@
+### [0.13.4](https://github.com/timonwong/vscode-shellcheck/compare/v0.13.3...v0.13.4) (2021-03-14)
+
+
+### Bug Fixes
+
+* shellcheck.executablePath to machine scope ([#181](https://github.com/timonwong/vscode-shellcheck/issues/181)) ([3d68e17](https://github.com/timonwong/vscode-shellcheck/commit/3d68e17bcbf879e3303da9de4b48228a393f3b5e))
+
 ### [0.13.3](https://github.com/timonwong/vscode-shellcheck/compare/v0.13.2...v0.13.3) (2021-03-10)
 
 
