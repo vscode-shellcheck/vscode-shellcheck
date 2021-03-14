@@ -63,7 +63,7 @@
 						"shellcheck"
 					],
 					"type": "string",
-					"scope": "resource"
+					"scope": "machine"
 				},
 				"shellcheck.run": {
 					"description": "Whether shellcheck is run on save or on type.",
