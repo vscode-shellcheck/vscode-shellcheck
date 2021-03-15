@@ -1,3 +1,10 @@
+## [0.14.0](https://github.com/timonwong/vscode-shellcheck/compare/v0.13.4...v0.14.0) (2021-03-15)
+
+
+### Features
+
+* Enable the "Quick Fix" feature by default ([#182](https://github.com/timonwong/vscode-shellcheck/issues/182)) ([eb64cc3](https://github.com/timonwong/vscode-shellcheck/commit/eb64cc389efd754a859e12d50bd347a0a43c3181)), closes [#161](https://github.com/timonwong/vscode-shellcheck/issues/161)
+
 ### [0.13.4](https://github.com/timonwong/vscode-shellcheck/compare/v0.13.3...v0.13.4) (2021-03-14)
 
 
