@@ -52,10 +52,10 @@
 					"default": true
 				},
 				"shellcheck.enableQuickFix": {
-					"description": "Whether to enable experimental \"Quick Fix\" feature.",
+					"description": "Whether to enable the \"Quick Fix\" feature.",
 					"type": "boolean",
 					"scope": "resource",
-					"default": false
+					"default": true
 				},
 				"shellcheck.executablePath": {
 					"description": "Path to the shellcheck executable (builtin binaries will be used if empty).",
