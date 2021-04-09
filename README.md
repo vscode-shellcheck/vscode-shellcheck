@@ -1,5 +1,7 @@
 # ShellCheck for Visual Studio Code
 
+![](/shellcheck.png)
+
 Integrates [ShellCheck](https://github.com/koalaman/shellcheck) into VS Code, a linter for Shell scripts.
 
 [![ci](https://github.com/timonwong/vscode-shellcheck/workflows/ci/badge.svg)](https://github.com/timonwong/vscode-shellcheck/actions?query=workflow%3Aci)
@@ -7,6 +9,8 @@ Integrates [ShellCheck](https://github.com/koalaman/shellcheck) into VS Code, a 
 [![Install Count](https://vsmarketplacebadge.apphb.com/installs-short/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
 
 ## Quick start
+
+Head on over to [Visual Studio Marketplace: ShellCheck](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck) to install, or use the VS Code extension search:
 
 ![Extension GIF](https://user-images.githubusercontent.com/29582865/106907134-c299c000-66b2-11eb-8d8b-ea1bd898cb3a.gif)
 
