@@ -1,3 +1,15 @@
+### [0.14.1](https://github.com/timonwong/vscode-shellcheck/compare/v0.14.0...v0.14.1) (2021-04-19)
+
+
+### Bug Fixes
+
+* timeout on shellcheck -V ([#180](https://github.com/timonwong/vscode-shellcheck/issues/180)) ([da3b38b](https://github.com/timonwong/vscode-shellcheck/commit/da3b38b4571f4ae75c93af8d24388132ba670eef))
+
+
+### Dependencies
+
+* **deps:** upgrade shellcheck from 0.7.1 to 0.7.2 ([#194](https://github.com/timonwong/vscode-shellcheck/issues/194)) ([04f99e0](https://github.com/timonwong/vscode-shellcheck/commit/04f99e0d4f4bcb4315e21ff88f9dc56e442434ae))
+
 ## [0.14.0](https://github.com/timonwong/vscode-shellcheck/compare/v0.13.4...v0.14.0) (2021-03-15)
 
 
