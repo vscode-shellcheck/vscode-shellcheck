@@ -2,7 +2,7 @@
 	"name": "shellcheck",
 	"displayName": "ShellCheck",
 	"description": "Integrates ShellCheck into VS Code, a linter for Shell scripts.",
-	"version": "0.13.3",
+	"version": "0.14.0",
 	"publisher": "timonwong",
 	"author": "Timon Wong <timon86.wang@gmail.com> (https://github.com/timonwong)",
 	"contributors": [
@@ -52,10 +52,10 @@
 					"default": true
 				},
 				"shellcheck.enableQuickFix": {
-					"description": "Whether to enable experimental \"Quick Fix\" feature.",
+					"description": "Whether to enable the \"Quick Fix\" feature.",
 					"type": "boolean",
 					"scope": "resource",
-					"default": false
+					"default": true
 				},
 				"shellcheck.executablePath": {
 					"description": "Path to the shellcheck executable (builtin binaries will be used if empty).",
@@ -63,7 +63,7 @@
 						"shellcheck"
 					],
 					"type": "string",
-					"scope": "resource"
+					"scope": "machine"
 				},
 				"shellcheck.run": {
 					"description": "Whether shellcheck is run on save or on type.",

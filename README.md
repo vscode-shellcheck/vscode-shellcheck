@@ -34,7 +34,7 @@ Default options are:
 ```javascript
 {
     "shellcheck.enable": true,
-    "shellcheck.enableQuickFix": false,
+    "shellcheck.enableQuickFix": true,
     "shellcheck.run": "onType",
     "shellcheck.executablePath": "",  // Priority: user defined > bundled shellcheck binary > "shellcheck"
     "shellcheck.exclude": [],
