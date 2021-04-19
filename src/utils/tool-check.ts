@@ -19,7 +19,7 @@ export function tryPromptForUpdatingTool(version: semver.SemVer | null) {
 
 export async function getToolVersion(executable: string): Promise<semver.SemVer | null> {
 
-    const { stdout } = execa.sync(executable, ['-V'], { timeout: 2000 });
+    const { stdout } = execa.sync(executable, ['-V'], { timeout: 5000 });
 
     const matches = /version: ((?:\d+)\.(?:\d+)(?:\.\d+)*)/.exec(stdout);
     if (matches && matches[1]) {
