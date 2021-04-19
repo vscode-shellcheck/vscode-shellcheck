@@ -6,4 +6,16 @@ updates:
       interval: "daily"
     ignore:
       - dependency-name: "@types/node"
+        versions:
+          - ">=13"
       - dependency-name: "@types/vscode"
+        versions:
+          - ">=1.39"
+    open-pull-requests-limit: 100
+  - package-ecosystem: github-actions
+    directory: /
+    open-pull-requests-limit: 100
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: ci
