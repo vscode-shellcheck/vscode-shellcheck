@@ -1,4 +1,4 @@
-const version = "v0.7.1";
+const version = "v0.7.2";
 const commonUrl = `https://github.com/koalaman/shellcheck/releases/download/${version}/shellcheck-${version}`
 
 module.exports = {
@@ -52,7 +52,7 @@ module.exports = {
             arch: "x32",
             url: `${commonUrl}.zip`,
             files: [
-                { source: `shellcheck-${version}.exe`, target: "shellcheck.exe" },
+                { source: `shellcheck.exe`, target: "shellcheck.exe" },
             ],
         },
     ],
