@@ -193,7 +193,7 @@
 		"@types/semver": "^7.3.4",
 		"@types/vscode": "1.38.0",
 		"bindl": "^1.1.0",
-		"conventional-changelog-conventionalcommits": "^4.5.0",
+		"conventional-changelog-conventionalcommits": "^4.6.0",
 		"filemanager-webpack-plugin": "^2.0.5",
 		"glob": "^7.1.4",
 		"kind-of": "^6.0.3",
