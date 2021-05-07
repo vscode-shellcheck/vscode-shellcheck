@@ -206,7 +206,7 @@
 		"typescript": "^3.0.3",
 		"vscode-test": "^1.0.2",
 		"webpack": "^4.44.2",
-		"webpack-cli": "^3.3.6"
+		"webpack-cli": "^4.7.0"
 	},
 	"engines": {
 		"vscode": "^1.38.0"
