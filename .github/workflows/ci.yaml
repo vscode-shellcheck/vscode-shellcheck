@@ -22,7 +22,7 @@ jobs:
                   node-version: 12
             - run: yarn install
             - name: Test
-              uses: GabrielBB/xvfb-action@v1
+              uses: GabrielBB/xvfb-action@v1.5
               with:
                   run: yarn test
 
