@@ -177,7 +177,7 @@
 	},
 	"dependencies": {
 		"bl": "^4.0.3",
-		"execa": "^5.0.0",
+		"execa": "^5.0.1",
 		"lodash": "^4.17.19",
 		"minimatch": "^3.0.4",
 		"semver": "^7.3.4"
