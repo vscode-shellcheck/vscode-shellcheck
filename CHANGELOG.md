@@ -1,3 +1,15 @@
+### [0.14.2](https://github.com/timonwong/vscode-shellcheck/compare/v0.14.1...v0.14.2) (2021-06-12)
+
+
+### Bug Fixes
+
+* not loading shellcheck from PATH when the bundled is not available ([#246](https://github.com/timonwong/vscode-shellcheck/issues/246)) ([7a31f98](https://github.com/timonwong/vscode-shellcheck/commit/7a31f98b9394859f7f466bbd236c5a89da4db199)), closes [#244](https://github.com/timonwong/vscode-shellcheck/issues/244)
+
+
+### Dependencies
+
+* **deps:** upgrade dependencies ([#245](https://github.com/timonwong/vscode-shellcheck/issues/245)) ([1f189eb](https://github.com/timonwong/vscode-shellcheck/commit/1f189eb072fa69d2af01ad35ca902434bc1f3037))
+
 ### [0.14.1](https://github.com/timonwong/vscode-shellcheck/compare/v0.14.0...v0.14.1) (2021-04-19)
 
 
