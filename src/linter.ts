@@ -154,7 +154,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         }
 
         // Fallback to default shellcheck path
-        if (!executablePath) {
+        if (!isBundled) {
             executablePath = 'shellcheck';
         }
 
