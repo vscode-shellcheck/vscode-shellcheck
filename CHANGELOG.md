@@ -1,3 +1,10 @@
+### [0.14.3](https://github.com/timonwong/vscode-shellcheck/compare/v0.14.2...v0.14.3) (2021-06-13)
+
+
+### Dependencies
+
+* **deps:** upgrade dependencies ([#248](https://github.com/timonwong/vscode-shellcheck/issues/248)) ([cd70efc](https://github.com/timonwong/vscode-shellcheck/commit/cd70efccea17c00c778b56f4909cdedd09c13ac9))
+
 ### [0.14.2](https://github.com/timonwong/vscode-shellcheck/compare/v0.14.1...v0.14.2) (2021-06-12)
 
 
