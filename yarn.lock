@@ -1123,10 +1123,10 @@ bindings@^1.5.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
-bindl@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/bindl/-/bindl-1.1.0.tgz#31267524f17faf842aea356567b5f562adc1a09e"
-  integrity sha512-4pOFMfdhodjiq3Hcm5xN2iyzKAlZ7uDVgO5qcTHnGHSRp2Xmd3SBTLVNEwNz5To1W7nbDFvq5JvvMAI89+Q3xg==
+bindl@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/bindl/-/bindl-1.1.1.tgz#4ac588ba263e6f24d993ac666f18b95f6ec7381a"
+  integrity sha512-2tnX4yaKfQKyCooiDMHn12GYqx5jGfT5NUf1Q9N8buf6Ivtb452RCR5K/8uFDsNFtsM/PGfBzJFk39NOU+8SRQ==
   dependencies:
     "@oclif/command" "^1.8.0"
     "@oclif/config" "^1.17.0"
