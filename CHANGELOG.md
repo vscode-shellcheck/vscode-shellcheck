@@ -1,3 +1,10 @@
+### [0.14.4](https://github.com/timonwong/vscode-shellcheck/compare/v0.14.3...v0.14.4) (2021-06-25)
+
+
+### Bug Fixes
+
+* `executablePath` not being respected ([#257](https://github.com/timonwong/vscode-shellcheck/issues/257)) ([d3710b9](https://github.com/timonwong/vscode-shellcheck/commit/d3710b97315b62c1aee9022aab0a416f356f6af9))
+
 ### [0.14.3](https://github.com/timonwong/vscode-shellcheck/compare/v0.14.2...v0.14.3) (2021-06-13)
 
 
