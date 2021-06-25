@@ -150,12 +150,10 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
             executablePath = this.context.asAbsolutePath(`./binaries/${process.platform}/${osarch}/shellcheck${suffix}`);
             if (fs.existsSync(executablePath)) {
                 isBundled = true;
+            } else {
+                // Fallback to default shellcheck path
+                executablePath = 'shellcheck';
             }
-        }
-
-        // Fallback to default shellcheck path
-        if (!isBundled) {
-            executablePath = 'shellcheck';
         }
 
         return {
