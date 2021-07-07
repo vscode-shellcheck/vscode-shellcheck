@@ -185,7 +185,7 @@
 	"devDependencies": {
 		"@semantic-release/changelog": "^5.0.1",
 		"@semantic-release/git": "^9.0.0",
-		"@types/glob": "^7.1.1",
+		"@types/glob": "^7.1.4",
 		"@types/lodash": "^4.14.168",
 		"@types/minimatch": "^3.0.3",
 		"@types/mocha": "^5.2.5",
