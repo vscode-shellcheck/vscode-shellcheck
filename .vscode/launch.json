@@ -50,14 +50,14 @@
             "runtimeExecutable": "${execPath}",
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}",
-                "--extensionTestsPath=${workspaceFolder}/out/test"
+                "--extensionTestsPath=${workspaceFolder}/out/test/suite"
             ],
             "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceFolder}/out/test/**/*.js"
+                "${workspaceFolder}/out/**/*.js"
             ],
-            "preLaunchTask": "npm: build",
+            "preLaunchTask": "npm: compile",
             "env": {
                 "SCPLUGIN_IGNORE_BUNDLE": "1",
                 "DEBUGTELEMETRY": "1",
@@ -71,7 +71,7 @@
 			"runtimeExecutable": "${execPath}",
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--extensionTestsPath=${workspaceFolder}/dist/test"
+				"--extensionTestsPath=${workspaceFolder}/dist/test/suite"
 			],
 			"stopOnEntry": false,
 			"sourceMaps": true,

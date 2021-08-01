@@ -9,13 +9,8 @@ import * as assert from 'assert';
 // You can import and use all API from the 'vscode' module
 // as well as import your extension to test it
 import * as vscode from 'vscode';
+import { sleep } from './utils';
 
-
-export function sleep(ms: number): Promise<void> {
-    return new Promise(resolve => {
-        setTimeout(resolve, ms);
-    });
-}
 
 suite('Shellcheck extension', () => {
     test('Extension should be activated on shell script files', async () => {
