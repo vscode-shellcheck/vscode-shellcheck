@@ -8,6 +8,7 @@ import { ThrottledDelayer } from './utils/async';
 import { FileMatcher, FileSettings } from './utils/filematcher';
 import { getToolVersion, tryPromptForUpdatingTool } from './utils/tool-check';
 import { getWorkspaceFolderPath } from './utils/path';
+import { FixAllProvider } from './fix-all';
 
 interface Executable {
     path: string;
@@ -77,7 +78,11 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     private readonly diagnosticCollection: vscode.DiagnosticCollection;
     private readonly codeActionCollection: Map<string, ParseResult[]>;
 
-    public static readonly providedCodeActionKinds = [vscode.CodeActionKind.QuickFix];
+    public static readonly providedCodeActionKinds = [vscode.CodeActionKind.QuickFix, vscode.CodeActionKind.Source];
+
+    public static metadata: vscode.CodeActionProviderMetadata = {
+        providedCodeActionKinds: ShellCheckProvider.providedCodeActionKinds,
+    };
 
     constructor(private readonly context: vscode.ExtensionContext) {
         this.channel = vscode.window.createOutputChannel('ShellCheck');
@@ -89,9 +94,11 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
         // code actions
         context.subscriptions.push(
-            vscode.languages.registerCodeActionsProvider('shellscript', this, {
-                providedCodeActionKinds: ShellCheckProvider.providedCodeActionKinds,
-            }),
+            vscode.languages.registerCodeActionsProvider('shellscript', this, ShellCheckProvider.metadata),
+        );
+
+        context.subscriptions.push(
+            vscode.languages.registerCodeActionsProvider('shellscript', new FixAllProvider(), FixAllProvider.metadata)
         );
 
         // commands
