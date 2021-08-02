@@ -31,12 +31,12 @@ There are various options that can be configured by making changes to your user 
 
 Default options are:
 
-```javascript
+```jsonc
 {
     "shellcheck.enable": true,
     "shellcheck.enableQuickFix": true,
     "shellcheck.run": "onType",
-    "shellcheck.executablePath": "",  // Priority: user defined > bundled shellcheck binary > "shellcheck"
+    "shellcheck.executablePath": "", // Priority: user defined > bundled shellcheck binary > "shellcheck"
     "shellcheck.exclude": [],
     "shellcheck.customArgs": [],
     "shellcheck.ignorePatterns": {
@@ -53,7 +53,7 @@ Default options are:
         "**/zshenv": true,
         "**/*.zsh-theme": true
     },
-    "shellcheck.ignoreFileSchemes": ["git", "gitfs"],
+    "shellcheck.ignoreFileSchemes": ["git", "gitfs"]
 }
 ```
 
@@ -63,7 +63,7 @@ The `shellcheck.ignorePatterns` works exactly the same as `search.exclude`, read
 
 For example:
 
-```javascript
+```jsonc
 {
     "shellcheck.ignorePatterns": {
         "**/*.zsh": true,
@@ -74,23 +74,25 @@ For example:
 }
 ```
 
-### Experimental Quick Fix
+### Fix all errors on save
 
-In order to enable the "auto fix" feature, [shellcheck] **v0.7.0** or better is required.
+The auto-fixable errors can be fixed automatically on save by using the following configuration:
 
-Since this feature is still in experimental, additionally, `shellcheck.enableQuickFix` should be `true`:
-
-```javascript
+```jsonc
 {
-    "shellcheck.enableQuickFix": true
+    "editor.codeActionsOnSave": {
+        "source.fixAll.shellcheck": true
+    }
 }
 ```
+
+Alternatively, you can fix all errors on demand by running the command _Fix All_ in the VS Code Command Palette.
 
 ### Lint onType or onSave
 
 By default the linter will lint as you type. Alternatively, set `shellcheck.run` to `onSave` if you want to lint only when the file is saved (works best if auto-save is on).
 
-```javascript
+```jsonc
 {
     "shellcheck.run": "onType" // also: "onSave"
 }
@@ -100,9 +102,9 @@ By default the linter will lint as you type. Alternatively, set `shellcheck.run`
 
 By default all shellcheck checks are performed and reported on as necessary. To globally ignore certain checks in all files, add the "SC identifiers" to `shellcheck.exclude`. For example, to exclude [SC1017](https://github.com/koalaman/shellcheck/wiki/SC1017):
 
-```javascript
+```jsonc
 {
-    "shellcheck.exclude": ["1017"],
+    "shellcheck.exclude": ["1017"]
 }
 ```
 
