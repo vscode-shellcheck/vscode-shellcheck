@@ -1,3 +1,10 @@
+## [0.15.0](https://github.com/timonwong/vscode-shellcheck/compare/v0.14.4...v0.15.0) (2021-08-02)
+
+
+### Features
+
+* fix all issues on demand or on save ([#278](https://github.com/timonwong/vscode-shellcheck/issues/278)) ([bea1bda](https://github.com/timonwong/vscode-shellcheck/commit/bea1bdacc29afdf5697a437b5f40e2799bdf12f5)), closes [#273](https://github.com/timonwong/vscode-shellcheck/issues/273)
+
 ### [0.14.4](https://github.com/timonwong/vscode-shellcheck/compare/v0.14.3...v0.14.4) (2021-06-25)
 
 
