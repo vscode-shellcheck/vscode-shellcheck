@@ -187,7 +187,7 @@
 		"@semantic-release/git": "^9.0.0",
 		"@types/glob": "^7.1.4",
 		"@types/lodash": "^4.14.168",
-		"@types/minimatch": "^3.0.3",
+		"@types/minimatch": "^3.0.5",
 		"@types/mocha": "^5.2.5",
 		"@types/node": "^10.11.0",
 		"@types/semver": "^7.3.4",
