@@ -2,7 +2,7 @@
 
 Integrates [ShellCheck](https://github.com/koalaman/shellcheck) into VS Code, a linter for Shell scripts.
 
-[![ci](https://github.com/timonwong/vscode-shellcheck/workflows/ci/badge.svg)](https://github.com/timonwong/vscode-shellcheck/actions?query=workflow%3Aci)
+[![ci](https://github.com/vscode-shellcheck/vscode-shellcheck/workflows/ci/badge.svg)](https://github.com/vscode-shellcheck/vscode-shellcheck/actions?query=workflow%3Aci)
 [![Current Version](https://vsmarketplacebadge.apphb.com/version/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
 [![Install Count](https://vsmarketplacebadge.apphb.com/installs-short/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
 
@@ -112,7 +112,7 @@ By default all shellcheck checks are performed and reported on as necessary. To 
 
 In order to get it work, you need a "shim" script, and then, just remember, do not try to construct command line arguments for shellcheck yourself.
 
-Here is a simple "shim" script to get start with (See discussion: [#24](https://github.com/timonwong/vscode-shellcheck/issues/24)):
+Here is a simple "shim" script to get start with (See discussion: [#24](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/24)):
 
 ```shell
 #!/bin/bash
