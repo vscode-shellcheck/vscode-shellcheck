@@ -1,58 +1,61 @@
 name: ci
 
 on:
-    push:
-        branches: [master]
-    pull_request:
-        branches: [master]
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
 
 jobs:
-    test:
-        strategy:
-            matrix:
-                os: [ubuntu-latest, macos-latest]
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        vscode-version: [1.38.1, stable]
 
-        runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
 
-        steps:
-            - uses: actions/checkout@v2
-            - name: Use Node.js 12
-              uses: actions/setup-node@v2
-              with:
-                  node-version: 12
-            - run: yarn install
-            - name: Test
-              uses: GabrielBB/xvfb-action@v1
-              with:
-                  run: yarn test
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - run: yarn install
+      - name: Test with VS Code ${{ matrix.vscode-version }}
+        uses: GabrielBB/xvfb-action@v1
+        env:
+          VSCODE_TEST_VERSION: ${{ matrix.vscode-version }}
+        with:
+          run: yarn test
 
-    release:
-        needs: test
+  release:
+    needs: test
 
-        runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-        steps:
-            - uses: actions/checkout@v2
-              with:
-                  token: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE }}
-            - name: Use Node.js 12
-              uses: actions/setup-node@v2
-              with:
-                  node-version: 12
-            - run: yarn install
-            - run: yarn run release
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
-            - if: github.event_name == 'pull_request'
-              name: Create extension vsix for pull request
-              run: |
-                pr_number=$([[ "${GITHUB_REF}" =~ ^refs/pull/(.*)/merge$ ]] && echo ${BASH_REMATCH[1]})
-                yarn version --prerelease --preid "pr-${pr_number}" --no-git-tag-version
-                yarn run package
-            - if: github.event_name == 'pull_request'
-              name: Archive the extension vsix for pull request
-              uses: actions/upload-artifact@v2
-              with:
-                name: extension-vsix
-                path: "*.vsix"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE }}
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - run: yarn install
+      - run: yarn run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
+      - if: github.event_name == 'pull_request'
+        name: Create extension vsix for pull request
+        run: |
+          pr_number=$([[ "${GITHUB_REF}" =~ ^refs/pull/(.*)/merge$ ]] && echo ${BASH_REMATCH[1]})
+          yarn version --prerelease --preid "pr-${pr_number}" --no-git-tag-version
+          yarn run package
+      - if: github.event_name == 'pull_request'
+        name: Archive the extension vsix for pull request
+        uses: actions/upload-artifact@v2
+        with:
+          name: extension-vsix
+          path: "*.vsix"

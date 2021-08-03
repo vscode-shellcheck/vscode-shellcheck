@@ -149,7 +149,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
             let suffix = '';
             let osarch = process.arch;
             if (process.platform === 'win32') {
-                if (process.arch === 'x64') {
+                if (process.arch === 'x64' || process.arch === 'ia32') {
                     osarch = 'x32';
                 }
                 suffix = '.exe';

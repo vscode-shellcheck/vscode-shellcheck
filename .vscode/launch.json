@@ -49,6 +49,7 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
+                "--new-window",
                 "--extensionDevelopmentPath=${workspaceFolder}",
                 "--extensionTestsPath=${workspaceFolder}/out/test/suite"
             ],
@@ -65,25 +66,26 @@
             }
         },
         {
-			"name": "Launch Tests (Webpack)",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--extensionTestsPath=${workspaceFolder}/dist/test/suite"
-			],
-			"stopOnEntry": false,
-			"sourceMaps": true,
-			// outFiles is used for locating generated JavaScript files, see https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_source-maps
-			"outFiles": [
-				"${workspaceFolder}/dist/**/*.js"
-			],
-			"preLaunchTask": "npm: pretest",
-			"env": {
-				"DEBUGTELEMETRY": "1",
-				"NODE_DEBUG": ""
-			}
-		},
+            "name": "Launch Tests (Webpack)",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--new-window",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/dist/test/suite"
+            ],
+            "stopOnEntry": false,
+            "sourceMaps": true,
+            // outFiles is used for locating generated JavaScript files, see https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_source-maps
+            "outFiles": [
+                "${workspaceFolder}/dist/**/*.js"
+            ],
+            "preLaunchTask": "npm: pretest",
+            "env": {
+                "DEBUGTELEMETRY": "1",
+                "NODE_DEBUG": ""
+            }
+        },
     ]
 }
