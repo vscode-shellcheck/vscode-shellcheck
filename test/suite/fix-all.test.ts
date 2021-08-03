@@ -5,7 +5,6 @@ import { sleep } from './utils';
 
 suite('Fix all', () => {
     test('Extension should fix ssues automatically on demand', async () => {
-        <vscode.Extension<any>>vscode.extensions.getExtension('timonwong.shellcheck');
         const document = await vscode.workspace.openTextDocument({
             content: '#!/bin/bash\necho $SHELL\necho $SHELL\neval `uname -r`',
             language: 'shellscript',

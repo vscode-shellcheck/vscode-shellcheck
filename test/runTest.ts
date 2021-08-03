@@ -17,8 +17,11 @@ async function main() {
             extensionDevelopmentPath,
             extensionTestsPath,
             launchArgs: [
+                '--new-window',
                 '--disable-extensions',
             ],
+            // Use VSCODE_TEST_VERSION if set
+            ...(process.env.VSCODE_TEST_VERSION ? { version: process.env.VSCODE_TEST_VERSION } : {})
         });
     } catch (err) {
         console.error('Failed to run tests');
