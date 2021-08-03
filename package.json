@@ -20,14 +20,14 @@
         "linter",
         "lint"
     ],
-    "homepage": "https://github.com/timonwong/vscode-shellcheck#readme",
+    "homepage": "https://github.com/vscode-shellcheck/vscode-shellcheck#readme",
     "private": true,
     "repository": {
         "type": "git",
-        "url": "https://github.com/timonwong/vscode-shellcheck.git"
+        "url": "https://github.com/vscode-shellcheck/vscode-shellcheck.git"
     },
     "bugs": {
-        "url": "https://github.com/timonwong/vscode-shellcheck/issues"
+        "url": "https://github.com/vscode-shellcheck/vscode-shellcheck/issues"
     },
     "icon": "shellcheck.png",
     "activationEvents": [
