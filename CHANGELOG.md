@@ -1,3 +1,10 @@
+### [0.15.2](https://github.com/timonwong/vscode-shellcheck/compare/v0.15.1...v0.15.2) (2021-08-03)
+
+
+### Bug Fixes
+
+* loading bundled binary on Windows `ia32` arch ([#283](https://github.com/timonwong/vscode-shellcheck/issues/283)) ([8ddea18](https://github.com/timonwong/vscode-shellcheck/commit/8ddea18908fc5e691f45003eac822dca78a21fc1))
+
 ### [0.15.1](https://github.com/timonwong/vscode-shellcheck/compare/v0.15.0...v0.15.1) (2021-08-02)
 
 
