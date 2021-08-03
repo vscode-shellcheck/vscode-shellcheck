@@ -5,6 +5,9 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
+  # This is to catch new releases of VS Code which could cause the extension to break
+  schedule:
+    - cron: 0 0 * * *
 
 jobs:
   test:
@@ -30,6 +33,8 @@ jobs:
           run: yarn test
 
   release:
+    if: github.event_name != 'schedule'
+
     needs: test
 
     runs-on: ubuntu-latest
