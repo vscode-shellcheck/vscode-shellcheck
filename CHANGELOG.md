@@ -1,3 +1,10 @@
+### [0.15.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.15.2...v0.15.3) (2021-09-03)
+
+
+### Dependencies
+
+* **deps:** bump tar from 6.1.3 to 6.1.11 ([#297](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/297)) ([3d083ed](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/3d083ed79acc9e0a80a53f711736268bc86eaeeb))
+
 ### [0.15.2](https://github.com/timonwong/vscode-shellcheck/compare/v0.15.1...v0.15.2) (2021-08-03)
 
 
