@@ -40,6 +40,8 @@ Default options are:
     "shellcheck.exclude": [],
     "shellcheck.customArgs": [],
     "shellcheck.ignorePatterns": {
+        "**/*.xonshrc": true,
+		"**/*.xsh": true,
         "**/*.zsh": true,
         "**/*.zshrc": true,
         "**/zshrc": true,

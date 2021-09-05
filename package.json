@@ -115,6 +115,8 @@
                         ]
                     },
                     "default": {
+                        "**/*.xonshrc": true,
+                        "**/*.xsh": true,
                         "**/*.zsh": true,
                         "**/*.zshrc": true,
                         "**/zshrc": true,
