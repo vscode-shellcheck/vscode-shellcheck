@@ -5,4 +5,4 @@
  */
 
 // Export activate/deactivate for main.js
-export { activateInternal, deactivateInternal } from './src/extension';
+export { activateInternal, deactivateInternal } from "./src/extension";
