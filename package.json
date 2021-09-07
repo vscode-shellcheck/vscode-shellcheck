@@ -174,7 +174,7 @@
     "lint:fix": "eslint --fix .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "spell": "cspell '**'",
+    "spell": "cspell \"**\"",
     "pretest": "yarn run compile && yarn run build",
     "test": "node ./out/test/runTest.js",
     "posttest": "yarn run lint && yarn run format:check && yarn run spell",
