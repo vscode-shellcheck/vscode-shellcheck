@@ -174,9 +174,10 @@
     "lint:fix": "eslint --fix .",
     "format": "prettier --write .",
     "format:check": "prettier --write .",
+    "spell": "cspell '**'",
     "pretest": "yarn run compile && yarn run build",
     "test": "node ./out/test/runTest.js",
-    "posttest": "yarn run lint && yarn run format:check",
+    "posttest": "yarn run lint && yarn run format:check && yarn run spell",
     "release": "semantic-release"
   },
   "dependencies": {
@@ -200,6 +201,7 @@
     "@typescript-eslint/parser": "^4.31.0",
     "bindl": "^2.0.0",
     "conventional-changelog-conventionalcommits": "^4.5.0",
+    "cspell": "^5.9.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "filemanager-webpack-plugin": "^2.0.5",

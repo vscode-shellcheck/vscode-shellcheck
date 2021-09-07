@@ -1,0 +1,37 @@
+{
+    "version": "0.2",
+    "language": "en",
+    "ignorePaths": [
+        "node_modules/**",
+        "binaries/**",
+        ".vscode-test/**",
+        "dist/**",
+        "out/**",
+        "licenses/shellcheck-LICENSE.txt"
+    ],
+    "words": [
+        "aarch64",
+        "armv6hf",
+        "bindl",
+        "conventionalcommits",
+        "execa",
+        "felipecrs",
+        "filemanager",
+        "filematcher",
+        "gitfs",
+        "hoovercj",
+        "koalaman",
+        "osarch",
+        "posttest",
+        "precompiled",
+        "ralish",
+        "SCPLUGIN",
+        "shellcheck",
+        "shellname",
+        "sylveon",
+        "timonwong",
+        "vsix",
+        "xonsh",
+        "xonshrc"
+    ],
+}
