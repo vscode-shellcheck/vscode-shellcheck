@@ -173,7 +173,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "format": "prettier --write .",
-    "format:check": "prettier --write .",
+    "format:check": "prettier --check .",
     "spell": "cspell '**'",
     "pretest": "yarn run compile && yarn run build",
     "test": "node ./out/test/runTest.js",
