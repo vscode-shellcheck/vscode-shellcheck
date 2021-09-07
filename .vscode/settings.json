@@ -9,7 +9,5 @@
         "out": true
     },
     "typescript.tsdk": "./node_modules/typescript/lib",
-    "[typescript]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
-    }
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
