@@ -42,13 +42,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          token: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE }}
+          token: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE || github.token }}
       - name: Use Node.js 14
         uses: actions/setup-node@v2
         with:
           node-version: 14
       - run: yarn install
+      # Only run on push events or pull requests coming from the same repository, except from dependabot
       - run: yarn run release
+        if: github.event_name == 'push' || github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
