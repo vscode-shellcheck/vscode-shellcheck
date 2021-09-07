@@ -1,5 +1,5 @@
 const version = "v0.7.2";
-const commonUrl = `https://github.com/koalaman/shellcheck/releases/download/${version}/shellcheck-${version}`
+const commonUrl = `https://github.com/koalaman/shellcheck/releases/download/${version}/shellcheck-${version}`;
 
 module.exports = {
     binaries: [

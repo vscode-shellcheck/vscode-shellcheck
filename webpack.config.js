@@ -1,4 +1,5 @@
 //@ts-check
+/* eslint-disable @typescript-eslint/naming-convention */
 
 'use strict';
 

@@ -8,8 +8,7 @@ scripts/**
 dist/test/**
 .gitignore
 tsconfig.json
-tslint.json
-.eslintrc
+.eslintrc.json
 .editorconfig
 .travis.yml
 .azure-pipelines
