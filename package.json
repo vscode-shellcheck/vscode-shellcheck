@@ -33,7 +33,7 @@
   "activationEvents": [
     "onLanguage:shellscript"
   ],
-  "main": "./main",
+  "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
@@ -160,13 +160,13 @@
   },
   "scripts": {
     "prepare": "bindl",
-    "compile": "tsc -p ./",
-    "compile:dev": "tsc --watch -p ./",
-    "bundle": "webpack --mode none",
-    "bundle:prod": "webpack --mode production",
-    "bundle:dev": "webpack --watch --mode none",
-    "build": "yarn run bundle",
-    "build:prod": "yarn run bundle:prod",
+    "build": "webpack",
+    "build:watch": "webpack --watch",
+    "build:prod": "webpack --mode production --devtool hidden-source-map",
+    "build:test": "tsc --project tsconfig.test.json",
+    "build:test:watch": "tsc --project tsconfig.test.json --watch",
+    "build:all": "run-p build build:test",
+    "build:all:watch": "run-p build:watch build:test:watch",
     "vscode:prepublish": "yarn run build:prod",
     "package": "vsce package --yarn",
     "publish": "vsce publish --yarn",
@@ -175,7 +175,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "spell": "cspell \"**\"",
-    "pretest": "yarn run compile && yarn run build",
+    "pretest": "yarn run build:all",
     "test": "node ./out/test/runTest.js",
     "posttest": "yarn run lint && yarn run format:check && yarn run spell",
     "release": "semantic-release"
@@ -203,19 +203,18 @@
     "cspell": "^5.9.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
-    "filemanager-webpack-plugin": "^2.0.5",
     "glob": "^7.1.4",
     "kind-of": "^6.0.3",
     "mocha": "^9.1.1",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.3.2",
     "semantic-release": "^17.4.7",
     "semantic-release-vsce": "^3.1.3",
-    "terser-webpack-plugin": "^1.4.3",
-    "ts-loader": "^8.0.4",
+    "ts-loader": "^9.2.2",
     "typescript": "^3.0.3",
     "vscode-test": "^1.0.2",
-    "webpack": "^4.44.2",
-    "webpack-cli": "^3.3.6"
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.0"
   },
   "engines": {
     "vscode": "^1.38.0"

@@ -1,22 +1,29 @@
+// See https://go.microsoft.com/fwlink/?LinkId=733558
+// for the documentation about the tasks.json format
 {
-  // See https://go.microsoft.com/fwlink/?LinkId=733558
-  // for the documentation about the tasks.json format
   "version": "2.0.0",
   "tasks": [
     {
-      "type": "typescript",
-      "tsconfig": "tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
+      "type": "npm",
+      "script": "build:watch",
+      "problemMatcher": ["$ts-webpack-watch"],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "silent"
+      },
       "group": {
         "kind": "build",
         "isDefault": true
       }
     },
     {
-      "type": "typescript",
-      "tsconfig": "tsconfig.json",
-      "problemMatcher": ["$tsc"],
+      "type": "npm",
+      "script": "build:all:watch",
+      "problemMatcher": ["$ts-webpack-watch", "$tsc-watch"],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "silent"
+      },
       "group": "build"
     }
   ]

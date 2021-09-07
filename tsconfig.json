@@ -16,5 +16,5 @@
     "noImplicitAny": true,
     "noImplicitThis": true
   },
-  "exclude": ["node_modules", ".vscode-test"]
+  "include": ["src"]
 }
