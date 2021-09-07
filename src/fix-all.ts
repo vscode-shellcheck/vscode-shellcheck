@@ -41,7 +41,7 @@ async function getFixAllCodeAction(
     );
 
     if (codeActionsForDiagnostic) {
-      // get only codeactions which perform edits
+      // get only code actions which perform edits
       const actionToFix = codeActionsForDiagnostic.filter(
         (action) => action.edit
       );

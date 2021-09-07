@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 import { sleep } from "./utils";
 
 suite("Fix all", () => {
-  test("Extension should fix ssues automatically on demand", async () => {
+  test("Extension should fix issues automatically on demand", async () => {
     const document = await vscode.workspace.openTextDocument({
       content: "#!/bin/bash\necho $SHELL\necho $SHELL\neval `uname -r`",
       language: "shellscript",

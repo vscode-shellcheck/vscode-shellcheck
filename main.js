@@ -23,7 +23,7 @@ async function deactivate(ctx) {
   return await extension.deactivateInternal(ctx, perfStats);
 }
 
-// Export as entrypoints for vscode
+// Export as entry points for vscode
 exports.activate = activate;
 exports.deactivate = deactivate;
 
