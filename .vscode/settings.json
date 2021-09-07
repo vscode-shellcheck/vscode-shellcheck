@@ -1,13 +1,13 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-    "files.exclude": {
-        "out": false
-    },
-    "search.exclude": {
-        "**/node_modules": true,
-        "**/bower_components": true,
-        "out": true
-    },
-    "typescript.tsdk": "./node_modules/typescript/lib",
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "files.exclude": {
+    "out": false
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "out": true
+  },
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
