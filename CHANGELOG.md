@@ -1,3 +1,10 @@
+### [0.16.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.16.1...v0.16.2) (2021-09-09)
+
+
+### Code Refactoring
+
+* simplify codebase to upgrade webpack ([#308](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/308)) ([8454c64](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/8454c64213ea65831392586e7527d470fe64fa6d))
+
 ### [0.16.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.16.0...v0.16.1) (2021-09-09)
 
 
