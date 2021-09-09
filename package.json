@@ -181,7 +181,6 @@
     "release": "semantic-release"
   },
   "dependencies": {
-    "bl": "^4.0.3",
     "execa": "^5.0.0",
     "lodash": "^4.17.19",
     "minimatch": "^3.0.4",
@@ -196,7 +195,7 @@
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.11.0",
     "@types/semver": "^7.3.4",
-    "@types/vscode": "1.38.0",
+    "@types/vscode": "~1.38.0",
     "@typescript-eslint/eslint-plugin": "^4.31.0",
     "@typescript-eslint/parser": "^4.31.0",
     "bindl": "^2.0.0",
