@@ -206,7 +206,7 @@
     "filemanager-webpack-plugin": "^2.0.5",
     "glob": "^7.1.4",
     "kind-of": "^6.0.3",
-    "mocha": "^5.2.0",
+    "mocha": "^9.1.1",
     "prettier": "^2.3.2",
     "semantic-release": "^17.4.7",
     "semantic-release-vsce": "^3.1.3",
