@@ -1,3 +1,10 @@
+### [0.16.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.16.0...v0.16.1) (2021-09-09)
+
+
+### Dependencies
+
+* **deps:** remove `bl` dependency and upgrade others ([#309](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/309)) ([8c53a49](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/8c53a49ddd5af40c792bccd334368ea8032cdbfe))
+
 ## [0.16.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.15.3...v0.16.0) (2021-09-05)
 
 
