@@ -59,6 +59,7 @@ module.exports = {
       "semantic-release-vsce",
       {
         packageVsix: true,
+        yarn: true,
       },
     ],
     "@semantic-release/git",
