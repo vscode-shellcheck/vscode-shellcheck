@@ -9,7 +9,6 @@ src/**
 .gitattributes
 .gitignore
 .prettierignore
-.yarnrc
 bindl.config.js
 cspell.json
 release.config.js

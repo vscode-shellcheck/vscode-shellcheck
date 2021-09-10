@@ -167,17 +167,17 @@
     "build:test:watch": "tsc --project tsconfig.test.json --watch",
     "build:all": "run-p build build:test",
     "build:all:watch": "run-p build:watch build:test:watch",
-    "vscode:prepublish": "yarn run build:prod",
-    "package": "vsce package --yarn",
-    "publish": "vsce publish --yarn",
+    "vscode:prepublish": "npm run build:prod",
+    "package": "vsce package",
+    "publish": "vsce publish",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "spell": "cspell \"**\"",
-    "pretest": "yarn run build:all",
+    "pretest": "npm run build:all",
     "test": "node ./out/test/runTest.js",
-    "posttest": "yarn run lint && yarn run format:check && yarn run spell",
+    "posttest": "npm run lint && npm run format:check && npm run spell",
     "release": "semantic-release"
   },
   "dependencies": {
@@ -218,6 +218,10 @@
   },
   "engines": {
     "vscode": "^1.38.0"
+  },
+  "volta": {
+    "node": "14.17.6",
+    "npm": "7.23.0"
   },
   "__metadata": {
     "id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",
