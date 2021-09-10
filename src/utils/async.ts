@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-type Nullable<T> = T | null;
-
 export interface ITask<T> {
   (): T;
 }
@@ -30,9 +28,9 @@ export interface ITask<T> {
  * 		}
  */
 export class Throttler<T> {
-  private activePromise: Nullable<Promise<T>>;
-  private queuedPromise: Nullable<Promise<T>>;
-  private queuedPromiseFactory: Nullable<ITask<Promise<T>>>;
+  private activePromise: Promise<T> | null;
+  private queuedPromise: Promise<T> | null;
+  private queuedPromiseFactory: ITask<Promise<T>> | null;
 
   constructor() {
     this.activePromise = null;
@@ -54,7 +52,7 @@ export class Throttler<T> {
           return result;
         };
 
-        this.queuedPromise = new Promise<T>((resolve, reject) => {
+        this.queuedPromise = new Promise<T>((resolve) => {
           this.activePromise!.then(onComplete, onComplete).then(resolve);
         });
       }
@@ -106,10 +104,10 @@ export class Throttler<T> {
  */
 export class Delayer<T> {
   public defaultDelay: number;
-  private timeout: Nullable<NodeJS.Timer>;
-  private completionPromise: Nullable<Promise<T>>;
-  private onResolve: Nullable<(value?: T | PromiseLike<T>) => void>;
-  private task: Nullable<ITask<T>>;
+  private timeout: NodeJS.Timer | null;
+  private completionPromise: Promise<T> | null;
+  private onResolve: ((value: T | PromiseLike<T> | undefined) => void) | null;
+  private task: ITask<T> | null;
 
   constructor(defaultDelay: number) {
     this.defaultDelay = defaultDelay;
@@ -127,7 +125,7 @@ export class Delayer<T> {
     this.cancelTimeout();
 
     if (!this.completionPromise) {
-      this.completionPromise = new Promise<T>((resolve, reject) => {
+      this.completionPromise = new Promise<T | undefined>((resolve) => {
         this.onResolve = resolve;
       }).then(() => {
         this.completionPromise = null;
@@ -142,7 +140,7 @@ export class Delayer<T> {
 
     this.timeout = setTimeout(() => {
       this.timeout = null;
-      this.onResolve!();
+      this.onResolve!(undefined);
     }, delay);
 
     return this.completionPromise;
@@ -181,10 +179,10 @@ export class ThrottledDelayer<T> extends Delayer<Promise<T>> {
   constructor(defaultDelay: number) {
     super(defaultDelay);
 
-    this.throttler = new Throttler();
+    this.throttler = new Throttler<T>();
   }
 
-  public trigger(
+  public override trigger(
     promiseFactory: ITask<Promise<T>>,
     delay?: number
   ): Promise<Promise<T>> {

@@ -249,7 +249,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       try {
         this.toolVersion = await getToolVersion(settings.executable.path);
         this.executableNotFound = false;
-      } catch (error) {
+      } catch (error: any) {
         this.showShellCheckError(error);
         this.executableNotFound = true;
       }
