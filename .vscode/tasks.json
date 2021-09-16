@@ -5,8 +5,8 @@
   "tasks": [
     {
       "type": "npm",
-      "script": "build:watch",
-      "problemMatcher": ["$ts-webpack-watch"],
+      "script": "build:prod",
+      // "problemMatcher": ["$ts-webpack-watch"],
       "isBackground": true,
       "presentation": {
         "reveal": "silent"
@@ -18,8 +18,8 @@
     },
     {
       "type": "npm",
-      "script": "build:all:watch",
-      "problemMatcher": ["$ts-webpack-watch", "$tsc-watch"],
+      "script": "build:test:watch",
+      // "problemMatcher": ["$ts-webpack-watch", "$tsc-watch"],
       "isBackground": true,
       "presentation": {
         "reveal": "silent"

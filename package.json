@@ -160,13 +160,11 @@
   },
   "scripts": {
     "prepare": "bindl",
-    "build": "webpack",
-    "build:watch": "webpack --watch",
-    "build:prod": "webpack --mode production --devtool hidden-source-map",
-    "build:test": "tsc --project tsconfig.test.json",
-    "build:test:watch": "tsc --project tsconfig.test.json --watch",
-    "build:all": "run-p build build:test",
-    "build:all:watch": "run-p build:watch build:test:watch",
+    "build": "snowpack build --mode development",
+    "build:watch": "snowpack build --mode development --watch",
+    "build:prod": "snowpack build --mode production",
+    "build:test": "snowpack build --mode test",
+    "build:test:watch": "snowpack build --mode test --watch",
     "vscode:prepublish": "npm run build:prod",
     "package": "vsce package",
     "publish": "vsce publish",
@@ -175,8 +173,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "spell": "cspell \"**\"",
-    "pretest": "npm run build:all",
-    "test": "node ./out/test/runTest.js",
+    "pretest": "npm run build:test",
+    "test": "node ./dist/test/runTest.js",
     "posttest": "npm run lint && npm run format:check && npm run spell",
     "release": "semantic-release"
   },
@@ -189,6 +187,7 @@
   "devDependencies": {
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/git": "^9.0.1",
+    "@snowpack/plugin-typescript": "^1.2.1",
     "@types/glob": "^7.1.4",
     "@types/lodash": "^4.14.172",
     "@types/minimatch": "^3.0.3",
@@ -206,15 +205,12 @@
     "glob": "^7.1.4",
     "kind-of": "^6.0.3",
     "mocha": "^9.1.1",
-    "npm-run-all": "^4.1.5",
     "prettier": "^2.3.2",
     "semantic-release": "^17.4.7",
     "semantic-release-vsce": "^3.1.3",
-    "ts-loader": "^9.2.2",
+    "snowpack": "^3.8.8",
     "typescript": "^4.4.2",
-    "vscode-test": "^1.0.2",
-    "webpack": "^5.38.1",
-    "webpack-cli": "^4.7.0"
+    "vscode-test": "^1.0.2"
   },
   "engines": {
     "vscode": "^1.38.0"
