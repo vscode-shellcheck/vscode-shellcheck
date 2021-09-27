@@ -197,7 +197,7 @@
     "@types/semver": "^7.3.4",
     "@types/vscode": "~1.38.0",
     "@typescript-eslint/eslint-plugin": "^4.31.0",
-    "@typescript-eslint/parser": "^4.31.0",
+    "@typescript-eslint/parser": "^4.32.0",
     "bindl": "^2.0.0",
     "conventional-changelog-conventionalcommits": "^4.5.0",
     "cspell": "^5.9.0",
