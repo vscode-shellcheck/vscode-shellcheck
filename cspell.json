@@ -34,6 +34,7 @@
     "vsceignore",
     "vsix",
     "xonsh",
-    "xonshrc"
+    "xonshrc",
+    "shellcheckrc"
   ]
 }

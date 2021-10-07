@@ -1,0 +1,35 @@
+{
+  "scopeName": "source.shellcheckrc",
+  "patterns": [
+    {
+      "comment": "Comments",
+      "match": "(#).*",
+      "name": "comment.line.number-sign.shellcheckrc",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.comment.shellcheckrc"
+        }
+      }
+    },
+    {
+      "comment": "Keywords",
+      "match": "[A-Za-z0-9-]+(?=\\=)",
+      "name": "keyword.other.definition.shellcheckrc"
+    },
+    {
+      "comment": "Strings",
+      "match": "(?<=[A-Za-z0-9-]+=|,)[^=,\\s]*",
+      "name": "string.shellcheckrc"
+    },
+    {
+      "comment": "Commas",
+      "match": ",",
+      "name": "punctuation.separator.list.shellcheckrc"
+    },
+    {
+      "comment": "Equals signs",
+      "match": "=",
+      "name": "punctuation.separator.key-value.shellcheckrc"
+    }
+  ]
+}
