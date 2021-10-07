@@ -31,10 +31,27 @@
   },
   "icon": "shellcheck.png",
   "activationEvents": [
-    "onLanguage:shellscript"
+    "onLanguage:shellscript",
+    "workspaceContains:**/.shellcheckrc"
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "languages": [
+      {
+        "id": "shellcheckrc",
+        "extensions": [
+          ".shellcheckrc"
+        ],
+        "configuration": "./shellcheckrc/language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "shellcheckrc",
+        "scopeName": "source.shellcheckrc",
+        "path": "./shellcheckrc/tmLanguage.json"
+      }
+    ],
     "commands": [
       {
         "command": "shellcheck.runLint",
