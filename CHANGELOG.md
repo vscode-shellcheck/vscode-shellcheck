@@ -1,3 +1,10 @@
+## [0.17.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.16.2...v0.17.0) (2021-10-11)
+
+
+### Features
+
+* allow `${workspaceFolder}` in `shellcheck.customArgs` ([#356](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/356)) ([1358710](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/135871057ebfe42aebc74e8775bba651f4f0e10a))
+
 ### [0.16.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.16.1...v0.16.2) (2021-09-09)
 
 
