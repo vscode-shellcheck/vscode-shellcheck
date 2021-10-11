@@ -65,7 +65,9 @@ function substitutePath(s: string, workspaceFolder?: string): string {
     );
   }
 
-  return s.replace(/\${workspaceRoot}/g, workspaceFolder || "");
+  return s
+    .replace(/\${workspaceRoot}/g, workspaceFolder || "")
+    .replace(/\${workspaceFolder}/g, workspaceFolder || "");
 }
 
 export default class ShellCheckProvider implements vscode.CodeActionProvider {
@@ -212,7 +214,9 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       trigger: RunTrigger.from(section.get("run", RunTrigger.strings.onType)),
       executable: this.getExecutable(section.get("executablePath", "")),
       exclude: section.get("exclude", []),
-      customArgs: section.get("customArgs", []),
+      customArgs: section
+        .get("customArgs", [])
+        .map((arg) => substitutePath(arg)),
       ignorePatterns: section.get("ignorePatterns", {}),
       ignoreFileSchemes: new Set(
         section.get("ignoreFileSchemes", ["git", "gitfs"])
