@@ -173,7 +173,7 @@
           "description": "Whether to use the workspace root directory as the current working directory when launching ShellCheck.",
           "type": "boolean",
           "scope": "resource",
-          "default": false
+          "default": true
         },
         "shellcheck.disableVersionCheck": {
           "description": "Whether to disable shellcheck binary version check, which prompt for updating when outdated version found.",
