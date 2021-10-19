@@ -7,10 +7,10 @@ updates:
     ignore:
       - dependency-name: "@types/node"
         versions:
-          - ">=11"
+          - ">=15"
       - dependency-name: "@types/vscode"
         versions:
-          - ">=1.39"
+          - ">=1.58"
     open-pull-requests-limit: 100
   - package-ecosystem: github-actions
     directory: /
