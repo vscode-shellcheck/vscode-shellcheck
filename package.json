@@ -35,6 +35,15 @@
     "workspaceContains:**/.shellcheckrc"
   ],
   "main": "./dist/extension.js",
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "Only the user defined shellcheck executable will be taken into account when running in untrusted mode.",
+      "restrictedConfigurations": [
+        "shellcheck.executablePath"
+      ]
+    }
+  },
   "contributes": {
     "languages": [
       {
@@ -80,7 +89,7 @@
             "shellcheck"
           ],
           "type": "string",
-          "scope": "machine"
+          "scope": "machine-overridable"
         },
         "shellcheck.run": {
           "description": "Whether shellcheck is run on save or on type.",
