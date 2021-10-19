@@ -414,7 +414,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         return;
       });
 
-      if (childProcess.pid) {
+      if (childProcess.pid && childProcess.stdout && childProcess.stdin) {
         childProcess.stdout.setEncoding("utf-8");
 
         let script = textDocument.getText();
