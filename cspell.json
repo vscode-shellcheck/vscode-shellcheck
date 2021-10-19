@@ -35,6 +35,8 @@
     "vsix",
     "xonsh",
     "xonshrc",
-    "shellcheckrc"
+    "shellcheckrc",
+    "untrusted",
+    "overridable"
   ]
 }

@@ -112,14 +112,23 @@ By default all shellcheck checks are performed and reported on as necessary. To 
 
 ### Using Docker version of shellcheck
 
-In order to get it work, you need a "shim" script, and then, just remember, do not try to construct command line arguments for shellcheck yourself.
+In order to get it to work, you need a "shim" script, and then, just remember, do not try to construct command line arguments for shellcheck yourself.
 
 Here is a simple "shim" script to get start with (See discussion: [#24](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/24)):
 
 ```shell
 #!/bin/bash
 
-exec docker run --rm -i -v "$PWD:/mnt:ro" koalaman/shellcheck:v0.7.0 "$@"
+exec docker run --rm -i -v "$PWD:/mnt:ro" koalaman/shellcheck:latest "$@"
+```
+
+For example, you can place it at `shellcheck.sh` in the root of your workspace and ensure that it have execution permission with `chmod +x shellcheck.sh`. And then, you can configure the extension to use it:
+
+```jsonc
+// .vscode/settings.json
+{
+  "shellcheck.executablePath": "${workspaceFolder}/shellcheck.sh"
+}
 ```
 
 ## Acknowledgements
