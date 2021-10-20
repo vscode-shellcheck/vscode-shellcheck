@@ -1,3 +1,18 @@
+## [0.18.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.17.0...v0.18.0) (2021-10-20)
+
+
+### Features
+
+* add syntax highlight to `.shellcheckrc` ([29e11ef](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/29e11ef16dc7b3d8bb7fbc85ba154dbc56793724)), closes [#350](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/350)
+* allow `executablePath` to be set in trusted workspaces ([36c2802](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/36c280213d8db93f2c5ab8a7f0ab85ac94ffeb17))
+* use workspace folder as working directory by default ([eb05cb8](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/eb05cb870312cc612f04dbb3e8d819da8b940cc2))
+
+
+### Dependencies
+
+* **deps:** bumps minimum vscode version from 1.38 to 1.57 ([c349204](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/c3492046750bffcdb60ad4e7319cae6b71c0c94e))
+* **deps:** update `glob` ([129eaaf](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/129eaaf4cebb9cc25844ed496186ec22fdc09105))
+
 ## [0.17.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.16.2...v0.17.0) (2021-10-11)
 
 
