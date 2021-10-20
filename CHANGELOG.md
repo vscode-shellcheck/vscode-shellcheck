@@ -1,3 +1,10 @@
+### [0.18.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.18.0...v0.18.1) (2021-10-20)
+
+
+### Reverts
+
+* Revert "feat: use workspace folder as working directory by default" ([a3e25e6](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/a3e25e615fb3b42b29d28ab4a5c43257e83b5480))
+
 ## [0.18.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.17.0...v0.18.0) (2021-10-20)
 
 
