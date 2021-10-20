@@ -127,7 +127,12 @@ For example, you can place it at `shellcheck.sh` in the root of your workspace a
 ```jsonc
 // .vscode/settings.json
 {
-  "shellcheck.executablePath": "${workspaceFolder}/shellcheck.sh"
+  // use the shim as shellcheck executable
+  "shellcheck.executablePath": "${workspaceFolder}/shellcheck.sh",
+
+  // you may also need to turn this option on, so shellcheck in the container
+  // can access all the files in the workspace
+  "shellcheck.useWorkspaceRootAsCwd": true
 }
 ```
 
