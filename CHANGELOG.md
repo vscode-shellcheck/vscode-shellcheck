@@ -1,3 +1,10 @@
+### [0.18.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.18.1...v0.18.2) (2021-11-07)
+
+
+### Dependencies
+
+* **deps:** upgrade shellcheck to v0.8.0 ([931b3eb](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/931b3eb8136a61efcfee58f885d5b992f441cb0d)), closes [/github.com/koalaman/shellcheck/blob/master/CHANGELOG.md#v080---2021-11-06](https://github.com/vscode-shellcheck//github.com/koalaman/shellcheck/blob/master/CHANGELOG.md/issues/v080---2021-11-06)
+
 ### [0.18.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.18.0...v0.18.1) (2021-10-20)
 
 
