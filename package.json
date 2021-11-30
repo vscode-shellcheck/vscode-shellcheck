@@ -222,7 +222,7 @@
     "@types/node": "^14.17.27",
     "@types/semver": "^7.3.4",
     "@types/vscode": "~1.57.0",
-    "@typescript-eslint/eslint-plugin": "^5.3.0",
+    "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.3.0",
     "bindl": "^2.0.0",
     "conventional-changelog-conventionalcommits": "^4.5.0",
