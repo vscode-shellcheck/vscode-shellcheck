@@ -24,8 +24,8 @@ suite("Shellcheck extension", () => {
 
     await sleep(1500);
     const diagnostics = vscode.languages.getDiagnostics(editor.document.uri);
-    assert.equal(ext.isActive, true, "Extension should be activated");
-    assert.equal(diagnostics.length, 1);
-    assert.equal(diagnostics[0].code, "SC2034");
+    assert.strictEqual(ext.isActive, true, "Extension should be activated");
+    assert.strictEqual(diagnostics.length, 1);
+    assert.strictEqual(diagnostics[0].code, "SC2034");
   });
 });
