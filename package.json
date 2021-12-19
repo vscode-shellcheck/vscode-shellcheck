@@ -246,8 +246,8 @@
     "vscode": "^1.57.0"
   },
   "volta": {
-    "node": "14.18.1",
-    "npm": "8.1.3"
+    "node": "14.18.2",
+    "npm": "8.3.0"
   },
   "__metadata": {
     "id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",
