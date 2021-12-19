@@ -11,30 +11,13 @@ function executeCodeActionProvider(uri: vscode.Uri, range: vscode.Range) {
 async function getFixAllCodeAction(
   document: vscode.TextDocument
 ): Promise<vscode.CodeAction | undefined> {
-  const nonUniqueRanges = vscode.languages
+  const actionRanges = vscode.languages
     .getDiagnostics(document.uri)
     .filter((diagnostic) => diagnostic.source === "shellcheck")
     .map((diagnostic) => diagnostic.range);
 
-  // filter ranges so we get only unique ranges
-  const uniqueRanges: vscode.Range[] = [];
-  for (const nonUniqueRange of nonUniqueRanges) {
-    let duplicated = false;
-
-    for (const uniqueRange of uniqueRanges) {
-      if (uniqueRange.contains(nonUniqueRange)) {
-        duplicated = true;
-        break;
-      }
-    }
-
-    if (!duplicated) {
-      uniqueRanges.push(nonUniqueRange);
-    }
-  }
-
   const codeActions: vscode.CodeAction[] = [];
-  for (const range of uniqueRanges) {
+  for (const range of actionRanges) {
     const codeActionsForDiagnostic = await executeCodeActionProvider(
       document.uri,
       range
@@ -66,8 +49,28 @@ async function getFixAllCodeAction(
         if (!fixAll.edit) {
           fixAll.edit = new vscode.WorkspaceEdit();
         }
-        for (const edit of action.edit.entries()) {
-          fixAll.edit.set(edit[0], edit[1]);
+        for (const actionEditEntries of action.edit.entries()) {
+          // filter overlapping edits to prevent wrong behavior
+          let duplicated = false;
+          for (const actionEdit of actionEditEntries[1]) {
+            for (const fixAllEditEntries of fixAll.edit.entries()) {
+              for (const fixAllEdit of fixAllEditEntries[1]) {
+                if (fixAllEdit.range.contains(actionEdit.range)) {
+                  duplicated = true;
+                  break;
+                }
+              }
+              if (duplicated) {
+                break;
+              }
+            }
+            if (duplicated) {
+              break;
+            }
+          }
+          if (!duplicated) {
+            fixAll.edit.set(actionEditEntries[0], actionEditEntries[1]);
+          }
         }
       }
     }
