@@ -1,3 +1,10 @@
+### [0.18.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.18.2...v0.18.3) (2021-12-19)
+
+
+### Bug Fixes
+
+* only fix one issue when multiples are found ([bd4222d](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/bd4222dfd7e51cf2147196709409f7f93f5845c4)), closes [#367](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/367)
+
 ### [0.18.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.18.1...v0.18.2) (2021-11-07)
 
 
