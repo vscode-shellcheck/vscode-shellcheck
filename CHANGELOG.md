@@ -1,3 +1,10 @@
+### [0.18.4](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.18.3...v0.18.4) (2022-01-18)
+
+
+### Dependencies
+
+* **deps:** update build dependencies ([#449](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/449)) ([5a75236](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/5a75236db24ce4193e225b9109e9f758eb9ad169))
+
 ### [0.18.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.18.2...v0.18.3) (2021-12-19)
 
 
