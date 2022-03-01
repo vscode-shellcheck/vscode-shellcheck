@@ -227,7 +227,7 @@
     "bindl": "^2.0.0",
     "conventional-changelog-conventionalcommits": "^4.5.0",
     "cspell": "^5.18.5",
-    "eslint": "^8.9.0",
+    "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.4.0",
     "glob": "^7.1.4",
     "kind-of": "^6.0.3",
