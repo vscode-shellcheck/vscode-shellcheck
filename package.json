@@ -226,7 +226,7 @@
     "@typescript-eslint/parser": "^5.14.0",
     "bindl": "^2.0.0",
     "conventional-changelog-conventionalcommits": "^4.5.0",
-    "cspell": "^5.18.5",
+    "cspell": "^5.19.2",
     "eslint": "^8.11.0",
     "eslint-config-prettier": "^8.5.0",
     "glob": "^7.1.4",
