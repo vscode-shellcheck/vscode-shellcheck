@@ -1,3 +1,10 @@
+### [0.18.10](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.18.9...v0.18.10) (2022-03-25)
+
+
+### Dependencies
+
+* **deps:** bump minimist from 1.2.5 to 1.2.6 ([#526](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/526)) ([dc6d6e0](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/dc6d6e0366f5c986135c84107ae12290cf432714))
+
 ### [0.18.9](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.18.8...v0.18.9) (2022-02-24)
 
 
