@@ -9,7 +9,6 @@ import { FileMatcher, FileSettings } from "./utils/filematcher";
 import { getToolVersion, tryPromptForUpdatingTool } from "./utils/tool-check";
 import { getWorkspaceFolderPath } from "./utils/path";
 import { FixAllProvider } from "./fix-all";
-import { LinkifyProvider } from "./linkify";
 import { getWikiUrlForRule } from "./utils/link";
 
 interface Executable {
@@ -113,12 +112,6 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         ShellCheckProvider.LANGUAGE_ID,
         new FixAllProvider(),
         FixAllProvider.metadata
-      ),
-
-      // link provider
-      vscode.languages.registerDocumentLinkProvider(
-        ShellCheckProvider.LANGUAGE_ID,
-        new LinkifyProvider()
       ),
 
       // commands
