@@ -1,4 +1,5 @@
 {
+  "editor.tabSize": 2,
   "search.exclude": {
     "out": true,
     "dist": true
