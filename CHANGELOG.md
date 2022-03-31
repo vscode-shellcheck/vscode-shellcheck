@@ -1,3 +1,16 @@
+## [0.19.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.18.10...v0.19.0) (2022-03-31)
+
+
+### Features
+
+* allow shellcheck directives to be ctrl-clicked ([#539](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/539)) ([9503e44](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/9503e44173d38d9c1e254d88ec3d2bcef41bdb69)), closes [#299](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/299) [#535](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/535)
+
+
+### Bug Fixes
+
+* linkify RE only works for first line ([#540](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/540)) ([b575bfe](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/b575bfe86a069c77ccddcb2d99cd49db35df1775))
+* not working together with the SSH FS extension ([#538](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/538)) ([fc76402](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/fc76402b7959cd422d4d8e0828af3df1fe954c20)), closes [#536](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/536)
+
 ### [0.18.10](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.18.9...v0.18.10) (2022-03-25)
 
 
