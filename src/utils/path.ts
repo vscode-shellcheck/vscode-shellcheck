@@ -1,4 +1,4 @@
-import path = require("path");
+import * as path from "path";
 import * as vscode from "vscode";
 
 // Stolen from vscode-go: https://github.com/microsoft/vscode-go/blob/d6a0fac4d1722367c9496fb516d2d05ec887fbd3/src/goPath.ts#L193
@@ -43,7 +43,7 @@ export function getWorkspaceFolderPath(
   const folders = vscode.workspace.workspaceFolders;
   if (folders?.length) {
     // Only file uris are supported
-    let folder = folders.find((folder) => isSafeUriSchemeFunc(folder.uri));
+    const folder = folders.find((folder) => isSafeUriSchemeFunc(folder.uri));
     if (folder) {
       return fixDriveCasingInWindows(folder.uri.fsPath);
     }
