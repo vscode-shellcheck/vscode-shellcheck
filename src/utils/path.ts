@@ -9,7 +9,7 @@ export function fixDriveCasingInWindows(pathToFix: string): string {
     : pathToFix;
 }
 
-function isSupportedUriScheme(uri: vscode.Uri): boolean {
+function isSafeUriScheme(uri: vscode.Uri): boolean {
   return uri.scheme === "file";
 }
 
@@ -18,17 +18,18 @@ export function guessDocumentDirname(textDocument: vscode.TextDocument): string 
     return getWorkspaceFolderPath(textDocument.uri);
   }
 
-  if (isSupportedUriScheme(textDocument.uri)) {
+  if (isSafeUriScheme(textDocument.uri)) {
     return path.dirname(textDocument.fileName);
   }
 
   return undefined;
 }
 
-export function getWorkspaceFolderPath(fileUri?: vscode.Uri): string | undefined {
-  if (fileUri) {
-    const workspace = vscode.workspace.getWorkspaceFolder(fileUri);
-    if (workspace && isSupportedUriScheme(workspace.uri)) {
+export function getWorkspaceFolderPath(uri?: vscode.Uri, safe: boolean = true): string | undefined {
+  const isSafeUriSchemeFunc = safe ? isSafeUriScheme : () => true;
+  if (uri) {
+    const workspace = vscode.workspace.getWorkspaceFolder(uri);
+    if (workspace && isSafeUriSchemeFunc(workspace.uri)) {
       return fixDriveCasingInWindows(workspace.uri.fsPath);
     }
   }
@@ -37,7 +38,7 @@ export function getWorkspaceFolderPath(fileUri?: vscode.Uri): string | undefined
   const folders = vscode.workspace.workspaceFolders;
   if (folders?.length) {
     // Only file uris are supported
-    let folder = folders.find((folder) => isSupportedUriScheme(folder.uri));
+    let folder = folders.find((folder) => isSafeUriSchemeFunc(folder.uri));
     if (folder) {
       return fixDriveCasingInWindows(folder.uri.fsPath);
     }
