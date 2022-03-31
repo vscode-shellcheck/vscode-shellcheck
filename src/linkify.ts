@@ -6,6 +6,11 @@ export class LinkifyProvider implements vscode.DocumentLinkProvider {
     document: vscode.TextDocument,
     token: vscode.CancellationToken
   ): vscode.ProviderResult<vscode.DocumentLink[]> {
+    // Possible shellcheck directive:
+    //   - # shellcheck disable=code,code,...
+    //   - # shellcheck disable=SC0000-SC9999
+    // This method first find matching directives, then extracing rule ids and do linkify.
+
     const text = document.getText();
     const directivePattern = /^\s*#\s*shellcheck\s+disable=.+$/gm;
     const result: vscode.DocumentLink[] = [];
