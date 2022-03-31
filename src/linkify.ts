@@ -12,7 +12,7 @@ export class LinkifyProvider implements vscode.DocumentLinkProvider {
     // This method first find matching directives, then extracting rule ids and do linkify.
 
     const text = document.getText();
-    const directivePattern = /^\s*#\s*shellcheck\s+disable=.+$/gm;
+    const directivePattern = /^[ \t]*#[ \t]*shellcheck[ \t]+disable=.+$/gm;
     const result: vscode.DocumentLink[] = [];
 
     let match;
