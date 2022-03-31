@@ -39,7 +39,7 @@ export class FileMatcher {
       if (cuttingPoint < fsPath.length && fsPath.charAt(cuttingPoint) === "/") {
         cuttingPoint += 1;
       }
-      return fsPath.substr(cuttingPoint);
+      return fsPath.substring(cuttingPoint);
     }
     return fsPath;
   }
