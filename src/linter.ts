@@ -101,20 +101,24 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.diagnosticCollection = vscode.languages.createDiagnosticCollection();
     this.codeActionCollection = new Map();
 
+    // code actions
     context.subscriptions.push(
-      // code actions
       vscode.languages.registerCodeActionsProvider(
         ShellCheckProvider.LANGUAGE_ID,
         this,
         ShellCheckProvider.metadata
-      ),
+      )
+    );
+    context.subscriptions.push(
       vscode.languages.registerCodeActionsProvider(
         ShellCheckProvider.LANGUAGE_ID,
         new FixAllProvider(),
         FixAllProvider.metadata
-      ),
+      )
+    );
 
-      // commands
+    // commands
+    context.subscriptions.push(
       vscode.commands.registerCommand(
         CommandIds.openRuleDoc,
         async (url: string) => {
