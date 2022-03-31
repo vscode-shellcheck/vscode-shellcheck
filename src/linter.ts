@@ -9,6 +9,7 @@ import { FileMatcher, FileSettings } from "./utils/filematcher";
 import { getToolVersion, tryPromptForUpdatingTool } from "./utils/tool-check";
 import { guessDocumentDirname, getWorkspaceFolderPath } from "./utils/path";
 import { FixAllProvider } from "./fix-all";
+import { getWikiUrlForRule } from "./utils/link";
 
 interface Executable {
   path: string;
@@ -70,7 +71,8 @@ function substitutePath(s: string, workspaceFolder?: string): string {
 }
 
 export default class ShellCheckProvider implements vscode.CodeActionProvider {
-  public static LANGUAGE_ID = "shellscript";
+  public static readonly LANGUAGE_ID = "shellscript";
+
   private channel: vscode.OutputChannel;
   private settings!: ShellCheckSettings;
   private executableNotFound: boolean;
@@ -86,7 +88,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     vscode.CodeActionKind.Source,
   ];
 
-  public static metadata: vscode.CodeActionProviderMetadata = {
+  public static readonly metadata: vscode.CodeActionProviderMetadata = {
     providedCodeActionKinds: ShellCheckProvider.providedCodeActionKinds,
   };
 
@@ -101,15 +103,14 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     // code actions
     context.subscriptions.push(
       vscode.languages.registerCodeActionsProvider(
-        "shellscript",
+        ShellCheckProvider.LANGUAGE_ID,
         this,
         ShellCheckProvider.metadata
       )
     );
-
     context.subscriptions.push(
       vscode.languages.registerCodeActionsProvider(
-        "shellscript",
+        ShellCheckProvider.LANGUAGE_ID,
         new FixAllProvider(),
         FixAllProvider.metadata
       )
@@ -299,7 +300,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         action.command = {
           title: title,
           command: CommandIds.openRuleDoc,
-          arguments: [`https://www.shellcheck.net/wiki/${ruleId}`],
+          arguments: [getWikiUrlForRule(ruleId)],
         };
         actions.push(action);
       }
