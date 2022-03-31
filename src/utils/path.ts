@@ -5,7 +5,7 @@ import * as vscode from "vscode";
 // Workaround for issue in https://github.com/Microsoft/vscode/issues/9448#issuecomment-244804026
 export function fixDriveCasingInWindows(pathToFix: string): string {
   return process.platform === "win32" && pathToFix
-    ? pathToFix.substr(0, 1).toUpperCase() + pathToFix.substr(1)
+    ? pathToFix.substring(0, 1).toUpperCase() + pathToFix.substring(1)
     : pathToFix;
 }
 

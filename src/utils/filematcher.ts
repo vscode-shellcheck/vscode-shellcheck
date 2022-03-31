@@ -39,16 +39,12 @@ export class FileMatcher {
       if (cuttingPoint < fsPath.length && fsPath.charAt(cuttingPoint) === "/") {
         cuttingPoint += 1;
       }
-      return fsPath.substr(cuttingPoint);
+      return fsPath.substring(cuttingPoint);
     }
     return fsPath;
   }
 
-  private match(
-    excludePatterns: string[],
-    path: string,
-    root?: string
-  ): boolean {
+  private match(excludePatterns: string[], path: string, root?: string): boolean {
     const relativePath = this.relativeTo(path, root);
     return _.some(excludePatterns, (pattern) => {
       return minimatch(relativePath, pattern, { dot: true });
