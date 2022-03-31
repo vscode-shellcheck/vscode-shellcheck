@@ -7,7 +7,7 @@ import { createParser, ParseResult } from "./parser";
 import { ThrottledDelayer } from "./utils/async";
 import { FileMatcher, FileSettings } from "./utils/filematcher";
 import { getToolVersion, tryPromptForUpdatingTool } from "./utils/tool-check";
-import { getWorkspaceFolderPath } from "./utils/path";
+import { guessDocumentDirname, getWorkspaceFolderPath } from "./utils/path";
 import { FixAllProvider } from "./fix-all";
 
 interface Executable {
@@ -60,8 +60,7 @@ namespace CommandIds {
 function substitutePath(s: string, workspaceFolder?: string): string {
   if (!workspaceFolder && vscode.workspace.workspaceFolders) {
     workspaceFolder = getWorkspaceFolderPath(
-      vscode.window.activeTextEditor &&
-        vscode.window.activeTextEditor.document.uri
+      vscode.window.activeTextEditor?.document.uri
     );
   }
 
@@ -346,7 +345,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     if (
       this.fileMatcher.excludes(
         textDocument.fileName,
-        getWorkspaceFolderPath(textDocument.uri)
+        getWorkspaceFolderPath(textDocument.uri, false)
       )
     ) {
       return;
@@ -383,7 +382,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       const fileExt = path.extname(textDocument.fileName);
       if (fileExt === ".bash" || fileExt === ".ksh" || fileExt === ".dash") {
         // shellcheck args: specify dialect (sh, bash, dash, ksh)
-        args = args.concat(["-s", fileExt.substr(1)]);
+        args = args.concat(["-s", fileExt.substring(1)]);
       }
 
       if (settings.customArgs.length) {
@@ -393,16 +392,15 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       args.push("-"); // Use stdin for shellcheck
 
       let cwd: string | undefined;
+
       if (settings.useWorkspaceRootAsCwd) {
         cwd = getWorkspaceFolderPath(textDocument.uri);
       } else {
-        cwd = textDocument.isUntitled
-          ? getWorkspaceFolderPath(textDocument.uri)
-          : path.dirname(textDocument.fileName);
+        cwd = guessDocumentDirname(textDocument);
       }
 
-      const options = cwd ? { cwd: cwd } : undefined;
-      // this.channel.appendLine(`[DEBUG] Spawn: ${executable} ${args.join(' ')}`);
+      const options: execa.Options = { cwd: cwd ?? undefined };
+      // this.channel.appendLine(`[DEBUG] Spawn: ${executable.path} ${args.join(' ')}`);
       const childProcess = execa(executable.path, args, options);
       childProcess.on("error", (error: NodeJS.ErrnoException) => {
         if (!this.executableNotFound) {
@@ -417,7 +415,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       if (childProcess.pid && childProcess.stdout && childProcess.stdin) {
         childProcess.stdout.setEncoding("utf-8");
 
-        let script = textDocument.getText();
+        const script = textDocument.getText();
         childProcess.stdin.write(script);
         childProcess.stdin.end();
 
