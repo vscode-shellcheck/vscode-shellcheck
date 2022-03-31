@@ -13,7 +13,9 @@ function isSafeUriScheme(uri: vscode.Uri): boolean {
   return uri.scheme === "file";
 }
 
-export function guessDocumentDirname(textDocument: vscode.TextDocument): string | undefined {
+export function guessDocumentDirname(
+  textDocument: vscode.TextDocument
+): string | undefined {
   if (textDocument.isUntitled) {
     return getWorkspaceFolderPath(textDocument.uri);
   }
@@ -25,7 +27,10 @@ export function guessDocumentDirname(textDocument: vscode.TextDocument): string 
   return undefined;
 }
 
-export function getWorkspaceFolderPath(uri?: vscode.Uri, safe: boolean = true): string | undefined {
+export function getWorkspaceFolderPath(
+  uri?: vscode.Uri,
+  safe: boolean = true
+): string | undefined {
   const isSafeUriSchemeFunc = safe ? isSafeUriScheme : () => true;
   if (uri) {
     const workspace = vscode.workspace.getWorkspaceFolder(uri);

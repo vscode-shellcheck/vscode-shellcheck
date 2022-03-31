@@ -59,10 +59,14 @@ namespace CommandIds {
 
 function substitutePath(s: string, workspaceFolder?: string): string {
   if (!workspaceFolder && vscode.workspace.workspaceFolders) {
-    workspaceFolder = getWorkspaceFolderPath(vscode.window.activeTextEditor?.document.uri);
+    workspaceFolder = getWorkspaceFolderPath(
+      vscode.window.activeTextEditor?.document.uri
+    );
   }
 
-  return s.replace(/\${workspaceRoot}/g, workspaceFolder || "").replace(/\${workspaceFolder}/g, workspaceFolder || "");
+  return s
+    .replace(/\${workspaceRoot}/g, workspaceFolder || "")
+    .replace(/\${workspaceFolder}/g, workspaceFolder || "");
 }
 
 export default class ShellCheckProvider implements vscode.CodeActionProvider {
@@ -77,7 +81,10 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   private readonly diagnosticCollection: vscode.DiagnosticCollection;
   private readonly codeActionCollection: Map<string, ParseResult[]>;
 
-  public static readonly providedCodeActionKinds = [vscode.CodeActionKind.QuickFix, vscode.CodeActionKind.Source];
+  public static readonly providedCodeActionKinds = [
+    vscode.CodeActionKind.QuickFix,
+    vscode.CodeActionKind.Source,
+  ];
 
   public static metadata: vscode.CodeActionProviderMetadata = {
     providedCodeActionKinds: ShellCheckProvider.providedCodeActionKinds,
@@ -93,26 +100,51 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
     // code actions
     context.subscriptions.push(
-      vscode.languages.registerCodeActionsProvider("shellscript", this, ShellCheckProvider.metadata)
+      vscode.languages.registerCodeActionsProvider(
+        "shellscript",
+        this,
+        ShellCheckProvider.metadata
+      )
     );
 
     context.subscriptions.push(
-      vscode.languages.registerCodeActionsProvider("shellscript", new FixAllProvider(), FixAllProvider.metadata)
+      vscode.languages.registerCodeActionsProvider(
+        "shellscript",
+        new FixAllProvider(),
+        FixAllProvider.metadata
+      )
     );
 
     // commands
     context.subscriptions.push(
-      vscode.commands.registerCommand(CommandIds.openRuleDoc, async (url: string) => {
-        return await vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(url));
-      }),
-      vscode.commands.registerTextEditorCommand(CommandIds.runLint, async (editor) => {
-        return await this.triggerLint(editor.document);
-      })
+      vscode.commands.registerCommand(
+        CommandIds.openRuleDoc,
+        async (url: string) => {
+          return await vscode.commands.executeCommand(
+            "vscode.open",
+            vscode.Uri.parse(url)
+          );
+        }
+      ),
+      vscode.commands.registerTextEditorCommand(
+        CommandIds.runLint,
+        async (editor) => {
+          return await this.triggerLint(editor.document);
+        }
+      )
     );
 
     // event handlers
-    vscode.workspace.onDidChangeConfiguration(this.loadConfiguration, this, context.subscriptions);
-    vscode.workspace.onDidOpenTextDocument(this.triggerLint, this, context.subscriptions);
+    vscode.workspace.onDidChangeConfiguration(
+      this.loadConfiguration,
+      this,
+      context.subscriptions
+    );
+    vscode.workspace.onDidOpenTextDocument(
+      this.triggerLint,
+      this,
+      context.subscriptions
+    );
     vscode.workspace.onDidCloseTextDocument(
       (textDocument) => {
         this.setCollection(textDocument.uri);
@@ -157,7 +189,9 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         }
         suffix = ".exe";
       }
-      executablePath = this.context.asAbsolutePath(`./binaries/${process.platform}/${osarch}/shellcheck${suffix}`);
+      executablePath = this.context.asAbsolutePath(
+        `./binaries/${process.platform}/${osarch}/shellcheck${suffix}`
+      );
       if (fs.existsSync(executablePath)) {
         isBundled = true;
       } else {
@@ -179,9 +213,13 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       trigger: RunTrigger.from(section.get("run", RunTrigger.strings.onType)),
       executable: this.getExecutable(section.get("executablePath", "")),
       exclude: section.get("exclude", []),
-      customArgs: section.get("customArgs", []).map((arg) => substitutePath(arg)),
+      customArgs: section
+        .get("customArgs", [])
+        .map((arg) => substitutePath(arg)),
       ignorePatterns: section.get("ignorePatterns", {}),
-      ignoreFileSchemes: new Set(section.get("ignoreFileSchemes", ["git", "gitfs"])),
+      ignoreFileSchemes: new Set(
+        section.get("ignoreFileSchemes", ["git", "gitfs"])
+      ),
       useWorkspaceRootAsCwd: section.get("useWorkspaceRootAsCwd", false),
       enableQuickFix: section.get("enableQuickFix", false),
     };
@@ -220,9 +258,13 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       }
 
       if (settings.executable.bundled) {
-        this.channel.appendLine(`[INFO] shellcheck (bundled) version: ${this.toolVersion}`);
+        this.channel.appendLine(
+          `[INFO] shellcheck (bundled) version: ${this.toolVersion}`
+        );
       } else {
-        this.channel.appendLine(`[INFO] shellcheck version: ${this.toolVersion}`);
+        this.channel.appendLine(
+          `[INFO] shellcheck version: ${this.toolVersion}`
+        );
         tryPromptForUpdatingTool(this.toolVersion);
       }
     }
@@ -244,10 +286,16 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         continue;
       }
 
-      if (typeof diagnostic.code === "string" && diagnostic.code.startsWith("SC")) {
+      if (
+        typeof diagnostic.code === "string" &&
+        diagnostic.code.startsWith("SC")
+      ) {
         const ruleId = diagnostic.code;
         const title = `Show ShellCheck Wiki for ${ruleId}`;
-        const action = new vscode.CodeAction(title, vscode.CodeActionKind.QuickFix);
+        const action = new vscode.CodeAction(
+          title,
+          vscode.CodeActionKind.QuickFix
+        );
         action.command = {
           title: title,
           command: CommandIds.openRuleDoc,
@@ -294,14 +342,21 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       return;
     }
 
-    if (this.fileMatcher.excludes(textDocument.fileName, getWorkspaceFolderPath(textDocument.uri, false))) {
+    if (
+      this.fileMatcher.excludes(
+        textDocument.fileName,
+        getWorkspaceFolderPath(textDocument.uri, false)
+      )
+    ) {
       return;
     }
 
     const key = textDocument.uri.toString();
     let delayer = this.delayers[key];
     if (!delayer) {
-      delayer = new ThrottledDelayer<void>(this.settings.trigger === RunTrigger.onType ? 250 : 0);
+      delayer = new ThrottledDelayer<void>(
+        this.settings.trigger === RunTrigger.onType ? 250 : 0
+      );
       this.delayers[key] = delayer;
     }
 
@@ -396,7 +451,9 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.codeActionCollection.set(uri.toString(), results);
   }
 
-  private async showShellCheckError(error: NodeJS.ErrnoException): Promise<void> {
+  private async showShellCheckError(
+    error: NodeJS.ErrnoException
+  ): Promise<void> {
     let message: string;
     let items: string[] = [];
     if (error.code === "ENOENT") {
@@ -408,7 +465,9 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
     const selected = await vscode.window.showErrorMessage(message, ...items);
     if (selected === "Installation Guide") {
-      vscode.env.openExternal(vscode.Uri.parse("https://github.com/koalaman/shellcheck#installing"));
+      vscode.env.openExternal(
+        vscode.Uri.parse("https://github.com/koalaman/shellcheck#installing")
+      );
     }
   }
 }

@@ -44,7 +44,11 @@ export class FileMatcher {
     return fsPath;
   }
 
-  private match(excludePatterns: string[], path: string, root?: string): boolean {
+  private match(
+    excludePatterns: string[],
+    path: string,
+    root?: string
+  ): boolean {
     const relativePath = this.relativeTo(path, root);
     return _.some(excludePatterns, (pattern) => {
       return minimatch(relativePath, pattern, { dot: true });
