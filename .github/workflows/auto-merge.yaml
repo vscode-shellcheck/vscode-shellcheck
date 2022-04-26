@@ -1,14 +1,22 @@
-name: auto-merge
+name: Dependabot auto-merge
+on: pull_request
 
-on:
-  pull_request:
+permissions:
+  pull-requests: write
 
 jobs:
-  auto-merge:
+  dependabot:
     runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: ahmadnassri/action-dependabot-auto-merge@v2
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v1.1.1
         with:
-          command: squash and merge
-          github-token: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Enable auto-merge for Dependabot PRs
+        if: steps.metadata.outputs.dependency-type == 'direct:production' && (steps.metadata.outputs.update-type == 'version-update:semver-minor' || steps.metadata.outputs.update-type == 'version-update:semver-patch')
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
