@@ -1,3 +1,10 @@
+### [0.19.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.19.2...v0.19.3) (2022-05-16)
+
+
+### Dependencies
+
+* **deps:** bump minimatch from 5.0.1 to 5.1.0 ([#583](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/583)) ([984ab34](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/984ab34be14d80f847205901f73ad16186a51cb1))
+
 ### [0.19.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.19.1...v0.19.2) (2022-04-13)
 
 
