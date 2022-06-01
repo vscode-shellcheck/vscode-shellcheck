@@ -39,6 +39,7 @@
     "shellcheckrc",
     "untrusted",
     "overridable",
-    "linkify"
+    "linkify",
+    "deps"
   ]
 }
