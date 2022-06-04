@@ -1,3 +1,11 @@
+## [0.19.4](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.19.3...v0.19.4) (2022-06-04)
+
+
+### Dependencies
+
+* **deps:** bump npm from 8.4.1 to 8.12.1 ([#606](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/606)) ([16d94b1](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/16d94b1f52bccd8c46f54d9cc98b27571502279e))
+* **deps:** bump semver-regex from 3.1.3 to 3.1.4 ([#610](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/610)) ([25ec436](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/25ec4366a716a7620a91ba6c5bad8fa068da36d5))
+
 ### [0.19.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.19.2...v0.19.3) (2022-05-16)
 
 
