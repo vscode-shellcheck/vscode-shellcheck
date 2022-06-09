@@ -6,7 +6,7 @@
   "publisher": "timonwong",
   "author": "Timon Wong <timon86.wang@gmail.com> (https://github.com/timonwong)",
   "contributors": [
-    "Felipe Santos (https://github.com/felipecrs)"
+    "Felipe Santos <felipecassiors@gmail.com> (https://github.com/felipecrs)"
   ],
   "license": "MIT",
   "categories": [
@@ -28,6 +28,9 @@
   },
   "bugs": {
     "url": "https://github.com/vscode-shellcheck/vscode-shellcheck/issues"
+  },
+  "sponsor": {
+    "url": "https://github.com/vscode-shellcheck/vscode-shellcheck"
   },
   "icon": "shellcheck.png",
   "activationEvents": [
@@ -246,8 +249,8 @@
     "vscode": "^1.57.0"
   },
   "volta": {
-    "node": "14.19.1",
-    "npm": "8.7.0"
+    "node": "14.19.3",
+    "npm": "8.12.1"
   },
   "__metadata": {
     "id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",
