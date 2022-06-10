@@ -1,3 +1,11 @@
+## [0.19.5](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.19.4...v0.19.5) (2022-06-10)
+
+
+### Code Refactoring
+
+* remove unnecessary files from extension ([aa487a8](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/aa487a896929f3fd8cb74fdbcb963d3892a8d72e))
+* support sponsorship ([19e1591](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/19e1591b53dc16e8eae8a847db90dfe39dff138e))
+
 ## [0.19.4](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.19.3...v0.19.4) (2022-06-04)
 
 
