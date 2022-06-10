@@ -1,21 +1,12 @@
-.github/**
-.vscode-test/**
-.vscode/**
-node_modules/**
-out/**
-src/**
+**/*
 
-.eslintrc.json
-.gitattributes
-.gitignore
-.prettierignore
-bindl.config.js
-cspell.json
-release.config.js
-tsconfig.json
-webpack.config.js
+!binaries/
+!dist/
+!licenses/
+!shellcheckrc/
 
-**/*.map
-**/*.tgz
-**/*.ts
-**/*.zip
+!CHANGELOG.md
+!LICENSE
+!package.json
+!README.md
+!shellcheck.png
