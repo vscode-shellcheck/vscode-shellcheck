@@ -7,3 +7,5 @@
 *.vsix
 *.zip
 *.orig
+
+.envrc
