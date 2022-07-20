@@ -1,3 +1,10 @@
+## [0.19.6](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.19.5...v0.19.6) (2022-07-20)
+
+
+### Dependencies
+
+* **deps:** bump terser from 5.10.0 to 5.14.2 ([#664](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/664)) ([dc4ac57](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/dc4ac57219dc9cfc13a0ecb7b701b750970c56c2))
+
 ## [0.19.5](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.19.4...v0.19.5) (2022-06-10)
 
 
