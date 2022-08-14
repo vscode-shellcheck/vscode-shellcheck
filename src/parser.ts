@@ -140,7 +140,12 @@ class JsonParserMixin {
     const severity = convertSeverity(problem.level);
     const diagnostic = new vscode.Diagnostic(range, problem.message, severity);
     diagnostic.source = "shellcheck";
-    diagnostic.code = `SC${problem.code}`;
+    diagnostic.code = {
+      value: `SC${problem.code}`,
+      target: vscode.Uri.parse(
+        `https://www.shellcheck.net/wiki/SC${problem.code}`
+      ),
+    };
     diagnostic.tags = scCodeToDiagnosticTags(problem.code);
     return diagnostic;
   }

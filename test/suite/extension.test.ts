@@ -26,6 +26,13 @@ suite("Shellcheck extension", () => {
     const diagnostics = vscode.languages.getDiagnostics(editor.document.uri);
     assert.strictEqual(ext.isActive, true, "Extension should be activated");
     assert.strictEqual(diagnostics.length, 1);
-    assert.strictEqual(diagnostics[0].code, "SC2034");
+    if (typeof diagnostics[0].code !== "object") {
+      throw new Error("diagnostic.code should be an object");
+    }
+    assert.strictEqual(diagnostics[0].code?.value, "SC2034");
+    assert.strictEqual(
+      diagnostics[0].code?.target.toString(),
+      "https://www.shellcheck.net/wiki/SC2034"
+    );
   });
 });
