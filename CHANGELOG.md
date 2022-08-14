@@ -1,3 +1,10 @@
+## [0.20.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.19.6...v0.20.0) (2022-08-14)
+
+
+### Features
+
+* provide inline links to wiki on hover ([#686](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/686)) ([1293da9](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/1293da9318e9272ff03631c9d0c768f6ce364daf))
+
 ## [0.19.6](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.19.5...v0.19.6) (2022-07-20)
 
 
