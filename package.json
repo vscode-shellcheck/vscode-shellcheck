@@ -222,7 +222,7 @@
     "@types/lodash": "^4.14.182",
     "@types/minimatch": "^3.0.3",
     "@types/mocha": "^9.1.1",
-    "@types/node": "^14.18.23",
+    "@types/node": "^14.18.24",
     "@types/semver": "^7.3.12",
     "@types/vscode": "~1.57.0",
     "@typescript-eslint/eslint-plugin": "^5.33.1",
