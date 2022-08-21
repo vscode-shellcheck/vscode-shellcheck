@@ -1,8 +1,11 @@
 import * as vscode from "vscode";
+import { ShellCheckExtensionApi } from "./api";
 import { LinkifyProvider } from "./linkify";
 import ShellCheckProvider from "./linter";
 
-export function activate(context: vscode.ExtensionContext): void {
+export function activate(
+  context: vscode.ExtensionContext
+): ShellCheckExtensionApi {
   const linter = new ShellCheckProvider(context);
   context.subscriptions.push(linter);
 
@@ -12,6 +15,9 @@ export function activate(context: vscode.ExtensionContext): void {
     new LinkifyProvider()
   );
   context.subscriptions.push(linker);
+
+  // public API surface
+  return linter.provideApi();
 }
 
 export function deactivate(): void {}

@@ -3,6 +3,7 @@ import * as path from "path";
 import * as semver from "semver";
 import * as vscode from "vscode";
 import * as execa from "execa";
+import { ShellCheckExtensionApi } from "./api";
 import { createParser, ParseResult } from "./parser";
 import { ThrottledDelayer } from "./utils/async";
 import { FileMatcher, FileSettings } from "./utils/filematcher";
@@ -82,6 +83,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   private readonly fileMatcher: FileMatcher;
   private readonly diagnosticCollection: vscode.DiagnosticCollection;
   private readonly codeActionCollection: Map<string, ParseResult[]>;
+  private readonly additionalDocumentFilters: Set<vscode.DocumentFilter>;
 
   public static readonly providedCodeActionKinds = [
     vscode.CodeActionKind.QuickFix,
@@ -99,6 +101,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.fileMatcher = new FileMatcher();
     this.diagnosticCollection = vscode.languages.createDiagnosticCollection();
     this.codeActionCollection = new Map();
+    this.additionalDocumentFilters = new Set();
 
     // code actions
     context.subscriptions.push(
@@ -325,8 +328,36 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     return actions;
   }
 
+  public provideApi(): ShellCheckExtensionApi {
+    return {
+      apiVersion1: {
+        registerDocumentFilter: this.registerDocumentFilter,
+      },
+    };
+  }
+
+  private registerDocumentFilter = (documentFilter: vscode.DocumentFilter) => {
+    if (this.additionalDocumentFilters.has(documentFilter)) {
+      // Duplicate request. Ignore.
+      return vscode.Disposable.from();
+    }
+    this.additionalDocumentFilters.add(documentFilter);
+    // Re-evaluate all open shell documents due to updated filters
+    vscode.workspace.textDocuments.forEach(this.triggerLint, this);
+
+    return {
+      dispose: () => {
+        this.additionalDocumentFilters.delete(documentFilter);
+      },
+    };
+  };
+
   private isAllowedTextDocument(textDocument: vscode.TextDocument): boolean {
-    if (textDocument.languageId !== ShellCheckProvider.LANGUAGE_ID) {
+    let allowedDocumentSelector: vscode.DocumentSelector = [
+      ShellCheckProvider.LANGUAGE_ID,
+      ...this.additionalDocumentFilters,
+    ];
+    if (!vscode.languages.match(allowedDocumentSelector, textDocument)) {
       return false;
     }
 
