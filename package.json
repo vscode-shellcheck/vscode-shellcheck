@@ -169,7 +169,8 @@
           "scope": "application",
           "default": [
             "git",
-            "gitfs"
+            "gitfs",
+            "output"
           ]
         },
         "shellcheck.useWorkspaceRootAsCwd": {

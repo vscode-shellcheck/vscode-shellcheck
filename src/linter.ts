@@ -222,7 +222,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         .map((arg) => substitutePath(arg)),
       ignorePatterns: section.get("ignorePatterns", {}),
       ignoreFileSchemes: new Set(
-        section.get("ignoreFileSchemes", ["git", "gitfs"])
+        section.get("ignoreFileSchemes", ["git", "gitfs", "output"])
       ),
       useWorkspaceRootAsCwd: section.get("useWorkspaceRootAsCwd", false),
       enableQuickFix: section.get("enableQuickFix", false),
