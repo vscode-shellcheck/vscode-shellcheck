@@ -76,8 +76,9 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
   private channel: vscode.OutputChannel;
   private settings!: ShellCheckSettings;
-  private executableNotFound: boolean;
-  private toolVersion: semver.SemVer | null;
+  private toolStatus!:
+    | { ok: true; version: semver.SemVer }
+    | { ok: false; reason: "executableNotFound" | "executionFailed" };
   private documentListener!: vscode.Disposable;
   private delayers!: { [key: string]: ThrottledDelayer<void> };
   private readonly fileMatcher: FileMatcher;
@@ -96,8 +97,6 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
   constructor(private readonly context: vscode.ExtensionContext) {
     this.channel = vscode.window.createOutputChannel("ShellCheck");
-    this.executableNotFound = false;
-    this.toolVersion = null;
     this.fileMatcher = new FileMatcher();
     this.diagnosticCollection = vscode.languages.createDiagnosticCollection();
     this.codeActionCollection = new Map();
@@ -254,22 +253,26 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
       // Prompt user to update shellcheck binary when necessary
       try {
-        this.toolVersion = await getToolVersion(settings.executable.path);
-        this.executableNotFound = false;
+        this.toolStatus = {
+          ok: true,
+          version: await getToolVersion(settings.executable.path),
+        };
       } catch (error: any) {
         this.showShellCheckError(error);
-        this.executableNotFound = true;
+        this.toolStatus = { ok: false, reason: "executableNotFound" };
       }
 
-      if (settings.executable.bundled) {
-        this.channel.appendLine(
-          `[INFO] shellcheck (bundled) version: ${this.toolVersion}`
-        );
-      } else {
-        this.channel.appendLine(
-          `[INFO] shellcheck version: ${this.toolVersion}`
-        );
-        tryPromptForUpdatingTool(this.toolVersion);
+      if (this.toolStatus.ok) {
+        if (settings.executable.bundled) {
+          this.channel.appendLine(
+            `[INFO] shellcheck (bundled) version: ${this.toolStatus.version}`
+          );
+        } else {
+          this.channel.appendLine(
+            `[INFO] shellcheck version: ${this.toolStatus.version}`
+          );
+          tryPromptForUpdatingTool(this.toolStatus.version);
+        }
       }
     }
 
@@ -366,7 +369,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   }
 
   private triggerLint(textDocument: vscode.TextDocument): void {
-    if (this.executableNotFound || !this.isAllowedTextDocument(textDocument)) {
+    if (!this.toolStatus.ok || !this.isAllowedTextDocument(textDocument)) {
       return;
     }
 
@@ -398,11 +401,14 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
   private runLint(textDocument: vscode.TextDocument): Promise<void> {
     return new Promise<void>((resolve, reject) => {
+      if (!this.toolStatus.ok) {
+        return reject(this.toolStatus.reason);
+      }
       const settings = this.settings;
 
       const executable = settings.executable || "shellcheck";
       const parser = createParser(textDocument, {
-        toolVersion: this.toolVersion,
+        toolVersion: this.toolStatus.version,
         enableQuickFix: this.settings.enableQuickFix,
       });
       let args = ["-f", parser.outputFormat];
@@ -436,11 +442,8 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       // this.channel.appendLine(`[DEBUG] Spawn: ${executable.path} ${args.join(' ')}`);
       const childProcess = execa(executable.path, args, options);
       childProcess.on("error", (error: NodeJS.ErrnoException) => {
-        if (!this.executableNotFound) {
-          this.showShellCheckError(error);
-        }
-
-        this.executableNotFound = true;
+        this.showShellCheckError(error);
+        this.toolStatus = { ok: false, reason: "executionFailed" };
         resolve();
         return;
       });

@@ -4,11 +4,7 @@ import * as execa from "execa";
 
 export const BEST_TOOL_VERSION = "0.7.0";
 
-export function tryPromptForUpdatingTool(version: semver.SemVer | null) {
-  if (!version) {
-    return;
-  }
-
+export function tryPromptForUpdatingTool(version: semver.SemVer) {
   const disableVersionCheckUpdateSetting =
     new DisableVersionCheckUpdateSetting();
   if (!disableVersionCheckUpdateSetting.isDisabled) {
@@ -20,15 +16,18 @@ export function tryPromptForUpdatingTool(version: semver.SemVer | null) {
 
 export async function getToolVersion(
   executable: string
-): Promise<semver.SemVer | null> {
+): Promise<semver.SemVer> {
   const { stdout } = execa.sync(executable, ["-V"], { timeout: 5000 });
 
   const matches = /version: ((?:\d+)\.(?:\d+)(?:\.\d+)*)/.exec(stdout);
-  if (matches && matches[1]) {
-    return semver.parse(matches[1]);
+  if (!matches || matches.length < 2) {
+    throw new Error(`Unexpected response from ShellCheck: ${stdout}`);
   }
-
-  return null;
+  const version: semver.SemVer | null = semver.parse(matches[1]);
+  if (!version) {
+    throw new Error(`Unable to parse ShellCheck version: ${version}`);
+  }
+  return version;
 }
 
 async function promptForUpdatingTool(
