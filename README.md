@@ -136,6 +136,12 @@ For example, you can place it at `shellcheck.sh` in the root of your workspace a
 }
 ```
 
+## Advanced usage
+
+### Integrating other VS Code extensions
+
+This extension provides a small API, which allows other VS Code extensions to interact with the ShellCheck extension. For details, see [API.md](./doc/API.md).
+
 ## Acknowledgements
 
 This extension is based on [@hoovercj's Haskell Linter](https://github.com/hoovercj/vscode-haskell-linter).
