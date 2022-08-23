@@ -1,3 +1,10 @@
+## [0.21.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.21.0...v0.21.1) (2022-08-23)
+
+
+### Code Refactoring
+
+* make mutually exclusive fields a union ([#705](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/705)) ([9f3b88b](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/9f3b88b71f1eb56ff9992110bd8de5fbd9811ac5))
+
 ## [0.21.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.20.0...v0.21.0) (2022-08-23)
 
 
