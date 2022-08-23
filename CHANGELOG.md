@@ -1,3 +1,15 @@
+## [0.21.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.20.0...v0.21.0) (2022-08-23)
+
+
+### Features
+
+* allow linting for domain-specific shell languages ([#696](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/696)) ([83636d2](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/83636d28f7ea5a0a73cae2a6e81b82880e680c5f))
+
+
+### Bug Fixes
+
+* prevent endless feedback loops ([#698](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/698)) ([e8ada0c](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/e8ada0c77dc0df32d05e3c73679e4e81271827e2))
+
 ## [0.20.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.19.6...v0.20.0) (2022-08-14)
 
 
