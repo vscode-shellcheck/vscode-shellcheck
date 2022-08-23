@@ -55,7 +55,7 @@ Default options are:
     "**/zshenv": true,
     "**/*.zsh-theme": true
   },
-  "shellcheck.ignoreFileSchemes": ["git", "gitfs"]
+  "shellcheck.ignoreFileSchemes": ["git", "gitfs", "output"]
 }
 ```
 
