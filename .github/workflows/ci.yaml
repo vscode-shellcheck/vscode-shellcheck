@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup Volta, Node and NPM
-        uses: volta-cli/action@v2.0.1
+        uses: volta-cli/action@v2.0.2
       - run: npm ci
       - name: Test with VS Code ${{ matrix.vscode-version }}
         uses: GabrielBB/xvfb-action@v1
@@ -43,7 +43,7 @@ jobs:
         with:
           token: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE || github.token }}
       - name: Setup Volta, Node and NPM
-        uses: volta-cli/action@v2.0.1
+        uses: volta-cli/action@v2.0.2
       - run: npm ci
       # Only run on push events or pull requests coming from the same repository, except from dependabot
       - run: npm run release
