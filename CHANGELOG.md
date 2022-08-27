@@ -1,3 +1,10 @@
+## [0.21.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.21.1...v0.21.2) (2022-08-27)
+
+
+### Bug Fixes
+
+* honor folder-level and lang-specific settings ([#697](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/697)) ([687b72e](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/687b72ede70665a4e89c6cbaf85da30bf08764f9))
+
 ## [0.21.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.21.0...v0.21.1) (2022-08-23)
 
 
