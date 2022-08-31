@@ -101,7 +101,8 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.delayers = Object.create(null);
     this.settingsByUri = new Map();
     this.toolStatusByPath = new Map();
-    this.diagnosticCollection = vscode.languages.createDiagnosticCollection();
+    this.diagnosticCollection =
+      vscode.languages.createDiagnosticCollection("shellcheck");
     this.codeActionCollection = new Map();
     this.additionalDocumentFilters = new Set();
 
