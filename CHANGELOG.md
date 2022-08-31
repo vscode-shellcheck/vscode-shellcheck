@@ -1,3 +1,10 @@
+## [0.21.4](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.21.3...v0.21.4) (2022-08-31)
+
+
+### Bug Fixes
+
+* use named diagnostic collection ([#721](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/721)) ([562186d](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/562186dbd3b1b4b879102bea9fc68ed109ad5ee9)), closes [#666](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/666)
+
 ## [0.21.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.21.2...v0.21.3) (2022-08-29)
 
 
