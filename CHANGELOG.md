@@ -1,3 +1,10 @@
+## [0.22.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.21.4...v0.22.0) (2022-09-02)
+
+
+### Features
+
+* add prebuilt Shellcheck binary for Apple M1 (from Homebrew) ([#725](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/725)) ([bd0069d](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/bd0069d117eb23300c0370d268a7dd6d254880fc))
+
 ## [0.21.4](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.21.3...v0.21.4) (2022-08-31)
 
 
