@@ -106,22 +106,32 @@
           "default": "onType"
         },
         "shellcheck.exclude": {
-          "description": "Exclude types of warnings, for example [\"1017\"].",
+          "markdownDescription": "Exclude certain checks. For example, to exclude [SC1017](https://shellcheck.net/wiki/SC1017), enter _1017_.",
           "type": "array",
           "items": {
             "type": "string"
           },
           "scope": "resource",
-          "default": []
+          "default": [],
+          "examples": [
+            [
+              "1017"
+            ]
+          ]
         },
         "shellcheck.customArgs": {
-          "description": "Custom arguments to shellcheck.",
+          "markdownDescription": "Custom arguments to pass when calling the `shellcheck` binary.",
           "type": "array",
           "items": {
             "type": "string"
           },
           "scope": "resource",
-          "default": []
+          "default": [],
+          "examples": [
+            [
+              "--external-sources"
+            ]
+          ]
         },
         "shellcheck.ignorePatterns": {
           "markdownDescription": "Configure glob patterns for excluding files and folders by shellcheck. Glob patterns are interpreted relative to the workspace's root folder. Read more about glob patterns [here](https://code.visualstudio.com/docs/editor/codebasics#_advanced-search-options).",
