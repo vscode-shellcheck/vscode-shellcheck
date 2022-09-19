@@ -1,3 +1,10 @@
+## [0.23.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.22.0...v0.23.0) (2022-09-19)
+
+
+### Features
+
+* improve some configuration descriptions ([#741](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/741)) ([7fdb12f](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/7fdb12f925dbf2a4fc2b95b80fffef1fb353bb50))
+
 ## [0.22.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.21.4...v0.22.0) (2022-09-02)
 
 
