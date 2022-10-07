@@ -1,3 +1,10 @@
+## [0.23.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.23.0...v0.23.1) (2022-10-07)
+
+
+### Dependencies
+
+* **deps:** bump semver from 7.3.7 to 7.3.8 ([#759](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/759)) ([633d2de](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/633d2decb628c9010a980e8718a9c95a0aa034c9))
+
 ## [0.23.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.22.0...v0.23.0) (2022-09-19)
 
 
