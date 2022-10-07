@@ -3,8 +3,10 @@
 Integrates [ShellCheck](https://github.com/koalaman/shellcheck) into VS Code, a linter for Shell scripts.
 
 [![ci](https://github.com/vscode-shellcheck/vscode-shellcheck/workflows/ci/badge.svg)](https://github.com/vscode-shellcheck/vscode-shellcheck/actions?query=workflow%3Aci)
-[![Current Version](https://vsmarketplacebadge.apphb.com/version/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
-[![Install Count](https://vsmarketplacebadge.apphb.com/installs-short/timonwong.shellcheck.svg)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
+[![Current Version](https://badgen.net/github/tag/vscode-shellcheck/vscode-shellcheck)](https://github.com/vscode-shellcheck/vscode-shellcheck/releases/latest)
+[![Install Count](https://badgen.net/vs-marketplace/i/timonwong.shellcheck?label=Installs)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
+[![VS Marketplace DLs](https://badgen.net/vs-marketplace/d/timonwong.shellcheck?label=VS%20Marketplace%20DLs)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
+[![Open VSX DLs](https://badgen.net/open-vsx/d/timonwong/shellcheck?color=purple&label=Open%20VSX%20Registry%20DLs)](https://open-vsx.org/extension/timonwong/shellcheck)
 
 ## Quick start
 
