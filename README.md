@@ -3,6 +3,7 @@
 Integrates [ShellCheck](https://github.com/koalaman/shellcheck) into VS Code, a linter for Shell scripts.
 
 [![ci](https://github.com/vscode-shellcheck/vscode-shellcheck/workflows/ci/badge.svg)](https://github.com/vscode-shellcheck/vscode-shellcheck/actions?query=workflow%3Aci)
+
 [![Latest version](https://badgen.net/github/release/vscode-shellcheck/vscode-shellcheck)](https://github.com/vscode-shellcheck/vscode-shellcheck/releases/latest)
 [![VS Marketplace installs](https://badgen.net/vs-marketplace/i/timonwong.shellcheck?label=VS%20Marketplace%20installs)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
 [![VS Marketplace downloads](https://badgen.net/vs-marketplace/d/timonwong.shellcheck?label=VS%20Marketplace%20downloads)](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck)
