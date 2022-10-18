@@ -337,7 +337,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
           this.channel.appendLine(
             `[INFO] shellcheck version: ${toolStatus.version}`
           );
-          tryPromptForUpdatingTool(toolStatus.version);
+          tryPromptForUpdatingTool(this.context, toolStatus.version);
         }
       }
     }
