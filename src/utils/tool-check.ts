@@ -1,6 +1,7 @@
 import * as semver from "semver";
 import * as vscode from "vscode";
 import * as execa from "execa";
+import * as logging from "./logging";
 
 export const BEST_TOOL_VERSION = "0.7.0";
 
@@ -17,6 +18,7 @@ export function tryPromptForUpdatingTool(version: semver.SemVer) {
 export async function getToolVersion(
   executable: string
 ): Promise<semver.SemVer> {
+  logging.debug(`Spawn: ${executable} -V`);
   const { stdout } = execa.sync(executable, ["-V"], { timeout: 5000 });
 
   const matches = /version: ((?:\d+)\.(?:\d+)(?:\.\d+)*)/.exec(stdout);

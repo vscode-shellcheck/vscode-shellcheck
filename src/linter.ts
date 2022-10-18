@@ -1,4 +1,3 @@
-import * as fs from "fs";
 import * as path from "path";
 import * as semver from "semver";
 import * as vscode from "vscode";
@@ -6,54 +5,16 @@ import * as execa from "execa";
 import { ShellCheckExtensionApi } from "./api";
 import { createParser, ParseResult } from "./parser";
 import { ThrottledDelayer } from "./utils/async";
-import { FileMatcher, FileSettings } from "./utils/filematcher";
 import { getToolVersion, tryPromptForUpdatingTool } from "./utils/tool-check";
 import { guessDocumentDirname, getWorkspaceFolderPath } from "./utils/path";
 import { FixAllProvider } from "./fix-all";
 import { getWikiUrlForRule } from "./utils/link";
-
-interface Executable {
-  path: string;
-  bundled: boolean;
-}
-
-interface ShellCheckSettings {
-  enabled: boolean;
-  enableQuickFix: boolean;
-  executable: Executable;
-  trigger: RunTrigger;
-  exclude: string[];
-  customArgs: string[];
-  ignorePatterns: FileSettings;
-  ignoreFileSchemes: Set<string>;
-  useWorkspaceRootAsCwd: boolean;
-  fileMatcher: FileMatcher;
-}
-
-enum RunTrigger {
-  onSave,
-  onType,
-  manual,
-}
-
-namespace RunTrigger {
-  export const strings = {
-    onSave: "onSave",
-    onType: "onType",
-    manual: "manual",
-  };
-
-  export function from(value: string): RunTrigger {
-    switch (value) {
-      case strings.onSave:
-        return RunTrigger.onSave;
-      case strings.onType:
-        return RunTrigger.onType;
-      default:
-        return RunTrigger.manual;
-    }
-  }
-}
+import * as logging from "./utils/logging";
+import {
+  getWorkspaceSettings,
+  RunTrigger,
+  ShellCheckSettings,
+} from "./settings";
 
 namespace CommandIds {
   export const runLint: string = "shellcheck.runLint";
@@ -64,22 +25,20 @@ type ToolStatus =
   | { ok: true; version: semver.SemVer }
   | { ok: false; reason: "executableNotFound" | "executionFailed" };
 
-function substitutePath(s: string, workspaceFolder?: string): string {
-  if (!workspaceFolder && vscode.workspace.workspaceFolders) {
-    workspaceFolder = getWorkspaceFolderPath(
-      vscode.window.activeTextEditor?.document.uri
-    );
+function toolStatusByError(error: any): ToolStatus {
+  if (error && error instanceof Error) {
+    const e = error as NodeJS.ErrnoException;
+    if (e.code === "ENOENT") {
+      return { ok: false, reason: "executableNotFound" };
+    }
   }
 
-  return s
-    .replace(/\${workspaceRoot}/g, workspaceFolder || "")
-    .replace(/\${workspaceFolder}/g, workspaceFolder || "");
+  return { ok: false, reason: "executionFailed" };
 }
 
 export default class ShellCheckProvider implements vscode.CodeActionProvider {
   public static readonly LANGUAGE_ID = "shellscript";
 
-  private channel: vscode.OutputChannel;
   private delayers: { [key: string]: ThrottledDelayer<void> };
   private readonly settingsByUri: Map<string, ShellCheckSettings>;
   private readonly toolStatusByPath: Map<string, ToolStatus>;
@@ -97,7 +56,6 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   };
 
   constructor(private readonly context: vscode.ExtensionContext) {
-    this.channel = vscode.window.createOutputChannel("ShellCheck");
     this.delayers = Object.create(null);
     this.settingsByUri = new Map();
     this.toolStatusByPath = new Map();
@@ -176,7 +134,11 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.triggerLintForEntireWorkspace();
   }
 
-  private onDidChangeConfiguration() {
+  private onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
+    if (!e.affectsConfiguration("shellcheck")) {
+      return;
+    }
+
     this.settingsByUri.clear();
     this.toolStatusByPath.clear();
 
@@ -188,7 +150,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     try {
       await this.triggerLint(textDocument);
     } catch (error) {
-      this.channel.appendLine(`[ERROR] onDidOpenTextDocument: ${error}`);
+      logging.error(`onDidOpenTextDocument: ${error}`);
     }
   }
 
@@ -211,7 +173,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         (settings) => settings.trigger === RunTrigger.onType
       );
     } catch (error) {
-      this.channel.appendLine(`[ERROR] onDidChangeTextDocument: ${error}`);
+      logging.error(`onDidChangeTextDocument: ${error}`);
     }
   }
 
@@ -222,7 +184,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         (settings) => settings.trigger === RunTrigger.onSave
       );
     } catch (error) {
-      this.channel.appendLine(`[ERROR] onDidSaveTextDocument: ${error}`);
+      logging.error(`onDidSaveTextDocument ${error}`);
     }
   }
 
@@ -231,9 +193,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       try {
         await this.triggerLint(textDocument);
       } catch (error) {
-        this.channel.appendLine(
-          `[ERROR] triggerLintForEntireWorkspace: ${error}`
-        );
+        logging.error(`triggerLintForEntireWorkspace: ${error}`);
       }
     }
   }
@@ -242,38 +202,6 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.diagnosticCollection.clear();
     this.codeActionCollection.clear();
     this.diagnosticCollection.dispose();
-    this.channel.dispose();
-  }
-
-  private getExecutable(executablePath: string): Executable {
-    let isBundled = false;
-    if (executablePath) {
-      executablePath = substitutePath(executablePath);
-    } else {
-      // Use bundled binaries (maybe)
-      let suffix = "";
-      let osarch = process.arch;
-      if (process.platform === "win32") {
-        if (process.arch === "x64" || process.arch === "ia32") {
-          osarch = "x32";
-        }
-        suffix = ".exe";
-      }
-      executablePath = this.context.asAbsolutePath(
-        `./binaries/${process.platform}/${osarch}/shellcheck${suffix}`
-      );
-      if (fs.existsSync(executablePath)) {
-        isBundled = true;
-      } else {
-        // Fallback to default shellcheck path
-        executablePath = "shellcheck";
-      }
-    }
-
-    return {
-      path: executablePath,
-      bundled: isBundled,
-    };
   }
 
   private async getSettings(
@@ -286,28 +214,8 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   }
 
   private async updateConfiguration(textDocument: vscode.TextDocument) {
-    const section = vscode.workspace.getConfiguration(
-      "shellcheck",
-      textDocument
-    );
-    const settings = <ShellCheckSettings>{
-      enabled: section.get("enable", true),
-      trigger: RunTrigger.from(section.get("run", RunTrigger.strings.onType)),
-      executable: this.getExecutable(section.get("executablePath", "")),
-      exclude: section.get("exclude", []),
-      customArgs: section
-        .get("customArgs", [])
-        .map((arg) => substitutePath(arg)),
-      ignorePatterns: section.get("ignorePatterns", {}),
-      ignoreFileSchemes: new Set(
-        section.get("ignoreFileSchemes", ["git", "gitfs", "output"])
-      ),
-      useWorkspaceRootAsCwd: section.get("useWorkspaceRootAsCwd", false),
-      enableQuickFix: section.get("enableQuickFix", false),
-      fileMatcher: new FileMatcher(),
-    };
+    const settings = getWorkspaceSettings(this.context, textDocument);
 
-    settings.fileMatcher.configure(settings.ignorePatterns);
     this.settingsByUri.set(textDocument.uri.toString(), settings);
     this.setResultCollections(textDocument.uri);
 
@@ -323,20 +231,17 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
           version: await getToolVersion(settings.executable.path),
         };
       } catch (error: any) {
+        logging.debug("Unable to start shellcheck: %O", error);
         this.showShellCheckError(error);
-        toolStatus = { ok: false, reason: "executableNotFound" };
+        toolStatus = toolStatusByError(error);
       }
       this.toolStatusByPath.set(settings.executable.path, toolStatus);
 
       if (toolStatus.ok) {
         if (settings.executable.bundled) {
-          this.channel.appendLine(
-            `[INFO] shellcheck (bundled) version: ${toolStatus.version}`
-          );
+          logging.info(`shellcheck (bundled) version: ${toolStatus.version}`);
         } else {
-          this.channel.appendLine(
-            `[INFO] shellcheck version: ${toolStatus.version}`
-          );
+          logging.info(`shellcheck version: ${toolStatus.version}`);
           tryPromptForUpdatingTool(toolStatus.version);
         }
       }
@@ -519,14 +424,15 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       }
 
       const options: execa.Options = { cwd: cwd ?? undefined };
-      // this.channel.appendLine(`[DEBUG] Spawn: ${executable.path} ${args.join(' ')}`);
+      logging.debug(`Spawn: ${executable.path} ${args.join(" ")}`);
       const childProcess = execa(executable.path, args, options);
       childProcess.on("error", (error: NodeJS.ErrnoException) => {
+        logging.debug("Unable to start shellcheck: %O", error);
         this.showShellCheckError(error);
-        this.toolStatusByPath.set(settings.executable.path, {
-          ok: false,
-          reason: "executionFailed",
-        });
+        this.toolStatusByPath.set(
+          settings.executable.path,
+          toolStatusByError(error)
+        );
         resolve();
         return;
       });

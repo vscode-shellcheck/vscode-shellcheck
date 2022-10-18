@@ -51,3 +51,15 @@ export function getWorkspaceFolderPath(
 
   return undefined;
 }
+
+export function substitutePath(s: string, workspaceFolder?: string): string {
+  if (!workspaceFolder && vscode.workspace.workspaceFolders) {
+    workspaceFolder = getWorkspaceFolderPath(
+      vscode.window.activeTextEditor?.document.uri
+    );
+  }
+
+  return s
+    .replace(/\${workspaceRoot}/g, workspaceFolder || "")
+    .replace(/\${workspaceFolder}/g, workspaceFolder || "");
+}

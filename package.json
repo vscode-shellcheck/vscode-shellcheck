@@ -189,6 +189,20 @@
           "scope": "resource",
           "default": false
         },
+        "shellcheck.logLevel": {
+          "description": "The trace level the extension logs at, defaults to 'info'.",
+          "type": "string",
+          "scope": "window",
+          "enum": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "off"
+          ],
+          "default": "info"
+        },
         "shellcheck.disableVersionCheck": {
           "description": "Whether to disable shellcheck binary version check, which prompt for updating when outdated version found.",
           "type": "boolean",
