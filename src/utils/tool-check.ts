@@ -4,9 +4,13 @@ import * as execa from "execa";
 
 export const BEST_TOOL_VERSION = "0.7.0";
 
-export function tryPromptForUpdatingTool(version: semver.SemVer) {
-  const disableVersionCheckUpdateSetting =
-    new DisableVersionCheckUpdateSetting();
+export function tryPromptForUpdatingTool(
+  context: vscode.ExtensionContext,
+  version: semver.SemVer
+) {
+  const disableVersionCheckUpdateSetting = new DisableVersionCheckUpdateSetting(
+    context
+  );
   if (!disableVersionCheckUpdateSetting.isDisabled) {
     if (semver.lt(version, BEST_TOOL_VERSION)) {
       promptForUpdatingTool(version.format(), disableVersionCheckUpdateSetting);
@@ -53,16 +57,16 @@ async function promptForUpdatingTool(
 
 export class DisableVersionCheckUpdateSetting {
   private static KEY = "disableVersionCheck";
-  private config: vscode.WorkspaceConfiguration;
   readonly isDisabled: boolean;
 
-  constructor() {
-    this.config = vscode.workspace.getConfiguration("shellcheck", null);
-    this.isDisabled =
-      this.config.get(DisableVersionCheckUpdateSetting.KEY) || false;
+  constructor(private readonly context: vscode.ExtensionContext) {
+    this.isDisabled = context.globalState.get(
+      DisableVersionCheckUpdateSetting.KEY,
+      false
+    );
   }
 
   persist() {
-    this.config.update(DisableVersionCheckUpdateSetting.KEY, true, true);
+    this.context.globalState.update(DisableVersionCheckUpdateSetting.KEY, true);
   }
 }

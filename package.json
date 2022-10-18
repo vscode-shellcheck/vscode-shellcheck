@@ -188,12 +188,6 @@
           "type": "boolean",
           "scope": "resource",
           "default": false
-        },
-        "shellcheck.disableVersionCheck": {
-          "description": "Whether to disable shellcheck binary version check, which prompt for updating when outdated version found.",
-          "type": "boolean",
-          "scope": "application",
-          "default": false
         }
       }
     }
