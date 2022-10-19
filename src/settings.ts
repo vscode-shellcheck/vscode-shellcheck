@@ -15,10 +15,23 @@ export interface ShellCheckSettings {
   trigger: RunTrigger;
   exclude: string[];
   customArgs: string[];
-  ignorePatterns: FileSettings;
   ignoreFileSchemes: Set<string>;
   useWorkspaceRootAsCwd: boolean;
   fileMatcher: FileMatcher;
+}
+
+export namespace ShellCheckSettings {
+  export const keys = {
+    enable: "enable",
+    enableQuickFix: "enableQuickFix",
+    executablePath: "executablePath",
+    run: "run",
+    exclude: "exclude",
+    customArgs: "customArgs",
+    ignorePatterns: "ignorePatterns",
+    ignoreFileSchemes: "ignoreFileSchemes",
+    useWorkspaceRootAsCwd: "useWorkspaceRootAsCwd",
+  };
 }
 
 export enum RunTrigger {
@@ -50,24 +63,39 @@ export function getWorkspaceSettings(
   context: vscode.ExtensionContext,
   scope?: vscode.ConfigurationScope | null
 ): ShellCheckSettings {
+  const keys = ShellCheckSettings.keys;
   const section = vscode.workspace.getConfiguration("shellcheck", scope);
   const settings = <ShellCheckSettings>{
-    enabled: section.get("enable", true),
-    trigger: RunTrigger.from(section.get("run", RunTrigger.strings.onType)),
-    executable: getExecutable(context, section.get("executablePath", "")),
-    exclude: section.get("exclude", []),
-    customArgs: section.get("customArgs", []).map((arg) => substitutePath(arg)),
-    ignorePatterns: section.get("ignorePatterns", {}),
+    enabled: section.get(keys.enable, true),
+    trigger: RunTrigger.from(section.get(keys.run, RunTrigger.strings.onType)),
+    executable: getExecutable(context, section.get(keys.executablePath, "")),
+    exclude: section.get(keys.exclude, []),
+    customArgs: section
+      .get(keys.customArgs, [])
+      .map((arg) => substitutePath(arg)),
     ignoreFileSchemes: new Set(
-      section.get("ignoreFileSchemes", ["git", "gitfs", "output"])
+      section.get(keys.ignoreFileSchemes, ["git", "gitfs", "output"])
     ),
-    useWorkspaceRootAsCwd: section.get("useWorkspaceRootAsCwd", false),
-    enableQuickFix: section.get("enableQuickFix", false),
+    useWorkspaceRootAsCwd: section.get(keys.useWorkspaceRootAsCwd, false),
+    enableQuickFix: section.get(keys.enableQuickFix, false),
     fileMatcher: new FileMatcher(),
   };
 
-  settings.fileMatcher.configure(settings.ignorePatterns);
+  const ignorePatterns: FileSettings = section.get(keys.ignorePatterns, {});
+  settings.fileMatcher.configure(ignorePatterns);
   return settings;
+}
+
+export function checkIfConfigurationChanged(
+  e: vscode.ConfigurationChangeEvent
+): boolean {
+  for (let k in ShellCheckSettings.keys) {
+    const section = `shellcheck.${k}`;
+    if (e.affectsConfiguration(section)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function getExecutable(

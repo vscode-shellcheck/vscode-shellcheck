@@ -11,6 +11,7 @@ import { FixAllProvider } from "./fix-all";
 import { getWikiUrlForRule } from "./utils/link";
 import * as logging from "./utils/logging";
 import {
+  checkIfConfigurationChanged,
   getWorkspaceSettings,
   RunTrigger,
   ShellCheckSettings,
@@ -135,7 +136,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   }
 
   private onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
-    if (!e.affectsConfiguration("shellcheck")) {
+    if (!checkIfConfigurationChanged(e)) {
       return;
     }
 
