@@ -7,7 +7,11 @@ function formatMessage(
   format: string,
   ...data: Arguments
 ): string {
-  return `[${level.toUpperCase()}] ${util.format(format, ...data)}`;
+  const date = new Date();
+  return `[${date.toISOString()}] [${level.toUpperCase()}] ${util.format(
+    format,
+    ...data
+  )}`;
 }
 
 export class OutputChannelLogger implements Logger {
