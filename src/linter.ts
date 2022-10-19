@@ -1,4 +1,4 @@
-import * as path from "path";
+import * as path from "node:path";
 import * as semver from "semver";
 import * as vscode from "vscode";
 import * as execa from "execa";
@@ -232,7 +232,10 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
           version: await getToolVersion(settings.executable.path),
         };
       } catch (error: any) {
-        logging.debug("Unable to start shellcheck: %O", error);
+        logging.debug(
+          "Unable to start shellcheck for version check: %O",
+          error
+        );
         this.showShellCheckError(error);
         toolStatus = toolStatusByError(error);
       }
@@ -392,7 +395,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       if (!toolStatus.ok) {
         return reject(toolStatus.reason);
       }
-      const executable = settings.executable || "shellcheck";
+      const executable = settings.executable;
       const parser = createParser(textDocument, {
         toolVersion: toolStatus.version,
         enableQuickFix: settings.enableQuickFix,
@@ -424,43 +427,52 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         cwd = guessDocumentDirname(textDocument);
       }
 
-      const options: execa.Options = { cwd: cwd ?? undefined };
       logging.debug(`Spawn: ${executable.path} ${args.join(" ")}`);
+
+      const options: execa.Options = {
+        cwd: cwd ?? undefined,
+      };
       const childProcess = execa(executable.path, args, options);
-      childProcess.on("error", (error: NodeJS.ErrnoException) => {
+
+      const handleError = (error: Error) => {
         logging.debug("Unable to start shellcheck: %O", error);
         this.showShellCheckError(error);
-        this.toolStatusByPath.set(
-          settings.executable.path,
-          toolStatusByError(error)
-        );
-        resolve();
-        return;
-      });
+        this.toolStatusByPath.set(executable.path, toolStatusByError(error));
+      };
 
-      if (childProcess.pid && childProcess.stdout && childProcess.stdin) {
+      if (childProcess.pid && childProcess.stdin && childProcess.stdout) {
         childProcess.stdout.setEncoding("utf-8");
 
         const script = textDocument.getText();
         childProcess.stdin.write(script);
         childProcess.stdin.end();
 
-        const output: string[] = [];
+        const buf: string[] = [];
+
         childProcess.stdout
-          .on("data", (data: Buffer) => {
-            output.push(data.toString());
+          .on("data", (chunk: Buffer) => {
+            buf.push(chunk.toString());
           })
           .on("end", () => {
             let result: ParseResult[] | null = null;
+            const output = buf.join("");
             if (output.length) {
-              result = parser.parse(output.join(""));
+              result = parser.parse(output);
             }
-
             this.setResultCollections(textDocument.uri, result);
             resolve();
           });
+
+        childProcess.on("error", (error) => {
+          handleError(error);
+          resolve();
+        });
       } else {
         resolve();
+
+        childProcess.catch((error) => {
+          handleError(error);
+        });
       }
     });
   }
@@ -480,16 +492,20 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.codeActionCollection.set(uri.toString(), results);
   }
 
-  private async showShellCheckError(
-    error: NodeJS.ErrnoException
-  ): Promise<void> {
+  private async showShellCheckError(err: any): Promise<void> {
     let message: string;
     let items: string[] = [];
-    if (error.code === "ENOENT") {
-      message = `The shellcheck program was not found (not installed?). Use the 'shellcheck.executablePath' setting to configure the location of 'shellcheck'`;
-      items = ["OK", "Installation Guide"];
+
+    if (err && err instanceof Error) {
+      const error = err as NodeJS.ErrnoException;
+      if (error.code === "ENOENT") {
+        message = `The shellcheck program was not found (not installed?). Use the 'shellcheck.executablePath' setting to configure the location of 'shellcheck'`;
+        items = ["OK", "Installation Guide"];
+      } else {
+        message = `Failed to run shellcheck: [${error.code}] ${error.message}`;
+      }
     } else {
-      message = `Failed to run shellcheck: [${error.code}] ${error.message}`;
+      message = `Failed to run shellcheck: unknown error`;
     }
 
     const selected = await vscode.window.showErrorMessage(message, ...items);
