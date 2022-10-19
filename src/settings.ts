@@ -1,4 +1,4 @@
-import * as fs from "fs";
+import * as fs from "node:fs";
 import * as vscode from "vscode";
 import { FileMatcher, FileSettings } from "./utils/filematcher";
 import { substitutePath } from "./utils/path";
