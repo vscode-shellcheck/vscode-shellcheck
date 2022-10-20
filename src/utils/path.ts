@@ -1,3 +1,4 @@
+import * as fs from "node:fs";
 import * as path from "node:path";
 import * as vscode from "vscode";
 
@@ -50,6 +51,27 @@ export function getWorkspaceFolderPath(
   }
 
   return undefined;
+}
+
+// Check the cwd because if the cwd is not accessible, it will throw ENOENT
+// https://github.com/vscode-shellcheck/vscode-shellcheck/issues/767
+export async function fixCurrentWorkingDirectory(
+  cwd: string | undefined
+): Promise<string | undefined> {
+  if (!cwd) {
+    return undefined;
+  }
+
+  try {
+    const fstat = await fs.promises.stat(cwd);
+    if (!fstat.isDirectory()) {
+      return undefined;
+    }
+  } catch (error) {
+    return undefined;
+  }
+
+  return cwd;
 }
 
 export function substitutePath(s: string, workspaceFolder?: string): string {

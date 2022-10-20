@@ -1,4 +1,4 @@
-import * as path from "path";
+import * as path from "node:path";
 import * as semver from "semver";
 import * as vscode from "vscode";
 import * as execa from "execa";
@@ -6,7 +6,11 @@ import { ShellCheckExtensionApi } from "./api";
 import { createParser, ParseResult } from "./parser";
 import { ThrottledDelayer } from "./utils/async";
 import { getToolVersion, tryPromptForUpdatingTool } from "./utils/tool-check";
-import { guessDocumentDirname, getWorkspaceFolderPath } from "./utils/path";
+import {
+  guessDocumentDirname,
+  getWorkspaceFolderPath,
+  fixCurrentWorkingDirectory,
+} from "./utils/path";
 import { FixAllProvider } from "./fix-all";
 import { getWikiUrlForRule } from "./utils/link";
 import * as logging from "./utils/logging";
@@ -215,7 +219,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   }
 
   private async updateConfiguration(textDocument: vscode.TextDocument) {
-    const settings = getWorkspaceSettings(this.context, textDocument);
+    const settings = await getWorkspaceSettings(this.context, textDocument);
 
     this.settingsByUri.set(textDocument.uri.toString(), settings);
     this.setResultCollections(textDocument.uri);
@@ -232,10 +236,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
           version: getToolVersion(settings.executable.path),
         };
       } catch (error: any) {
-        logging.debug(
-          "Unable to start shellcheck for version check: %O",
-          error
-        );
+        logging.debug("Failed to get tool version: %O", error);
         this.showShellCheckError(error);
         toolStatus = toolStatusByError(error);
       }
@@ -388,7 +389,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     textDocument: vscode.TextDocument,
     settings: ShellCheckSettings
   ): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       const toolStatus: ToolStatus = this.toolStatusByPath.get(
         settings.executable.path
       )!;
@@ -420,18 +421,15 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       args.push("-"); // Use stdin for shellcheck
 
       let cwd: string | undefined;
-
       if (settings.useWorkspaceRootAsCwd) {
         cwd = getWorkspaceFolderPath(textDocument.uri);
       } else {
         cwd = guessDocumentDirname(textDocument);
       }
 
-      logging.debug(`Spawn: ${executable.path} ${args.join(" ")}`);
-
-      const options: execa.Options = {
-        cwd: cwd ?? undefined,
-      };
+      cwd = await fixCurrentWorkingDirectory(cwd);
+      logging.debug("Spawn: (cwd=%s) %s %s", cwd, executable.path, args);
+      const options: execa.Options = { cwd };
       const childProcess = execa(executable.path, args, options);
 
       const handleError = (error: Error) => {

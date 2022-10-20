@@ -61,16 +61,19 @@ export namespace RunTrigger {
 
 const validErrorCodePattern = /^(SC)?(\d{4})$/;
 
-export function getWorkspaceSettings(
+export async function getWorkspaceSettings(
   context: vscode.ExtensionContext,
   scope?: vscode.ConfigurationScope | null
-): ShellCheckSettings {
+): Promise<ShellCheckSettings> {
   const keys = ShellCheckSettings.keys;
   const section = vscode.workspace.getConfiguration("shellcheck", scope);
   const settings = <ShellCheckSettings>{
     enabled: section.get(keys.enable, true),
     trigger: RunTrigger.from(section.get(keys.run, RunTrigger.strings.onType)),
-    executable: getExecutable(context, section.get(keys.executablePath, "")),
+    executable: await getExecutable(
+      context,
+      section.get(keys.executablePath, "")
+    ),
     exclude: section.get(keys.exclude, []),
     customArgs: section
       .get(keys.customArgs, [])
@@ -109,14 +112,11 @@ export function checkIfConfigurationChanged(
   return false;
 }
 
-function getExecutable(
+async function getExecutable(
   context: vscode.ExtensionContext,
   executablePath: string
-): Executable {
-  let isBundled = false;
-  if (executablePath) {
-    executablePath = substitutePath(executablePath);
-  } else {
+): Promise<Executable> {
+  if (!executablePath) {
     // Use bundled binaries (maybe)
     let suffix = "";
     let osarch = process.arch;
@@ -129,16 +129,22 @@ function getExecutable(
     executablePath = context.asAbsolutePath(
       `./binaries/${process.platform}/${osarch}/shellcheck${suffix}`
     );
-    if (fs.existsSync(executablePath)) {
-      isBundled = true;
-    } else {
-      // Fallback to default shellcheck path
-      executablePath = "shellcheck";
+    try {
+      await fs.promises.access(executablePath, fs.constants.X_OK);
+      return {
+        path: executablePath,
+        bundled: true,
+      };
+    } catch (error) {
+      return {
+        path: "shellcheck", // Fallback to default shellcheck path.
+        bundled: false,
+      };
     }
   }
 
   return {
-    path: executablePath,
-    bundled: isBundled,
+    path: substitutePath(executablePath),
+    bundled: false,
   };
 }
