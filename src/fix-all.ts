@@ -49,27 +49,11 @@ async function getFixAllCodeAction(
         if (!fixAll.edit) {
           fixAll.edit = new vscode.WorkspaceEdit();
         }
-        for (const actionEditEntries of action.edit.entries()) {
+        for (const [uri, textEdits] of action.edit.entries()) {
           // filter overlapping edits to prevent wrong behavior
-          let duplicated = false;
-          for (const actionEdit of actionEditEntries[1]) {
-            for (const fixAllEditEntries of fixAll.edit.entries()) {
-              for (const fixAllEdit of fixAllEditEntries[1]) {
-                if (fixAllEdit.range.contains(actionEdit.range)) {
-                  duplicated = true;
-                  break;
-                }
-              }
-              if (duplicated) {
-                break;
-              }
-            }
-            if (duplicated) {
-              break;
-            }
-          }
-          if (!duplicated) {
-            fixAll.edit.set(actionEditEntries[0], actionEditEntries[1]);
+          const overlapped = hasOverlappedTextEdits(fixAll, textEdits);
+          if (!overlapped) {
+            fixAll.edit.set(uri, textEdits);
           }
         }
       }
@@ -78,6 +62,40 @@ async function getFixAllCodeAction(
   }
 
   return undefined;
+}
+
+function getActionRanges(action: vscode.CodeAction): vscode.Range[] {
+  if (!action.edit) {
+    return [];
+  }
+
+  const ranges: vscode.Range[] = [];
+  for (const [_, textEdits] of action.edit.entries()) {
+    for (const textEdit of textEdits) {
+      ranges.push(textEdit.range);
+    }
+  }
+  return ranges;
+}
+
+function hasOverlappedTextEdits(
+  action: vscode.CodeAction,
+  actionTextEdits: vscode.TextEdit[]
+): boolean {
+  const ranges = getActionRanges(action);
+  if (ranges.length === 0) {
+    return false;
+  }
+
+  for (const actionEdit of actionTextEdits) {
+    for (const range of ranges) {
+      if (range.contains(actionEdit.range)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
 
 export class FixAllProvider implements vscode.CodeActionProvider {
