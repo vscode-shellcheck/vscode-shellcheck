@@ -59,6 +59,8 @@ export namespace RunTrigger {
   }
 }
 
+const validErrorCodeRe = /^(SC)?(\d{4})$/;
+
 export function getWorkspaceSettings(
   context: vscode.ExtensionContext,
   scope?: vscode.ConfigurationScope | null
@@ -80,6 +82,15 @@ export function getWorkspaceSettings(
     enableQuickFix: section.get(keys.enableQuickFix, false),
     fileMatcher: new FileMatcher(),
   };
+
+  // Filter excludes (#739), besides, tolerate error codes prefixed with "SC"
+  settings.exclude = settings.exclude.reduce<string[]>((acc, pattern) => {
+    const m = pattern.match(validErrorCodeRe);
+    if (m) {
+      acc.push(m[2]);
+    }
+    return acc;
+  }, []);
 
   const ignorePatterns: FileSettings = section.get(keys.ignorePatterns, {});
   settings.fileMatcher.configure(ignorePatterns);
