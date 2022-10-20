@@ -15,21 +15,23 @@ export function tryPromptForUpdatingTool(version: semver.SemVer) {
   }
 }
 
-export async function getToolVersion(
-  executable: string
-): Promise<semver.SemVer> {
+export function parseToolVersion(s: string): semver.SemVer {
+  const match = s.match(/version: ((?:\d+)\.(?:\d+)(?:\.\d+)*)/);
+  if (!match || match.length < 2) {
+    throw new Error(`Unexpected response from ShellCheck: ${s}`);
+  }
+  const version: semver.SemVer | null = semver.parse(match[1]);
+  if (!version) {
+    throw new Error(`Unable to parse ShellCheck version: ${match[1]}`);
+  }
+  return version;
+}
+
+export function getToolVersion(executable: string): semver.SemVer {
   logging.debug(`Spawn: ${executable} -V`);
   const { stdout } = execa.sync(executable, ["-V"], { timeout: 5000 });
 
-  const matches = /version: ((?:\d+)\.(?:\d+)(?:\.\d+)*)/.exec(stdout);
-  if (!matches || matches.length < 2) {
-    throw new Error(`Unexpected response from ShellCheck: ${stdout}`);
-  }
-  const version: semver.SemVer | null = semver.parse(matches[1]);
-  if (!version) {
-    throw new Error(`Unable to parse ShellCheck version: ${version}`);
-  }
-  return version;
+  return parseToolVersion(stdout);
 }
 
 async function promptForUpdatingTool(

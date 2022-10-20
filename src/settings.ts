@@ -59,7 +59,7 @@ export namespace RunTrigger {
   }
 }
 
-const validErrorCodeRe = /^(SC)?(\d{4})$/;
+const validErrorCodePattern = /^(SC)?(\d{4})$/;
 
 export function getWorkspaceSettings(
   context: vscode.ExtensionContext,
@@ -85,7 +85,7 @@ export function getWorkspaceSettings(
 
   // Filter excludes (#739), besides, tolerate error codes prefixed with "SC"
   settings.exclude = settings.exclude.reduce<string[]>((acc, pattern) => {
-    const m = pattern.match(validErrorCodeRe);
+    const m = pattern.match(validErrorCodePattern);
     if (m) {
       acc.push(m[2]);
     }

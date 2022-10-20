@@ -229,7 +229,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       try {
         toolStatus = {
           ok: true,
-          version: await getToolVersion(settings.executable.path),
+          version: getToolVersion(settings.executable.path),
         };
       } catch (error: any) {
         logging.debug(

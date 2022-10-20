@@ -15,10 +15,12 @@ export class LinkifyProvider implements vscode.DocumentLinkProvider {
     const directivePattern = /^[ \t]*#[ \t]*shellcheck[ \t]+disable=.+$/gm;
     const result: vscode.DocumentLink[] = [];
 
-    let match;
-    while ((match = directivePattern.exec(text)) !== null) {
-      const startPosition = document.positionAt(match.index);
-      this.getMatchesOnLine(startPosition, match[0], result);
+    const matches = text.matchAll(directivePattern);
+    for (const match of matches) {
+      if (match.index) {
+        const startPosition = document.positionAt(match.index!);
+        this.getMatchesOnLine(startPosition, match[0], result);
+      }
     }
 
     return result;
@@ -29,10 +31,9 @@ export class LinkifyProvider implements vscode.DocumentLinkProvider {
     line: string,
     result: vscode.DocumentLink[]
   ) {
-    const pattern = /\bSC\d+\b/g;
-
-    let match;
-    while ((match = pattern.exec(line)) !== null) {
+    const pattern = /\bSC\d{4}\b/g;
+    const matches = line.matchAll(pattern);
+    for (const match of matches) {
       const ruleId = match[0];
       const url = getWikiUrlForRule(ruleId);
       const position = startPosition.translate(0, match.index);
