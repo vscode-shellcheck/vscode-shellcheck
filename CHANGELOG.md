@@ -1,3 +1,10 @@
+## [0.24.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.23.1...v0.24.0) (2022-10-20)
+
+
+### Features
+
+* add log level & fix potential missing error during spawn ([#774](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/774)) ([669aae0](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/669aae0a69877aa703415061f3edfd4a03b6f3ed))
+
 ## [0.23.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.23.0...v0.23.1) (2022-10-07)
 
 

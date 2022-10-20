@@ -2,7 +2,7 @@
   "name": "shellcheck",
   "displayName": "ShellCheck",
   "description": "Integrates ShellCheck into VS Code, a linter for Shell scripts.",
-  "version": "0.23.1",
+  "version": "0.24.0",
   "publisher": "timonwong",
   "author": "Timon Wong <timon86.wang@gmail.com> (https://github.com/timonwong)",
   "contributors": [
