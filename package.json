@@ -251,7 +251,7 @@
     "@types/mocha": "^10.0.0",
     "@types/node": "^14.18.32",
     "@types/semver": "^7.3.12",
-    "@types/vscode": "~1.57.0",
+    "@types/vscode": "~1.66.0",
     "@typescript-eslint/eslint-plugin": "^5.40.1",
     "@typescript-eslint/parser": "^5.40.1",
     "@vscode/test-electron": "^2.1.5",
@@ -273,7 +273,7 @@
     "webpack-cli": "^4.10.0"
   },
   "engines": {
-    "vscode": "^1.57.0"
+    "vscode": "^1.66.0"
   },
   "volta": {
     "node": "14.20.0",

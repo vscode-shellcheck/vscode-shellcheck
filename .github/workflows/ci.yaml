@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        vscode-version: [1.57.1, stable]
+        vscode-version: [1.66.0, stable]
 
     runs-on: ${{ matrix.os }}
 
