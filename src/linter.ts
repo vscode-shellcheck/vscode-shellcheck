@@ -1,4 +1,4 @@
-import * as path from "node:path";
+import * as path from "path";
 import * as semver from "semver";
 import * as vscode from "vscode";
 import * as execa from "execa";

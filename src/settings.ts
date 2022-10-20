@@ -1,4 +1,4 @@
-import * as fs from "node:fs";
+import * as fs from "fs";
 import * as vscode from "vscode";
 import { FileMatcher, FileSettings } from "./utils/filematcher";
 import { substitutePath } from "./utils/path";
@@ -89,8 +89,8 @@ export function getWorkspaceSettings(
 export function checkIfConfigurationChanged(
   e: vscode.ConfigurationChangeEvent
 ): boolean {
-  for (let k in ShellCheckSettings.keys) {
-    const section = `shellcheck.${k}`;
+  for (const key in ShellCheckSettings.keys) {
+    const section = `shellcheck.${key}`;
     if (e.affectsConfiguration(section)) {
       return true;
     }
