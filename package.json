@@ -106,11 +106,11 @@
           "default": "onType"
         },
         "shellcheck.exclude": {
-          "markdownDescription": "Exclude certain error codes. For example, to exclude [SC1017](https://shellcheck.net/wiki/SC1017), enter _1017_.",
+          "markdownDescription": "Exclude certain error codes. For example, to exclude [SC1017](https://shellcheck.net/wiki/SC1017), enter _1017_.\n\nEnumerated error codes can be found [in this gist](https://gist.github.com/nicerobot/53cee11ee0abbdc997661e65b348f375).",
           "type": "array",
           "items": {
             "type": "string",
-            "pattern": "^\\d{4}$",
+            "pattern": "^(SC)?\\d{4}$",
             "patternErrorMessage": "Valid shellcheck error code should be 4-digit numbers, 1017 for example.\n"
           },
           "scope": "resource",
