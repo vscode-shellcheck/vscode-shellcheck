@@ -1,3 +1,10 @@
+## [0.25.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.24.0...v0.25.0) (2022-10-20)
+
+
+### Features
+
+* validate user input for `shellcheck.exclude` ([#776](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/776)) ([561cf12](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/561cf12d21714eb6d976415ad62c225d115c1fd0)), closes [#739](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/739)
+
 ## [0.24.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.23.1...v0.24.0) (2022-10-20)
 
 
