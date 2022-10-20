@@ -59,6 +59,8 @@ export namespace RunTrigger {
   }
 }
 
+const validErrorCodeRe = /^\d{4}$/;
+
 export function getWorkspaceSettings(
   context: vscode.ExtensionContext,
   scope?: vscode.ConfigurationScope | null
@@ -80,6 +82,11 @@ export function getWorkspaceSettings(
     enableQuickFix: section.get(keys.enableQuickFix, false),
     fileMatcher: new FileMatcher(),
   };
+
+  // Filter excludes (#739)
+  settings.exclude = settings.exclude.filter((pattern) =>
+    validErrorCodeRe.test(pattern)
+  );
 
   const ignorePatterns: FileSettings = section.get(keys.ignorePatterns, {});
   settings.fileMatcher.configure(ignorePatterns);

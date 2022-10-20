@@ -106,10 +106,12 @@
           "default": "onType"
         },
         "shellcheck.exclude": {
-          "markdownDescription": "Exclude certain checks. For example, to exclude [SC1017](https://shellcheck.net/wiki/SC1017), enter _1017_.",
+          "markdownDescription": "Exclude certain error codes. For example, to exclude [SC1017](https://shellcheck.net/wiki/SC1017), enter _1017_.",
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^\\d{4}$",
+            "patternErrorMessage": "Valid shellcheck error code should be 4-digit numbers, 1017 for example.\n"
           },
           "scope": "resource",
           "default": [],
@@ -134,7 +136,7 @@
           ]
         },
         "shellcheck.ignorePatterns": {
-          "markdownDescription": "Configure glob patterns for excluding files and folders by shellcheck. Glob patterns are interpreted relative to the workspace's root folder. Read more about glob patterns [here](https://code.visualstudio.com/docs/editor/codebasics#_advanced-search-options).",
+          "markdownDescription": "Configure glob patterns for excluding files and folders by shellcheck. Glob patterns are interpreted relative to the workspace's root folder.\n\nRead more about glob patterns [here](https://code.visualstudio.com/docs/editor/codebasics#_advanced-search-options).",
           "examples": [
             {
               "**/*.zsh": true,
