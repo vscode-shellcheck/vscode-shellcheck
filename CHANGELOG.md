@@ -1,3 +1,10 @@
+## [0.26.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.25.1...v0.26.0) (2022-10-21)
+
+
+### Features
+
+* colorize output ([#781](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/781)) ([84beebe](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/84beebe5b442fbcd6ac8c9d5840d1a7ad045bf8a)), closes [microsoft/vscode-react-native#1385](https://github.com/microsoft/vscode-react-native/issues/1385)
+
 ## [0.25.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.25.0...v0.25.1) (2022-10-21)
 
 
