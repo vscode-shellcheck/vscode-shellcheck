@@ -54,14 +54,23 @@
         "extensions": [
           ".shellcheckrc"
         ],
-        "configuration": "./shellcheckrc/language-configuration.json"
+        "configuration": "./languages/shellcheckrc/language-configuration.json"
+      },
+      {
+        "id": "shellcheck-output",
+        "configuration": "./languages/shellcheck-output/language-configuration.json"
       }
     ],
     "grammars": [
       {
         "language": "shellcheckrc",
         "scopeName": "source.shellcheckrc",
-        "path": "./shellcheckrc/tmLanguage.json"
+        "path": "./languages/shellcheckrc/tmLanguage.json"
+      },
+      {
+        "language": "shellcheck-output",
+        "scopeName": "shellcheck-output",
+        "path": "./languages/shellcheck-output/tmLanguage.json"
       }
     ],
     "commands": [

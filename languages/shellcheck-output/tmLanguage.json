@@ -1,0 +1,77 @@
+{
+  "scopeName": "shellcheck-output",
+  "patterns": [
+    {
+      "include": "#string-single-quoted"
+    },
+    {
+      "include": "#string-double-quoted"
+    },
+    {
+      "include": "#datetime-RFC3339"
+    },
+    {
+      "include": "#date-ISO"
+    },
+    {
+      "include": "#time"
+    },
+    {
+      "include": "#error-tag"
+    },
+    {
+      "include": "#warn-tag"
+    },
+    {
+      "include": "#info-tag"
+    },
+    {
+      "include": "#debug-tag"
+    },
+    {
+      "include": "#numeric-decimal"
+    }
+  ],
+  "repository": {
+    "string-double-quoted": {
+      "match": "\"(.*?)\"",
+      "name": "string.quoted"
+    },
+    "string-single-quoted": {
+      "match": "'(.*?)'",
+      "name": "string.quoted"
+    },
+    "datetime-RFC3339": {
+      "match": "\\b(\\d{4}-\\d{2}-\\d{2})T(\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?)(Z|[\\+-]\\d{2}:\\d{2})?",
+      "name": "constant.numeric"
+    },
+    "date-ISO": {
+      "match": "\\b\\d{4}-\\d{2}-\\d{2}(T|\\b)",
+      "name": "constant.numeric"
+    },
+    "time": {
+      "match": "\\d{1,2}:\\d{1,2}:\\d{2}(:\\d{2}([.,]\\d{1,})?)?(Z| ?[+-]\\d{1,2}:\\d{2})?(.\\d{3})?",
+      "name": "constant.numeric"
+    },
+    "error-tag": {
+      "match": "\\[ERROR\\]",
+      "name": "markup.bold invalid.illegal"
+    },
+    "warn-tag": {
+      "match": "\\[WARN\\]",
+      "name": "markup.bold markup.deleted"
+    },
+    "info-tag": {
+      "match": "\\[INFO\\]",
+      "name": "markup.bold markup.inserted"
+    },
+    "debug-tag": {
+      "match": "\\[(TRACE|DEBUG)\\]",
+      "name": "markup.bold markup.changed"
+    },
+    "numeric-decimal": {
+      "match": "\\b\\d+(\\.\\d+)?\\b",
+      "name": "constant.numeric"
+    }
+  }
+}
