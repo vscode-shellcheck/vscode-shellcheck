@@ -8,6 +8,9 @@
       "include": "#string-double-quoted"
     },
     {
+      "include": "#filepath"
+    },
+    {
       "include": "#datetime-RFC3339"
     },
     {
@@ -30,6 +33,15 @@
     },
     {
       "include": "#numeric-decimal"
+    },
+    {
+      "include": "#constants"
+    },
+    {
+      "include": "#exception"
+    },
+    {
+      "include": "#exception-stack"
     }
   ],
   "repository": {
@@ -40,6 +52,10 @@
     "string-single-quoted": {
       "match": "'(.*?)'",
       "name": "string.quoted"
+    },
+    "filepath": {
+      "match": "(([a-zA-Z]:)|((\\\\|/){1,2}\\w+)\\$?)((\\\\|/)(\\w[\\w ]*.*))+\\.([a-zA-Z0-9]+)",
+      "name": "markup.underline.link"
     },
     "datetime-RFC3339": {
       "match": "\\b(\\d{4}-\\d{2}-\\d{2})T(\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?)(Z|[\\+-]\\d{2}:\\d{2})?",
@@ -72,6 +88,18 @@
     "numeric-decimal": {
       "match": "\\b\\d+(\\.\\d+)?\\b",
       "name": "constant.numeric"
+    },
+    "constants": {
+      "match": "\\b(true|false|null|undefined|NaN)\\b",
+      "name": "constant.language"
+    },
+    "exception": {
+      "match": "\\b(Exception|Error|Failure|Fail|EXCEPTION|ERROR|FAILURE|FAIL):?\\b.*$",
+      "name": "invalid"
+    },
+    "exception-stack": {
+      "match": "^[\\t ]*at.+$",
+      "name": "invalid"
     }
   }
 }
