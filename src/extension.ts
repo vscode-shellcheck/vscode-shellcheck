@@ -10,7 +10,10 @@ export function activate(
   context: vscode.ExtensionContext
 ): ShellCheckExtensionApi {
   // Setup logging
-  const outputChannel = vscode.window.createOutputChannel("ShellCheck");
+  const outputChannel = vscode.window.createOutputChannel(
+    "ShellCheck",
+    "shellcheck-output"
+  );
   context.subscriptions.push(outputChannel);
 
   const logger = new OutputChannelLogger(outputChannel);
