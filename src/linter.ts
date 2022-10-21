@@ -9,7 +9,7 @@ import { getToolVersion, tryPromptForUpdatingTool } from "./utils/tool-check";
 import {
   guessDocumentDirname,
   getWorkspaceFolderPath,
-  fixCurrentWorkingDirectory,
+  ensureCurrentWorkingDirectory,
 } from "./utils/path";
 import { FixAllProvider } from "./fix-all";
 import { getWikiUrlForRule } from "./utils/link";
@@ -427,7 +427,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         cwd = guessDocumentDirname(textDocument);
       }
 
-      cwd = await fixCurrentWorkingDirectory(cwd);
+      cwd = await ensureCurrentWorkingDirectory(cwd);
       logging.debug("Spawn: (cwd=%s) %s %s", cwd, executable.path, args);
       const options: execa.Options = { cwd };
       const childProcess = execa(executable.path, args, options);

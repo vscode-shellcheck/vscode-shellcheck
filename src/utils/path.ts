@@ -10,7 +10,7 @@ export function fixDriveCasingInWindows(pathToFix: string): string {
     : pathToFix;
 }
 
-function isSafeUriScheme(uri: vscode.Uri): boolean {
+function isFileUriScheme(uri: vscode.Uri): boolean {
   return uri.scheme === "file";
 }
 
@@ -21,7 +21,7 @@ export function guessDocumentDirname(
     return getWorkspaceFolderPath(textDocument.uri);
   }
 
-  if (isSafeUriScheme(textDocument.uri)) {
+  if (isFileUriScheme(textDocument.uri)) {
     return path.dirname(textDocument.fileName);
   }
 
@@ -30,9 +30,9 @@ export function guessDocumentDirname(
 
 export function getWorkspaceFolderPath(
   uri?: vscode.Uri,
-  safe: boolean = true
+  requireFileUri: boolean = true
 ): string | undefined {
-  const isSafeUriSchemeFunc = safe ? isSafeUriScheme : () => true;
+  const isSafeUriSchemeFunc = requireFileUri ? isFileUriScheme : () => true;
   if (uri) {
     const workspace = vscode.workspace.getWorkspaceFolder(uri);
     if (workspace && isSafeUriSchemeFunc(workspace.uri)) {
@@ -53,9 +53,9 @@ export function getWorkspaceFolderPath(
   return undefined;
 }
 
-// Check the cwd because if the cwd is not accessible, it will throw ENOENT
+// Ensure the cwd exists, or it will throw ENOENT
 // https://github.com/vscode-shellcheck/vscode-shellcheck/issues/767
-export async function fixCurrentWorkingDirectory(
+export async function ensureCurrentWorkingDirectory(
   cwd: string | undefined
 ): Promise<string | undefined> {
   if (!cwd) {
