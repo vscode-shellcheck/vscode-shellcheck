@@ -70,11 +70,8 @@ export async function getWorkspaceSettings(
   const settings = <ShellCheckSettings>{
     enabled: section.get(keys.enable, true),
     trigger: RunTrigger.from(section.get(keys.run, RunTrigger.strings.onType)),
-    executable: await getExecutable(
-      context,
-      section.get(keys.executablePath, "")
-    ),
     exclude: section.get(keys.exclude, []),
+    executable: await getExecutable(context, section.get(keys.executablePath)),
     customArgs: section
       .get(keys.customArgs, [])
       .map((arg) => substitutePath(arg)),
@@ -114,17 +111,17 @@ export function checkIfConfigurationChanged(
 
 async function getExecutable(
   context: vscode.ExtensionContext,
-  executablePath: string
+  executablePath: string | undefined
 ): Promise<Executable> {
   if (!executablePath) {
     // Use bundled binaries (maybe)
     let suffix = "";
     let osarch = process.arch;
     if (process.platform === "win32") {
+      suffix = ".exe";
       if (process.arch === "x64" || process.arch === "ia32") {
         osarch = "x32";
       }
-      suffix = ".exe";
     }
     executablePath = context.asAbsolutePath(
       `./binaries/${process.platform}/${osarch}/shellcheck${suffix}`
