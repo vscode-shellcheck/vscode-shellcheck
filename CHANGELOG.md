@@ -1,3 +1,10 @@
+## [0.25.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.25.0...v0.25.1) (2022-10-21)
+
+
+### Bug Fixes
+
+* ensure cwd exists before spawn shellcheck ([#780](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/780)) ([79febb8](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/79febb8464fbfe924deffdaa645ee18c380e64c3)), closes [#767](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/767)
+
 ## [0.25.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.24.0...v0.25.0) (2022-10-20)
 
 
