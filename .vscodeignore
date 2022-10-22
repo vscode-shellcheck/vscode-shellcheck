@@ -3,7 +3,7 @@
 !binaries/
 !dist/
 !licenses/
-!shellcheckrc/
+!languages/
 
 !CHANGELOG.md
 !LICENSE
