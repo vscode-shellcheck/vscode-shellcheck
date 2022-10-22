@@ -1,3 +1,10 @@
+## [0.26.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.26.0...v0.26.1) (2022-10-22)
+
+
+### Bug Fixes
+
+* missing resource files ([#785](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/785)) ([3423e3e](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/3423e3e698c23fa7e7aa3b567382c8be09af3044)), closes [#784](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/784)
+
 ## [0.26.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.25.1...v0.26.0) (2022-10-21)
 
 
