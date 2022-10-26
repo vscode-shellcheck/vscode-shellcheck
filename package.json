@@ -157,12 +157,8 @@
           "type": "object",
           "scope": "resource",
           "additionalProperties": {
-            "anyOf": [
-              {
-                "type": "boolean",
-                "description": "The glob pattern to match file paths against. Set to true or false to enable or disable the pattern."
-              }
-            ]
+            "type": "boolean",
+            "description": "The glob pattern to match file paths against. Set to true or false to enable or disable the pattern."
           },
           "default": {
             "**/*.xonshrc": true,
