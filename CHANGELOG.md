@@ -1,3 +1,10 @@
+## [0.26.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.26.1...v0.26.2) (2022-10-26)
+
+
+### Bug Fixes
+
+* ignore patterns added in settings ui not being ignored ([#792](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/792)) ([53022f6](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/53022f6db2198e21fc2f8d11e1ed10d703e0a10f)), closes [#790](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/790)
+
 ## [0.26.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.26.0...v0.26.1) (2022-10-22)
 
 
