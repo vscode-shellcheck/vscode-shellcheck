@@ -258,7 +258,7 @@
     "@types/lodash": "^4.14.186",
     "@types/minimatch": "^5.1.2",
     "@types/mocha": "^10.0.0",
-    "@types/node": "^14.18.32",
+    "@types/node": "^16.18.1",
     "@types/semver": "^7.3.12",
     "@types/vscode": "~1.66.0",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
@@ -285,8 +285,8 @@
     "vscode": "^1.66.0"
   },
   "volta": {
-    "node": "14.20.0",
-    "npm": "8.18.0"
+    "node": "16.18.0",
+    "npm": "8.19.2"
   },
   "__metadata": {
     "id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",

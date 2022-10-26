@@ -15,14 +15,14 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        vscode-version: [1.66.0, stable]
+        vscode-version: ["1.66.0", stable]
 
     runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v3
       - name: Setup Volta, Node and NPM
-        uses: volta-cli/action@v4.0.0
+        uses: volta-cli/action@v4
       - run: npm ci
       - name: Test with VS Code ${{ matrix.vscode-version }}
         uses: GabrielBB/xvfb-action@v1
@@ -43,7 +43,7 @@ jobs:
         with:
           token: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE || github.token }}
       - name: Setup Volta, Node and NPM
-        uses: volta-cli/action@v4.0.0
+        uses: volta-cli/action@v4
       - run: npm ci
       # Only run on push events or pull requests coming from the same repository, except from dependabot
       - run: npm run release
