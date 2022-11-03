@@ -16,7 +16,7 @@ export function tryPromptForUpdatingTool(version: semver.SemVer) {
 }
 
 export function parseToolVersion(s: string): semver.SemVer {
-  const match = s.match(/version: ((?:\d+)\.(?:\d+)(?:\.\d+)*)/);
+  const match = s.match(/version: v?((?:\d+)\.(?:\d+)(?:\.\d+)*)/);
   if (!match || match.length < 2) {
     throw new Error(`Unexpected response from ShellCheck: ${s}`);
   }
