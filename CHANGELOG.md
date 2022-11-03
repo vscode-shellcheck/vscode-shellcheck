@@ -1,3 +1,10 @@
+## [0.26.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.26.2...v0.26.3) (2022-11-03)
+
+
+### Bug Fixes
+
+* detect shellcheck versions with `v` as prefix ([#806](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/806)) ([ebcece8](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/ebcece82af0e0c98b9768a34bf70778c145ee015)), closes [#804](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/804)
+
 ## [0.26.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.26.1...v0.26.2) (2022-10-26)
 
 
