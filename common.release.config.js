@@ -55,20 +55,6 @@ module.exports = {
       },
     ],
     "@semantic-release/changelog",
-    [
-      "semantic-release-vsce",
-      {
-        packageVsix: true,
-      },
-    ],
-    "@semantic-release/git",
-    [
-      "@semantic-release/github",
-      {
-        assets: "*.vsix",
-        addReleases: "bottom",
-      },
-    ],
   ],
   preset: "conventionalcommits",
 };

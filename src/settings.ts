@@ -119,9 +119,6 @@ async function getExecutable(
     let osarch = process.arch;
     if (process.platform === "win32") {
       suffix = ".exe";
-      if (process.arch === "x64" || process.arch === "ia32") {
-        osarch = "x32";
-      }
     }
     executablePath = context.asAbsolutePath(
       `./binaries/${process.platform}/${osarch}/shellcheck${suffix}`
