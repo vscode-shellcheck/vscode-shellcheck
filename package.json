@@ -257,7 +257,7 @@
     "@types/node": "^16.18.3",
     "@types/semver": "^7.3.13",
     "@types/vscode": "~1.66.0",
-    "@typescript-eslint/eslint-plugin": "^5.42.1",
+    "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.42.1",
     "@vscode/test-electron": "^2.2.0",
     "bindl": "^2.0.0",
