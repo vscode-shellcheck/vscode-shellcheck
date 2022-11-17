@@ -1,3 +1,10 @@
+## [0.28.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.28.0...v0.28.1) (2022-11-17)
+
+
+### Bug Fixes
+
+* windows x86 (32 bits) vsix does not contain the binary ([#823](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/823)) ([387641d](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/387641d1def026f34983dda1ce916ab461cc6692)), closes [#805](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/805)
+
 ## [0.28.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.27.0...v0.28.0) (2022-11-17)
 
 
