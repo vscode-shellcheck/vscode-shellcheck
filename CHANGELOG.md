@@ -1,3 +1,10 @@
+## [0.28.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.27.0...v0.28.0) (2022-11-17)
+
+
+### Features
+
+* publish platform-specific vsix ([#805](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/805)) ([419d7a0](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/419d7a018367accd843535679f9c0b4fa2d70d9e))
+
 ## [0.26.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.26.2...v0.26.3) (2022-11-03)
 
 
