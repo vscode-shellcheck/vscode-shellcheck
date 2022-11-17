@@ -36,7 +36,7 @@ module.exports = {
     },
     {
       platform: "win32",
-      arch: "x32",
+      arch: "ia32",
       url: `${officialReleaseUrl}.zip`,
       files: [{ source: "shellcheck.exe", target: "shellcheck.exe" }],
     },
