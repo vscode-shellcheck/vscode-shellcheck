@@ -24,6 +24,8 @@ jobs:
       - name: Setup Volta, Node and NPM
         uses: volta-cli/action@v4
       - run: npm ci
+        env:
+          npm_config_arch: x64
       - name: Test with VS Code ${{ matrix.vscode-version }}
         uses: GabrielBB/xvfb-action@v1
         env:
@@ -31,10 +33,72 @@ jobs:
         with:
           run: npm test
 
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: win32
+            arch: x64
+            npm_config_arch: x64
+          - os: windows-latest
+            platform: win32
+            arch: ia32
+            npm_config_arch: ia32
+          - os: windows-latest
+            platform: win32
+            arch: arm64
+            # Change to 'arm' after https://github.com/microsoft/vscode-vsce/issues/786 is fixed
+            npm_config_arch: ia32
+          - os: ubuntu-latest
+            platform: linux
+            arch: x64
+            npm_config_arch: x64
+          - os: ubuntu-latest
+            platform: linux
+            arch: arm64
+            npm_config_arch: arm64
+          - os: ubuntu-latest
+            platform: linux
+            arch: armhf
+            npm_config_arch: arm
+          - os: ubuntu-latest
+            platform: alpine
+            arch: x64
+            npm_config_arch: x64
+          - os: macos-latest
+            platform: darwin
+            arch: x64
+            npm_config_arch: x64
+          - os: macos-latest
+            platform: darwin
+            arch: arm64
+            npm_config_arch: arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Volta, Node and NPM
+        uses: volta-cli/action@v4
+      - run: npm ci
+        env:
+          npm_config_arch: ${{ matrix.npm_config_arch }}
+      - shell: pwsh
+        run: echo "VSCE_TARGET=${{ matrix.platform }}-${{ matrix.arch }}" >> $env:GITHUB_ENV
+      - run: npx semantic-release --extends ./package.release.config.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.VSCE_TARGET }}
+          path: "*.vsix"
+
   release:
     if: github.event_name != 'schedule'
 
-    needs: test
+    needs: [test, build]
 
     runs-on: ubuntu-latest
 
@@ -45,22 +109,13 @@ jobs:
       - name: Setup Volta, Node and NPM
         uses: volta-cli/action@v4
       - run: npm ci
+        env:
+          npm_config_arch: x64
+      - uses: actions/download-artifact@v3
       # Only run on push events or pull requests coming from the same repository, except from dependabot
-      - run: npm run release
+      - run: npx semantic-release --extends ./publish.release.config.js
         if: github.event_name == 'push' || github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
-      - if: github.event_name == 'pull_request'
-        name: Create extension vsix for pull request
-        run: |
-          pr_number=$([[ "${GITHUB_REF}" =~ ^refs/pull/(.*)/merge$ ]] && echo ${BASH_REMATCH[1]})
-          npm version prerelease --preid "pr-${pr_number}" --no-git-tag-version
-          npm run package
-      - if: github.event_name == 'pull_request'
-        name: Archive the extension vsix for pull request
-        uses: actions/upload-artifact@v3
-        with:
-          name: extension-vsix
-          path: "*.vsix"
