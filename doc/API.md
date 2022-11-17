@@ -12,7 +12,7 @@ The `registerDocumentFilter` function allows other VS Code extensions to regist
 
 To make the ShellCheck extension known to your own VS Code extension, add `timonwong.shellcheck` to the `extensionDependencies` list in your `package.json`:
 
-```json
+```jsonc
 // Add this to your package.json
 "extensionDependencies": [
   "timonwong.shellcheck"
