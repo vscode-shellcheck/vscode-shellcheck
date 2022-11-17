@@ -7,6 +7,7 @@ module.exports = {
     [
       "semantic-release-vsce",
       {
+        packageVsix: false,
         publishPackagePath: "*.vsix",
       },
     ],
