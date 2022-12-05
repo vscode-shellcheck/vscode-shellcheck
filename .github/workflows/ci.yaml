@@ -39,60 +39,58 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            platform: win32
-            arch: x64
+            target: win32-x64
             npm_config_arch: x64
           - os: windows-latest
-            platform: win32
-            arch: ia32
+            target: win32-ia32
             npm_config_arch: ia32
           - os: windows-latest
-            platform: win32
-            arch: arm64
-            # Change to 'arm' after https://github.com/microsoft/vscode-vsce/issues/786 is fixed
-            npm_config_arch: ia32
-          - os: ubuntu-latest
-            platform: linux
-            arch: x64
-            npm_config_arch: x64
-          - os: ubuntu-latest
-            platform: linux
-            arch: arm64
-            npm_config_arch: arm64
-          - os: ubuntu-latest
-            platform: linux
-            arch: armhf
+            target: win32-arm64
             npm_config_arch: arm
           - os: ubuntu-latest
-            platform: alpine
-            arch: x64
+            taget: linux-x64
             npm_config_arch: x64
-          - os: macos-latest
-            platform: darwin
-            arch: x64
-            npm_config_arch: x64
-          - os: macos-latest
-            platform: darwin
-            arch: arm64
+          - os: ubuntu-latest
+            target: linux-arm64
             npm_config_arch: arm64
+          - os: ubuntu-latest
+            target: linux-armhf
+            npm_config_arch: arm
+          - os: ubuntu-latest
+            target: alpine-x64
+            npm_config_arch: x64
+          - os: macos-latest
+            target: darwin-x64
+            npm_config_arch: x64
+          - os: macos-latest
+            target: darwin-arm64
+            npm_config_arch: arm64
+          - os: ubuntu-latest
+            target: universal
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup Volta, Node and NPM
         uses: volta-cli/action@v4
-      - run: npm ci
+      - if: matrix.target != 'universal'
+        name: Install dependencies (with binaries)
+        run: npm ci
         env:
           npm_config_arch: ${{ matrix.npm_config_arch }}
-      - shell: pwsh
-        run: echo "VSCE_TARGET=${{ matrix.platform }}-${{ matrix.arch }}" >> $env:GITHUB_ENV
+      - if: matrix.target == 'universal'
+        name: Install dependencies (without binaries)
+        run: npm ci
+        env:
+          BINDL_SKIP: "true"
       - run: npx semantic-release --extends ./package.release.config.js
         env:
+          VSCE_TARGET: ${{ matrix.target }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.VSCE_TARGET }}
+          name: ${{ matrix.target }}
           path: "*.vsix"
 
   release:
@@ -110,7 +108,7 @@ jobs:
         uses: volta-cli/action@v4
       - run: npm ci
         env:
-          npm_config_arch: x64
+          BINDL_SKIP: "true"
       - uses: actions/download-artifact@v3
       # Only run on push events or pull requests coming from the same repository, except from dependabot
       - run: npx semantic-release --extends ./publish.release.config.js

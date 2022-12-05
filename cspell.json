@@ -42,6 +42,7 @@
     "linkify",
     "deps",
     "outputchannel",
-    "datetime"
+    "datetime",
+    "keytar"
   ]
 }
