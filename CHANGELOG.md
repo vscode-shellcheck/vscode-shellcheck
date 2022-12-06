@@ -1,3 +1,10 @@
+## [0.29.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.29.0...v0.29.1) (2022-12-06)
+
+
+### Dependencies
+
+* **deps:** fix windows arm vsix without binary ([3b56c78](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/3b56c786f3cac71818179da44db30901f1d81263))
+
 ## [0.29.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.28.2...v0.29.0) (2022-12-06)
 
 
