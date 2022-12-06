@@ -1,3 +1,16 @@
+## [0.29.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.28.2...v0.29.0) (2022-12-06)
+
+
+### Features
+
+* publish universal `vsix` without binaries ([#852](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/852)) ([212550f](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/212550f77fe57235e7d7d289edea92772fa45f9e))
+
+
+### Dependencies
+
+* **deps:** bump decode-uri-component from 0.2.0 to 0.2.2 ([#844](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/844)) ([231d034](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/231d03497c3d6746682c3119da68f99f4999d637))
+* **deps:** bump minimatch from 5.1.0 to 5.1.1 ([#839](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/839)) ([922d10d](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/922d10d582a923fee110c990e0d500975c4bbdc6))
+
 ## [0.28.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.28.1...v0.28.2) (2022-11-17)
 
 
