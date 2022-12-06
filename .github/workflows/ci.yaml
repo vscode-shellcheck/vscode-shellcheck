@@ -48,7 +48,7 @@ jobs:
             target: win32-arm64
             npm_config_arch: arm
           - os: ubuntu-latest
-            taget: linux-x64
+            target: linux-x64
             npm_config_arch: x64
           - os: ubuntu-latest
             target: linux-arm64
