@@ -1,4 +1,4 @@
-const version = "v0.8.0";
+const version = "v0.9.0";
 const officialReleaseUrl = `https://github.com/koalaman/shellcheck/releases/download/${version}/shellcheck-${version}`;
 const ourReleaseUrl = `https://github.com/vscode-shellcheck/shellcheck-binaries/releases/download/${version}/shellcheck-${version}`;
 
