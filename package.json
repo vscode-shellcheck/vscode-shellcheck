@@ -263,7 +263,7 @@
     "bindl": "^4.0.0",
     "conventional-changelog-conventionalcommits": "^5.0.0",
     "cspell": "^6.19.2",
-    "eslint": "^8.32.0",
+    "eslint": "^8.33.0",
     "eslint-config-prettier": "^8.6.0",
     "glob": "^8.1.0",
     "kind-of": "^6.0.3",
