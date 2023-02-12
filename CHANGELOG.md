@@ -1,3 +1,10 @@
+## [0.29.4](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.29.3...v0.29.4) (2023-02-12)
+
+
+### Dependencies
+
+* **deps:** remove incorrect binary for Windows x86 ([e0ffbe0](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/e0ffbe0f9020c301449f12aaea5d668f73182cb4))
+
 ## [0.29.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.29.2...v0.29.3) (2023-01-05)
 
 
