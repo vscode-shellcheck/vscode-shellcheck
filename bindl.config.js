@@ -41,12 +41,6 @@ module.exports = {
     },
     {
       platform: "win32",
-      arch: "ia32",
-      url: `${releaseUrl}.windows.x86_64.tar.gz`,
-      files: [{ source: "shellcheck.exe", target: "shellcheck.exe" }],
-    },
-    {
-      platform: "win32",
       arch: "arm",
       url: `${releaseUrl}.windows.x86_64.tar.gz`,
       files: [{ source: "shellcheck.exe", target: "shellcheck.exe" }],
