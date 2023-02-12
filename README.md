@@ -15,7 +15,7 @@ Integrates [ShellCheck](https://github.com/koalaman/shellcheck) into VS Code, a 
 
 This VS Code extension requires [shellcheck] (the awesome static analysis tool for shell scripts) to work.
 
-Pre-compiled [shellcheck] binaries are bundled in this extension for these platforms:
+Precompiled [shellcheck] binaries are bundled in this extension for these platforms:
 
 - Linux (x86_64, arm, arm64)
 - macOS (x86_64, arm64)
