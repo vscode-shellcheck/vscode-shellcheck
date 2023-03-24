@@ -48,6 +48,12 @@
     }
   },
   "contributes": {
+    "snippets": [
+      {
+        "language": "shellscript",
+        "path": "./snippets/snippets.json"
+      }
+    ],
     "languages": [
       {
         "id": "shellcheckrc",
