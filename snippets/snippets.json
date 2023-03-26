@@ -12,7 +12,7 @@
     "shellcheck enable optional": {
         "description": "enable optional warnings",
         "prefix": "shellcheck:enable-optional-warnings",
-        "body": ["# shellcheck enable=${2|add-default-case,avoid-nullary-conditions,check-extra-masked-returns,check-set-e-suppressed,check-unassigned-uppercase,deprecate-which,quote-safe-variables,require-double-brackets,require-variable-braces|}"]
+        "body": ["# shellcheck enable=${1|add-default-case,avoid-nullary-conditions,check-extra-masked-returns,check-set-e-suppressed,check-unassigned-uppercase,deprecate-which,quote-safe-variables,require-double-brackets,require-variable-braces|}"]
     },
     "shellcheck source file": {
         "description": "source file",
