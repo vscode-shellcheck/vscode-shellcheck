@@ -1,30 +1,22 @@
 {
-    "shellcheck:toggle": {
-        "description": "[shellcheck:toggle-warnings]",
-        "prefix": "shellcheck:toggle-warnings",
-        "body": [
-            "# shellcheck ${1|enable,disable|}=${2:warnings}"
-        ]
-    },
-    "shellcheck:source-file": {
-        "description": "[shellcheck:source-file]",
-        "prefix": "shellcheck:source-file",
-        "body": [
-            "# shellcheck source=${1:path/to/file}"
-        ]
-    },
-    "shellcheck:source-directory": {
-        "description": "[shellcheck:source-directory]",
-        "prefix": "shellcheck:source-directory",
-        "body": [
-            "# shellcheck source-path=${1:path/to/directory}"
-        ]
-    },
-    "shellcheck:shell": {
-        "description": "[shellcheck:shell]",
-        "prefix": "shellcheck:shell",
-        "body": [
-            "# shellcheck shell=${1:shell}"
-        ]
-    }
+  "shellcheck:toggle": {
+    "description": "[shellcheck:toggle-warnings]",
+    "prefix": "shellcheck:toggle-warnings",
+    "body": ["# shellcheck ${1|enable,disable|}=${2:warnings}"]
+  },
+  "shellcheck:source-file": {
+    "description": "[shellcheck:source-file]",
+    "prefix": "shellcheck:source-file",
+    "body": ["# shellcheck source=${1:path/to/file}"]
+  },
+  "shellcheck:source-directory": {
+    "description": "[shellcheck:source-directory]",
+    "prefix": "shellcheck:source-directory",
+    "body": ["# shellcheck source-path=${1:path/to/directory}"]
+  },
+  "shellcheck:shell": {
+    "description": "[shellcheck:shell]",
+    "prefix": "shellcheck:shell",
+    "body": ["# shellcheck shell=${1:shell}"]
+  }
 }
