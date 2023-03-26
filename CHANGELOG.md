@@ -1,3 +1,10 @@
+## [0.30.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.29.4...v0.30.0) (2023-03-26)
+
+
+### Features
+
+* add snippets for directives ([#1002](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1002)) ([421e658](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/421e65816dfe134e19cbf3e7b4660ea4388b8518))
+
 ## [0.29.4](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.29.3...v0.29.4) (2023-02-12)
 
 
