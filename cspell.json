@@ -43,6 +43,7 @@
     "deps",
     "outputchannel",
     "datetime",
-    "keytar"
+    "keytar",
+    "nullary"
   ]
 }
