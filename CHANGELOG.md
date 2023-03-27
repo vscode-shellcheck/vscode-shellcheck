@@ -1,3 +1,10 @@
+## [0.31.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.30.0...v0.31.0) (2023-03-27)
+
+
+### Features
+
+* prettify existing snippets and add new ones ([#1008](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1008)) ([edaf065](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/edaf065701c278f96a2d029786021e06f17e7651))
+
 ## [0.30.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.29.4...v0.30.0) (2023-03-26)
 
 
