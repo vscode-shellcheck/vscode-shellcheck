@@ -257,7 +257,7 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@types/glob": "^8.1.0",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "^4.14.192",
     "@types/minimatch": "^5.1.2",
     "@types/mocha": "^10.0.1",
     "@types/node": "^16.18.21",
