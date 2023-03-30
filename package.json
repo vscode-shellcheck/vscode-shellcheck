@@ -260,7 +260,7 @@
     "@types/lodash": "^4.14.192",
     "@types/minimatch": "^5.1.2",
     "@types/mocha": "^10.0.1",
-    "@types/node": "^16.18.22",
+    "@types/node": "^16.18.23",
     "@types/semver": "^7.3.13",
     "@types/vscode": "~1.66.0",
     "@typescript-eslint/eslint-plugin": "^5.57.0",
