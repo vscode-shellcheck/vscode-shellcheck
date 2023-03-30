@@ -1,3 +1,10 @@
+## [0.31.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.31.0...v0.31.1) (2023-03-30)
+
+
+### Bug Fixes
+
+* snippets folder not found ([#1017](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1017)) ([7df268e](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/7df268e7dc65bb9d82902f9c19ab89f05dc662a8)), closes [#1016](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1016)
+
 ## [0.31.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.30.0...v0.31.0) (2023-03-27)
 
 
