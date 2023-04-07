@@ -280,7 +280,7 @@
     "semantic-release-stop-before-publish": "^1.0.0",
     "semantic-release-vsce": "^5.5.3",
     "ts-loader": "^9.4.2",
-    "typescript": "^5.0.3",
+    "typescript": "^5.0.4",
     "webpack": "^5.78.0",
     "webpack-cli": "^5.0.1"
   },
