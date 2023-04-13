@@ -24,6 +24,7 @@ import {
 namespace CommandIds {
   export const runLint: string = "shellcheck.runLint";
   export const openRuleDoc: string = "shellcheck.openRuleDoc";
+  export const collectDiagnostics: string = "shellcheck.collectDiagnostics";
 }
 
 type ToolStatus =
@@ -44,13 +45,6 @@ function toolStatusByError(error: any): ToolStatus {
 export default class ShellCheckProvider implements vscode.CodeActionProvider {
   public static readonly LANGUAGE_ID = "shellscript";
 
-  private delayers: { [key: string]: ThrottledDelayer<void> };
-  private readonly settingsByUri: Map<string, ShellCheckSettings>;
-  private readonly toolStatusByPath: Map<string, ToolStatus>;
-  private readonly diagnosticCollection: vscode.DiagnosticCollection;
-  private readonly codeActionCollection: Map<string, ParseResult[]>;
-  private readonly additionalDocumentFilters: Set<vscode.DocumentFilter>;
-
   public static readonly providedCodeActionKinds = [
     vscode.CodeActionKind.QuickFix,
     vscode.CodeActionKind.Source,
@@ -59,6 +53,13 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   public static readonly metadata: vscode.CodeActionProviderMetadata = {
     providedCodeActionKinds: ShellCheckProvider.providedCodeActionKinds,
   };
+
+  private delayers: { [key: string]: ThrottledDelayer<void> };
+  private readonly settingsByUri: Map<string, ShellCheckSettings>;
+  private readonly toolStatusByPath: Map<string, ToolStatus>;
+  private readonly diagnosticCollection: vscode.DiagnosticCollection;
+  private readonly codeActionCollection: Map<string, ParseResult[]>;
+  private readonly additionalDocumentFilters: Set<vscode.DocumentFilter>;
 
   constructor(private readonly context: vscode.ExtensionContext) {
     this.delayers = Object.create(null);
@@ -101,6 +102,12 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         async (editor) => {
           return await this.triggerLint(editor.document);
         }
+      ),
+      vscode.commands.registerTextEditorCommand(
+        CommandIds.collectDiagnostics,
+        async (editor) => {
+          return await this.collectDiagnostics(editor.document);
+        }
       )
     );
 
@@ -116,11 +123,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       context.subscriptions
     );
     vscode.workspace.onDidCloseTextDocument(
-      (textDocument) => {
-        this.setResultCollections(textDocument.uri);
-        this.settingsByUri.delete(textDocument.uri.toString());
-        delete this.delayers[textDocument.uri.toString()];
-      },
+      this.onDidCloseTextDocument,
       null,
       context.subscriptions
     );
@@ -137,6 +140,12 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
     // Shellcheck all open shell documents
     this.triggerLintForEntireWorkspace();
+  }
+
+  private onDidCloseTextDocument(textDocument: vscode.TextDocument) {
+    this.setResultCollections(textDocument.uri);
+    this.settingsByUri.delete(textDocument.uri.toString());
+    delete this.delayers[textDocument.uri.toString()];
   }
 
   private onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
@@ -204,7 +213,6 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   }
 
   public dispose(): void {
-    this.diagnosticCollection.clear();
     this.codeActionCollection.clear();
     this.diagnosticCollection.dispose();
   }
@@ -342,6 +350,67 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     return !!vscode.languages.match(allowedDocumentSelector, textDocument);
   }
 
+  private async collectDiagnostics(textDocument: vscode.TextDocument) {
+    const output: string[] = [
+      "## Document\n",
+      `URI: \`${textDocument.uri.toString()}\``,
+      `Language: \`${textDocument.languageId}\``,
+      "",
+    ];
+
+    output.push("## ShellCheck\n");
+    const settings: ShellCheckSettings = await this.getSettings(textDocument);
+    const toolStatus = this.toolStatusByPath.get(settings.executable.path);
+    if (toolStatus && toolStatus.ok) {
+      output.push(
+        `- Version: \`${toolStatus.version}\``,
+        `- bundled: \`${settings.executable.bundled}\``,
+        ""
+      );
+    } else {
+      output.push("- ShellCheck is not installed or not working");
+      output.push("");
+    }
+
+    const warnings: string[] = [];
+    if (!this.isAllowedTextDocument(textDocument)) {
+      warnings.push("- Document is not a shell script or is filtered out");
+    }
+
+    if (settings.ignoreFileSchemes.has(textDocument.uri.scheme)) {
+      warnings.push(
+        `- File scheme of document is ignored: ${textDocument.uri.scheme} not in \`shellcheck.ignoreFileSchemes\``
+      );
+    }
+
+    if (warnings.length) {
+      output.push("## Warnings\n");
+      output.push(...warnings);
+      output.push("");
+    }
+    const ext = vscode.extensions.getExtension("mads-hartmann.bash-ide-vscode");
+    if (ext) {
+      const bashIdeSection = vscode.workspace.getConfiguration(
+        "bashIde",
+        textDocument
+      );
+      if (bashIdeSection.get<boolean>("enableSourceErrorDiagnostics")) {
+        output.push(
+          "## Notes about Bash IDE Extension\n",
+          "- This extension may overlaps the Bash IDE extension, to disable linting in Bash IDE, you can set `bashIde.enableSourceErrorDiagnostics` to `false`."
+        );
+      }
+    }
+
+    output.push("");
+
+    const doc = await vscode.workspace.openTextDocument({
+      language: "markdown",
+      content: output.join("\n"),
+    });
+    await vscode.window.showTextDocument(doc, { preview: true });
+  }
+
   private async triggerLint(
     textDocument: vscode.TextDocument,
     extraCondition: (settings: ShellCheckSettings) => boolean = (_) => true
@@ -454,6 +523,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
           .on("end", () => {
             let result: ParseResult[] | null = null;
             const output = buf.join("");
+            logging.trace("shellcheck response: %s", output);
             if (output.length) {
               result = parser.parse(output);
             }

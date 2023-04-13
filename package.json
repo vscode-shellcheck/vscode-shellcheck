@@ -83,6 +83,10 @@
       {
         "command": "shellcheck.runLint",
         "title": "ShellCheck: Run Linting"
+      },
+      {
+        "command": "shellcheck.collectDiagnostics",
+        "title": "ShellCheck: Collect Diagnostics For Current Document"
       }
     ],
     "configuration": {
