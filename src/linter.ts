@@ -364,7 +364,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     if (toolStatus && toolStatus.ok) {
       output.push(
         `- Version: \`${toolStatus.version}\``,
-        `- bundled: \`${settings.executable.bundled}\``,
+        `- Bundled: \`${settings.executable.bundled}\``,
         ""
       );
     } else {
