@@ -1,3 +1,10 @@
+## [0.32.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.31.1...v0.32.0) (2023-04-14)
+
+
+### Features
+
+* add shellcheck.collectDiagnostics command  ([#1035](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1035)) ([21f0d5e](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/21f0d5e2c81e19b27442a71e97510ae218ee74e4)), closes [#908](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/908)
+
 ## [0.31.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.31.0...v0.31.1) (2023-03-30)
 
 
