@@ -2,8 +2,9 @@ import * as semver from "semver";
 import * as vscode from "vscode";
 import * as execa from "execa";
 import * as logging from "./logging";
+import { shellcheckVersion } from "../../package.json";
 
-export const BEST_TOOL_VERSION = "0.7.0";
+export const BEST_TOOL_VERSION = shellcheckVersion;
 
 export function tryPromptForUpdatingTool(version: semver.SemVer) {
   const disableVersionCheckUpdateSetting =
