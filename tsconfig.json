@@ -14,7 +14,8 @@
     "noUnusedLocals": true,
     "noImplicitReturns": true,
     "noImplicitAny": true,
-    "noImplicitThis": true
+    "noImplicitThis": true,
+    "resolveJsonModule": true
   },
   "include": ["src"]
 }

@@ -302,5 +302,6 @@
     "id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",
     "publisherDisplayName": "Timon Wong",
     "publisherId": "04757770-dd50-443e-aae4-e1c7cf9c24f5"
-  }
+  },
+  "shellcheckVersion": "0.9.0"
 }

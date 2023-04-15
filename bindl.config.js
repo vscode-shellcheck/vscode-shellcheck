@@ -1,4 +1,4 @@
-const version = "v0.9.0";
+const version = `v${require("./package.json").shellcheckVersion}`;
 const releaseUrl = `https://github.com/vscode-shellcheck/shellcheck-binaries/releases/download/${version}/shellcheck-${version}`;
 
 module.exports = {
