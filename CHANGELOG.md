@@ -1,3 +1,16 @@
+## [0.32.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.32.0...v0.32.1) (2023-04-15)
+
+
+### Bug Fixes
+
+* align shellcheck version check with bundled binary ([#1037](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1037)) ([8d23125](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/8d23125dae7c96dc2bc7a0ec1de67c4f68eb9aba)), closes [#1036](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1036)
+
+
+### Dependencies
+
+* **deps:** bump semver from 7.3.8 to 7.4.0 ([#1032](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1032)) ([61d2515](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/61d251592880010a928927a8c8cee36933c27014))
+* **deps:** bump xml2js and @vscode/vsce ([#1034](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1034)) ([fd6f015](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/fd6f015a1475b77d005e11e889024776e30d224c))
+
 ## [0.32.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.31.1...v0.32.0) (2023-04-14)
 
 
