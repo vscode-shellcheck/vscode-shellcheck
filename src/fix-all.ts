@@ -24,9 +24,12 @@ async function getFixAllCodeAction(
     );
 
     if (codeActionsForDiagnostic) {
-      // get only code actions which perform edits
+      // get only code actions from shellcheck which perform edits and isPreferred
       const actionToFix = codeActionsForDiagnostic.filter(
-        (action) => action.edit
+        (action) =>
+          action.title.startsWith("ShellCheck: ") &&
+          action.isPreferred &&
+          action.edit
       );
       codeActions.push(...actionToFix);
     }
@@ -34,7 +37,7 @@ async function getFixAllCodeAction(
 
   if (codeActions.length > 0) {
     const fixAll = new vscode.CodeAction(
-      "Fix All ShellCheck",
+      "ShellCheck: Fix all auto-fixable issues",
       FixAllProvider.fixAllCodeActionKind
     );
 

@@ -84,10 +84,12 @@ class JsonParserMixin {
     }
 
     const fix = new vscode.CodeAction(
-      `Apply fix for SC${problem.code}`,
+      // We use the "ShellCheck:" prefix to filter code actions in Fix All.
+      `ShellCheck: Apply fix for SC${problem.code}`,
       vscode.CodeActionKind.QuickFix
     );
     fix.diagnostics = [diagnostic];
+    fix.isPreferred = true;
     fix.edit = new vscode.WorkspaceEdit();
     fix.edit.set(textDocument.uri, edits);
     return fix;
