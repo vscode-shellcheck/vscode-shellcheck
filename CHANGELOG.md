@@ -1,3 +1,10 @@
+## [0.32.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.32.1...v0.32.2) (2023-04-17)
+
+
+### Bug Fixes
+
+* fix all applying edits not owned by shellcheck ([#1044](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1044)) ([8822110](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/88221105b121ad5931cf7f2a1b7ddb2d7f9469e9)), closes [#914](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/914)
+
 ## [0.32.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.32.0...v0.32.1) (2023-04-15)
 
 
