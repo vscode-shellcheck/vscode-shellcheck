@@ -143,9 +143,13 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   }
 
   private onDidCloseTextDocument(textDocument: vscode.TextDocument) {
-    this.setResultCollections(textDocument.uri);
-    this.settingsByUri.delete(textDocument.uri.toString());
-    delete this.delayers[textDocument.uri.toString()];
+    // For some reason, this is not always set. See:
+    // https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1039
+    if (this) {
+      this.setResultCollections(textDocument.uri);
+      this.settingsByUri.delete(textDocument.uri.toString());
+      delete this.delayers[textDocument.uri.toString()];
+    }
   }
 
   private onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
