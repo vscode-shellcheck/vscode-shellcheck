@@ -124,7 +124,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     );
     vscode.workspace.onDidCloseTextDocument(
       this.onDidCloseTextDocument,
-      null,
+      this,
       context.subscriptions
     );
     vscode.workspace.onDidChangeTextDocument(
