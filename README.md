@@ -26,6 +26,10 @@ Precompiled [shellcheck] binaries are bundled in this extension for these platfo
 1. Run [`Install Extension`](https://code.visualstudio.com/docs/editor/extension-gallery#_install-an-extension) command from [Command Palette](https://code.visualstudio.com/Docs/editor/codebasics#_command-palette).
 2. Search and choose `shellcheck`.
 
+## Troubleshooting
+
+If shellcheck seems not working, a helper command `ShellCheck: ShellCheck: Collect Diagnostics For Current Document` from the [Command Palette](https://code.visualstudio.com/Docs/editor/codebasics#_command-palette) is provided to help troubleshooting.
+
 ## Options
 
 There are various options that can be configured by making changes to your user or workspace preferences.
