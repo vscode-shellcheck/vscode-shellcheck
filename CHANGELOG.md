@@ -1,3 +1,10 @@
+## [0.32.4](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.32.3...v0.32.4) (2023-04-18)
+
+
+### Bug Fixes
+
+* cannot read properties of null ([5ef360d](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/5ef360d076ec92d3301a9857876d7f3a67949178))
+
 ## [0.32.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.32.2...v0.32.3) (2023-04-18)
 
 
