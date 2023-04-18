@@ -252,7 +252,7 @@
     "release": "semantic-release"
   },
   "dependencies": {
-    "execa": "^5.0.0",
+    "execa": "^7.1.1",
     "lodash": "^4.17.19",
     "minimatch": "^9.0.0",
     "semver": "^7.4.0"
