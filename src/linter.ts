@@ -280,7 +280,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         diagnostic.code.value.startsWith("SC")
       ) {
         const ruleId = diagnostic.code.value;
-        const title = `Show ShellCheck Wiki for ${ruleId}`;
+        const title = `ShellCheck: Show wiki for ${ruleId}`;
         const action = new vscode.CodeAction(
           title,
           vscode.CodeActionKind.QuickFix
