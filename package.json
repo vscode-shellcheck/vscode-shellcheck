@@ -273,7 +273,7 @@
     "cspell": "^6.31.1",
     "eslint": "^8.38.0",
     "eslint-config-prettier": "^8.8.0",
-    "glob": "^10.2.1",
+    "glob": "^10.2.2",
     "kind-of": "^6.0.3",
     "mocha": "^10.2.0",
     "npm-run-all": "^4.1.5",
