@@ -266,7 +266,7 @@
     "@types/semver": "^7.3.13",
     "@types/vscode": "~1.66.0",
     "@typescript-eslint/eslint-plugin": "^5.59.1",
-    "@typescript-eslint/parser": "^5.59.0",
+    "@typescript-eslint/parser": "^5.59.1",
     "@vscode/test-electron": "^2.3.0",
     "bindl": "^4.0.0",
     "conventional-changelog-conventionalcommits": "^5.0.0",
