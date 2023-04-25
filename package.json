@@ -171,6 +171,7 @@
             "description": "The glob pattern to match file paths against. Set to true or false to enable or disable the pattern."
           },
           "default": {
+            "**/*.fish": true,
             "**/*.xonshrc": true,
             "**/*.xsh": true,
             "**/*.zsh": true,
