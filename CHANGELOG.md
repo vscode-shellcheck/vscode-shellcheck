@@ -1,3 +1,10 @@
+## [0.32.5](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.32.4...v0.32.5) (2023-04-25)
+
+
+### Bug Fixes
+
+* add fish scripts to the default ignore patterns ([#1059](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1059)) ([d53b33f](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/d53b33f8ac2cb78092fe9cbc9ef1c9b246f87f14))
+
 ## [0.32.4](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.32.3...v0.32.4) (2023-04-18)
 
 
