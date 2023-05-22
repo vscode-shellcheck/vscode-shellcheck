@@ -255,7 +255,7 @@
   "dependencies": {
     "execa": "^5.0.0",
     "lodash": "^4.17.19",
-    "minimatch": "^9.0.0",
+    "minimatch": "^9.0.1",
     "semver": "^7.5.0"
   },
   "devDependencies": {
