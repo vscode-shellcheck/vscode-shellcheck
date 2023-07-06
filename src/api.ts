@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 export interface ShellCheckExtensionApiVersion1 {
   registerDocumentFilter: (
-    documentFilter: vscode.DocumentFilter
+    documentFilter: vscode.DocumentFilter,
   ) => vscode.Disposable;
 }
 

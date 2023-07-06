@@ -20,7 +20,7 @@ version: 0.8.a
 
     assert.throws(
       () => parseToolVersion(stdout),
-      "Unexpected response from ShellCheck"
+      "Unexpected response from ShellCheck",
     );
   });
 });

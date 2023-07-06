@@ -15,7 +15,7 @@ function isFileUriScheme(uri: vscode.Uri): boolean {
 }
 
 export function guessDocumentDirname(
-  textDocument: vscode.TextDocument
+  textDocument: vscode.TextDocument,
 ): string | undefined {
   if (textDocument.isUntitled) {
     return getWorkspaceFolderPath(textDocument.uri);
@@ -30,7 +30,7 @@ export function guessDocumentDirname(
 
 export function getWorkspaceFolderPath(
   uri?: vscode.Uri,
-  requireFileUri: boolean = true
+  requireFileUri: boolean = true,
 ): string | undefined {
   const isSafeUriSchemeFunc = requireFileUri ? isFileUriScheme : () => true;
   if (uri) {
@@ -56,7 +56,7 @@ export function getWorkspaceFolderPath(
 // Ensure the cwd exists, or it will throw ENOENT
 // https://github.com/vscode-shellcheck/vscode-shellcheck/issues/767
 export async function ensureCurrentWorkingDirectory(
-  cwd: string | undefined
+  cwd: string | undefined,
 ): Promise<string | undefined> {
   if (!cwd) {
     return undefined;
@@ -77,7 +77,7 @@ export async function ensureCurrentWorkingDirectory(
 export function substitutePath(s: string, workspaceFolder?: string): string {
   if (!workspaceFolder && vscode.workspace.workspaceFolders) {
     workspaceFolder = getWorkspaceFolderPath(
-      vscode.window.activeTextEditor?.document.uri
+      vscode.window.activeTextEditor?.document.uri,
     );
   }
 

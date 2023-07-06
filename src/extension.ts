@@ -7,12 +7,12 @@ import { registerLogger, setLoggingLevel } from "./utils/logging";
 import { LogLevelNameType } from "./utils/logging/types";
 
 export function activate(
-  context: vscode.ExtensionContext
+  context: vscode.ExtensionContext,
 ): ShellCheckExtensionApi {
   // Setup logging
   const outputChannel = vscode.window.createOutputChannel(
     "ShellCheck",
-    "shellcheck-output"
+    "shellcheck-output",
   );
   context.subscriptions.push(outputChannel);
 
@@ -25,7 +25,7 @@ export function activate(
       if (e.affectsConfiguration("shellcheck.logLevel")) {
         updateLoggingLevel();
       }
-    })
+    }),
   );
   updateLoggingLevel();
 
@@ -35,7 +35,7 @@ export function activate(
   // link provider
   const linker = vscode.languages.registerDocumentLinkProvider(
     ShellCheckProvider.LANGUAGE_ID,
-    new LinkifyProvider()
+    new LinkifyProvider(),
   );
   context.subscriptions.push(linker);
 

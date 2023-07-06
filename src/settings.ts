@@ -63,7 +63,7 @@ const validErrorCodePattern = /^(SC)?(\d{4})$/;
 
 export async function getWorkspaceSettings(
   context: vscode.ExtensionContext,
-  scope?: vscode.ConfigurationScope | null
+  scope?: vscode.ConfigurationScope | null,
 ): Promise<ShellCheckSettings> {
   const keys = ShellCheckSettings.keys;
   const section = vscode.workspace.getConfiguration("shellcheck", scope);
@@ -76,7 +76,7 @@ export async function getWorkspaceSettings(
       .get(keys.customArgs, [])
       .map((arg) => substitutePath(arg)),
     ignoreFileSchemes: new Set(
-      section.get(keys.ignoreFileSchemes, ["git", "gitfs", "output"])
+      section.get(keys.ignoreFileSchemes, ["git", "gitfs", "output"]),
     ),
     useWorkspaceRootAsCwd: section.get(keys.useWorkspaceRootAsCwd, false),
     enableQuickFix: section.get(keys.enableQuickFix, false),
@@ -98,7 +98,7 @@ export async function getWorkspaceSettings(
 }
 
 export function checkIfConfigurationChanged(
-  e: vscode.ConfigurationChangeEvent
+  e: vscode.ConfigurationChangeEvent,
 ): boolean {
   for (const key in ShellCheckSettings.keys) {
     const section = `shellcheck.${key}`;
@@ -111,7 +111,7 @@ export function checkIfConfigurationChanged(
 
 async function getExecutable(
   context: vscode.ExtensionContext,
-  executablePath: string | undefined
+  executablePath: string | undefined,
 ): Promise<Executable> {
   if (!executablePath) {
     // Use bundled binaries (maybe)
@@ -122,7 +122,7 @@ async function getExecutable(
         ? "ia32"
         : process.arch;
     executablePath = context.asAbsolutePath(
-      `./binaries/${process.platform}/${osarch}/shellcheck${suffix}`
+      `./binaries/${process.platform}/${osarch}/shellcheck${suffix}`,
     );
     try {
       await fs.promises.access(executablePath, fs.constants.X_OK);

@@ -28,7 +28,7 @@ eval \`uname -r\`
 echo "$SHELL"
 echo "$SHELL"
 eval $(uname -r)
-`
+`,
     );
   });
 
@@ -59,7 +59,7 @@ eval \`uname -r\`
 echo "\$SHELL"
 echo "\$SHELL"
 eval $(uname -r)
-`
+`,
     );
   });
 });

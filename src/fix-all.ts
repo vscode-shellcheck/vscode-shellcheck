@@ -4,12 +4,12 @@ function executeCodeActionProvider(uri: vscode.Uri, range: vscode.Range) {
   return vscode.commands.executeCommand<vscode.CodeAction[]>(
     "vscode.executeCodeActionProvider",
     uri,
-    range
+    range,
   );
 }
 
 async function getFixAllCodeAction(
-  document: vscode.TextDocument
+  document: vscode.TextDocument,
 ): Promise<vscode.CodeAction | undefined> {
   const actionRanges = vscode.languages
     .getDiagnostics(document.uri)
@@ -20,7 +20,7 @@ async function getFixAllCodeAction(
   for (const range of actionRanges) {
     const codeActionsForDiagnostic = await executeCodeActionProvider(
       document.uri,
-      range
+      range,
     );
 
     if (codeActionsForDiagnostic) {
@@ -29,7 +29,7 @@ async function getFixAllCodeAction(
         (action) =>
           action.title.startsWith("ShellCheck: ") &&
           action.isPreferred &&
-          action.edit
+          action.edit,
       );
       codeActions.push(...actionToFix);
     }
@@ -38,7 +38,7 @@ async function getFixAllCodeAction(
   if (codeActions.length > 0) {
     const fixAll = new vscode.CodeAction(
       "ShellCheck: Fix all auto-fixable issues",
-      FixAllProvider.fixAllCodeActionKind
+      FixAllProvider.fixAllCodeActionKind,
     );
 
     for (const action of codeActions) {
@@ -95,7 +95,7 @@ export class FixAllProvider implements vscode.CodeActionProvider {
     document: vscode.TextDocument,
     _range: vscode.Range | vscode.Selection,
     context: vscode.CodeActionContext,
-    _token: vscode.CancellationToken
+    _token: vscode.CancellationToken,
   ): Promise<vscode.CodeAction[]> {
     if (!context.only) {
       return [];

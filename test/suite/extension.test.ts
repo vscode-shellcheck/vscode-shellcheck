@@ -32,7 +32,7 @@ suite("Shellcheck extension", () => {
     assert.strictEqual(diagnostics[0].code?.value, "SC2034");
     assert.strictEqual(
       diagnostics[0].code?.target.toString(),
-      "https://www.shellcheck.net/wiki/SC2034"
+      "https://www.shellcheck.net/wiki/SC2034",
     );
   });
 });
