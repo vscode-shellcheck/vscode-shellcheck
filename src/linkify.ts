@@ -4,7 +4,7 @@ import { getWikiUrlForRule } from "./utils/link";
 export class LinkifyProvider implements vscode.DocumentLinkProvider {
   public provideDocumentLinks(
     document: vscode.TextDocument,
-    token: vscode.CancellationToken
+    token: vscode.CancellationToken,
   ): vscode.ProviderResult<vscode.DocumentLink[]> {
     // Possible shellcheck directives:
     //   - # shellcheck disable=code,code,...
@@ -29,7 +29,7 @@ export class LinkifyProvider implements vscode.DocumentLinkProvider {
   private getMatchesOnLine(
     startPosition: vscode.Position,
     line: string,
-    result: vscode.DocumentLink[]
+    result: vscode.DocumentLink[],
   ) {
     const pattern = /\bSC\d{4}\b/g;
     const matches = line.matchAll(pattern);
@@ -39,7 +39,7 @@ export class LinkifyProvider implements vscode.DocumentLinkProvider {
       const position = startPosition.translate(0, match.index);
       const range = new vscode.Range(
         position,
-        position.translate(0, ruleId.length)
+        position.translate(0, ruleId.length),
       );
 
       const link = new vscode.DocumentLink(range, vscode.Uri.parse(url));

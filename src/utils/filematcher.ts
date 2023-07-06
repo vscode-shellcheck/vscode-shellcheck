@@ -20,7 +20,7 @@ export class FileMatcher {
     return _.keys(
       _.pickBy(obj, (value) => {
         return value === true;
-      })
+      }),
     );
   }
 
@@ -47,7 +47,7 @@ export class FileMatcher {
   private match(
     excludePatterns: string[],
     path: string,
-    root?: string
+    root?: string,
   ): boolean {
     const relativePath = this.relativeTo(path, root);
     return _.some(excludePatterns, (pattern) => {

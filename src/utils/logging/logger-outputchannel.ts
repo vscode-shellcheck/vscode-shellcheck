@@ -10,7 +10,7 @@ function formatMessage(
   const date = new Date();
   return `[${date.toISOString()}] [${level.toUpperCase()}] ${util.format(
     format,
-    ...data
+    ...data,
   )}`;
 }
 
@@ -19,31 +19,31 @@ export class OutputChannelLogger implements Logger {
 
   trace(format: string, ...data: Arguments): void {
     this.channel.appendLine(
-      formatMessage(LogLevel[LogLevel.trace], format, ...data)
+      formatMessage(LogLevel[LogLevel.trace], format, ...data),
     );
   }
 
   debug(format: string, ...data: Arguments): void {
     this.channel.appendLine(
-      formatMessage(LogLevel[LogLevel.debug], format, ...data)
+      formatMessage(LogLevel[LogLevel.debug], format, ...data),
     );
   }
 
   info(format: string, ...data: Arguments): void {
     this.channel.appendLine(
-      formatMessage(LogLevel[LogLevel.info], format, ...data)
+      formatMessage(LogLevel[LogLevel.info], format, ...data),
     );
   }
 
   warn(format: string, ...data: Arguments): void {
     this.channel.appendLine(
-      formatMessage(LogLevel[LogLevel.warn], format, ...data)
+      formatMessage(LogLevel[LogLevel.warn], format, ...data),
     );
   }
 
   error(format: string, ...data: Arguments): void {
     this.channel.appendLine(
-      formatMessage(LogLevel[LogLevel.error], format, ...data)
+      formatMessage(LogLevel[LogLevel.error], format, ...data),
     );
   }
 }

@@ -73,7 +73,7 @@ export class Throttler<T> {
         (err: any) => {
           this.activePromise = null;
           reject(err);
-        }
+        },
       );
     });
   }
@@ -119,7 +119,7 @@ export class Delayer<T> {
 
   public trigger(
     task: ITask<T>,
-    delay: number = this.defaultDelay
+    delay: number = this.defaultDelay,
   ): Promise<T> {
     this.task = task;
     this.cancelTimeout();
@@ -184,7 +184,7 @@ export class ThrottledDelayer<T> extends Delayer<Promise<T>> {
 
   public override trigger(
     promiseFactory: ITask<Promise<T>>,
-    delay?: number
+    delay?: number,
   ): Promise<Promise<T>> {
     return super.trigger(() => this.throttler.queue(promiseFactory), delay);
   }

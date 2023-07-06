@@ -37,12 +37,12 @@ export function getToolVersion(executable: string): semver.SemVer {
 
 async function promptForUpdatingTool(
   currentVersion: string,
-  disableVersionCheckUpdateSetting: DisableVersionCheckUpdateSetting
+  disableVersionCheckUpdateSetting: DisableVersionCheckUpdateSetting,
 ) {
   const selected = await vscode.window.showInformationMessage(
     `The vscode-shellcheck extension is better with a newer version of "shellcheck" (You got v${currentVersion}, v${BEST_TOOL_VERSION} or newer is recommended)`,
     "Don't Show Again",
-    "Update"
+    "Update",
   );
   switch (selected) {
     case "Don't Show Again":
@@ -50,7 +50,7 @@ async function promptForUpdatingTool(
       break;
     case "Update":
       vscode.env.openExternal(
-        vscode.Uri.parse("https://github.com/koalaman/shellcheck#installing")
+        vscode.Uri.parse("https://github.com/koalaman/shellcheck#installing"),
       );
       break;
   }
