@@ -222,9 +222,9 @@
           "default": "info"
         },
         "shellcheck.disableVersionCheck": {
-          "description": "Whether to disable shellcheck binary version check, which prompt for updating when outdated version found.",
+          "description": "Whether to disable shellcheck binary version check, which prompts for updating when an outdated version is found.",
           "type": "boolean",
-          "scope": "application",
+          "scope": "machine-overridable",
           "default": false
         }
       }
