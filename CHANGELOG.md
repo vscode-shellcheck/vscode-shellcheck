@@ -1,3 +1,16 @@
+## [0.33.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.32.6...v0.33.0) (2023-07-17)
+
+
+### Features
+
+* allow to disable version check on workspace ([#1159](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1159)) ([a7e9ea1](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/a7e9ea168f315789fadfb08e7881f201ca52f3ac))
+
+
+### Dependencies
+
+* **deps:** bump minimatch from 9.0.1 to 9.0.3 ([#1152](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1152)) ([309b4e8](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/309b4e8dcc18a5087e08a7653dc2c549ab932ed3))
+* **deps:** bump semver from 7.5.1 to 7.5.4 ([#1153](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1153)) ([2ad0ed0](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/2ad0ed00421f5c385a82719d940aee69a9d5f2cf))
+
 ## [0.32.6](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.32.5...v0.32.6) (2023-06-06)
 
 
