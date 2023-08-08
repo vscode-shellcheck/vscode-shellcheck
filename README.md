@@ -45,6 +45,13 @@ Default options are:
   "shellcheck.exclude": [],
   "shellcheck.customArgs": [],
   "shellcheck.ignorePatterns": {
+    "**/*.csh": true,
+    "**/*.cshrc": true,
+    "**/*.fish": true,
+    "**/*.login": true,
+    "**/*.logout": true,
+    "**/*.tcsh": true,
+    "**/*.tcshrc": true,
     "**/*.xonshrc": true,
     "**/*.xsh": true,
     "**/*.zsh": true,
