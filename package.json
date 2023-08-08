@@ -277,7 +277,7 @@
     "@vscode/test-electron": "^2.3.4",
     "bindl": "^4.1.6",
     "conventional-changelog-conventionalcommits": "^6.1.0",
-    "cspell": "^6.31.2",
+    "cspell": "^6.31.3",
     "eslint": "^8.46.0",
     "eslint-config-prettier": "^9.0.0",
     "glob": "^10.3.3",
