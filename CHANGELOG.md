@@ -1,3 +1,10 @@
+## [0.33.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.33.0...v0.33.1) (2023-08-08)
+
+
+### Bug Fixes
+
+* add csh and tcsh scripts to the default ignore patterns ([#1179](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1179)) ([0e207ae](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/0e207ae7407270af4311345176c460252e9a0e47))
+
 ## [0.33.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.32.6...v0.33.0) (2023-07-17)
 
 
