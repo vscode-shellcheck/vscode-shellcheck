@@ -4,9 +4,17 @@ reset_color='\e[0m'
 red_color='\e[31m'
 background_red_color='\e[41m'
 
+snippet_path=../snippets/snippets.json
+
 error() {
     e_in_message="$1"
     printf "${background_red_color}error:$reset_color$red_color %s$reset_color" "$e_in_message"
+}
+
+error_when_option_is_not_supported() {
+    ewoins_in_option="$1"
+
+    error "'$ewoins_in_option' is not supported."
 }
 
 error_when_dependency_does_not_exist() {
@@ -38,11 +46,75 @@ generate_snippets() {
 }
 
 merge_snippets() {
-  ms_snippet_path=../snippets/snippets.json
-  jq -n '$ARGS.named["generated"] * $ARGS.named["source"]' --argjson generated "$(generate_snippets)" --argjson source "$(cat "$ms_snippet_path")"
+  ms_snippet_path="$path"
+  # shellcheck disable=SC2016
+  if [ -z "$is_append" ]; then
+    command='$ARGS.named["generated"] * $ARGS.named["source"]'
+  else
+    command='$ARGS.named["source"] * $ARGS.named["generated"]'
+  fi
+
+  jq -n "$command" --argjson generated "$(generate_snippets)" --argjson source "$(jq '[to_entries[] | select(.key | test("^sc\\d{4}$") | not)] | from_entries' "$ms_snippet_path")"
+}
+
+help() {
+  echo "Snippet generator.
+
+Usage:
+  $0 [--help|-h] [--version|-v] [--append|-a] [--filter|-f <snippet-key-filter>] [--path|-p <snippet-path>]
+
+Options:
+  --help|-h     Print help.
+  --version|-v  Print version.
+  --append|-a   Append generated snippets instead of prepending them to manually written ones.
+  --filter|-f   Filter out generated snippets by their key.
+  --path|-p     Specify path for manually written snippets [default: '$snippet_path']."
+}
+
+version() {
+  echo "1.0.0"
 }
 
 error_when_dependency_does_not_exist npx "npm install -g npx"
+
+succeded=0
+failed=1
+
+is_append=
+filter=
+path="$snippet_path"
+
+while [ -n "$1" ]; do
+  option="$1"
+  argument="$2"
+
+  case "$option" in
+    --help|-h)
+      help
+      exit "$succeded"
+      ;;
+    --version|-v)
+      version
+      exit "$succeded"
+      ;;
+    --append|-a)
+      is_append=true
+      ;;
+    --filter|-f)
+      filter="$argument"
+      shift
+      ;;
+    --path|-p)
+      path="$argument"
+      shift
+      ;;
+    *)
+      error_when_option_is_not_supported "$option"
+      exit "$failed"
+      ;;
+  esac
+  shift
+done
 
 snippet_path=../snippets/snippets.json
 result="$(merge_snippets "$snippet_path")"
