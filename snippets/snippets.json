@@ -1,13 +1,1762 @@
 {
+  "sc1000": {
+    "prefix": "sc1000",
+    "description": "$ is not used specially and should therefore be escaped.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1000"
+  },
+  "sc1001": {
+    "prefix": "sc1001",
+    "description": "This `\\o` will be a regular 'o' in this context.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1001"
+  },
+  "sc1003": {
+    "prefix": "sc1003",
+    "description": "Want to escape a single quote? echo 'This is how it'\\\\''s done'.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1003"
+  },
+  "sc1004": {
+    "prefix": "sc1004",
+    "description": "This backslash+linefeed is literal. Break outside single quotes if you just want to break the line.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1004"
+  },
+  "sc1007": {
+    "prefix": "sc1007",
+    "description": "Remove space after = if trying to assign a value (or for empty string, use var='' ... ).",
+    "body": "# shellcheck ${1|disable,enable|}=SC1007"
+  },
+  "sc1008": {
+    "prefix": "sc1008",
+    "description": "This shebang was unrecognized. ShellCheck only supports sh/bash/dash/ksh. Add a 'shell' directive to specify.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1008"
+  },
+  "sc1009": {
+    "prefix": "sc1009",
+    "description": "The mentioned parser error was in ...",
+    "body": "# shellcheck ${1|disable,enable|}=SC1009"
+  },
+  "sc1010": {
+    "prefix": "sc1010",
+    "description": "Use semicolon or linefeed before 'done' (or quote to make it literal).",
+    "body": "# shellcheck ${1|disable,enable|}=SC1010"
+  },
+  "sc1011": {
+    "prefix": "sc1011",
+    "description": "This apostrophe terminated the single quoted string!",
+    "body": "# shellcheck ${1|disable,enable|}=SC1011"
+  },
+  "sc1012": {
+    "prefix": "sc1012",
+    "description": "`\\t` is just literal `t` here. For tab, use `\"$(printf '\\t')\"` instead.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1012"
+  },
+  "sc1014": {
+    "prefix": "sc1014",
+    "description": "Use 'if cmd; then ..' to check exit code, or 'if [ \"$(cmd)\" = .. ]' to check output.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1014"
+  },
+  "sc1015": {
+    "prefix": "sc1015",
+    "description": "This is a unicode double quote. Delete and retype it.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1015"
+  },
+  "sc1016": {
+    "prefix": "sc1016",
+    "description": "This is a Unicode single quote. Delete and retype it.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1016"
+  },
+  "sc1017": {
+    "prefix": "sc1017",
+    "description": "Literal carriage return. Run script through `tr -d '\\r'` .",
+    "body": "# shellcheck ${1|disable,enable|}=SC1017"
+  },
+  "sc1018": {
+    "prefix": "sc1018",
+    "description": "This is a unicode non-breaking space. Delete it and retype as space.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1018"
+  },
+  "sc1019": {
+    "prefix": "sc1019",
+    "description": "Expected this to be an argument to the unary condition.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1019"
+  },
+  "sc1020": {
+    "prefix": "sc1020",
+    "description": "You need a space before the if single then \"]\" else \"]]\"",
+    "body": "# shellcheck ${1|disable,enable|}=SC1020"
+  },
+  "sc1026": {
+    "prefix": "sc1026",
+    "description": "If grouping expressions inside [[..]], use ( .. ).",
+    "body": "# shellcheck ${1|disable,enable|}=SC1026"
+  },
+  "sc1027": {
+    "prefix": "sc1027",
+    "description": "New page",
+    "body": "# shellcheck ${1|disable,enable|}=SC1027"
+  },
+  "sc1028": {
+    "prefix": "sc1028",
+    "description": "In [..] you have to escape \\\\( \\\\) or preferably combine [..] expressions.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1028"
+  },
+  "sc1029": {
+    "prefix": "sc1029",
+    "description": "In `[[..]]` you shouldn't escape `(` or `)`.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1029"
+  },
+  "sc1035": {
+    "prefix": "sc1035",
+    "description": "You need a space here",
+    "body": "# shellcheck ${1|disable,enable|}=SC1035"
+  },
+  "sc1036": {
+    "prefix": "sc1036",
+    "description": "`(` is invalid here. Did you forget to escape it?",
+    "body": "# shellcheck ${1|disable,enable|}=SC1036"
+  },
+  "sc1037": {
+    "prefix": "sc1037",
+    "description": "Braces are required for positionals over 9, e.g. ${10}.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1037"
+  },
+  "sc1038": {
+    "prefix": "sc1038",
+    "description": "Shells are space sensitive. Use '< <(cmd)', not '<<(cmd)'.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1038"
+  },
+  "sc1039": {
+    "prefix": "sc1039",
+    "description": "Remove indentation before end token (or use `<<-` and indent with tabs).",
+    "body": "# shellcheck ${1|disable,enable|}=SC1039"
+  },
+  "sc1040": {
+    "prefix": "sc1040",
+    "description": "When using <<-, you can only indent with tabs.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1040"
+  },
+  "sc1041": {
+    "prefix": "sc1041",
+    "description": "Found 'eof' further down, but not on a separate line.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1041"
+  },
+  "sc1042": {
+    "prefix": "sc1042",
+    "description": "Found 'eof' further down, but not on a separate line.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1042"
+  },
+  "sc1044": {
+    "prefix": "sc1044",
+    "description": "Couldn't find end token `EOF' in the here document.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1044"
+  },
+  "sc1045": {
+    "prefix": "sc1045",
+    "description": "It's not 'foo &; bar', just 'foo & bar'.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1045"
+  },
+  "sc1046": {
+    "prefix": "sc1046",
+    "description": "Couldn't find 'fi' for this 'if'.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1046"
+  },
+  "sc1047": {
+    "prefix": "sc1047",
+    "description": "\"Expected 'fi' matching previously mentioned 'if'.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1047"
+  },
+  "sc1048": {
+    "prefix": "sc1048",
+    "description": "Can't have empty then clauses (use 'true' as a no-op).",
+    "body": "# shellcheck ${1|disable,enable|}=SC1048"
+  },
+  "sc1049": {
+    "prefix": "sc1049",
+    "description": "Did you forget the 'then' for this 'if'?",
+    "body": "# shellcheck ${1|disable,enable|}=SC1049"
+  },
+  "sc1050": {
+    "prefix": "sc1050",
+    "description": "Expected 'then'.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1050"
+  },
+  "sc1051": {
+    "prefix": "sc1051",
+    "description": "Semicolons directly after 'then' are not allowed. Just remove it.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1051"
+  },
+  "sc1052": {
+    "prefix": "sc1052",
+    "description": "Semicolons directly after 'then' are not allowed. Just remove it.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1052"
+  },
+  "sc1053": {
+    "prefix": "sc1053",
+    "description": "Semicolons directly after 'else' are not allowed. Just remove it.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1053"
+  },
+  "sc1054": {
+    "prefix": "sc1054",
+    "description": "You need a space after the '{'.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1054"
+  },
+  "sc1058": {
+    "prefix": "sc1058",
+    "description": "Expected `do`.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1058"
+  },
+  "sc1061": {
+    "prefix": "sc1061",
+    "description": "Couldn't find 'done' for this 'do'.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1061"
+  },
+  "sc1062": {
+    "prefix": "sc1062",
+    "description": "Expected 'done' matching previously mentioned 'do'.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1062"
+  },
+  "sc1064": {
+    "prefix": "sc1064",
+    "description": "Expected a { to open the function definition.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1064"
+  },
+  "sc1065": {
+    "prefix": "sc1065",
+    "description": "Trying to declare parameters? Don't. Use () and refer to params as $1, $2..",
+    "body": "# shellcheck ${1|disable,enable|}=SC1065"
+  },
+  "sc1066": {
+    "prefix": "sc1066",
+    "description": "Don't use $ on the left side of assignments.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1066"
+  },
+  "sc1067": {
+    "prefix": "sc1067",
+    "description": "For indirection, use arrays, `declare \"var$n=value\"`, or (for sh) read/eval",
+    "body": "# shellcheck ${1|disable,enable|}=SC1067"
+  },
+  "sc1068": {
+    "prefix": "sc1068",
+    "description": "Don't put spaces around the = in assignments.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1068"
+  },
+  "sc1069": {
+    "prefix": "sc1069",
+    "description": "You need a space before the [.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1069"
+  },
+  "sc1070": {
+    "prefix": "sc1070",
+    "description": "Parsing stopped here. Mismatched keywords or invalid parentheses?",
+    "body": "# shellcheck ${1|disable,enable|}=SC1070"
+  },
+  "sc1071": {
+    "prefix": "sc1071",
+    "description": "ShellCheck only supports sh/bash/dash/ksh scripts. Sorry!",
+    "body": "# shellcheck ${1|disable,enable|}=SC1071"
+  },
+  "sc1072": {
+    "prefix": "sc1072",
+    "description": "Unexpected ..",
+    "body": "# shellcheck ${1|disable,enable|}=SC1072"
+  },
+  "sc1073": {
+    "prefix": "sc1073",
+    "description": "Couldn't parse this (thing). Fix to allow more checks.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1073"
+  },
+  "sc1075": {
+    "prefix": "sc1075",
+    "description": "Use 'elif' instead of 'else if'.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1075"
+  },
+  "sc1077": {
+    "prefix": "sc1077",
+    "description": "For command expansion, the tick should slant left (` vs ´).",
+    "body": "# shellcheck ${1|disable,enable|}=SC1077"
+  },
+  "sc1078": {
+    "prefix": "sc1078",
+    "description": "Did you forget to close this double quoted string?",
+    "body": "# shellcheck ${1|disable,enable|}=SC1078"
+  },
+  "sc1079": {
+    "prefix": "sc1079",
+    "description": "This is actually an end quote, but due to next char it looks suspect.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1079"
+  },
+  "sc1081": {
+    "prefix": "sc1081",
+    "description": "Scripts are case sensitive. Use 'if', not 'If'.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1081"
+  },
+  "sc1082": {
+    "prefix": "sc1082",
+    "description": "This file has a UTF-8 BOM. Remove it with: LC_CTYPE=C sed '1s/^...//' < yourscript .",
+    "body": "# shellcheck ${1|disable,enable|}=SC1082"
+  },
+  "sc1083": {
+    "prefix": "sc1083",
+    "description": "This `{`/`}` is literal. Check expression (missing `;/\\n?`) or quote it.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1083"
+  },
+  "sc1084": {
+    "prefix": "sc1084",
+    "description": "Use #!, not !#, for the shebang.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1084"
+  },
+  "sc1086": {
+    "prefix": "sc1086",
+    "description": "Don't use $ on the iterator name in for loops.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1086"
+  },
+  "sc1087": {
+    "prefix": "sc1087",
+    "description": "\"Use braces when expanding arrays, e.g. ${array[idx]} (or ${var}[.. to quiet).\"",
+    "body": "# shellcheck ${1|disable,enable|}=SC1087"
+  },
+  "sc1088": {
+    "prefix": "sc1088",
+    "description": "Parsing stopped here. Invalid use of parentheses?",
+    "body": "# shellcheck ${1|disable,enable|}=SC1088"
+  },
+  "sc1089": {
+    "prefix": "sc1089",
+    "description": "Parsing stopped here. Is this keyword correctly matched up?",
+    "body": "# shellcheck ${1|disable,enable|}=SC1089"
+  },
+  "sc1090": {
+    "prefix": "sc1090",
+    "description": "Can't follow non-constant source. Use a directive to specify location.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1090"
+  },
+  "sc1091": {
+    "prefix": "sc1091",
+    "description": "Not following: (error message here)",
+    "body": "# shellcheck ${1|disable,enable|}=SC1091"
+  },
+  "sc1094": {
+    "prefix": "sc1094",
+    "description": "Parsing of sourced file failed. Ignoring it.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1094"
+  },
+  "sc1095": {
+    "prefix": "sc1095",
+    "description": "You need a space or linefeed between the function name and body.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1095"
+  },
+  "sc1097": {
+    "prefix": "sc1097",
+    "description": "Unexpected ==. For assignment, use =. For comparison, use [/[[.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1097"
+  },
+  "sc1098": {
+    "prefix": "sc1098",
+    "description": "Quote/escape special characters when using eval, e.g. eval \"a=(b)\".",
+    "body": "# shellcheck ${1|disable,enable|}=SC1098"
+  },
+  "sc1099": {
+    "prefix": "sc1099",
+    "description": "You need a space before the #.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1099"
+  },
+  "sc1100": {
+    "prefix": "sc1100",
+    "description": "This is a unicode dash. Delete and retype as ASCII minus.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1100"
+  },
+  "sc1101": {
+    "prefix": "sc1101",
+    "description": "Delete trailing spaces after \\ to break line (or use quotes for literal space).",
+    "body": "# shellcheck ${1|disable,enable|}=SC1101"
+  },
+  "sc1102": {
+    "prefix": "sc1102",
+    "description": "Shells disambiguate `$((` differently or not at all. For `$(command substition)`, add space after `$(` . For `$((arithmetics))`, fix parsing errors.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1102"
+  },
+  "sc1104": {
+    "prefix": "sc1104",
+    "description": "Use #!, not just !, for the shebang.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1104"
+  },
+  "sc1105": {
+    "prefix": "sc1105",
+    "description": "Shells disambiguate (( differently or not at all. If the first ( should start a subshell, add a space after it.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1105"
+  },
+  "sc1107": {
+    "prefix": "sc1107",
+    "description": "This directive is unknown. It will be ignored.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1107"
+  },
+  "sc1108": {
+    "prefix": "sc1108",
+    "description": "You need a space before and after the = .",
+    "body": "# shellcheck ${1|disable,enable|}=SC1108"
+  },
+  "sc1109": {
+    "prefix": "sc1109",
+    "description": "This is an unquoted HTML entity. Replace with corresponding character.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1109"
+  },
+  "sc1110": {
+    "prefix": "sc1110",
+    "description": "This is a unicode quote. Delete and retype it (or quote to make literal).",
+    "body": "# shellcheck ${1|disable,enable|}=SC1110"
+  },
+  "sc1111": {
+    "prefix": "sc1111",
+    "description": "This is a unicode quote. Delete and retype it (or ignore/singlequote for literal).",
+    "body": "# shellcheck ${1|disable,enable|}=SC1111"
+  },
+  "sc1112": {
+    "prefix": "sc1112",
+    "description": "This is a unicode quote. Delete and retype it (or ignore/doublequote for literal).",
+    "body": "# shellcheck ${1|disable,enable|}=SC1112"
+  },
+  "sc1113": {
+    "prefix": "sc1113",
+    "description": "Use #!, not just #, for the shebang.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1113"
+  },
+  "sc1114": {
+    "prefix": "sc1114",
+    "description": "Remove leading spaces before the shebang.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1114"
+  },
+  "sc1115": {
+    "prefix": "sc1115",
+    "description": "Remove spaces between # and ! in the shebang.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1115"
+  },
+  "sc1116": {
+    "prefix": "sc1116",
+    "description": "Missing $ on a $((..)) expression? (or use ( ( for arrays).",
+    "body": "# shellcheck ${1|disable,enable|}=SC1116"
+  },
+  "sc1117": {
+    "prefix": "sc1117",
+    "description": "Backslash is literal in `\"\\n\"`. Prefer explicit escaping: `\"\\\\n\"`.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1117"
+  },
+  "sc1118": {
+    "prefix": "sc1118",
+    "description": "Delete whitespace after the here-doc end token.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1118"
+  },
+  "sc1119": {
+    "prefix": "sc1119",
+    "description": "Add a linefeed between end token and terminating ')'.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1119"
+  },
+  "sc1120": {
+    "prefix": "sc1120",
+    "description": "No comments allowed after here-doc token. Comment the next line instead.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1120"
+  },
+  "sc1121": {
+    "prefix": "sc1121",
+    "description": "Add ;/& terminators (and other syntax) on the line with the <<, not here.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1121"
+  },
+  "sc1122": {
+    "prefix": "sc1122",
+    "description": "Nothing allowed after end token. To continue a command, put it on the line with the `<<`.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1122"
+  },
+  "sc1123": {
+    "prefix": "sc1123",
+    "description": "ShellCheck directives are only valid in front of complete compound commands, like `if`, not e.g. individual `elif` branches.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1123"
+  },
+  "sc1124": {
+    "prefix": "sc1124",
+    "description": "ShellCheck directives are only valid in front of complete commands like 'case' statements, not individual case branches.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1124"
+  },
+  "sc1125": {
+    "prefix": "sc1125",
+    "description": "Invalid key=value pair in directive",
+    "body": "# shellcheck ${1|disable,enable|}=SC1125"
+  },
+  "sc1126": {
+    "prefix": "sc1126",
+    "description": "Place shellcheck directives before commands, not after.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1126"
+  },
+  "sc1127": {
+    "prefix": "sc1127",
+    "description": "Was this intended as a comment? Use `#` in sh.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1127"
+  },
+  "sc1128": {
+    "prefix": "sc1128",
+    "description": "The shebang must be on the first line. Delete blanks and move comments.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1128"
+  },
+  "sc1129": {
+    "prefix": "sc1129",
+    "description": "You need a space before the !.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1129"
+  },
+  "sc1130": {
+    "prefix": "sc1130",
+    "description": "You need a space before the :.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1130"
+  },
+  "sc1131": {
+    "prefix": "sc1131",
+    "description": "Use `elif` to start another branch.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1131"
+  },
+  "sc1132": {
+    "prefix": "sc1132",
+    "description": "This `&` terminates the command. Escape it or add space after `&` to silence.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1132"
+  },
+  "sc1133": {
+    "prefix": "sc1133",
+    "description": "Unexpected start of line. If breaking lines, |/||/&& should be at the end of the previous one.",
+    "body": "# shellcheck ${1|disable,enable|}=SC1133"
+  },
+  "sc1135": {
+    "prefix": "sc1135",
+    "description": "Prefer escape over ending quote to make `$` literal. Instead of `\"It costs $\"5`, use `\"It costs \\$5\"`",
+    "body": "# shellcheck ${1|disable,enable|}=SC1135"
+  },
+  "sc1136": {
+    "prefix": "sc1136",
+    "description": "Unexpected characters after terminating `]`. Missing semicolon/linefeed?",
+    "body": "# shellcheck ${1|disable,enable|}=SC1136"
+  },
+  "sc2000": {
+    "prefix": "sc2000",
+    "description": "See if you can use ${#variable} instead",
+    "body": "# shellcheck ${1|disable,enable|}=SC2000"
+  },
+  "sc2001": {
+    "prefix": "sc2001",
+    "description": "SC2001: See if you can use ${variable//search/replace} instead.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2001"
+  },
+  "sc2002": {
+    "prefix": "sc2002",
+    "description": "Useless cat. Consider 'cmd < file | ..' or 'cmd file | ..' instead.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2002"
+  },
+  "sc2003": {
+    "prefix": "sc2003",
+    "description": "expr is antiquated. Consider rewriting this using $((..)), ${} or \\[\\[ \\]\\].",
+    "body": "# shellcheck ${1|disable,enable|}=SC2003"
+  },
+  "sc2004": {
+    "prefix": "sc2004",
+    "description": "$/${} is unnecessary on arithmetic variables.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2004"
+  },
+  "sc2005": {
+    "prefix": "sc2005",
+    "description": "Useless `echo`? Instead of `echo $(cmd)`, just use `cmd`",
+    "body": "# shellcheck ${1|disable,enable|}=SC2005"
+  },
+  "sc2006": {
+    "prefix": "sc2006",
+    "description": "Use `$(...)` notation instead of legacy backticked `` `...` ``.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2006"
+  },
+  "sc2007": {
+    "prefix": "sc2007",
+    "description": "Use $((..)) instead of deprecated $[..]",
+    "body": "# shellcheck ${1|disable,enable|}=SC2007"
+  },
+  "sc2008": {
+    "prefix": "sc2008",
+    "description": "echo doesn't read from stdin, are you sure you should be piping to it?",
+    "body": "# shellcheck ${1|disable,enable|}=SC2008"
+  },
+  "sc2009": {
+    "prefix": "sc2009",
+    "description": "SC2009 Consider using pgrep instead of grepping ps output.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2009"
+  },
+  "sc2010": {
+    "prefix": "sc2010",
+    "description": "Don't use ls | grep. Use a glob or a for loop with a condition to allow non-alphanumeric filenames.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2010"
+  },
+  "sc2011": {
+    "prefix": "sc2011",
+    "description": "Use `find -print0` or `find -exec` to better handle non-alphanumeric filenames.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2011"
+  },
+  "sc2012": {
+    "prefix": "sc2012",
+    "description": "Use `find` instead of `ls` to better handle non-alphanumeric filenames.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2012"
+  },
+  "sc2013": {
+    "prefix": "sc2013",
+    "description": "To read lines rather than words, pipe/redirect to a 'while read' loop.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2013"
+  },
+  "sc2014": {
+    "prefix": "sc2014",
+    "description": "This will expand once before find runs, not per file found.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2014"
+  },
+  "sc2015": {
+    "prefix": "sc2015",
+    "description": "Note that A && B || C is not if-then-else. C may run when A is true.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2015"
+  },
+  "sc2016": {
+    "prefix": "sc2016",
+    "description": "Expressions don't expand in single quotes, use double quotes for that.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2016"
+  },
+  "sc2017": {
+    "prefix": "sc2017",
+    "description": "Increase precision by replacing a/b\\*c with a\\*c/b.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2017"
+  },
+  "sc2018": {
+    "prefix": "sc2018",
+    "description": "Use '[:lower:]' to support accents and foreign alphabets.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2018"
+  },
+  "sc2019": {
+    "prefix": "sc2019",
+    "description": "Use '[:upper:]' to support accents and foreign alphabets.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2019"
+  },
+  "sc2020": {
+    "prefix": "sc2020",
+    "description": "tr replaces sets of chars, not words (mentioned due to duplicates).",
+    "body": "# shellcheck ${1|disable,enable|}=SC2020"
+  },
+  "sc2021": {
+    "prefix": "sc2021",
+    "description": "Don't use [] around ranges in tr, it replaces literal square brackets.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2021"
+  },
+  "sc2022": {
+    "prefix": "sc2022",
+    "description": "Note that unlike globs, o* here matches 'ooo' but not 'oscar'",
+    "body": "# shellcheck ${1|disable,enable|}=SC2022"
+  },
+  "sc2024": {
+    "prefix": "sc2024",
+    "description": "`sudo` doesn't affect redirects. Use `..| sudo tee file`",
+    "body": "# shellcheck ${1|disable,enable|}=SC2024"
+  },
+  "sc2025": {
+    "prefix": "sc2025",
+    "description": "Make sure all escape sequences are enclosed in `\\[..\\]` to prevent line wrapping issues",
+    "body": "# shellcheck ${1|disable,enable|}=SC2025"
+  },
+  "sc2026": {
+    "prefix": "sc2026",
+    "description": "This word is outside of quotes. Did you intend to `'nest '\"'single quotes'\"'` instead'?",
+    "body": "# shellcheck ${1|disable,enable|}=SC2026"
+  },
+  "sc2027": {
+    "prefix": "sc2027",
+    "description": "The surrounding quotes actually unquote this. Remove or escape them.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2027"
+  },
+  "sc2028": {
+    "prefix": "sc2028",
+    "description": "echo won't expand escape sequences. Consider printf.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2028"
+  },
+  "sc2029": {
+    "prefix": "sc2029",
+    "description": "Note that, unescaped, this expands on the client side.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2029"
+  },
+  "sc2030": {
+    "prefix": "sc2030",
+    "description": "Modification of var is local (to subshell caused by pipeline).",
+    "body": "# shellcheck ${1|disable,enable|}=SC2030"
+  },
+  "sc2031": {
+    "prefix": "sc2031",
+    "description": "var was modified in a subshell. That change might be lost.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2031"
+  },
+  "sc2032": {
+    "prefix": "sc2032",
+    "description": "Use own script or sh -c '..' to run this from su.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2032"
+  },
+  "sc2033": {
+    "prefix": "sc2033",
+    "description": "Shell functions can't be passed to external commands.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2033"
+  },
+  "sc2034": {
+    "prefix": "sc2034",
+    "description": "foo appears unused. Verify it or export it.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2034"
+  },
+  "sc2035": {
+    "prefix": "sc2035",
+    "description": "Use ./\\*glob* or -- \\*glob* so names with dashes won't become options.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2035"
+  },
+  "sc2036": {
+    "prefix": "sc2036",
+    "description": "If you wanted to assign the output of the pipeline, use a=$(b | c) .",
+    "body": "# shellcheck ${1|disable,enable|}=SC2036"
+  },
+  "sc2037": {
+    "prefix": "sc2037",
+    "description": "To assign the output of a command, use var=$(cmd) .",
+    "body": "# shellcheck ${1|disable,enable|}=SC2037"
+  },
+  "sc2038": {
+    "prefix": "sc2038",
+    "description": "Use -print0/-0 or find -exec + to allow for non-alphanumeric filenames.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2038"
+  },
+  "sc2039": {
+    "prefix": "sc2039",
+    "description": "In POSIX sh, *something* is undefined.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2039"
+  },
+  "sc2040": {
+    "prefix": "sc2040",
+    "description": "!/bin/sh was specified, so ____ is not supported, even when sh is actually bash.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2040"
+  },
+  "sc2041": {
+    "prefix": "sc2041",
+    "description": "This is a literal string. To run as a command, use $(..) instead of '..' .",
+    "body": "# shellcheck ${1|disable,enable|}=SC2041"
+  },
+  "sc2043": {
+    "prefix": "sc2043",
+    "description": "This loop will only ever run once for a constant value. Did you perhaps mean to loop over dir/*, $var or $(cmd)?\"",
+    "body": "# shellcheck ${1|disable,enable|}=SC2043"
+  },
+  "sc2044": {
+    "prefix": "sc2044",
+    "description": "For loops over find output are fragile. Use find -exec or a while read loop.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2044"
+  },
+  "sc2045": {
+    "prefix": "sc2045",
+    "description": "Iterating over ls output is fragile. Use globs.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2045"
+  },
+  "sc2046": {
+    "prefix": "sc2046",
+    "description": "Quote this to prevent word splitting",
+    "body": "# shellcheck ${1|disable,enable|}=SC2046"
+  },
+  "sc2048": {
+    "prefix": "sc2048",
+    "description": "Use \"$@\" (with quotes) to prevent whitespace problems.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2048"
+  },
+  "sc2049": {
+    "prefix": "sc2049",
+    "description": "=~ is for regex, but this looks like a glob. Use = instead.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2049"
+  },
+  "sc2050": {
+    "prefix": "sc2050",
+    "description": "This expression is constant. Did you forget the `$` on a variable?",
+    "body": "# shellcheck ${1|disable,enable|}=SC2050"
+  },
+  "sc2051": {
+    "prefix": "sc2051",
+    "description": "Bash doesn't support variables in brace range expansions.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2051"
+  },
+  "sc2053": {
+    "prefix": "sc2053",
+    "description": "Quote the rhs of = in [[ ]] to prevent glob matching.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2053"
+  },
+  "sc2054": {
+    "prefix": "sc2054",
+    "description": "Use spaces, not commas, to separate array elements.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2054"
+  },
+  "sc2055": {
+    "prefix": "sc2055",
+    "description": "You probably wanted && here, otherwise it's always true.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2055"
+  },
+  "sc2056": {
+    "prefix": "sc2056",
+    "description": "You probably wanted && here",
+    "body": "# shellcheck ${1|disable,enable|}=SC2056"
+  },
+  "sc2057": {
+    "prefix": "sc2057",
+    "description": "Unknown binary operator.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2057"
+  },
+  "sc2058": {
+    "prefix": "sc2058",
+    "description": "Unknown unaryoperator.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2058"
+  },
+  "sc2059": {
+    "prefix": "sc2059",
+    "description": "Don't use variables in the printf format string. Use printf \"..%s..\" \"$foo\".",
+    "body": "# shellcheck ${1|disable,enable|}=SC2059"
+  },
+  "sc2060": {
+    "prefix": "sc2060",
+    "description": "Quote parameters to tr to prevent glob expansion.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2060"
+  },
+  "sc2061": {
+    "prefix": "sc2061",
+    "description": "Quote the parameter to -name so the shell won't interpret it.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2061"
+  },
+  "sc2062": {
+    "prefix": "sc2062",
+    "description": "Quote the grep pattern so the shell won't interpret it.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2062"
+  },
+  "sc2063": {
+    "prefix": "sc2063",
+    "description": "Grep uses regex, but this looks like a glob.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2063"
+  },
+  "sc2064": {
+    "prefix": "sc2064",
+    "description": "Use single quotes, otherwise this expands now rather than when signalled.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2064"
+  },
+  "sc2065": {
+    "prefix": "sc2065",
+    "description": "This is interpreted as a shell file redirection, not a comparison.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2065"
+  },
+  "sc2066": {
+    "prefix": "sc2066",
+    "description": "Since you double quoted this, it will not word split, and the loop will only run once.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2066"
+  },
+  "sc2067": {
+    "prefix": "sc2067",
+    "description": "Missing ';' or + terminating -exec. You can't use |/||/&&, and ';' has to be a separate, quoted argument.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2067"
+  },
+  "sc2068": {
+    "prefix": "sc2068",
+    "description": "Double quote array expansions to avoid re-splitting elements.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2068"
+  },
+  "sc2069": {
+    "prefix": "sc2069",
+    "description": "To redirect stdout+stderr, 2>&1 must be last (or use '{ cmd > file; } 2>&1' to clarify).",
+    "body": "# shellcheck ${1|disable,enable|}=SC2069"
+  },
+  "sc2070": {
+    "prefix": "sc2070",
+    "description": "`-n` doesn't work with unquoted arguments. Quote or use ``[[ ]]``.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2070"
+  },
+  "sc2071": {
+    "prefix": "sc2071",
+    "description": "> is for string comparisons. Use -gt instead.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2071"
+  },
+  "sc2072": {
+    "prefix": "sc2072",
+    "description": "Decimals are not supported. Either use integers only, or use bc or awk to compare.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2072"
+  },
+  "sc2073": {
+    "prefix": "sc2073",
+    "description": "Escape `\\<` to prevent it redirecting (or switch to `[[ .. ]]`).",
+    "body": "# shellcheck ${1|disable,enable|}=SC2073"
+  },
+  "sc2074": {
+    "prefix": "sc2074",
+    "description": "Can't use `=~` in `[ ]`. Use `[[..]]` instead.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2074"
+  },
+  "sc2076": {
+    "prefix": "sc2076",
+    "description": "Don't quote rhs of =~, it'll match literally rather than as a regex.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2076"
+  },
+  "sc2077": {
+    "prefix": "sc2077",
+    "description": "You need spaces around the comparison operator.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2077"
+  },
+  "sc2078": {
+    "prefix": "sc2078",
+    "description": "This expression is constant. Did you forget a `$` somewhere?",
+    "body": "# shellcheck ${1|disable,enable|}=SC2078"
+  },
+  "sc2079": {
+    "prefix": "sc2079",
+    "description": "(( )) doesn't support decimals. Use bc or awk.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2079"
+  },
+  "sc2080": {
+    "prefix": "sc2080",
+    "description": "Numbers with leading 0 are considered octal.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2080"
+  },
+  "sc2081": {
+    "prefix": "sc2081",
+    "description": "`[ .. ]` can't match globs. Use `[[ .. ]]` or grep.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2081"
+  },
+  "sc2082": {
+    "prefix": "sc2082",
+    "description": "To expand via indirection, use name=\"foo$n\"; echo \"${!name}\".",
+    "body": "# shellcheck ${1|disable,enable|}=SC2082"
+  },
+  "sc2084": {
+    "prefix": "sc2084",
+    "description": "Remove '$' or use '_=$((expr))' to avoid executing output.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2084"
+  },
+  "sc2086": {
+    "prefix": "sc2086",
+    "description": "Double quote to prevent globbing and word splitting.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2086"
+  },
+  "sc2087": {
+    "prefix": "sc2087",
+    "description": "Quote 'EOF' to make here document expansions happen on the server side rather than on the client.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2087"
+  },
+  "sc2088": {
+    "prefix": "sc2088",
+    "description": "Tilde does not expand in quotes. Use $HOME.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2088"
+  },
+  "sc2089": {
+    "prefix": "sc2089",
+    "description": "Quotes/backslashes will be treated literally. Use an array.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2089"
+  },
+  "sc2090": {
+    "prefix": "sc2090",
+    "description": "Quotes/backslashes in this variable will not be respected.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2090"
+  },
+  "sc2091": {
+    "prefix": "sc2091",
+    "description": "Remove surrounding $() to avoid executing output.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2091"
+  },
+  "sc2092": {
+    "prefix": "sc2092",
+    "description": "Remove backticks to avoid executing output.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2092"
+  },
+  "sc2093": {
+    "prefix": "sc2093",
+    "description": "Remove \"exec \" if script should continue after this command.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2093"
+  },
+  "sc2094": {
+    "prefix": "sc2094",
+    "description": "SC2094 Make sure not to read and write the same file in the same pipeline.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2094"
+  },
+  "sc2095": {
+    "prefix": "sc2095",
+    "description": "Use ssh -n to prevent ssh from swallowing stdin.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2095"
+  },
+  "sc2096": {
+    "prefix": "sc2096",
+    "description": "On most OS, shebangs can only specify a single parameter.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2096"
+  },
+  "sc2097": {
+    "prefix": "sc2097",
+    "description": "This assignment is only seen by the forked process.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2097"
+  },
+  "sc2098": {
+    "prefix": "sc2098",
+    "description": "This expansion will not see the mentioned assignment.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2098"
+  },
+  "sc2099": {
+    "prefix": "sc2099",
+    "description": "Use `$((..))` for arithmetics, e.g. `i=$((i + 2))`",
+    "body": "# shellcheck ${1|disable,enable|}=SC2099"
+  },
+  "sc2100": {
+    "prefix": "sc2100",
+    "description": "Use `$((..))` for arithmetics, e.g. `i=$((i + 2))`",
+    "body": "# shellcheck ${1|disable,enable|}=SC2100"
+  },
+  "sc2101": {
+    "prefix": "sc2101",
+    "description": "Named class needs outer [], e.g. [[:digit:]\\].",
+    "body": "# shellcheck ${1|disable,enable|}=SC2101"
+  },
+  "sc2102": {
+    "prefix": "sc2102",
+    "description": "Ranges can only match single chars (mentioned due to duplicates).",
+    "body": "# shellcheck ${1|disable,enable|}=SC2102"
+  },
+  "sc2103": {
+    "prefix": "sc2103",
+    "description": "Use a ( subshell ) to avoid having to cd back.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2103"
+  },
+  "sc2104": {
+    "prefix": "sc2104",
+    "description": "In functions, use return instead of break.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2104"
+  },
+  "sc2105": {
+    "prefix": "sc2105",
+    "description": "`break` is only valid in loops",
+    "body": "# shellcheck ${1|disable,enable|}=SC2105"
+  },
+  "sc2106": {
+    "prefix": "sc2106",
+    "description": "SC2106: This only exits the subshell caused by the pipeline.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2106"
+  },
+  "sc2107": {
+    "prefix": "sc2107",
+    "description": "Instead of [ a && b ], use [ a ] && [ b ].",
+    "body": "# shellcheck ${1|disable,enable|}=SC2107"
+  },
+  "sc2108": {
+    "prefix": "sc2108",
+    "description": "In [\\[..]], use && instead of -a.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2108"
+  },
+  "sc2109": {
+    "prefix": "sc2109",
+    "description": "Instead of [ a || b ], use [ a ] || [ b ].",
+    "body": "# shellcheck ${1|disable,enable|}=SC2109"
+  },
+  "sc2110": {
+    "prefix": "sc2110",
+    "description": "In [\\[..]], use || instead of -o.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2110"
+  },
+  "sc2112": {
+    "prefix": "sc2112",
+    "description": "'function' keyword is non-standard. Delete it.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2112"
+  },
+  "sc2114": {
+    "prefix": "sc2114",
+    "description": "Warning: deletes a system directory. ",
+    "body": "# shellcheck ${1|disable,enable|}=SC2114"
+  },
+  "sc2115": {
+    "prefix": "sc2115",
+    "description": "Use \"${var:?}\" to ensure this never expands to /* .",
+    "body": "# shellcheck ${1|disable,enable|}=SC2115"
+  },
+  "sc2116": {
+    "prefix": "sc2116",
+    "description": "SC2116 Useless echo? Instead of 'cmd $(echo foo)', just use 'cmd foo'.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2116"
+  },
+  "sc2117": {
+    "prefix": "sc2117",
+    "description": "To run commands as another user, use su -c or sudo.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2117"
+  },
+  "sc2119": {
+    "prefix": "sc2119",
+    "description": "Use foo \"$@\" if function's $1 should mean script's $1.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2119"
+  },
+  "sc2120": {
+    "prefix": "sc2120",
+    "description": "foo references arguments, but none are ever passed.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2120"
+  },
+  "sc2121": {
+    "prefix": "sc2121",
+    "description": "To assign a variable, use just 'var=value', no 'set ..'.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2121"
+  },
+  "sc2122": {
+    "prefix": "sc2122",
+    "description": ">= is not a valid operator. Use '! a < b' instead.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2122"
+  },
+  "sc2123": {
+    "prefix": "sc2123",
+    "description": "PATH is the shell search path. Use another name.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2123"
+  },
+  "sc2124": {
+    "prefix": "sc2124",
+    "description": "Assigning an array to a string! Assign as array, or use * instead of @ to concatenate.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2124"
+  },
+  "sc2125": {
+    "prefix": "sc2125",
+    "description": "Brace expansions and globs are literal in assignments. Quote it or use an array.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2125"
+  },
+  "sc2126": {
+    "prefix": "sc2126",
+    "description": "Consider using `grep -c` instead of `grep | wc`",
+    "body": "# shellcheck ${1|disable,enable|}=SC2126"
+  },
+  "sc2128": {
+    "prefix": "sc2128",
+    "description": "Expanding an array without an index only gives the first element.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2128"
+  },
+  "sc2129": {
+    "prefix": "sc2129",
+    "description": "Consider using { cmd1; cmd2; } >> file instead of individual redirects.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2129"
+  },
+  "sc2130": {
+    "prefix": "sc2130",
+    "description": "-eq is for integer comparisons. Use = instead.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2130"
+  },
+  "sc2139": {
+    "prefix": "sc2139",
+    "description": "This expands when defined, not when used. Consider escaping.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2139"
+  },
+  "sc2140": {
+    "prefix": "sc2140",
+    "description": "Word is on the form \"A\"B\"C\" (B indicated). Did you mean \"ABC\" or \"A\\\\\"B\\\\\"C\"?",
+    "body": "# shellcheck ${1|disable,enable|}=SC2140"
+  },
+  "sc2141": {
+    "prefix": "sc2141",
+    "description": "Did you mean IFS=$'\\t' ?",
+    "body": "# shellcheck ${1|disable,enable|}=SC2141"
+  },
+  "sc2142": {
+    "prefix": "sc2142",
+    "description": "Aliases can't use positional parameters. Use a function.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2142"
+  },
+  "sc2143": {
+    "prefix": "sc2143",
+    "description": "Use grep -q instead of comparing output with [ -n .. ].",
+    "body": "# shellcheck ${1|disable,enable|}=SC2143"
+  },
+  "sc2144": {
+    "prefix": "sc2144",
+    "description": "-e doesn't work with globs. Use a for loop.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2144"
+  },
+  "sc2145": {
+    "prefix": "sc2145",
+    "description": "Argument mixes string and array. Use * or separate argument.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2145"
+  },
+  "sc2146": {
+    "prefix": "sc2146",
+    "description": "This action ignores everything before the -o. Use \\\\( \\\\) to group.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2146"
+  },
+  "sc2147": {
+    "prefix": "sc2147",
+    "description": "Literal tilde in PATH works poorly across programs.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2147"
+  },
+  "sc2148": {
+    "prefix": "sc2148",
+    "description": "Add a shebang line to the top of your script:",
+    "body": "# shellcheck ${1|disable,enable|}=SC2148"
+  },
+  "sc2149": {
+    "prefix": "sc2149",
+    "description": "Remove $/${} for numeric index, or escape it for string.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2149"
+  },
+  "sc2150": {
+    "prefix": "sc2150",
+    "description": "-exec does not automatically invoke a shell. Use -exec sh -c .. for that.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2150"
+  },
+  "sc2151": {
+    "prefix": "sc2151",
+    "description": "Only one integer 0-255 can be returned. Use stdout for other data.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2151"
+  },
+  "sc2152": {
+    "prefix": "sc2152",
+    "description": "Can only return 0-255. Other data should be written to stdout.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2152"
+  },
+  "sc2153": {
+    "prefix": "sc2153",
+    "description": "Possible Misspelling: MYVARIABLE may not be assigned, but MY_VARIABLE is.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2153"
+  },
+  "sc2154": {
+    "prefix": "sc2154",
+    "description": "var is referenced but not assigned.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2154"
+  },
+  "sc2155": {
+    "prefix": "sc2155",
+    "description": "Declare and assign separately to avoid masking return values.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2155"
+  },
+  "sc2156": {
+    "prefix": "sc2156",
+    "description": "Injecting filenames is fragile and insecure. Use parameters.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2156"
+  },
+  "sc2157": {
+    "prefix": "sc2157",
+    "description": "Argument to implicit -n is always true due to literal strings.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2157"
+  },
+  "sc2158": {
+    "prefix": "sc2158",
+    "description": "[ false ] is true. Remove the brackets",
+    "body": "# shellcheck ${1|disable,enable|}=SC2158"
+  },
+  "sc2159": {
+    "prefix": "sc2159",
+    "description": "[ 0 ] is true. Use 'false' instead",
+    "body": "# shellcheck ${1|disable,enable|}=SC2159"
+  },
+  "sc2160": {
+    "prefix": "sc2160",
+    "description": "Instead of '[ true ]', just use 'true'.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2160"
+  },
+  "sc2161": {
+    "prefix": "sc2161",
+    "description": "Instead of '[ 1 ]', use 'true'.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2161"
+  },
+  "sc2162": {
+    "prefix": "sc2162",
+    "description": "read without -r will mangle backslashes",
+    "body": "# shellcheck ${1|disable,enable|}=SC2162"
+  },
+  "sc2163": {
+    "prefix": "sc2163",
+    "description": "This does not export 'FOO'. Remove $/${} for that, or use ${var?} to quiet.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2163"
+  },
+  "sc2164": {
+    "prefix": "sc2164",
+    "description": "Use cd ... || exit in case cd fails.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2164"
+  },
+  "sc2165": {
+    "prefix": "sc2165",
+    "description": "This nested loop overrides the index variable of its parent.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2165"
+  },
+  "sc2166": {
+    "prefix": "sc2166",
+    "description": "Prefer [ p ] && [ q ] as [ p -a q ] is not well defined.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2166"
+  },
+  "sc2167": {
+    "prefix": "sc2167",
+    "description": "This parent loop has its index variable overridden.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2167"
+  },
+  "sc2168": {
+    "prefix": "sc2168",
+    "description": "'local' is only valid in functions.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2168"
+  },
+  "sc2169": {
+    "prefix": "sc2169",
+    "description": "In dash, *something* is not supported.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2169"
+  },
+  "sc2170": {
+    "prefix": "sc2170",
+    "description": "Numerical -eq does not dereference in [..]. Expand or use string operator.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2170"
+  },
+  "sc2171": {
+    "prefix": "sc2171",
+    "description": "Found trailing ] outside test. Add missing [ or quote if intentional.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2171"
+  },
+  "sc2172": {
+    "prefix": "sc2172",
+    "description": "Trapping signals by number is not well defined. Prefer signal names.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2172"
+  },
+  "sc2173": {
+    "prefix": "sc2173",
+    "description": "SIGKILL/SIGSTOP can not be trapped.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2173"
+  },
+  "sc2174": {
+    "prefix": "sc2174",
+    "description": "When used with -p, -m only applies to the deepest directory.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2174"
+  },
+  "sc2175": {
+    "prefix": "sc2175",
+    "description": "Quote this invalid brace expansion since it should be passed literally to eval",
+    "body": "# shellcheck ${1|disable,enable|}=SC2175"
+  },
+  "sc2176": {
+    "prefix": "sc2176",
+    "description": "'time' is undefined for pipelines. time single stage or bash -c instead.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2176"
+  },
+  "sc2177": {
+    "prefix": "sc2177",
+    "description": "'time' is undefined for compound commands, time sh -c instead.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2177"
+  },
+  "sc2178": {
+    "prefix": "sc2178",
+    "description": "Variable was used as an array but is now assigned a string.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2178"
+  },
+  "sc2179": {
+    "prefix": "sc2179",
+    "description": "Use array+=(\"item\") to append items to an array.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2179"
+  },
+  "sc2180": {
+    "prefix": "sc2180",
+    "description": "Bash does not support multidimensional arrays. Use 1D or associative arrays.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2180"
+  },
+  "sc2181": {
+    "prefix": "sc2181",
+    "description": "Check exit code directly with e.g. 'if mycmd;', not indirectly with $?.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2181"
+  },
+  "sc2182": {
+    "prefix": "sc2182",
+    "description": "This printf format string has no variables. Other arguments are ignored.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2182"
+  },
+  "sc2183": {
+    "prefix": "sc2183",
+    "description": "This format string has 2 variables, but is passed 1 arguments.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2183"
+  },
+  "sc2184": {
+    "prefix": "sc2184",
+    "description": "Quote arguments to unset so they're not glob expanded.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2184"
+  },
+  "sc2185": {
+    "prefix": "sc2185",
+    "description": "Some finds don't have a default path. Specify '.' explicitly.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2185"
+  },
+  "sc2186": {
+    "prefix": "sc2186",
+    "description": "tempfile is deprecated. Use mktemp instead.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2186"
+  },
+  "sc2187": {
+    "prefix": "sc2187",
+    "description": "Ash scripts will be checked as Dash. Add '# shellcheck shell=dash' to silence.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2187"
+  },
+  "sc2188": {
+    "prefix": "sc2188",
+    "description": "This redirection doesn't have a command. Move to its command (or use 'true' as no-op).",
+    "body": "# shellcheck ${1|disable,enable|}=SC2188"
+  },
+  "sc2189": {
+    "prefix": "sc2189",
+    "description": "You can't have | between this redirection and the command it should apply to.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2189"
+  },
+  "sc2190": {
+    "prefix": "sc2190",
+    "description": "Elements in associative arrays need index, e.g. array=( [index]=value ) .",
+    "body": "# shellcheck ${1|disable,enable|}=SC2190"
+  },
+  "sc2191": {
+    "prefix": "sc2191",
+    "description": "The = here is literal. To assign by index, use ( [index]=value ) with no spaces. To keep as literal, quote it.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2191"
+  },
+  "sc2192": {
+    "prefix": "sc2192",
+    "description": "This array element has no value. Remove spaces after = or use \"\" for empty string.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2192"
+  },
+  "sc2193": {
+    "prefix": "sc2193",
+    "description": "The arguments to this comparison can never be equal. Make sure your syntax is correct.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2193"
+  },
+  "sc2194": {
+    "prefix": "sc2194",
+    "description": "This word is constant. Did you forget the $ on a variable?",
+    "body": "# shellcheck ${1|disable,enable|}=SC2194"
+  },
+  "sc2195": {
+    "prefix": "sc2195",
+    "description": "This pattern will never match the case statement's word. Double check them.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2195"
+  },
+  "sc2196": {
+    "prefix": "sc2196",
+    "description": "egrep is non-standard and deprecated. Use grep -E instead.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2196"
+  },
+  "sc2197": {
+    "prefix": "sc2197",
+    "description": "fgrep is non-standard and deprecated. Use grep -F instead.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2197"
+  },
+  "sc2198": {
+    "prefix": "sc2198",
+    "description": "Arrays don't work as operands in [ ]. Use a loop (or concatenate with * instead of @).",
+    "body": "# shellcheck ${1|disable,enable|}=SC2198"
+  },
+  "sc2199": {
+    "prefix": "sc2199",
+    "description": "Arrays implicitly concatenate in `[[ ]]`. Use a loop (or explicit * instead of @).",
+    "body": "# shellcheck ${1|disable,enable|}=SC2199"
+  },
+  "sc2200": {
+    "prefix": "sc2200",
+    "description": "Brace expansions don't work as operands in [ ]. Use a loop.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2200"
+  },
+  "sc2201": {
+    "prefix": "sc2201",
+    "description": "Brace expansion doesn't happen in `[[ ]]`. Use a loop.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2201"
+  },
+  "sc2202": {
+    "prefix": "sc2202",
+    "description": "Globs don't work as operands in [ ]. Use a loop.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2202"
+  },
+  "sc2203": {
+    "prefix": "sc2203",
+    "description": "Globs are ignored in `[[ ]]` except right of =/!=. Use a loop.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2203"
+  },
+  "sc2204": {
+    "prefix": "sc2204",
+    "description": "(..) is a subshell. Did you mean [ .. ], a test expression?",
+    "body": "# shellcheck ${1|disable,enable|}=SC2204"
+  },
+  "sc2205": {
+    "prefix": "sc2205",
+    "description": "(..) is a subshell. Did you mean [ .. ], a test expression?",
+    "body": "# shellcheck ${1|disable,enable|}=SC2205"
+  },
+  "sc2206": {
+    "prefix": "sc2206",
+    "description": "Quote to prevent word splitting/globbing, or split robustly with mapfile or read -a.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2206"
+  },
+  "sc2207": {
+    "prefix": "sc2207",
+    "description": "Prefer mapfile or read -a to split command output (or quote to avoid splitting).",
+    "body": "# shellcheck ${1|disable,enable|}=SC2207"
+  },
+  "sc2208": {
+    "prefix": "sc2208",
+    "description": "Use `[[ ]]` or quote arguments to -v to avoid glob expansion.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2208"
+  },
+  "sc2209": {
+    "prefix": "sc2209",
+    "description": "Use var=$(command) to assign output (or quote to assign string).",
+    "body": "# shellcheck ${1|disable,enable|}=SC2209"
+  },
+  "sc2210": {
+    "prefix": "sc2210",
+    "description": "This is a file redirection. Was it supposed to be a comparison or fd operation?",
+    "body": "# shellcheck ${1|disable,enable|}=SC2210"
+  },
+  "sc2211": {
+    "prefix": "sc2211",
+    "description": "This is a glob used as a command name. Was it supposed to be in ${..}, array, or is it missing quoting?",
+    "body": "# shellcheck ${1|disable,enable|}=SC2211"
+  },
+  "sc2212": {
+    "prefix": "sc2212",
+    "description": "Use 'false' instead of empty [/[[ conditionals.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2212"
+  },
+  "sc2213": {
+    "prefix": "sc2213",
+    "description": "getopts specified -n, but it's not handled by this 'case'.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2213"
+  },
+  "sc2214": {
+    "prefix": "sc2214",
+    "description": "This case is not specified by getopts.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2214"
+  },
+  "sc2215": {
+    "prefix": "sc2215",
+    "description": "This flag is used as a command name. Bad line break or missing `[ .. ]`?",
+    "body": "# shellcheck ${1|disable,enable|}=SC2215"
+  },
+  "sc2216": {
+    "prefix": "sc2216",
+    "description": "Piping to 'rm', a command that doesn't read stdin. Wrong command or missing xargs?",
+    "body": "# shellcheck ${1|disable,enable|}=SC2216"
+  },
+  "sc2217": {
+    "prefix": "sc2217",
+    "description": "Redirecting to 'echo', a command that doesn't read stdin. Bad quoting or missing xargs?",
+    "body": "# shellcheck ${1|disable,enable|}=SC2217"
+  },
+  "sc2218": {
+    "prefix": "sc2218",
+    "description": "This function is only defined later. Move the definition up.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2218"
+  },
+  "sc2219": {
+    "prefix": "sc2219",
+    "description": "Instead of `let expr`, prefer `(( expr ))` .",
+    "body": "# shellcheck ${1|disable,enable|}=SC2219"
+  },
+  "sc2220": {
+    "prefix": "sc2220",
+    "description": "Invalid flags are not handled. Add a `*)` case.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2220"
+  },
+  "sc2221": {
+    "prefix": "sc2221",
+    "description": "This pattern always overrides a later one.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2221"
+  },
+  "sc2222": {
+    "prefix": "sc2222",
+    "description": "This pattern never matches because of a previous pattern.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2222"
+  },
+  "sc2223": {
+    "prefix": "sc2223",
+    "description": "This default assignment may cause DoS due to globbing. Quote it.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2223"
+  },
+  "sc2224": {
+    "prefix": "sc2224",
+    "description": "This mv has no destination. Check the arguments.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2224"
+  },
+  "sc2225": {
+    "prefix": "sc2225",
+    "description": "This cp has no destination. Check the arguments.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2225"
+  },
+  "sc2226": {
+    "prefix": "sc2226",
+    "description": "This ln has no destination. Check the arguments, or specify '.' explicitly.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2226"
+  },
+  "sc2227": {
+    "prefix": "sc2227",
+    "description": "Redirection applies to the find command itself. Rewrite to work per action (or move to end).",
+    "body": "# shellcheck ${1|disable,enable|}=SC2227"
+  },
+  "sc2229": {
+    "prefix": "sc2229",
+    "description": "This does not read 'foo'. Remove $/${} for that, or use ${var?} to quiet.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2229"
+  },
+  "sc2230": {
+    "prefix": "sc2230",
+    "description": "which is non-standard. Use builtin 'command -v' instead.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2230"
+  },
+  "sc2231": {
+    "prefix": "sc2231",
+    "description": "Quote expansions in this for loop glob to prevent wordsplitting, e.g. \"$dir\"/*.txt .",
+    "body": "# shellcheck ${1|disable,enable|}=SC2231"
+  },
+  "sc2232": {
+    "prefix": "sc2232",
+    "description": "Can't use sudo with builtins like cd. Did you want sudo sh -c .. instead?",
+    "body": "# shellcheck ${1|disable,enable|}=SC2232"
+  },
+  "sc2233": {
+    "prefix": "sc2233",
+    "description": "Remove superfluous `(..)` around condition.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2233"
+  },
+  "sc2234": {
+    "prefix": "sc2234",
+    "description": "Remove superfluous `(..)` around test command.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2234"
+  },
+  "sc2235": {
+    "prefix": "sc2235",
+    "description": "Use `{ ..; }` instead of `(..)` to avoid subshell overhead.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2235"
+  },
+  "sc2236": {
+    "prefix": "sc2236",
+    "description": "Use `-n` instead of `! -z`.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2236"
+  },
+  "sc2237": {
+    "prefix": "sc2237",
+    "description": "Use `[ -n .. ]` instead of `! [ -z .. ]`.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2237"
+  },
+  "sc2238": {
+    "prefix": "sc2238",
+    "description": "Redirecting to/from command name instead of file. Did you want pipes/xargs (or quote to ignore)?",
+    "body": "# shellcheck ${1|disable,enable|}=SC2238"
+  },
+  "sc2239": {
+    "prefix": "sc2239",
+    "description": "Ensure the shebang uses the absolute path to the interpreter.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2239"
+  },
+  "sc2240": {
+    "prefix": "sc2240",
+    "description": "The dot command does not support arguments in sh/dash. Set them as variables.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2240"
+  },
+  "sc2241": {
+    "prefix": "sc2241",
+    "description": "The exit status can only be one integer 0-255. Use stdout for other data.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2241"
+  },
+  "sc2242": {
+    "prefix": "sc2242",
+    "description": "Can only exit with status 0-255. Other data should be written to stdout/stderr.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2242"
+  },
+  "sc2243": {
+    "prefix": "sc2243",
+    "description": "Prefer explicit -n to check for output (or run command without [/[[ to check for success)",
+    "body": "# shellcheck ${1|disable,enable|}=SC2243"
+  },
+  "sc2244": {
+    "prefix": "sc2244",
+    "description": "Prefer explicit -n to check non-empty string (or use =/-ne to check boolean/integer).",
+    "body": "# shellcheck ${1|disable,enable|}=SC2244"
+  },
+  "sc2245": {
+    "prefix": "sc2245",
+    "description": "-d only applies to the first expansion of this glob. Use a loop to check any/all.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2245"
+  },
+  "sc2246": {
+    "prefix": "sc2246",
+    "description": "This shebang specifies a directory. Ensure the interpreter is a file.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2246"
+  },
+  "sc2247": {
+    "prefix": "sc2247",
+    "description": "Flip leading $ and \" if this should be a quoted substitution.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2247"
+  },
+  "sc2248": {
+    "prefix": "sc2248",
+    "description": "Warn about variable references without braces.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2248"
+  },
+  "sc2249": {
+    "prefix": "sc2249",
+    "description": "Consider adding a default *) case, even if it just exits with error.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2249"
+  },
+  "sc2250": {
+    "prefix": "sc2250",
+    "description": "Prefer putting braces around variable references even when not strictly required.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2250"
+  },
+  "sc2251": {
+    "prefix": "sc2251",
+    "description": "This ! is not on a condition and skips errexit. Use `&& exit 1` instead, or make sure $? is checked.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2251"
+  },
+  "sc2252": {
+    "prefix": "sc2252",
+    "description": "You probably wanted && here, otherwise it's always true.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2252"
+  },
+  "sc2253": {
+    "prefix": "sc2253",
+    "description": "Use -R to recurse, or explicitly a-r to remove read permissions.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2253"
+  },
+  "sc2254": {
+    "prefix": "sc2254",
+    "description": "Quote expansions in case patterns to match literally rather than as a glob.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2254"
+  },
+  "sc2255": {
+    "prefix": "sc2255",
+    "description": "`[ ]` does not apply arithmetic evaluation. Evaluate with `$((..))` for numbers, or use string comparator for strings.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2255"
+  },
+  "sc2256": {
+    "prefix": "sc2256",
+    "description": "This translated string is the name of a variable. Flip leading $ and \" if this should be a quoted substitution.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2256"
+  },
+  "sc2257": {
+    "prefix": "sc2257",
+    "description": "Arithmetic modifications in command redirections may be discarded. Do them separately.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2257"
+  },
+  "sc2259": {
+    "prefix": "sc2259",
+    "description": "This redirection overrides piped input. To use both, merge or pass filenames.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2259"
+  },
+  "sc2260": {
+    "prefix": "sc2260",
+    "description": "This redirection overrides the output pipe. Use 'tee' to output to both.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2260"
+  },
+  "sc2261": {
+    "prefix": "sc2261",
+    "description": "Multiple redirections compete for stdout. Use cat, tee, or pass filenames instead.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2261"
+  },
+  "sc2262": {
+    "prefix": "sc2262",
+    "description": "This alias can't be defined and used in the same parsing unit. Use a function instead.",
+    "body": "# shellcheck ${1|disable,enable|}=SC2262"
+  },
+  "sc2263": {
+    "prefix": "sc2263",
+    "description": "See companion warning [[SC2262]]",
+    "body": "# shellcheck ${1|disable,enable|}=SC2263"
+  },
   "shellcheck toggle": {
     "description": "toggle warnings",
     "prefix": "shellcheck:toggle-warnings",
-    "body": ["# shellcheck ${1|enable,disable|}=${2:warnings}"]
+    "body": [
+      "# shellcheck ${1|enable,disable|}=${2:warnings}"
+    ]
   },
   "shellcheck disable all": {
     "description": "disable all warnings",
     "prefix": "shellcheck:disable-warnings-all",
-    "body": ["# shellcheck disable=all"]
+    "body": [
+      "# shellcheck disable=all"
+    ]
   },
   "shellcheck enable optional": {
     "description": "enable optional warnings",
@@ -19,16 +1768,22 @@
   "shellcheck source file": {
     "description": "source file",
     "prefix": "shellcheck:source-file",
-    "body": ["# shellcheck source=${1:path/to/file}"]
+    "body": [
+      "# shellcheck source=${1:path/to/file}"
+    ]
   },
   "shellcheck source directory": {
     "description": "source directory",
     "prefix": "shellcheck:source-directory",
-    "body": ["# shellcheck source-path=${1:path/to/directory}"]
+    "body": [
+      "# shellcheck source-path=${1:path/to/directory}"
+    ]
   },
   "shellcheck shell": {
     "description": "shell",
     "prefix": "shellcheck:shell",
-    "body": ["# shellcheck shell=${1:shell}"]
+    "body": [
+      "# shellcheck shell=${1:shell}"
+    ]
   }
 }
