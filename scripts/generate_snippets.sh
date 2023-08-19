@@ -11,7 +11,7 @@ generate_snippets() {
           key: .value | capture("^- +\\[(?<x>SC\\d{4})\\]") | .x | ascii_downcase,
           value:
             {
-              prefix: .value | capture("^- +\\[(?<x>SC\\d{4})\\]") | .x | ascii_downcase,
+              prefix: ("shellcheck-" + (.value | capture("^- +\\[(?<x>SC\\d{4})\\]") | .x | ascii_downcase)),
               description: .value | capture("SC\\d{4}\\]\\(.*?\\) (?<x>.+)$") | .x,
               body: ("# shellcheck ${1|disable,enable|}=" + (.value | capture("^- +\\[(?<x>SC\\d{4})\\]") | .x))
             }
