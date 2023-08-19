@@ -11,8 +11,8 @@ generate_snippets() {
           key: .value | capture("^- +\\[(?<x>SC\\d{4})\\]") | .x | ascii_downcase,
           value:
             {
-              prefix: ("shellcheck-" + (.value | capture("^- +\\[(?<x>SC\\d{4})\\]") | .x | ascii_downcase)),
               description: .value | capture("SC\\d{4}\\]\\(.*?\\) (?<x>.+)$") | .x,
+              prefix: ("shellcheck-" + (.value | capture("^- +\\[(?<x>SC\\d{4})\\]") | .x | ascii_downcase)),
               body: ("# shellcheck ${1|disable,enable|}=" + (.value | capture("^- +\\[(?<x>SC\\d{4})\\]") | .x))
             }
         }
@@ -21,7 +21,7 @@ generate_snippets() {
 
 merge_snippets() {
   ms_snippet_path=../snippets/snippets.json
-  jq -n '$ARGS.named["generated"] + $ARGS.named["source"]' --argjson generated "$(generate_snippets)" --argjson source "$(cat "$ms_snippet_path")"
+  jq -n '$ARGS.named["generated"] * $ARGS.named["source"]' --argjson generated "$(generate_snippets)" --argjson source "$(cat "$ms_snippet_path")"
 }
 
 snippet_path=../snippets/snippets.json
