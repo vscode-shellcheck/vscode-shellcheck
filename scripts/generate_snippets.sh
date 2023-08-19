@@ -86,10 +86,10 @@ version() {
 interactive() {
   error_when_dependency_does_not_exist gum "go install github.com/charmbracelet/gum@latest"
 
-  gum confirm "Do you want to append generated snippets?" && is_append=true
-  gum confirm "Do you want to filter generated snippets?" &&
+  gum confirm "Do you want to append generated snippets?" --default=No && is_append=true
+  gum confirm "Do you want to filter generated snippets?" --default=No &&
     filter="$(gum input --prompt "Type regular expression to filter out snippets by their keys: ")"
-  gum confirm "Do you want to use custom path to manually written snippets?" &&
+  gum confirm "Do you want to use custom path to manually written snippets?" --default=No &&
     path="$(gum input --prompt "Type path to manually written snippets: ")"
   
   save_and_reformat
