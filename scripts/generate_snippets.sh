@@ -45,16 +45,17 @@ generate_snippets() {
       )'
 }
 
+# shellcheck disable=SC2016
 merge_snippets() {
   ms_snippet_path="$path"
-  # shellcheck disable=SC2016
-  if [ -z "$is_append" ]; then
-    command='$ARGS.named["generated"] * $ARGS.named["source"]'
-  else
-    command='$ARGS.named["source"] * $ARGS.named["generated"]'
-  fi
+  
+  ms_command='$ARGS.named["generated"] * $ARGS.named["source"]'
+  [ -n "$is_append" ] && ms_command='$ARGS.named["source"] * $ARGS.named["generated"]'
 
-  jq -n "$command" --argjson generated "$(generate_snippets)" --argjson source "$(jq '[to_entries[] | select(.key | test("^sc\\d{4}$") | not)] | from_entries' "$ms_snippet_path")"
+  ms_generated_snippets="$(generate_snippets)"
+  [ -n "$filter" ] && ms_generated_snippets="$(echo "$ms_generated_snippets" | jq '[to_entries[] | select(.key | test($ARGS.named["filter"]))] | from_entries' --arg filter "$filter")"
+
+  jq -n "$ms_command" --argjson generated "$ms_generated_snippets" --argjson source "$(jq '[to_entries[] | select(.key | test("^sc\\d{4}$") | not)] | from_entries' "$ms_snippet_path")"
 }
 
 help() {
