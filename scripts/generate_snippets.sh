@@ -58,6 +58,12 @@ merge_snippets() {
   jq -n "$ms_command" --argjson generated "$ms_generated_snippets" --argjson source "$(jq '[to_entries[] | select(.key | test("^sc\\d{4}$") | not)] | from_entries' "$ms_snippet_path")"
 }
 
+save_and_reformat() {
+  result="$(merge_snippets "$path")"
+  echo "$result" > "$path"
+  npx prettier --write "$snippet_path"
+}
+
 help() {
   echo "Snippet generator.
 
@@ -86,8 +92,7 @@ interactive() {
   gum confirm "Do you want to use custom path to manually written snippets?" &&
     path="$(gum input --prompt "Type path to manually written snippets: ")"
   
-  result="$(merge_snippets "$snippet_path")"
-  echo "$result" > "$snippet_path"
+  save_and_reformat
 }
 
 error_when_dependency_does_not_exist npx "npm install -g npx"
@@ -135,7 +140,4 @@ while [ -n "$1" ]; do
   shift
 done
 
-snippet_path=../snippets/snippets.json
-result="$(merge_snippets "$snippet_path")"
-echo "$result" > "$snippet_path"
-npx prettier --write "$snippet_path"
+save_and_reformat
