@@ -62,18 +62,32 @@ help() {
   echo "Snippet generator.
 
 Usage:
-  $0 [--help|-h] [--version|-v] [--append|-a] [--filter|-f <snippet-key-filter>] [--path|-p <snippet-path>]
+  $0 [--help|-h] [--version|-v] [--interactive|-i] [--append|-a] [--filter|-f <snippet-key-filter>] [--path|-p <snippet-path>]
 
 Options:
-  --help|-h     Print help.
-  --version|-v  Print version.
-  --append|-a   Append generated snippets instead of prepending them to manually written ones.
-  --filter|-f   Filter out generated snippets by their key.
-  --path|-p     Specify path for manually written snippets [default: '$snippet_path']."
+  --help|-h         Print help.
+  --version|-v      Print version.
+  --interactive|-i  Enter an interactive session.
+  --append|-a       Append generated snippets instead of prepending them to manually written ones.
+  --filter|-f       Filter out generated snippets by their key.
+  --path|-p         Specify path for manually written snippets [default: '$snippet_path']."
 }
 
 version() {
   echo "1.0.0"
+}
+
+interactive() {
+  error_when_dependency_does_not_exist gum "go install github.com/charmbracelet/gum@latest"
+
+  gum confirm "Do you want to append generated snippets?" && is_append=true
+  gum confirm "Do you want to filter generated snippets?" &&
+    filter="$(gum input --prompt "Type regular expression to filter out snippets by their keys: ")"
+  gum confirm "Do you want to use custom path to manually written snippets?" &&
+    path="$(gum input --prompt "Type path to manually written snippets: ")"
+  
+  result="$(merge_snippets "$snippet_path")"
+  echo "$result" > "$snippet_path"
 }
 
 error_when_dependency_does_not_exist npx "npm install -g npx"
@@ -96,6 +110,10 @@ while [ -n "$1" ]; do
       ;;
     --version|-v)
       version
+      exit "$succeded"
+      ;;
+    --interactive|-i)
+      interactive
       exit "$succeded"
       ;;
     --append|-a)
