@@ -19,5 +19,11 @@ generate_snippets() {
       )'
 }
 
+merge_snippets() {
+  ms_snippet_path=../snippets/snippets.json
+  jq -n '$ARGS.named["generated"] + $ARGS.named["source"]' --argjson generated "$(generate_snippets)" --argjson source "$(cat "$ms_snippet_path")"
+}
+
 snippet_path=../snippets/snippets.json
-#jq '$ARGS.named["generated"] + $ARGS.named["source"]' --argjson generated "$(generate_snippets)" --argjson source "$(cat "$snippet_path")"
+result="$(merge_snippets "$snippet_path")"
+echo "$result" > "$snippet_path"
