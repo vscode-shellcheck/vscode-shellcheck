@@ -145,7 +145,6 @@ while [ -n "$1" ]; do
       ;;
     *)
       error_when_option_is_not_supported "$option"
-      exit "$failed"
       ;;
   esac
   shift
