@@ -8,13 +8,21 @@ snippet_path=../snippets/snippets.json
 
 error() {
     e_in_message="$1"
-    printf "${background_red_color}error:$reset_color$red_color %s$reset_color" "$e_in_message"
+    printf "${background_red_color}error:$reset_color$red_color %s$reset_color" "$e_in_message" >&2
+    exit "$failed"
 }
 
 error_when_option_is_not_supported() {
     ewoins_in_option="$1"
 
     error "'$ewoins_in_option' is not supported."
+}
+
+error_when_file_does_not_exist() {
+    ewfdne_in_file="$1"
+
+    [ ! -e "$ewfdne_in_file" ] &&
+      error "'$ewfdne_in_file' doesn't exist. Make sure it's accessible from '$PWD' by '$ewfdne_in_file' path."
 }
 
 error_when_dependency_does_not_exist() {
@@ -39,7 +47,7 @@ generate_snippets() {
             {
               description: .value | capture("SC\\d{4}\\]\\(.*?\\) (?<x>.+)$") | .x,
               prefix: ("shellcheck-" + (.value | capture("^- +\\[(?<x>SC\\d{4})\\]") | .x | ascii_downcase)),
-              body: ("# shellcheck ${1|disable,enable|}=" + (.value | capture("^- +\\[(?<x>SC\\d{4})\\]") | .x))
+              body: ("# shellcheck disable=" + (.value | capture("^- +\\[(?<x>SC\\d{4})\\]") | .x))
             }
         }
       )'
@@ -48,7 +56,9 @@ generate_snippets() {
 # shellcheck disable=SC2016
 merge_snippets() {
   ms_snippet_path="$path"
-  
+
+  error_when_file_does_not_exist "$ms_snippet_path"
+
   ms_command='$ARGS.named["generated"] * $ARGS.named["source"]'
   [ -n "$is_append" ] && ms_command='$ARGS.named["source"] * $ARGS.named["generated"]'
 
@@ -60,6 +70,7 @@ merge_snippets() {
 
 save_and_reformat() {
   result="$(merge_snippets "$path")"
+  [ "$?" != "$succeded" ] && exit "$failed"
   echo "$result" > "$path"
   npx prettier --write "$snippet_path"
 }
@@ -95,10 +106,10 @@ interactive() {
   save_and_reformat
 }
 
-error_when_dependency_does_not_exist npx "npm install -g npx"
-
 succeded=0
 failed=1
+
+error_when_dependency_does_not_exist npx "npm install -g npx"
 
 is_append=
 filter=
