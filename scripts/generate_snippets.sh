@@ -7,40 +7,40 @@ background_red_color='\e[41m'
 snippet_path=../snippets/snippets.json
 
 error() {
-    e_in_message="$1"
-    printf "${background_red_color}error:$reset_color$red_color %s$reset_color" "$e_in_message" >&2
-    exit "$failed"
+  e_in_message="$1"
+  printf "${background_red_color}error:$reset_color$red_color %s$reset_color" "$e_in_message" >&2
+  exit "$failed"
 }
 
 error_when_option_is_not_supported() {
-    ewoins_in_option="$1"
+  ewoins_in_option="$1"
 
-    error "'$ewoins_in_option' is not supported."
+  error "'$ewoins_in_option' is not supported."
 }
 
 error_when_file_does_not_exist() {
-    ewfdne_in_file="$1"
+  ewfdne_in_file="$1"
 
-    [ ! -e "$ewfdne_in_file" ] &&
-      error "'$ewfdne_in_file' doesn't exist. Make sure it's accessible from '$PWD' by '$ewfdne_in_file' path."
+  [ ! -e "$ewfdne_in_file" ] \
+    && error "'$ewfdne_in_file' doesn't exist. Make sure it's accessible from '$PWD' by '$ewfdne_in_file' path."
 }
 
 error_when_dependency_does_not_exist() {
-    ewddne_in_dependency="$1"
-    ewddne_in_command="$2"
+  ewddne_in_dependency="$1"
+  ewddne_in_command="$2"
 
-    ! which "$ewddne_in_dependency" > /dev/null && {
-        error "'$ewddne_in_dependency' doesn't exist, to install it use '$ewddne_in_command'."
-    }
+  ! which "$ewddne_in_dependency" > /dev/null && {
+    error "'$ewddne_in_dependency' doesn't exist, to install it use '$ewddne_in_command'."
+  }
 }
 
 generate_snippets() {
   gs_list_url='https://gist.githubusercontent.com/nicerobot/53cee11ee0abbdc997661e65b348f375/raw/d5a97b3b18ead38f323593532050f0711084acf1/_shellcheck.md'
 
-  wget -O - "$gs_list_url" 2> /dev/null |
-    jq -R '.' |
-    sed '1 s/"/["/; $! s/$/,/; $ s/"$/"]/' |
-    jq 'with_entries(
+  wget -O - "$gs_list_url" 2> /dev/null \
+    | jq -R '.' \
+    | sed '1 s/"/["/; $! s/$/,/; $ s/"$/"]/' \
+    | jq 'with_entries(
         {
           key: .value | capture("^- +\\[(?<x>SC\\d{4})\\]") | .x | ascii_downcase,
           value:
@@ -98,11 +98,11 @@ interactive() {
   error_when_dependency_does_not_exist gum "go install github.com/charmbracelet/gum@latest"
 
   gum confirm "Do you want to append generated snippets?" --default=No && is_append=true
-  gum confirm "Do you want to filter generated snippets?" --default=No &&
-    filter="$(gum input --prompt "Type regular expression to filter out snippets by their keys: ")"
-  gum confirm "Do you want to use custom path to manually written snippets?" --default=No &&
-    path="$(gum input --prompt "Type path to manually written snippets: ")"
-  
+  gum confirm "Do you want to filter generated snippets?" --default=No \
+    && filter="$(gum input --prompt "Type regular expression to filter out snippets by their keys: ")"
+  gum confirm "Do you want to use custom path to manually written snippets?" --default=No \
+    && path="$(gum input --prompt "Type path to manually written snippets: ")"
+
   save_and_reformat
 }
 
@@ -120,26 +120,26 @@ while [ -n "$1" ]; do
   argument="$2"
 
   case "$option" in
-    --help|-h)
+    --help | -h)
       help
       exit "$succeded"
       ;;
-    --version|-v)
+    --version | -v)
       version
       exit "$succeded"
       ;;
-    --interactive|-i)
+    --interactive | -i)
       interactive
       exit "$succeded"
       ;;
-    --append|-a)
+    --append | -a)
       is_append=true
       ;;
-    --filter|-f)
+    --filter | -f)
       filter="$argument"
       shift
       ;;
-    --path|-p)
+    --path | -p)
       path="$argument"
       shift
       ;;
