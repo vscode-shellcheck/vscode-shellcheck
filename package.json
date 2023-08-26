@@ -16,9 +16,13 @@
   "keywords": [
     "shell",
     "shellscript",
-    "bash",
     "linter",
-    "lint"
+    "lint",
+    "sh",
+    "bash",
+    "dash",
+    "ksh",
+    "posix"
   ],
   "homepage": "https://github.com/vscode-shellcheck/vscode-shellcheck#readme",
   "private": true,
@@ -41,7 +45,7 @@
   "capabilities": {
     "untrustedWorkspaces": {
       "supported": "limited",
-      "description": "Only the user defined shellcheck executable will be taken into account when running in untrusted mode.",
+      "description": "Only the user defined `shellcheck` executable will be taken into account when running in untrusted mode.",
       "restrictedConfigurations": [
         "shellcheck.executablePath"
       ]
@@ -82,7 +86,7 @@
     "commands": [
       {
         "command": "shellcheck.runLint",
-        "title": "ShellCheck: Run Linting"
+        "title": "ShellCheck: Lint Current Document"
       },
       {
         "command": "shellcheck.collectDiagnostics",
@@ -94,19 +98,19 @@
       "type": "object",
       "properties": {
         "shellcheck.enable": {
-          "description": "Whether shellcheck is enabled or not.",
+          "description": "Whether ShellCheck is enabled or not.",
           "type": "boolean",
           "scope": "resource",
           "default": true
         },
         "shellcheck.enableQuickFix": {
-          "description": "Whether to enable the \"Quick Fix\" feature.",
+          "description": "Whether to enable the _Quick Fix_ feature or not.",
           "type": "boolean",
           "scope": "resource",
           "default": true
         },
         "shellcheck.executablePath": {
-          "description": "Path to the shellcheck executable (builtin binaries will be used if empty).",
+          "description": "Path to the `shellcheck` executable (bundled binaries will be used if empty).",
           "examples": [
             "shellcheck"
           ],
@@ -114,7 +118,7 @@
           "scope": "machine-overridable"
         },
         "shellcheck.run": {
-          "description": "Whether shellcheck is run on save or on type.",
+          "description": "Whether ShellCheck is run on save, on type, or manually.",
           "type": "string",
           "enum": [
             "onSave",
@@ -125,7 +129,7 @@
           "default": "onType"
         },
         "shellcheck.exclude": {
-          "markdownDescription": "Exclude certain error codes. For example, to exclude [SC1017](https://shellcheck.net/wiki/SC1017), enter _1017_.\n\nEnumerated error codes can be found [in this gist](https://gist.github.com/nicerobot/53cee11ee0abbdc997661e65b348f375).",
+          "markdownDescription": "Exclude certain error codes. For example, to exclude [SC1017](https://shellcheck.net/wiki/SC1017), enter _1017_. Enumerated error codes can be found [in this gist](https://gist.github.com/nicerobot/53cee11ee0abbdc997661e65b348f375). Always prefer to use a `.shellcheckrc` file instead of this setting.",
           "type": "array",
           "items": {
             "type": "string",
@@ -141,7 +145,7 @@
           ]
         },
         "shellcheck.customArgs": {
-          "markdownDescription": "Custom arguments to pass when calling the `shellcheck` binary.",
+          "markdownDescription": "Custom arguments to pass when calling the `shellcheck` binary. Always prefer to use a `.shellcheckrc` file instead of this setting.",
           "type": "array",
           "items": {
             "type": "string"
@@ -155,7 +159,7 @@
           ]
         },
         "shellcheck.ignorePatterns": {
-          "markdownDescription": "Configure glob patterns for excluding files and folders by shellcheck. Glob patterns are interpreted relative to the workspace's root folder.\n\nRead more about glob patterns [here](https://code.visualstudio.com/docs/editor/codebasics#_advanced-search-options).",
+          "markdownDescription": "Configure glob patterns for excluding files and folders by ShellCheck. Glob patterns are interpreted relative to the workspace's root folder. Read more about glob patterns [here](https://code.visualstudio.com/docs/editor/glob-patterns).",
           "examples": [
             {
               "**/*.zsh": true,
@@ -208,7 +212,7 @@
           ]
         },
         "shellcheck.useWorkspaceRootAsCwd": {
-          "description": "Whether to use the workspace root directory as the current working directory when launching ShellCheck.",
+          "description": "Whether to use the workspace root directory as the current working directory when launching `shellcheck`. Otherwise, the directory of the file being linted will be used.",
           "type": "boolean",
           "scope": "resource",
           "default": false
