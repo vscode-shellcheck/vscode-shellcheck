@@ -70,7 +70,7 @@ merge_snippets() {
 
 save_and_reformat() {
   result="$(merge_snippets "$path")"
-  [ "$?" != "$succeded" ] && exit "$failed"
+  [ "$?" != "$succeeded" ] && exit "$failed"
   echo "$result" > "$path"
   npx prettier --write "$snippet_path"
 }
@@ -106,7 +106,7 @@ interactive() {
   save_and_reformat
 }
 
-succeded=0
+succeeded=0
 failed=1
 
 error_when_dependency_does_not_exist npx "npm install -g npx"
@@ -122,15 +122,15 @@ while [ -n "$1" ]; do
   case "$option" in
     --help | -h)
       help
-      exit "$succeded"
+      exit "$succeeded"
       ;;
     --version | -v)
       version
-      exit "$succeded"
+      exit "$succeeded"
       ;;
     --interactive | -i)
       interactive
-      exit "$succeded"
+      exit "$succeeded"
       ;;
     --append | -a)
       is_append=true
