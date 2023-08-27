@@ -1,3 +1,15 @@
+## [0.34.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.33.1...v0.34.0) (2023-08-27)
+
+
+### Features
+
+* add snippets to disable each rule ([#1190](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1190)) ([0022323](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/0022323171ae519b5ab252727ec1f5f71f65cf6c))
+
+
+### Bug Fixes
+
+* mention that `.shellcheckrc` should preferred in settings ([#1201](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1201)) ([aa20a08](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/aa20a0827b6e17c796c79049365eb3168cde6359))
+
 ## [0.33.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.33.0...v0.33.1) (2023-08-08)
 
 
