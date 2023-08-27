@@ -13,9 +13,7 @@ Integrates [ShellCheck](https://github.com/koalaman/shellcheck) into VS Code, a 
 
 ## Disclaimer
 
-This VS Code extension requires [shellcheck] (the awesome static analysis tool for shell scripts) to work.
-
-Precompiled [shellcheck] binaries are bundled in this extension for these platforms:
+This VS Code extension requires [shellcheck] (the awesome static analysis tool for shell scripts) to work, but precompiled [shellcheck] binaries are bundled in this extension for these platforms:
 
 - Linux (x86_64, arm, arm64)
 - macOS (x86_64, arm64)
@@ -88,6 +86,8 @@ For example:
 }
 ```
 
+To add additional ignore patterns atop the default patterns, you have to copy the default ignore patterns and then add yours to the end of the list ([#1196](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1196)).
+
 ### Fix all errors on save
 
 The auto-fixable errors can be fixed automatically on save by using the following configuration:
@@ -102,7 +102,7 @@ The auto-fixable errors can be fixed automatically on save by using the followin
 
 Alternatively, you can fix all errors on demand by running the command _Fix All_ in the VS Code Command Palette.
 
-### Lint onType or onSave
+### Lint `onType` or `onSave`
 
 By default the linter will lint as you type. Alternatively, set `shellcheck.run` to `onSave` if you want to lint only when the file is saved (works best if auto-save is on).
 
@@ -114,7 +114,15 @@ By default the linter will lint as you type. Alternatively, set `shellcheck.run`
 
 ### Excluding Checks
 
-By default all shellcheck checks are performed and reported on as necessary. To globally ignore certain checks in all files, add the "SC identifiers" to `shellcheck.exclude`. For example, to exclude [SC1017](https://github.com/koalaman/shellcheck/wiki/SC1017):
+By default all shellcheck checks are performed and reported on as necessary. To globally ignore certain checks in all files, you can use a `.shellcheckrc` at the workspace root. For example, to exclude [SC1017](https://github.com/koalaman/shellcheck/wiki/SC1017):
+
+```ini
+# .shellcheckrc
+
+disable=SC1017
+```
+
+As last resort, you can also add the "SC identifiers" to `shellcheck.exclude` extension setting. For example, to exclude [SC1017](https://github.com/koalaman/shellcheck/wiki/SC1017):
 
 ```jsonc
 {
@@ -124,17 +132,19 @@ By default all shellcheck checks are performed and reported on as necessary. To 
 
 ### Using Docker version of shellcheck
 
-In order to get it to work, you need a "shim" script, and then, just remember, do not try to construct command line arguments for shellcheck yourself.
+In order to get it to work, you need a "shim" script. Just remember not to try to construct command line arguments for shellcheck yourself.
 
-Here is a simple "shim" script to get start with (See discussion: [#24](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/24)):
+Here is a simple "shim" script to get started with (see discussion: [#24](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/24)):
 
 ```shell
 #!/bin/bash
 
-exec docker run --rm -i -v "$PWD:/mnt:ro" koalaman/shellcheck:latest "$@"
+exec docker run --rm --interactive --volume "${PWD}:/mnt:ro" koalaman/shellcheck:latest "$@"
 ```
 
-For example, you can place it at `shellcheck.sh` in the root of your workspace and ensure that it have execution permission with `chmod +x shellcheck.sh`. And then, you can configure the extension to use it:
+For example, you can place it at `shellcheck.sh` in the root of your workspace with execution permission (`chmod +x shellcheck.sh`).
+
+You can can then configure the extension to use it with:
 
 ```jsonc
 // .vscode/settings.json
@@ -143,10 +153,13 @@ For example, you can place it at `shellcheck.sh` in the root of your workspace a
   "shellcheck.executablePath": "${workspaceFolder}/shellcheck.sh",
 
   // you may also need to turn this option on, so shellcheck in the container
-  // can access all the files in the workspace
+  // can access all the files in the workspace and not only the directory
+  // where the file being linted is.
   "shellcheck.useWorkspaceRootAsCwd": true
 }
 ```
+
+Just have in mind that this should come with a performance hit, as booting up a docker container is slower than just invoking the binary.
 
 ## Advanced usage
 
@@ -156,13 +169,7 @@ This extension provides a small API, which allows other VS Code extensions to i
 
 ## Acknowledgements
 
-This extension is based on [@hoovercj's Haskell Linter](https://github.com/hoovercj/vscode-haskell-linter).
-
-### Contributors
-
-- [@felipecrs](https://github.com/felipecrs)
-- [@sylveon](https://github.com/sylveon)
-- [@ralish](https://github.com/ralish)
+This extension was originally based on @hoovercj's [Haskell Linter](https://github.com/hoovercj/vscode-haskell-linter).
 
 ## LICENSE
 
