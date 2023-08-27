@@ -269,7 +269,7 @@
     "@semantic-release/git": "^10.0.1",
     "@types/lodash": "^4.14.197",
     "@types/mocha": "^10.0.1",
-    "@types/node": "^16.18.43",
+    "@types/node": "^16.18.46",
     "@types/semver": "^7.5.0",
     "@types/vscode": "~1.66.0",
     "@typescript-eslint/eslint-plugin": "^6.4.1",
@@ -290,7 +290,7 @@
     "semantic-release-stop-before-publish": "^1.0.0",
     "semantic-release-vsce": "^5.6.1",
     "ts-loader": "^9.4.4",
-    "typescript": "^5.1.6",
+    "typescript": "^5.2.2",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
   },
