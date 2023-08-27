@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 reset_color='\e[0m'
 red_color='\e[31m'
