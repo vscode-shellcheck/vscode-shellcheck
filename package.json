@@ -279,7 +279,7 @@
     "@typescript-eslint/eslint-plugin": "^6.5.0",
     "@typescript-eslint/parser": "^6.6.0",
     "@vscode/test-electron": "^2.3.4",
-    "bindl": "^4.2.0",
+    "bindl": "^4.2.1",
     "conventional-changelog-conventionalcommits": "^6.1.0",
     "cspell": "^7.3.2",
     "eslint": "^8.48.0",
