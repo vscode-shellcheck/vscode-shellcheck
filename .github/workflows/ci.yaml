@@ -82,7 +82,11 @@ jobs:
         run: npm ci
         env:
           BINDL_SKIP: "true"
-      - run: npx semantic-release --extends ./package.release.config.js
+      - run: |
+          export GITHUB_EVENT_NAME="push"
+          export SR_BRANCH="pr-${{ github.event.pull_request.number }}"
+          export GITHUB_REF="refs/heads/pr-${{ github.event.pull_request.number }}"
+          npx semantic-release --extends ./package.release.config.js --branches "${SR_BRANCH}"
         env:
           VSCE_TARGET: ${{ matrix.target }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
