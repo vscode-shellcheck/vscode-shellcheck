@@ -273,7 +273,7 @@
     "@semantic-release/git": "^10.0.1",
     "@types/lodash": "^4.14.198",
     "@types/mocha": "^10.0.1",
-    "@types/node": "^16.18.52",
+    "@types/node": "^16.18.53",
     "@types/semver": "^7.5.2",
     "@types/vscode": "~1.66.0",
     "@typescript-eslint/eslint-plugin": "^6.7.2",
