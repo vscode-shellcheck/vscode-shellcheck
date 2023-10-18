@@ -272,7 +272,7 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@types/lodash": "^4.14.200",
-    "@types/mocha": "^10.0.2",
+    "@types/mocha": "^10.0.3",
     "@types/node": "^16.18.58",
     "@types/semver": "^7.5.3",
     "@types/vscode": "~1.66.0",
