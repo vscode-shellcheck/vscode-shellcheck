@@ -455,14 +455,13 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     if (!this.isAllowedTextDocument(textDocument)) {
       return;
     }
-    const commentLine = Math.max(0, range.start.line - 1);
     let position = new vscode.Position(
-      commentLine,
-      textDocument.lineAt(commentLine).range.end.character,
+      range.start.line,
+      textDocument.lineAt(range.start.line).range.start.character,
     );
     let textEdit = vscode.TextEdit.insert(
       position,
-      `\n# shellcheck disable=${ruleId}`,
+      `# shellcheck disable=${ruleId}\n`,
     );
     let edit = new vscode.WorkspaceEdit();
 
