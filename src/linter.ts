@@ -316,7 +316,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         diagnostic.code.value.startsWith("SC")
       ) {
         const ruleId = diagnostic.code.value;
-        const title = `ShellCheck: Add ignore comment for ${ruleId}`;
+        const title = `ShellCheck: Disable ${ruleId} for this line`;
         const action = new vscode.CodeAction(
           title,
           vscode.CodeActionKind.QuickFix,
