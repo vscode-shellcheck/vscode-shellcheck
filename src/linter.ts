@@ -23,7 +23,7 @@ import {
 
 namespace CommandIds {
   export const runLint: string = "shellcheck.runLint";
-  export const addIgnoreComment: string = "shellcheck.addIgnoreComment";
+  export const disableCheckForLine: string = "shellcheck.disableCheckForLine";
   export const openRuleDoc: string = "shellcheck.openRuleDoc";
   export const collectDiagnostics: string = "shellcheck.collectDiagnostics";
 }
@@ -99,13 +99,13 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         },
       ),
       vscode.commands.registerCommand(
-        CommandIds.addIgnoreComment,
+        CommandIds.disableCheckForLine,
         async (
           document: vscode.TextDocument,
           ruleId: string,
           range: vscode.Range,
         ) => {
-          return await this.addIgnoreComment(document, ruleId, range);
+          return await this.disableCheckForLine(document, ruleId, range);
         },
       ),
       vscode.commands.registerTextEditorCommand(
@@ -323,7 +323,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         );
         action.command = {
           title: title,
-          command: CommandIds.addIgnoreComment,
+          command: CommandIds.disableCheckForLine,
           arguments: [document, ruleId, diagnostic.range],
         };
         actions.push(action);
@@ -447,7 +447,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     await vscode.window.showTextDocument(doc, { preview: true });
   }
 
-  private async addIgnoreComment(
+  private async disableCheckForLine(
     textDocument: vscode.TextDocument,
     ruleId: string,
     range: vscode.Range,
