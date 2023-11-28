@@ -23,6 +23,7 @@ import {
 
 namespace CommandIds {
   export const runLint: string = "shellcheck.runLint";
+  export const disableCheckForLine: string = "shellcheck.disableCheckForLine";
   export const openRuleDoc: string = "shellcheck.openRuleDoc";
   export const collectDiagnostics: string = "shellcheck.collectDiagnostics";
 }
@@ -95,6 +96,16 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
             "vscode.open",
             vscode.Uri.parse(url),
           );
+        },
+      ),
+      vscode.commands.registerCommand(
+        CommandIds.disableCheckForLine,
+        async (
+          document: vscode.TextDocument,
+          ruleId: string,
+          range: vscode.Range,
+        ) => {
+          return await this.disableCheckForLine(document, ruleId, range);
         },
       ),
       vscode.commands.registerTextEditorCommand(
@@ -294,6 +305,31 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       }
     }
 
+    for (const diagnostic of context.diagnostics) {
+      if (diagnostic.source !== "shellcheck") {
+        continue;
+      }
+
+      if (
+        typeof diagnostic.code === "object" &&
+        typeof diagnostic.code.value === "string" &&
+        diagnostic.code.value.startsWith("SC")
+      ) {
+        const ruleId = diagnostic.code.value;
+        const title = `ShellCheck: Disable ${ruleId} for this line`;
+        const action = new vscode.CodeAction(
+          title,
+          vscode.CodeActionKind.QuickFix,
+        );
+        action.command = {
+          title: title,
+          command: CommandIds.disableCheckForLine,
+          arguments: [document, ruleId, diagnostic.range],
+        };
+        actions.push(action);
+      }
+    }
+
     const results = this.codeActionCollection.get(document.uri.toString());
     if (results && results.length) {
       for (const result of results) {
@@ -409,6 +445,34 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       content: output.join("\n"),
     });
     await vscode.window.showTextDocument(doc, { preview: true });
+  }
+
+  private async disableCheckForLine(
+    textDocument: vscode.TextDocument,
+    ruleId: string,
+    range: vscode.Range,
+  ) {
+    if (!this.isAllowedTextDocument(textDocument)) {
+      return;
+    }
+    const targetLine = textDocument.lineAt(range.start.line);
+    const indent = targetLine.text.substring(
+      0,
+      targetLine.firstNonWhitespaceCharacterIndex,
+    );
+
+    let textEdit = vscode.TextEdit.insert(
+      new vscode.Position(
+        range.start.line,
+        targetLine.firstNonWhitespaceCharacterIndex,
+      ),
+      `# shellcheck disable=${ruleId}\n${indent}`,
+    );
+
+    let edit = new vscode.WorkspaceEdit();
+    edit.set(textDocument.uri, [textEdit]);
+
+    vscode.workspace.applyEdit(edit);
   }
 
   private async triggerLint(
