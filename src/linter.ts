@@ -23,7 +23,7 @@ import {
 
 namespace CommandIds {
   export const runLint: string = "shellcheck.runLint";
-  export const addIgnoreComment: string = "shellcheck.addIgnoreComment";
+  export const addIgnoreComment: string = "shellcheck.disableCheckForLine";
   export const openRuleDoc: string = "shellcheck.openRuleDoc";
   export const collectDiagnostics: string = "shellcheck.collectDiagnostics";
 }
