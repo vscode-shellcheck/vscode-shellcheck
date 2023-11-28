@@ -1,3 +1,10 @@
+## [0.35.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.34.0...v0.35.0) (2023-11-28)
+
+
+### Features
+
+* add quick fix to disable check for line  ([#1305](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1305)) ([f9e900b](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/f9e900b2fe53ce2babad061cfc8b9e70f026699a))
+
 ## [0.34.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.33.1...v0.34.0) (2023-08-27)
 
 
