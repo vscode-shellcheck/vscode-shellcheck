@@ -283,7 +283,7 @@
     "conventional-changelog-conventionalcommits": "^6.1.0",
     "cspell": "^7.3.8",
     "eslint": "^8.54.0",
-    "eslint-config-prettier": "^9.0.0",
+    "eslint-config-prettier": "^9.1.0",
     "glob": "^10.3.10",
     "kind-of": "^6.0.3",
     "mocha": "^10.2.0",
