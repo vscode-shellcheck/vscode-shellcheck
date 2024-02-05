@@ -95,7 +95,7 @@ The auto-fixable errors can be fixed automatically on save by using the followin
 ```jsonc
 {
   "editor.codeActionsOnSave": {
-    "source.fixAll.shellcheck": true
+    "source.fixAll.shellcheck": "explicit"
   }
 }
 ```
