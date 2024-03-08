@@ -42,9 +42,6 @@ jobs:
             target: win32-x64
             npm_config_arch: x64
           - os: windows-latest
-            target: win32-ia32
-            npm_config_arch: ia32
-          - os: windows-latest
             target: win32-arm64
             npm_config_arch: arm
           - os: ubuntu-latest
