@@ -116,13 +116,8 @@ async function getExecutable(
   if (!executablePath) {
     // Use bundled binaries (maybe)
     const suffix = process.platform === "win32" ? ".exe" : "";
-    const osarch =
-      // Remove after https://github.com/microsoft/vscode-vsce/issues/786 is fixed
-      process.platform === "win32" && process.arch === "arm"
-        ? "ia32"
-        : process.arch;
     executablePath = context.asAbsolutePath(
-      `./binaries/${process.platform}/${osarch}/shellcheck${suffix}`,
+      `./binaries/${process.platform}/${process.arch}/shellcheck${suffix}`,
     );
     try {
       await fs.promises.access(executablePath, fs.constants.X_OK);
