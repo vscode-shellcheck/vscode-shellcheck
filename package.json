@@ -49,7 +49,11 @@
       "restrictedConfigurations": [
         "shellcheck.executablePath"
       ]
-    }
+    },
+		"virtualWorkspaces": {
+			"supported": false,
+			"description": "FIX: shellcheck doesn't support virtualWorkspaces due to local binary dependency."
+		}
   },
   "contributes": {
     "snippets": [
