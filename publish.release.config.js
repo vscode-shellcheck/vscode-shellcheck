@@ -8,14 +8,14 @@ module.exports = {
       "semantic-release-vsce",
       {
         packageVsix: false,
-        publishPackagePath: "*/*.vsix",
+        publishPackagePath: "*.vsix",
       },
     ],
     "@semantic-release/git",
     [
       "@semantic-release/github",
       {
-        assets: "*/*.vsix",
+        assets: "*.vsix",
         addReleases: "bottom",
       },
     ],

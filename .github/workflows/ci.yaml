@@ -107,6 +107,8 @@ jobs:
         env:
           BINDL_SKIP: "true"
       - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
       # Only run on push events or pull requests coming from the same repository, except from dependabot
       - run: npx semantic-release --extends ./publish.release.config.js
         if: github.event_name == 'push' || github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]'
