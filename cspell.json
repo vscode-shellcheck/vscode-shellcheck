@@ -9,9 +9,7 @@
     "out/**",
     "*.vsix",
     "licenses/shellcheck-LICENSE.txt",
-    "package-lock.json",
-    "snippets/snippets.json",
-    "scripts/*.sh"
+    "package-lock.json"
   ],
   "words": [
     "aarch64",
