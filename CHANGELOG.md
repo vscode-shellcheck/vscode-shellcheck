@@ -1,3 +1,15 @@
+## [0.36.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.35.0...v0.36.0) (2024-03-08)
+
+
+### Features
+
+* drop support for Windows 32 bits ([#1405](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1405)) ([464e08c](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/464e08c7f2d346a122a61bcec6e04717d4ac1cae))
+
+
+### Dependencies
+
+* **deps:** update shellcheck from 0.9.0 to 0.10.0 ([#1404](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1404)) ([4109917](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/4109917b25b98507504f68c751b8e1822d6f9cd5))
+
 ## [0.35.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.34.0...v0.35.0) (2023-11-28)
 
 
