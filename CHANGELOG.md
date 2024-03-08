@@ -1,3 +1,10 @@
+## [0.37.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.36.0...v0.37.0) (2024-03-08)
+
+
+### Features
+
+* remove snippets for disabling warnings in favor of quick fix ([#1407](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1407)) ([e0b8d78](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/e0b8d78fa17d44d1359b680e6c6c6f7259eb0eca))
+
 ## [0.36.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.35.0...v0.36.0) (2024-03-08)
 
 
