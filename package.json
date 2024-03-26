@@ -292,7 +292,7 @@
     "prettier-plugin-sh": "^0.14.0",
     "semantic-release": "^23.0.2",
     "semantic-release-stop-before-publish": "^1.0.0",
-    "semantic-release-vsce": "^5.7.0",
+    "semantic-release-vsce": "^5.7.1",
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.3",
     "webpack": "^5.91.0",
