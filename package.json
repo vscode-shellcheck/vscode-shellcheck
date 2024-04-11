@@ -52,7 +52,7 @@
     },
 		"virtualWorkspaces": {
 			"supported": false,
-			"description": "FIX: shellcheck doesn't support virtualWorkspaces due to local binary dependency."
+			"description": "Virtual Workspaces are not supported due to dependency on a local `shellcheck` binary."
 		}
   },
   "contributes": {
