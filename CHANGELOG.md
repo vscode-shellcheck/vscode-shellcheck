@@ -1,3 +1,10 @@
+## [0.37.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.37.0...v0.37.1) (2024-04-11)
+
+
+### Bug Fixes
+
+* mark Virtual Workspaces capability as unsupported ([#1408](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1408)) ([1a30a21](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/1a30a218dcaff9e4dbff0b6c28d82ce2490356d7))
+
 ## [0.37.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.36.0...v0.37.0) (2024-03-08)
 
 
