@@ -284,7 +284,7 @@
     "@typescript-eslint/parser": "^7.7.1",
     "@vscode/test-electron": "^2.3.9",
     "bindl": "^4.2.5",
-    "conventional-changelog-conventionalcommits": "^7.0.2",
+    "conventional-changelog-conventionalcommits": "^8.0.0",
     "cspell": "^8.7.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
