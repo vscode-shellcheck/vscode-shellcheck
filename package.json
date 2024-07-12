@@ -299,7 +299,7 @@
     "semantic-release-vsce": "^5.7.1",
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.5",
-    "webpack": "^5.91.0",
+    "webpack": "^5.93.0",
     "webpack-cli": "^5.1.4"
   },
   "overrides": {
