@@ -1,7 +1,17 @@
-const version = `v${require("./package.json").shellcheckVersion}`;
+// @ts-check
+
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+
+const packageJsonPath = join(import.meta.dirname, "package.json");
+const { shellcheckVersion } = JSON.parse(
+  await readFile(packageJsonPath, "utf8"),
+);
+
+const version = `v${shellcheckVersion}`;
 const releaseUrl = `https://github.com/vscode-shellcheck/shellcheck-binaries/releases/download/${version}/shellcheck-${version}`;
 
-module.exports = {
+export default {
   binaries: [
     {
       platform: "linux",

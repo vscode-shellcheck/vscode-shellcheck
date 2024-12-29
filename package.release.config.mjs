@@ -1,6 +1,9 @@
-const common = require("./common.release.config.js");
+import common from "./common.release.config.mjs";
 
-module.exports = {
+/**
+ * @type {import('semantic-release').GlobalConfig}
+ */
+export default {
   ...common,
   plugins: [
     ...common.plugins,

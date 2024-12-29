@@ -2,12 +2,17 @@ name: ci
 
 on:
   push:
-    branches: [master]
+    branches:
+      - master
   pull_request:
-    branches: [master]
+    branches:
+      - master
   # This is to catch new releases of VS Code which could cause the extension to break
   schedule:
     - cron: 0 0 * * *
+
+permissions:
+  contents: read
 
 jobs:
   test:
@@ -25,7 +30,7 @@ jobs:
         uses: volta-cli/action@v4
       - run: npm ci
         env:
-          npm_config_arch: x64
+          BINDL_CURRENT_ONLY: "true"
       - name: Test with VS Code ${{ matrix.vscode-version }}
         uses: GabrielBB/xvfb-action@v1
         env:
@@ -79,7 +84,7 @@ jobs:
         run: npm ci
         env:
           BINDL_SKIP: "true"
-      - run: npx semantic-release --extends ./package.release.config.js
+      - run: npx semantic-release --extends ./package.release.config.mjs
         env:
           VSCE_TARGET: ${{ matrix.target }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -97,6 +102,12 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+      id-token: write # to enable use of OIDC for npm provenance
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -109,8 +120,9 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           merge-multiple: true
+      - run: npm audit signatures
       # Only run on push events or pull requests coming from the same repository, except from dependabot
-      - run: npx semantic-release --extends ./publish.release.config.js
+      - run: npx semantic-release --extends ./publish.release.config.mjs
         if: github.event_name == 'push' || github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

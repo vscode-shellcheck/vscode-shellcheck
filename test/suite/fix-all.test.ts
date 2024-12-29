@@ -56,8 +56,8 @@ eval \`uname -r\`
       editor.document.getText(),
       `#!/bin/bash
 # shellcheck enable=require-variable-braces
-echo "\$SHELL"
-echo "\$SHELL"
+echo "$SHELL"
+echo "$SHELL"
 eval $(uname -r)
 `,
     );

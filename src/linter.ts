@@ -297,7 +297,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
           vscode.CodeActionKind.QuickFix,
         );
         action.command = {
-          title: title,
+          title,
           command: CommandIds.openRuleDoc,
           arguments: [getWikiUrlForRule(ruleId)],
         };
@@ -322,7 +322,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
           vscode.CodeActionKind.QuickFix,
         );
         action.command = {
-          title: title,
+          title,
           command: CommandIds.disableCheckForLine,
           arguments: [document, ruleId, diagnostic.range],
         };
@@ -379,7 +379,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   };
 
   private isAllowedTextDocument(textDocument: vscode.TextDocument): boolean {
-    let allowedDocumentSelector: vscode.DocumentSelector = [
+    const allowedDocumentSelector: vscode.DocumentSelector = [
       ShellCheckProvider.LANGUAGE_ID,
       ...this.additionalDocumentFilters,
     ];
@@ -461,7 +461,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       targetLine.firstNonWhitespaceCharacterIndex,
     );
 
-    let textEdit = vscode.TextEdit.insert(
+    const textEdit = vscode.TextEdit.insert(
       new vscode.Position(
         range.start.line,
         targetLine.firstNonWhitespaceCharacterIndex,
@@ -469,7 +469,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       `# shellcheck disable=${ruleId}\n${indent}`,
     );
 
-    let edit = new vscode.WorkspaceEdit();
+    const edit = new vscode.WorkspaceEdit();
     edit.set(textDocument.uri, [textEdit]);
 
     vscode.workspace.applyEdit(edit);
@@ -522,7 +522,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     textDocument: vscode.TextDocument,
     settings: ShellCheckSettings,
   ): Promise<void> {
-    return new Promise<void>(async (resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const toolStatus: ToolStatus = this.toolStatusByPath.get(
         settings.executable.path,
       )!;
@@ -560,52 +560,58 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         cwd = guessDocumentDirname(textDocument);
       }
 
-      cwd = await ensureCurrentWorkingDirectory(cwd);
-      logging.debug("Spawn: (cwd=%s) %s %s", cwd, executable.path, args);
-      const options: execa.Options = { cwd };
-      const childProcess = execa(executable.path, args, options);
-
       const handleError = (error: Error) => {
         logging.debug("Unable to start shellcheck: %O", error);
         this.showShellCheckError(error);
         this.toolStatusByPath.set(executable.path, toolStatusByError(error));
       };
 
-      if (childProcess.pid && childProcess.stdin && childProcess.stdout) {
-        childProcess.stdout.setEncoding("utf-8");
+      ensureCurrentWorkingDirectory(cwd)
+        .then((resolvedCwd) => {
+          cwd = resolvedCwd;
+          logging.debug("Spawn: (cwd=%s) %s %s", cwd, executable.path, args);
+          const options: execa.Options = { cwd };
+          const childProcess = execa(executable.path, args, options);
 
-        const script = textDocument.getText();
-        childProcess.stdin.write(script);
-        childProcess.stdin.end();
+          if (childProcess.pid && childProcess.stdin && childProcess.stdout) {
+            childProcess.stdout.setEncoding("utf-8");
 
-        const buf: string[] = [];
+            const script = textDocument.getText();
+            childProcess.stdin.write(script);
+            childProcess.stdin.end();
 
-        childProcess.stdout
-          .on("data", (chunk: Buffer) => {
-            buf.push(chunk.toString());
-          })
-          .on("end", () => {
-            let result: ParseResult[] | null = null;
-            const output = buf.join("");
-            logging.trace("shellcheck response: %s", output);
-            if (output.length) {
-              result = parser.parse(output);
-            }
-            this.setResultCollections(textDocument.uri, result);
+            const buf: string[] = [];
+
+            childProcess.stdout
+              .on("data", (chunk: Buffer) => {
+                buf.push(chunk.toString());
+              })
+              .on("end", () => {
+                let result: ParseResult[] | null = null;
+                const output = buf.join("");
+                logging.trace("shellcheck response: %s", output);
+                if (output.length) {
+                  result = parser.parse(output);
+                }
+                this.setResultCollections(textDocument.uri, result);
+                resolve();
+              });
+
+            childProcess.on("error", (error) => {
+              handleError(error);
+              resolve();
+            });
+          } else {
+            childProcess.catch((error) => {
+              handleError(error);
+            });
             resolve();
-          });
-
-        childProcess.on("error", (error) => {
+          }
+        })
+        .catch((error) => {
           handleError(error);
           resolve();
         });
-      } else {
-        resolve();
-
-        childProcess.catch((error) => {
-          handleError(error);
-        });
-      }
     });
   }
 
