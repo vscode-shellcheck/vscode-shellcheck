@@ -11,11 +11,10 @@
       "error",
       { "selector": "classProperty", "format": ["camelCase", "UPPER_CASE"] }
     ],
-    "@typescript-eslint/semi": "warn",
     "curly": "warn",
     "eqeqeq": "warn",
     "no-throw-literal": "warn",
-    "semi": "off"
+    "semi": "warn"
   },
   "ignorePatterns": ["out", "dist", "**/*.d.ts"],
   "extends": "prettier"

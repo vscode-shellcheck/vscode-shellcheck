@@ -263,54 +263,53 @@
     "spell": "cspell \"**\"",
     "pretest": "npm run build:all",
     "test": "node ./out/test/runTest.js",
-    "posttest": "npm run lint && npm run format:check && npm run spell",
+    "posttest": "npm run lint && npm run format:check && npm run spell && installed-check --ignore-dev",
     "release": "semantic-release"
   },
   "dependencies": {
     "execa": "^5.1.1",
     "lodash": "^4.17.21",
-    "minimatch": "^9.0.3",
-    "semver": "^7.6.0"
+    "minimatch": "^9.0.5",
+    "semver": "^7.6.3"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@types/lodash": "^4.17.0",
-    "@types/mocha": "^10.0.6",
-    "@types/node": "^16.18.96",
+    "@types/lodash": "^4.17.13",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^16.18.122",
     "@types/semver": "^7.5.8",
     "@types/vscode": "~1.66.0",
-    "@typescript-eslint/eslint-plugin": "^7.7.1",
-    "@typescript-eslint/parser": "^7.7.1",
-    "@vscode/test-electron": "^2.3.9",
+    "@typescript-eslint/eslint-plugin": "^8.18.2",
+    "@typescript-eslint/parser": "^8.18.2",
+    "@vscode/test-electron": "^2.4.1",
     "bindl": "^4.2.5",
-    "conventional-changelog-conventionalcommits": "^7.0.2",
-    "cspell": "^8.7.0",
-    "eslint": "^8.57.0",
+    "conventional-changelog-conventionalcommits": "^8.0.0",
+    "cspell": "^8.17.1",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
-    "glob": "^10.3.12",
+    "glob": "^11.0.0",
+    "installed-check": "^9.3.0",
     "kind-of": "^6.0.3",
-    "mocha": "^10.4.0",
+    "mocha": "^11.0.1",
     "npm-run-all": "^4.1.5",
-    "prettier": "^3.2.5",
+    "prettier": "^3.4.2",
     "prettier-plugin-sh": "^0.14.0",
-    "semantic-release": "^23.0.2",
+    "semantic-release": "^24.2.0",
     "semantic-release-stop-before-publish": "^1.0.0",
-    "semantic-release-vsce": "^5.7.1",
+    "semantic-release-vsce": "^6.0.1",
     "ts-loader": "^9.5.1",
-    "typescript": "^5.4.5",
-    "webpack": "^5.91.0",
-    "webpack-cli": "^5.1.4"
-  },
-  "overrides": {
-    "keytar": "./see_vscode_vsce_issue_786"
+    "typescript": "~5.5.4",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1"
   },
   "engines": {
-    "vscode": "^1.66.0"
+    "vscode": "^1.66.0",
+    "node": ">=16"
   },
   "volta": {
-    "node": "20.11.1",
-    "npm": "10.5.0"
+    "node": "22.12.0",
+    "npm": "11.0.0"
   },
   "__metadata": {
     "id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",
