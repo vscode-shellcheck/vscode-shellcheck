@@ -1,4 +1,7 @@
-module.exports = {
+/**
+ * @type {import('semantic-release').GlobalConfig}
+ */
+export default {
   plugins: [
     [
       "@semantic-release/commit-analyzer",
@@ -16,6 +19,11 @@ module.exports = {
             type: "build",
             scope: "deps",
             release: "patch",
+          },
+          // https://github.com/semantic-release/commit-analyzer/issues/413#issuecomment-1465299187
+          {
+            breaking: true,
+            release: "major",
           },
         ],
       },
