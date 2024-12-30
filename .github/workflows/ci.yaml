@@ -72,7 +72,16 @@ jobs:
             npm_config_arch: arm64
           - os: ubuntu-latest
             target: universal
+
     runs-on: ${{ matrix.os }}
+
+    # Even though semantic-release will not publish anything, it still needs to
+    # validate the GITHUB_TOKEN
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+
     steps:
       - uses: actions/checkout@v4
       - name: Setup Volta, Node and NPM
@@ -91,8 +100,6 @@ jobs:
         env:
           VSCE_TARGET: ${{ matrix.target }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}
@@ -109,7 +116,6 @@ jobs:
       contents: write # to be able to publish a GitHub release
       issues: write # to be able to comment on released issues
       pull-requests: write # to be able to comment on released pull requests
-      id-token: write # to enable use of OIDC for npm provenance
 
     steps:
       - uses: actions/checkout@v4
