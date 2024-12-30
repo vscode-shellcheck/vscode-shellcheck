@@ -28,9 +28,11 @@ export function parseToolVersion(s: string): semver.SemVer {
   return version;
 }
 
-export function getToolVersion(executable: string): semver.SemVer {
+export async function getToolVersion(
+  executable: string,
+): Promise<semver.SemVer> {
   logging.debug(`Spawn: ${executable} -V`);
-  const { stdout } = execa.sync(executable, ["-V"], { timeout: 5000 });
+  const { stdout } = await execa(executable, ["-V"], { timeout: 5000 });
 
   return parseToolVersion(stdout);
 }
