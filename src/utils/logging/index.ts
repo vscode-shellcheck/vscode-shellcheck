@@ -1,11 +1,11 @@
-import * as vscode from "vscode";
+import vscode from "vscode";
 import {
   Arguments,
   Logger,
   LogLevel,
   LogLevelMap,
   LogLevelNameType,
-} from "./types";
+} from "./types.js";
 
 let loggers: Logger[] = [];
 let globalLogLevel: LogLevel;

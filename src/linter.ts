@@ -1,25 +1,28 @@
-import * as path from "node:path";
-import * as semver from "semver";
-import * as vscode from "vscode";
-import * as execa from "execa";
-import { ShellCheckExtensionApi } from "./api";
-import { createParser, ParseResult } from "./parser";
-import { ThrottledDelayer } from "./utils/async";
-import { getToolVersion, tryPromptForUpdatingTool } from "./utils/tool-check";
+import path from "node:path";
+import semver from "semver";
+import vscode from "vscode";
+import { execa, type Options as ExecaOptions } from "execa";
+import { ShellCheckExtensionApi } from "./api.js";
+import { createParser, ParseResult } from "./parser.js";
+import { ThrottledDelayer } from "./utils/async.js";
+import {
+  getToolVersion,
+  tryPromptForUpdatingTool,
+} from "./utils/tool-check.js";
 import {
   guessDocumentDirname,
   getWorkspaceFolderPath,
   ensureCurrentWorkingDirectory,
-} from "./utils/path";
-import { FixAllProvider } from "./fix-all";
-import { getWikiUrlForRule } from "./utils/link";
-import * as logging from "./utils/logging";
+} from "./utils/path.js";
+import { FixAllProvider } from "./fix-all.js";
+import { getWikiUrlForRule } from "./utils/link.js";
+import * as logging from "./utils/logging/index.js";
 import {
   checkIfConfigurationChanged,
   getWorkspaceSettings,
   RunTrigger,
   ShellCheckSettings,
-} from "./settings";
+} from "./settings.js";
 
 namespace CommandIds {
   export const runLint: string = "shellcheck.runLint";
@@ -252,7 +255,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       try {
         toolStatus = {
           ok: true,
-          version: getToolVersion(settings.executable.path),
+          version: await getToolVersion(settings.executable.path),
         };
       } catch (error: any) {
         logging.debug("Failed to get tool version: %O", error);
@@ -570,7 +573,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         .then((resolvedCwd) => {
           cwd = resolvedCwd;
           logging.debug("Spawn: (cwd=%s) %s %s", cwd, executable.path, args);
-          const options: execa.Options = { cwd };
+          const options: ExecaOptions = { cwd };
           const childProcess = execa(executable.path, args, options);
 
           if (childProcess.pid && childProcess.stdin && childProcess.stdout) {

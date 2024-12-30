@@ -1,6 +1,6 @@
-import * as semver from "semver";
-import * as vscode from "vscode";
-import { BEST_TOOL_VERSION } from "./utils/tool-check";
+import semver from "semver";
+import vscode from "vscode";
+import { BEST_TOOL_VERSION } from "./utils/tool-check.js";
 
 interface ShellCheckReplacement {
   precedence: number;

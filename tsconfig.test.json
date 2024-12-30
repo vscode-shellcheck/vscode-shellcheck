@@ -1,4 +1,10 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["test"]
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "node10",
+    "target": "ES2020"
+  },
+  "include": ["test"],
+  "exclude": ["src"]
 }

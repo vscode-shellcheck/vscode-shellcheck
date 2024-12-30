@@ -1,6 +1,6 @@
-import * as assert from "node:assert";
-import * as vscode from "vscode";
-import { sleep } from "./utils";
+import assert from "node:assert";
+import vscode from "vscode";
+import { sleep } from "./utils.js";
 
 suite("Fix all", () => {
   test("Extension should fix issues automatically on demand", async () => {

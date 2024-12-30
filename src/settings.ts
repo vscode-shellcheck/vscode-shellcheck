@@ -1,7 +1,7 @@
-import * as fs from "node:fs";
-import * as vscode from "vscode";
-import { FileMatcher, FileSettings } from "./utils/filematcher";
-import { substitutePath } from "./utils/path";
+import fs from "node:fs/promises";
+import vscode from "vscode";
+import { FileMatcher, FileSettings } from "./utils/filematcher.js";
+import { substitutePath } from "./utils/path.js";
 
 export interface Executable {
   path: string;
@@ -120,7 +120,7 @@ async function getExecutable(
       `./binaries/${process.platform}/${process.arch}/shellcheck${suffix}`,
     );
     try {
-      await fs.promises.access(executablePath, fs.constants.X_OK);
+      await fs.access(executablePath, fs.constants.X_OK);
       return {
         path: executablePath,
         bundled: true,

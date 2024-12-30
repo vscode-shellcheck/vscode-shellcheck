@@ -1,10 +1,10 @@
-import * as vscode from "vscode";
-import { ShellCheckExtensionApi } from "./api";
-import { LinkifyProvider } from "./linkify";
-import ShellCheckProvider from "./linter";
-import { OutputChannelLogger } from "./utils/logging/logger-outputchannel";
-import { registerLogger, setLoggingLevel } from "./utils/logging";
-import { LogLevelNameType } from "./utils/logging/types";
+import vscode from "vscode";
+import { ShellCheckExtensionApi } from "./api.js";
+import { LinkifyProvider } from "./linkify.js";
+import ShellCheckProvider from "./linter.js";
+import { OutputChannelLogger } from "./utils/logging/logger-outputchannel.js";
+import { registerLogger, setLoggingLevel } from "./utils/logging/index.js";
+import { LogLevelNameType } from "./utils/logging/types.js";
 
 export function activate(
   context: vscode.ExtensionContext,

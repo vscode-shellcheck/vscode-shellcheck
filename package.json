@@ -8,6 +8,7 @@
   "contributors": [
     "Felipe Santos <felipecassiors@gmail.com> (https://github.com/felipecrs)"
   ],
+  "type": "module",
   "license": "MIT",
   "categories": [
     "Linters",
@@ -246,30 +247,32 @@
   },
   "scripts": {
     "prepare": "bindl",
-    "build": "webpack",
-    "build:watch": "webpack --watch",
-    "build:prod": "webpack --mode production --devtool hidden-source-map",
+    "check-types": "tsc --noEmit",
+    "check-types:watch": "tsc --noEmit --watch",
+    "build": "npm run check-types && node esbuild.js",
+    "build:watch": "node esbuild.js --watch",
+    "build:prod": "npm run check-types && node esbuild.js --production",
     "build:test": "tsc --project tsconfig.test.json",
     "build:test:watch": "tsc --project tsconfig.test.json --watch",
     "build:all": "run-p build build:test",
-    "build:all:watch": "run-p build:watch build:test:watch",
-    "vscode:prepublish": "npm run build:prod",
-    "package": "vsce package",
+    "build:all:watch": "run-p check-types:watch build:watch build:test:watch",
+    "vscode:prepublish": "npm run package",
+    "package": "npm run build:prod",
     "publish": "vsce publish",
-    "lint": "eslint .",
+    "lint": "tsc --noEmit && eslint .",
     "lint:fix": "eslint --fix .",
     "format": "prettier --write . **/*.sh",
     "format:check": "prettier --check . **/*.sh",
     "spell": "cspell \"**\"",
     "pretest": "npm run build:all",
-    "test": "node ./out/test/runTest.js",
+    "test": "vscode-test",
     "posttest": "npm run lint && npm run format:check && npm run spell && installed-check --ignore-dev",
     "release": "semantic-release"
   },
   "dependencies": {
-    "execa": "^5.1.1",
+    "execa": "^9.5.2",
     "lodash": "^4.17.21",
-    "minimatch": "^9.0.5",
+    "minimatch": "^10.0.1",
     "semver": "^7.6.3"
   },
   "devDependencies": {
@@ -277,13 +280,15 @@
     "@semantic-release/git": "^10.0.1",
     "@types/lodash": "^4.17.13",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^16.18.122",
+    "@types/node": "^20.17.10",
     "@types/semver": "^7.5.8",
-    "@types/vscode": "~1.66.0",
+    "@types/vscode": "~1.90.0",
+    "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
-    "bindl": "^5.1.1",
+    "bindl": "^5.1.2",
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "cspell": "^8.17.1",
+    "esbuild": "^0.24.2",
     "eslint": "^9.17.0",
     "glob": "^11.0.0",
     "installed-check": "^9.3.0",
@@ -295,15 +300,12 @@
     "prettier-plugin-sh": "^0.14.0",
     "semantic-release": "^24.2.0",
     "semantic-release-stop-before-publish": "^1.0.0",
-    "semantic-release-vsce": "^6.0.3",
-    "ts-loader": "^9.5.1",
-    "typescript": "^5.7.2",
-    "webpack": "^5.97.1",
-    "webpack-cli": "^6.0.1"
+    "semantic-release-vsce": "^6.0.4",
+    "typescript": "^5.7.2"
   },
   "engines": {
-    "vscode": "^1.66.0",
-    "node": ">=16"
+    "vscode": "^1.90.0",
+    "node": ">=20"
   },
   "volta": {
     "node": "22.12.0",
