@@ -104,6 +104,15 @@ jobs:
         with:
           name: ${{ matrix.target }}
           path: "*.vsix"
+      # vsce updates the version in package.json and package-lock.json during
+      # package step, so we need to save them for the publish step
+      - if: matrix.target == 'universal'
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-json
+          path: |
+            package.json
+            package-lock.json
 
   release:
     if: github.event_name != 'schedule'
