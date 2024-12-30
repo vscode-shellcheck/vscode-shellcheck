@@ -281,7 +281,7 @@
     "@types/vscode": "~1.66.0",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
-    "bindl": "^5.1.1",
+    "bindl": "^5.1.2",
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "cspell": "^8.17.1",
     "eslint": "^9.17.0",
