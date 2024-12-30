@@ -51,7 +51,7 @@ export default {
     },
     {
       platform: "win32",
-      arch: "arm",
+      arch: "arm64",
       url: `${releaseUrl}.windows.x86_64.tar.gz`,
       files: [{ source: "shellcheck.exe", target: "shellcheck.exe" }],
     },

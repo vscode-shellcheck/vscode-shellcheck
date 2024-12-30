@@ -48,7 +48,7 @@ jobs:
             npm_config_arch: x64
           - os: windows-latest
             target: win32-arm64
-            npm_config_arch: arm
+            npm_config_arch: arm64
           - os: ubuntu-latest
             target: linux-x64
             npm_config_arch: x64
