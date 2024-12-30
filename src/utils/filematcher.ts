@@ -57,7 +57,7 @@ export class FileMatcher {
 
   public excludes(fsPath: string, root?: string): boolean {
     if (fsPath) {
-      if (this.excludeCache.hasOwnProperty(fsPath)) {
+      if (Object.prototype.hasOwnProperty.call(this.excludeCache, fsPath)) {
         return this.excludeCache[fsPath];
       }
 
