@@ -1,5 +1,5 @@
 import * as assert from "node:assert";
-import { parseToolVersion } from "../../src/utils/tool-check";
+import { parseToolVersion } from "../src/utils/tool-check";
 
 suite("Tool Check Utils", () => {
   test("parseToolVersion should work", async () => {
