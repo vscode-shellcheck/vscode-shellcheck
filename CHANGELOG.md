@@ -1,3 +1,15 @@
+## [0.37.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.37.2...v0.37.3) (2024-12-30)
+
+### Code Refactoring
+
+* check shellcheck version asynchronously ([#1552](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1552)) ([50052dd](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/50052dd55635b16bed14209cb9b8a9b7b3b636b6))
+
+## [0.37.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.37.1...v0.37.2) (2024-12-30)
+
+### Bug Fixes
+
+* handle uncaught error, add alpine-arm64, update deps ([#1544](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1544)) ([15133e5](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/15133e56be776361401d07c775a9ed373551c968))
+
 ## [0.37.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.37.0...v0.37.1) (2024-04-11)
 
 

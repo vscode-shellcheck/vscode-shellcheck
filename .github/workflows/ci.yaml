@@ -12,7 +12,7 @@ on:
     - cron: 0 0 * * *
 
 permissions:
-  contents: read
+  contents: read # for checkout
 
 jobs:
   test:
@@ -48,7 +48,7 @@ jobs:
             npm_config_arch: x64
           - os: windows-latest
             target: win32-arm64
-            npm_config_arch: arm
+            npm_config_arch: arm64
           - os: ubuntu-latest
             target: linux-x64
             npm_config_arch: x64
@@ -61,6 +61,9 @@ jobs:
           - os: ubuntu-latest
             target: alpine-x64
             npm_config_arch: x64
+          - os: ubuntu-latest
+            target: alpine-arm64
+            npm_config_arch: arm64
           - os: macos-latest
             target: darwin-x64
             npm_config_arch: x64
@@ -69,7 +72,16 @@ jobs:
             npm_config_arch: arm64
           - os: ubuntu-latest
             target: universal
+
     runs-on: ${{ matrix.os }}
+
+    # Even though semantic-release will not publish anything, it still needs to
+    # validate the GITHUB_TOKEN
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+
     steps:
       - uses: actions/checkout@v4
       - name: Setup Volta, Node and NPM
@@ -84,16 +96,23 @@ jobs:
         run: npm ci
         env:
           BINDL_SKIP: "true"
-      - run: npx semantic-release --extends ./package.release.config.js
+      - run: npx semantic-release --extends ./package.release.config.mjs
         env:
           VSCE_TARGET: ${{ matrix.target }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}
           path: "*.vsix"
+      # vsce updates the version in package.json and package-lock.json during
+      # package step, so we need to save them for the publish step
+      - if: matrix.target == 'universal'
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-json
+          path: |
+            package.json
+            package-lock.json
 
   release:
     if: github.event_name != 'schedule'
@@ -106,23 +125,22 @@ jobs:
       contents: write # to be able to publish a GitHub release
       issues: write # to be able to comment on released issues
       pull-requests: write # to be able to comment on released pull requests
-      id-token: write # to enable use of OIDC for npm provenance
 
     steps:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE || github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
       - name: Setup Volta, Node and NPM
         uses: volta-cli/action@v4
       - run: npm ci
         env:
           BINDL_SKIP: "true"
-      - uses: actions/download-artifact@v4
-        with:
-          merge-multiple: true
       - run: npm audit signatures
       # Only run on push events or pull requests coming from the same repository, except from dependabot
-      - run: npx semantic-release --extends ./publish.release.config.js
+      - run: npx semantic-release --extends ./publish.release.config.mjs
         if: github.event_name == 'push' || github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

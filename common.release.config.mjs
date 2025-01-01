@@ -20,6 +20,11 @@ export default {
             scope: "deps",
             release: "patch",
           },
+          // https://github.com/semantic-release/commit-analyzer/issues/413#issuecomment-1465299187
+          {
+            breaking: true,
+            release: "major",
+          },
         ],
       },
     ],

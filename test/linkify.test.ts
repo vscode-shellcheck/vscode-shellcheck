@@ -1,6 +1,6 @@
-import assert from "node:assert";
-import vscode from "vscode";
-import { LinkifyProvider } from "../src/linkify.js";
+import * as assert from "node:assert";
+import * as vscode from "vscode";
+import { LinkifyProvider } from "../src/linkify";
 
 suite("Document Link Provider", () => {
   test("Extension should linkify shellcheck directives automatically", async () => {
