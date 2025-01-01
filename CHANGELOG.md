@@ -1,3 +1,9 @@
+## [0.37.4](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.37.3...v0.37.4) (2025-01-01)
+
+### Code Refactoring
+
+* switch to esbuild ([#1550](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1550)) ([62192a4](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/62192a430b02782bbfac190a012e735ce7a584f9))
+
 ## [0.37.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.37.2...v0.37.3) (2024-12-30)
 
 ### Code Refactoring
