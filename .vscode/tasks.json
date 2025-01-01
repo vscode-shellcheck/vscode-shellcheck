@@ -4,8 +4,12 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "watch",
-      "dependsOn": ["npm: check-types:watch", "npm: build:watch"],
+      "label": "build:all:watch",
+      "dependsOn": [
+        "npm: check-types:watch",
+        "npm: build:watch",
+        "npm: build:test:watch"
+      ],
       "presentation": {
         "reveal": "never"
       },
@@ -16,11 +20,11 @@
     },
     {
       "type": "npm",
-      "script": "build:watch",
+      "script": "check-types:watch",
       "group": "build",
-      "problemMatcher": "$esbuild-watch",
+      "problemMatcher": "$tsc-watch",
       "isBackground": true,
-      "label": "npm: watch:esbuild",
+      "label": "npm: check-types:watch",
       "presentation": {
         "group": "watch",
         "reveal": "never"
@@ -28,11 +32,23 @@
     },
     {
       "type": "npm",
-      "script": "check-types:watch",
+      "script": "build:watch",
+      "group": "build",
+      "problemMatcher": "$esbuild-watch",
+      "isBackground": true,
+      "label": "npm: build:watch",
+      "presentation": {
+        "group": "watch",
+        "reveal": "never"
+      }
+    },
+    {
+      "type": "npm",
+      "script": "build:test:watch",
       "group": "build",
       "problemMatcher": "$tsc-watch",
       "isBackground": true,
-      "label": "npm: watch:tsc",
+      "label": "npm: build:test:watch",
       "presentation": {
         "group": "watch",
         "reveal": "never"
