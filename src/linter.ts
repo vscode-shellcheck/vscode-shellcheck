@@ -1,7 +1,7 @@
 import path from "node:path";
 import semver from "semver";
 import vscode from "vscode";
-import { execa, type Options as ExecaOptions } from "execa";
+import execa from "execa";
 import { ShellCheckExtensionApi } from "./api.js";
 import { createParser, ParseResult } from "./parser.js";
 import { ThrottledDelayer } from "./utils/async.js";
@@ -573,7 +573,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         .then((resolvedCwd) => {
           cwd = resolvedCwd;
           logging.debug("Spawn: (cwd=%s) %s %s", cwd, executable.path, args);
-          const options: ExecaOptions = { cwd };
+          const options: execa.Options = { cwd };
           const childProcess = execa(executable.path, args, options);
 
           if (childProcess.pid && childProcess.stdin && childProcess.stdout) {

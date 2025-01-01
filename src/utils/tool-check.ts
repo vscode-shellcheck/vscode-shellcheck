@@ -1,6 +1,6 @@
 import semver from "semver";
 import vscode from "vscode";
-import { execa } from "execa";
+import execa from "execa";
 import * as logging from "./logging/index.js";
 import packageJson from "../../package.json" with { type: "json" };
 
