@@ -1,7 +1,7 @@
 import * as path from "node:path";
 import * as semver from "semver";
 import * as vscode from "vscode";
-import * as execa from "execa";
+import execa from "execa";
 import { ShellCheckExtensionApi } from "./api";
 import { createParser, ParseResult } from "./parser";
 import { ThrottledDelayer } from "./utils/async";

@@ -1,6 +1,6 @@
 import * as semver from "semver";
 import * as vscode from "vscode";
-import * as execa from "execa";
+import execa from "execa";
 import * as logging from "./logging";
 import { shellcheckVersion } from "../../package.json";
 

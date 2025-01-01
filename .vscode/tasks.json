@@ -4,12 +4,14 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "type": "npm",
-      "script": "build:watch",
-      "problemMatcher": ["$ts-webpack-watch"],
-      "isBackground": true,
+      "label": "build:all:watch",
+      "dependsOn": [
+        "npm: check-types:watch",
+        "npm: build:watch",
+        "npm: build:test:watch"
+      ],
       "presentation": {
-        "reveal": "silent"
+        "reveal": "never"
       },
       "group": {
         "kind": "build",
@@ -18,13 +20,39 @@
     },
     {
       "type": "npm",
-      "script": "build:all:watch",
-      "problemMatcher": ["$ts-webpack-watch", "$tsc-watch"],
+      "script": "check-types:watch",
+      "group": "build",
+      "problemMatcher": "$tsc-watch",
       "isBackground": true,
+      "label": "npm: check-types:watch",
       "presentation": {
-        "reveal": "silent"
-      },
-      "group": "build"
+        "group": "watch",
+        "reveal": "never"
+      }
+    },
+    {
+      "type": "npm",
+      "script": "build:watch",
+      "group": "build",
+      "problemMatcher": "$esbuild-watch",
+      "isBackground": true,
+      "label": "npm: build:watch",
+      "presentation": {
+        "group": "watch",
+        "reveal": "never"
+      }
+    },
+    {
+      "type": "npm",
+      "script": "build:test:watch",
+      "group": "build",
+      "problemMatcher": "$tsc-watch",
+      "isBackground": true,
+      "label": "npm: build:test:watch",
+      "presentation": {
+        "group": "watch",
+        "reveal": "never"
+      }
     }
   ]
 }
