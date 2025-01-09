@@ -293,7 +293,7 @@
     "semantic-release": "^24.2.0",
     "semantic-release-stop-before-publish": "^1.0.0",
     "semantic-release-vsce": "^6.0.5",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.3"
   },
   "engines": {
     "vscode": "^1.66.0",
