@@ -8,7 +8,6 @@
     "dist/**",
     "out/**",
     "*.vsix",
-    "licenses/shellcheck-LICENSE.txt",
     "package-lock.json"
   ],
   "words": [
