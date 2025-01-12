@@ -285,12 +285,12 @@
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "cspell": "^8.17.1",
     "esbuild": "^0.24.2",
-    "eslint": "^9.17.0",
+    "eslint": "^9.18.0",
     "installed-check": "^9.3.0",
     "neostandard": "^0.12.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.4.2",
-    "semantic-release": "^24.2.0",
+    "semantic-release": "^24.2.1",
     "semantic-release-stop-before-publish": "^1.0.0",
     "semantic-release-vsce": "^6.0.5",
     "typescript": "^5.7.3"
@@ -300,13 +300,13 @@
     "node": ">=16"
   },
   "volta": {
-    "node": "22.12.0",
+    "node": "22.13.0",
     "npm": "11.0.0"
   },
+  "shellcheckVersion": "0.10.0",
   "__metadata": {
     "id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",
     "publisherDisplayName": "Timon Wong",
     "publisherId": "04757770-dd50-443e-aae4-e1c7cf9c24f5"
-  },
-  "shellcheckVersion": "0.10.0"
+  }
 }
