@@ -1,3 +1,9 @@
+## [0.37.5](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.37.4...v0.37.5) (2025-01-12)
+
+### Bug Fixes
+
+* not linking comments without SC prefix ([#1560](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1560)) ([1c56d28](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/1c56d28973dcc1e00cde8f58b4c853ce21f3f873))
+
 ## [0.37.4](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.37.3...v0.37.4) (2025-01-01)
 
 ### Code Refactoring
