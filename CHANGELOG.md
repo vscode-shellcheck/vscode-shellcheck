@@ -1,3 +1,9 @@
+## [0.37.6](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.37.5...v0.37.6) (2025-01-12)
+
+### Dependencies
+
+* **deps:** bundle license from shellcheck binary as is ([#1561](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1561)) ([de4f16e](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/de4f16e1462e6a1f19ce45834a928048ae903b22))
+
 ## [0.37.5](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.37.4...v0.37.5) (2025-01-12)
 
 ### Bug Fixes
