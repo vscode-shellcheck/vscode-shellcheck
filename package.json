@@ -276,7 +276,7 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@types/lodash": "^4.17.14",
-    "@types/node": "^16.18.123",
+    "@types/node": "^16.18.124",
     "@types/semver": "^7.5.8",
     "@types/vscode": "~1.66.0",
     "@vscode/test-cli": "^0.0.10",
