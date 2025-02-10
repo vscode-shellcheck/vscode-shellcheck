@@ -2,15 +2,14 @@ import * as semver from "semver";
 import * as vscode from "vscode";
 import execa from "execa";
 import * as logging from "./logging";
-import { shellcheckVersion } from "../../package.json";
 
-export const BEST_TOOL_VERSION = shellcheckVersion;
+export const MINIMUM_TOOL_VERSION = "0.7.0";
 
 export function tryPromptForUpdatingTool(version: semver.SemVer) {
   const disableVersionCheckUpdateSetting =
     new DisableVersionCheckUpdateSetting();
   if (!disableVersionCheckUpdateSetting.isDisabled) {
-    if (semver.lt(version, BEST_TOOL_VERSION)) {
+    if (semver.lt(version, MINIMUM_TOOL_VERSION)) {
       promptForUpdatingTool(version.format(), disableVersionCheckUpdateSetting);
     }
   }
@@ -42,7 +41,7 @@ async function promptForUpdatingTool(
   disableVersionCheckUpdateSetting: DisableVersionCheckUpdateSetting,
 ) {
   const selected = await vscode.window.showInformationMessage(
-    `The vscode-shellcheck extension is better with a newer version of "shellcheck" (You got v${currentVersion}, v${BEST_TOOL_VERSION} or newer is recommended)`,
+    `The ShellCheck extension is better with a newer version of "shellcheck" (you got v${currentVersion}, v${MINIMUM_TOOL_VERSION} or newer is recommended)`,
     "Don't Show Again",
     "Update",
   );
