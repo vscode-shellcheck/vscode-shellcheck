@@ -303,7 +303,6 @@
     "node": "22.13.0",
     "npm": "11.0.0"
   },
-  "shellcheckVersion": "0.10.0",
   "__metadata": {
     "id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",
     "publisherDisplayName": "Timon Wong",
