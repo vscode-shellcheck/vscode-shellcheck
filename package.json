@@ -277,7 +277,7 @@
     "@semantic-release/git": "^10.0.1",
     "@types/lodash": "^4.17.16",
     "@types/node": "^16.18.126",
-    "@types/semver": "^7.5.8",
+    "@types/semver": "^7.7.0",
     "@types/vscode": "~1.66.0",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
