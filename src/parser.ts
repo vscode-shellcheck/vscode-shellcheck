@@ -1,6 +1,6 @@
 import semver from "semver";
 import vscode from "vscode";
-import { BEST_TOOL_VERSION } from "./utils/tool-check.js";
+import { MINIMUM_TOOL_VERSION } from "./utils/tool-check.js";
 
 interface ShellCheckReplacement {
   precedence: number;
@@ -243,7 +243,7 @@ export function createParser(
   if (
     options &&
     options.toolVersion &&
-    semver.gte(options.toolVersion, BEST_TOOL_VERSION)
+    semver.gte(options.toolVersion, MINIMUM_TOOL_VERSION)
   ) {
     return new Json1Parser(textDocument, options);
   }

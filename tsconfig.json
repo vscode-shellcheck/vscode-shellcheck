@@ -14,7 +14,6 @@
     "noImplicitReturns": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "resolveJsonModule": true,
     "esModuleInterop": true
   },
   "include": ["src", "test"]

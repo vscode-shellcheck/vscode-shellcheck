@@ -31,7 +31,7 @@ export class LinkifyProvider implements vscode.DocumentLinkProvider {
     line: string,
     result: vscode.DocumentLink[],
   ) {
-    const pattern = /\bSC\d{4}\b/g;
+    const pattern = /\b(SC)?\d{4}\b/g;
     const matches = line.matchAll(pattern);
     for (const match of matches) {
       const ruleId = match[0];
