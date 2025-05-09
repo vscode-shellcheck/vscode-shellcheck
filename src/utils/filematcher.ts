@@ -1,6 +1,8 @@
 // Stolen from vscode-jshint.
 // https://github.com/Microsoft/vscode-jshint/blob/ab784c08de7bbc6bac5b5c3fe1c1fbaa3fea110f/jshint-server/src/server.ts#L258
-import _ from "lodash";
+import pickBy from "lodash/pickBy.js";
+import some from "lodash/some.js";
+import keys from "lodash/keys.js";
 import { minimatch } from "minimatch";
 
 export interface FileSettings {
@@ -17,8 +19,8 @@ export class FileMatcher {
   }
 
   private pickTrueKeys(obj?: FileSettings): string[] {
-    return _.keys(
-      _.pickBy(obj, (value) => {
+    return keys(
+      pickBy(obj, (value) => {
         return value === true;
       }),
     );
@@ -50,7 +52,7 @@ export class FileMatcher {
     root?: string,
   ): boolean {
     const relativePath = this.relativeTo(path, root);
-    return _.some(excludePatterns, (pattern) => {
+    return some(excludePatterns, (pattern) => {
       return minimatch(relativePath, pattern, { dot: true });
     });
   }

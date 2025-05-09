@@ -1,11 +1,9 @@
 import semver from "semver";
-import vscode from "vscode";
-import execa from "execa";
+import * as vscode from "vscode";
+import { execa } from "execa";
 import * as logging from "./logging/index.js";
 
 export const MINIMUM_TOOL_VERSION = "0.7.0";
-
-
 
 export function tryPromptForUpdatingTool(version: semver.SemVer) {
   const disableVersionCheckUpdateSetting =

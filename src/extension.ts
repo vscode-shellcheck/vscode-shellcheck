@@ -1,4 +1,4 @@
-import vscode from "vscode";
+import * as vscode from "vscode";
 import { ShellCheckExtensionApi } from "./api.js";
 import { LinkifyProvider } from "./linkify.js";
 import ShellCheckProvider from "./linter.js";

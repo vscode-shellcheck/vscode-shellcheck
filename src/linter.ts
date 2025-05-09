@@ -1,7 +1,7 @@
 import path from "node:path";
 import semver from "semver";
-import vscode from "vscode";
-import execa from "execa";
+import * as vscode from "vscode";
+import { execa } from "execa";
 import { ShellCheckExtensionApi } from "./api.js";
 import { createParser, ParseResult } from "./parser.js";
 import { ThrottledDelayer } from "./utils/async.js";
@@ -353,9 +353,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
   public provideApi(): ShellCheckExtensionApi {
     return {
-      apiVersion1: {
-        registerDocumentFilter: this.registerDocumentFilter,
-      },
+      apiVersion1: { registerDocumentFilter: this.registerDocumentFilter },
     };
   }
 
@@ -573,8 +571,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         .then((resolvedCwd) => {
           cwd = resolvedCwd;
           logging.debug("Spawn: (cwd=%s) %s %s", cwd, executable.path, args);
-          const options: execa.Options = { cwd };
-          const childProcess = execa(executable.path, args, options);
+          const childProcess = execa(executable.path, args, { cwd });
 
           if (childProcess.pid && childProcess.stdin && childProcess.stdout) {
             childProcess.stdout.setEncoding("utf-8");
