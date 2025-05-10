@@ -21,6 +21,10 @@ async function main() {
       /* add to the end of plugins array */
       esbuildProblemMatcherPlugin,
     ],
+    banner: {
+      // https://github.com/microsoft/vscode/issues/130367#issuecomment-2832464097
+      js: 'import { createRequire } from "node:module";\nconst require = createRequire(import.meta.url);',
+    },
   });
   if (watch) {
     await ctx.watch();
