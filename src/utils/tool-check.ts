@@ -1,5 +1,5 @@
 import semver from "semver";
-import vscode from "vscode";
+import * as vscode from "vscode";
 import { execa } from "execa";
 import * as logging from "./logging/index.js";
 

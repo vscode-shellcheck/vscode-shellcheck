@@ -1,5 +1,5 @@
 import assert from "node:assert";
-import vscode from "vscode";
+import * as vscode from "vscode";
 import { LinkifyProvider } from "../src/linkify.js";
 
 suite("Document Link Provider", () => {

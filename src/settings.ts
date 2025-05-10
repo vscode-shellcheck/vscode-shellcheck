@@ -1,5 +1,5 @@
 import fs from "node:fs/promises";
-import vscode from "vscode";
+import * as vscode from "vscode";
 import { FileMatcher, FileSettings } from "./utils/filematcher.js";
 import { substitutePath } from "./utils/path.js";
 

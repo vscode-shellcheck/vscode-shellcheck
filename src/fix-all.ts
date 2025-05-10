@@ -1,4 +1,4 @@
-import vscode from "vscode";
+import * as vscode from "vscode";
 
 function executeCodeActionProvider(uri: vscode.Uri, range: vscode.Range) {
   return vscode.commands.executeCommand<vscode.CodeAction[]>(

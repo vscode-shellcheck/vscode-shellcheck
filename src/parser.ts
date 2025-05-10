@@ -1,5 +1,5 @@
 import semver from "semver";
-import vscode from "vscode";
+import * as vscode from "vscode";
 import { MINIMUM_TOOL_VERSION } from "./utils/tool-check.js";
 
 interface ShellCheckReplacement {

@@ -1,6 +1,6 @@
 import path from "node:path";
 import semver from "semver";
-import vscode from "vscode";
+import * as vscode from "vscode";
 import { execa } from "execa";
 import { ShellCheckExtensionApi } from "./api.js";
 import { createParser, ParseResult } from "./parser.js";
