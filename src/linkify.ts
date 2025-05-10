@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+import vscode from "vscode";
 import { getWikiUrlForRule } from "./utils/link.js";
 
 export class LinkifyProvider implements vscode.DocumentLinkProvider {
