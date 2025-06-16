@@ -292,7 +292,7 @@
     "prettier": "^3.5.3",
     "semantic-release": "^24.2.1",
     "semantic-release-stop-before-publish": "^1.0.0",
-    "semantic-release-vsce": "^6.0.8",
+    "semantic-release-vsce": "^6.0.9",
     "typescript": "^5.8.3"
   },
   "engines": {
