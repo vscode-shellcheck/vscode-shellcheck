@@ -390,9 +390,10 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
   private async collectDiagnostics(textDocument: vscode.TextDocument) {
     const output: string[] = [
+      "# ShellCheck Diagnostics Report\n",
       "## Document\n",
-      `URI: \`${textDocument.uri.toString()}\``,
-      `Language: \`${textDocument.languageId}\``,
+      `- URI: \`${textDocument.uri.toString()}\``,
+      `- Language: \`${textDocument.languageId}\``,
       "",
     ];
 
@@ -432,15 +433,14 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         "bashIde",
         textDocument,
       );
-      if (bashIdeSection.get<boolean>("enableSourceErrorDiagnostics")) {
+      if (bashIdeSection.get<string>("shellcheckPath") !== "") {
         output.push(
-          "## Notes about Bash IDE Extension\n",
-          "- This extension may overlaps the Bash IDE extension, to disable linting in Bash IDE, you can set `bashIde.enableSourceErrorDiagnostics` to `false`.",
+          "## Notes about Bash IDE extension\n",
+          "- Bash IDE also provides ShellCheck integration, which overlaps with the ShellCheck extension. To disable ShellCheck integration in Bash IDE, set `bashIde.shellcheckPath` to an empty string.",
         );
+        output.push("");
       }
     }
-
-    output.push("");
 
     const doc = await vscode.workspace.openTextDocument({
       language: "markdown",
