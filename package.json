@@ -22,7 +22,8 @@
     "bash",
     "dash",
     "ksh",
-    "posix"
+    "posix",
+    "bats"
   ],
   "homepage": "https://github.com/vscode-shellcheck/vscode-shellcheck#readme",
   "private": true,
@@ -39,6 +40,7 @@
   "icon": "shellcheck.png",
   "activationEvents": [
     "onLanguage:shellscript",
+    "onLanguage:bats",
     "workspaceContains:**/.shellcheckrc"
   ],
   "main": "./dist/extension.js",
@@ -60,6 +62,10 @@
       {
         "language": "shellscript",
         "path": "./snippets/snippets.json"
+      },
+      {
+        "language": "bats",
+        "path": "./snippets/snippets.json"
       }
     ],
     "languages": [
@@ -73,6 +79,12 @@
       {
         "id": "shellcheck-output",
         "configuration": "./languages/shellcheck-output/language-configuration.json"
+      },
+      {
+        "id": "bats",
+        "extensions": [
+          ".bats"
+        ]
       }
     ],
     "grammars": [
