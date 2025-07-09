@@ -280,17 +280,17 @@
     "release": "semantic-release"
   },
   "dependencies": {
-    "execa": "^9.5.3",
-    "minimatch": "^10.0.1",
-    "remeda": "^2.21.3",
-    "semver": "^7.7.1"
+    "execa": "^9.6.0",
+    "minimatch": "^10.0.3",
+    "remeda": "^2.25.0",
+    "semver": "^7.7.2"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@types/node": "^22.15.17",
+    "@types/node": "^22.16.2",
     "@types/semver": "^7.7.0",
-    "@types/vscode": "^1.100.0",
+    "@types/vscode": "~1.100.0",
     "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2",
     "bindl": "^5.1.4",
@@ -302,7 +302,7 @@
     "neostandard": "^0.12.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.6.2",
-    "semantic-release": "^24.2.3",
+    "semantic-release": "^24.2.6",
     "semantic-release-stop-before-publish": "^1.0.0",
     "semantic-release-vsce": "^6.0.10",
     "typescript": "^5.8.3"
@@ -312,8 +312,8 @@
     "node": ">=22"
   },
   "volta": {
-    "node": "22.15.0",
-    "npm": "11.3.0"
+    "node": "22.17.0",
+    "npm": "11.4.2"
   },
   "__metadata": {
     "id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",
