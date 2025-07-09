@@ -1,3 +1,13 @@
+## [0.38.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.37.7...v0.38.0) (2025-07-09)
+
+### Features
+
+* add support for Bats ([#1648](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1648)) ([66f74ac](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/66f74ac5d738acab8b1a497c9c28e2f042ba4924))
+
+### Bug Fixes
+
+* should warn if ShellCheck integration in Bash IDE is enabled ([#1649](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1649)) ([cc7c097](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/cc7c097337bfc03751c417c1c7d6774eeec78c66))
+
 ## [0.37.7](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.37.6...v0.37.7) (2025-02-10)
 
 ### Bug Fixes
