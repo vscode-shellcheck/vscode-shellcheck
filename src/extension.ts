@@ -33,11 +33,13 @@ export function activate(
   context.subscriptions.push(linter);
 
   // link provider
-  const linker = vscode.languages.registerDocumentLinkProvider(
-    ShellCheckProvider.LANGUAGE_ID,
-    new LinkifyProvider(),
-  );
-  context.subscriptions.push(linker);
+  for (const language of ShellCheckProvider.LANGUAGES) {
+    const linker = vscode.languages.registerDocumentLinkProvider(
+      language,
+      new LinkifyProvider(),
+    );
+    context.subscriptions.push(linker);
+  }
 
   // public API surface
   return linter.provideApi();

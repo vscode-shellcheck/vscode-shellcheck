@@ -44,7 +44,7 @@ function toolStatusByError(error: any): ToolStatus {
 }
 
 export default class ShellCheckProvider implements vscode.CodeActionProvider {
-  public static readonly LANGUAGE_ID = "shellscript";
+  public static readonly LANGUAGES = ["shellscript", "bats"];
 
   public static readonly providedCodeActionKinds = [
     vscode.CodeActionKind.QuickFix,
@@ -72,20 +72,22 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.additionalDocumentFilters = new Set();
 
     // code actions
-    context.subscriptions.push(
-      vscode.languages.registerCodeActionsProvider(
-        ShellCheckProvider.LANGUAGE_ID,
-        this,
-        ShellCheckProvider.metadata,
-      ),
-    );
-    context.subscriptions.push(
-      vscode.languages.registerCodeActionsProvider(
-        ShellCheckProvider.LANGUAGE_ID,
-        new FixAllProvider(),
-        FixAllProvider.metadata,
-      ),
-    );
+    for (const language of ShellCheckProvider.LANGUAGES) {
+      context.subscriptions.push(
+        vscode.languages.registerCodeActionsProvider(
+          language,
+          this,
+          ShellCheckProvider.metadata,
+        ),
+      );
+      context.subscriptions.push(
+        vscode.languages.registerCodeActionsProvider(
+          language,
+          new FixAllProvider(),
+          FixAllProvider.metadata,
+        ),
+      );
+    }
 
     // commands
     context.subscriptions.push(
@@ -380,7 +382,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
   private isAllowedTextDocument(textDocument: vscode.TextDocument): boolean {
     const allowedDocumentSelector: vscode.DocumentSelector = [
-      ShellCheckProvider.LANGUAGE_ID,
+      ...ShellCheckProvider.LANGUAGES,
       ...this.additionalDocumentFilters,
     ];
     return !!vscode.languages.match(allowedDocumentSelector, textDocument);
