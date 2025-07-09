@@ -13,20 +13,15 @@ Integrates [ShellCheck](https://github.com/koalaman/shellcheck) into VS Code, a 
 
 ## Disclaimer
 
-This VS Code extension requires [shellcheck] (the awesome static analysis tool for shell scripts) to work, but precompiled [shellcheck] binaries are bundled in this extension for these platforms:
+This VS Code extension requires [ShellCheck] (the awesome static analysis tool for shell scripts) to work, but precompiled [ShellCheck] binaries are bundled in this extension for these platforms:
 
 - Linux (`x86_64`, `arm64`, `arm`)
 - macOS (`x86_64`, `arm64`)
 - Windows (`x86_64`, `arm64` with the `x86_64` binary)
 
-## Requirements
-
-1. Run [`Install Extension`](https://code.visualstudio.com/docs/editor/extension-gallery#_install-an-extension) command from [Command Palette](https://code.visualstudio.com/Docs/editor/codebasics#_command-palette).
-2. Search and choose `shellcheck`.
-
 ## Troubleshooting
 
-If shellcheck seems not working, a helper command `ShellCheck: ShellCheck: Collect Diagnostics For Current Document` from the [Command Palette](https://code.visualstudio.com/Docs/editor/codebasics#_command-palette) is provided to help troubleshooting.
+If ShellCheck seems not working, a helper command _ShellCheck: Collect Diagnostics For Current Document_ from the [Command Palette](https://code.visualstudio.com/Docs/editor/codebasics#_command-palette) is provided to help troubleshooting.
 
 ## Options
 
@@ -39,7 +34,7 @@ Default options are:
   "shellcheck.enable": true,
   "shellcheck.enableQuickFix": true,
   "shellcheck.run": "onType",
-  "shellcheck.executablePath": "", // Priority: user defined > bundled shellcheck binary > "shellcheck"
+  "shellcheck.executablePath": "", // Priority: user defined > bundled binary > shellcheck in PATH
   "shellcheck.exclude": [],
   "shellcheck.customArgs": [],
   "shellcheck.ignorePatterns": {
@@ -71,7 +66,7 @@ Default options are:
 
 ### `shellcheck.ignorePatterns`
 
-The `shellcheck.ignorePatterns` works exactly the same as `search.exclude`, read more about glob patterns [here](https://code.visualstudio.com/docs/editor/codebasics#_advanced-search-options)
+The `shellcheck.ignorePatterns` works exactly the same as `search.exclude`, read more about glob patterns [here](https://code.visualstudio.com/docs/editor/codebasics#_advanced-search-options).
 
 For example:
 
@@ -114,7 +109,7 @@ By default the linter will lint as you type. Alternatively, set `shellcheck.run`
 
 ### Excluding Checks
 
-By default all shellcheck checks are performed and reported on as necessary. To globally ignore certain checks in all files, you can use a `.shellcheckrc` at the workspace root. For example, to exclude [SC1017](https://github.com/koalaman/shellcheck/wiki/SC1017):
+By default all [ShellCheck] checks are performed and reported on as necessary. To globally ignore certain checks in all files, you can use a `.shellcheckrc` at the workspace root. For example, to exclude [SC1017](https://github.com/koalaman/shellcheck/wiki/SC1017):
 
 ```ini
 # .shellcheckrc
@@ -122,7 +117,7 @@ By default all shellcheck checks are performed and reported on as necessary. To 
 disable=SC1017
 ```
 
-As last resort, you can also add the "SC identifiers" to `shellcheck.exclude` extension setting. For example, to exclude [SC1017](https://github.com/koalaman/shellcheck/wiki/SC1017):
+As last resort, you can also add the _SC_ identifiers to `shellcheck.exclude` extension setting. For example, to exclude [SC1017](https://github.com/koalaman/shellcheck/wiki/SC1017):
 
 ```jsonc
 {
@@ -130,16 +125,16 @@ As last resort, you can also add the "SC identifiers" to `shellcheck.exclude` ex
 }
 ```
 
-### Using Docker version of shellcheck
+### Using ShellCheck through Docker
 
-In order to get it to work, you need a "shim" script. Just remember not to try to construct command line arguments for shellcheck yourself.
+In order to get it working, you need a _shim_ script. Avoid including ShellCheck arguments in it.
 
-Here is a simple "shim" script to get started with (see discussion: [#24](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/24)):
+Here is a simple shim script to get started with (see discussion: [#24](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/24)):
 
 ```shell
 #!/bin/bash
 
-exec docker run --rm --interactive --volume "${PWD}:/mnt:ro" koalaman/shellcheck:latest "$@"
+exec docker run --rm -i -v "${PWD}:${PWD}:ro" -w "${PWD}" koalaman/shellcheck:latest "$@"
 ```
 
 For example, you can place it at `shellcheck.sh` in the root of your workspace with execution permission (`chmod +x shellcheck.sh`).
@@ -169,12 +164,12 @@ This extension provides a small API, which allows other VS Code extensions to i
 
 ## Acknowledgements
 
-This extension was originally based on @hoovercj's [Haskell Linter](https://github.com/hoovercj/vscode-haskell-linter).
+This extension was originally based on [@hoovercj](https://github.com/hoovercj)'s [Haskell Linter](https://github.com/hoovercj/vscode-haskell-linter).
 
-## LICENSE
+## License
 
 This extension is licensed under the [MIT license](./LICENSE).
 
-Bundled [shellcheck] binaries are licensed under [GPLv3](https://github.com/koalaman/shellcheck/blob/master/LICENSE).
+Bundled [ShellCheck] binaries are licensed under [GPLv3](https://github.com/koalaman/shellcheck/blob/master/LICENSE).
 
-[shellcheck]: https://github.com/koalaman/shellcheck
+[ShellCheck]: https://github.com/koalaman/shellcheck
