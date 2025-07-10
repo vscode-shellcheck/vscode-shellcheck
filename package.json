@@ -8,6 +8,7 @@
   "contributors": [
     "Felipe Santos <felipecassiors@gmail.com> (https://github.com/felipecrs)"
   ],
+  "type": "module",
   "license": "MIT",
   "categories": [
     "Linters",
@@ -260,9 +261,9 @@
     "prepare": "bindl",
     "check-types": "tsc --noEmit",
     "check-types:watch": "tsc --noEmit --watch",
-    "build": "npm run check-types && node esbuild.mjs",
-    "build:watch": "node esbuild.mjs --watch",
-    "build:prod": "npm run check-types && node esbuild.mjs --production",
+    "build": "npm run check-types && node esbuild.js",
+    "build:watch": "node esbuild.js --watch",
+    "build:prod": "npm run check-types && node esbuild.js --production",
     "build:test": "tsc --project tsconfig.test.json",
     "build:test:watch": "tsc --project tsconfig.test.json --watch",
     "build:all": "run-p build build:test",
@@ -279,18 +280,17 @@
     "release": "semantic-release"
   },
   "dependencies": {
-    "execa": "^5.1.1",
-    "lodash": "^4.17.21",
-    "minimatch": "^9.0.5",
-    "semver": "^7.7.1"
+    "execa": "^9.6.0",
+    "minimatch": "^10.0.3",
+    "remeda": "^2.25.0",
+    "semver": "^7.7.2"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@types/lodash": "^4.17.20",
-    "@types/node": "^16.18.126",
+    "@types/node": "^22.16.2",
     "@types/semver": "^7.7.0",
-    "@types/vscode": "~1.66.0",
+    "@types/vscode": "~1.100.0",
     "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2",
     "bindl": "^5.1.4",
@@ -302,18 +302,18 @@
     "neostandard": "^0.12.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.6.2",
-    "semantic-release": "^24.2.1",
+    "semantic-release": "^24.2.6",
     "semantic-release-stop-before-publish": "^1.0.0",
     "semantic-release-vsce": "^6.0.10",
     "typescript": "^5.8.3"
   },
   "engines": {
-    "vscode": "^1.66.0",
-    "node": ">=16"
+    "vscode": "^1.100.0",
+    "node": ">=22"
   },
   "volta": {
-    "node": "22.13.0",
-    "npm": "11.0.0"
+    "node": "22.17.0",
+    "npm": "11.4.2"
   },
   "__metadata": {
     "id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",
