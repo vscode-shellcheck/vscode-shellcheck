@@ -1,3 +1,9 @@
+## [0.38.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.0...v0.38.1) (2025-07-14)
+
+### Dependencies
+
+* **deps:** download binaries directly from shellcheck releases ([#1653](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1653)) ([1ddf951](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/1ddf9519f15f52084cf6e85e6a55962a69622888))
+
 ## [0.38.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.37.7...v0.38.0) (2025-07-09)
 
 ### Features
