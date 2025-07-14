@@ -282,7 +282,7 @@
     "execa": "^5.1.1",
     "lodash": "^4.17.21",
     "minimatch": "^9.0.5",
-    "semver": "^7.7.1"
+    "semver": "^7.7.2"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
@@ -293,16 +293,16 @@
     "@types/vscode": "~1.66.0",
     "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2",
-    "bindl": "^5.1.4",
+    "bindl": "^5.3.0",
     "conventional-changelog-conventionalcommits": "^9.1.0",
-    "cspell": "^9.1.3",
+    "cspell": "^9.1.5",
     "esbuild": "^0.25.6",
-    "eslint": "^9.30.1",
+    "eslint": "^9.31.0",
     "installed-check": "^9.3.0",
     "neostandard": "^0.12.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.6.2",
-    "semantic-release": "^24.2.1",
+    "semantic-release": "^24.2.7",
     "semantic-release-stop-before-publish": "^1.0.0",
     "semantic-release-vsce": "^6.0.10",
     "typescript": "^5.8.3"
