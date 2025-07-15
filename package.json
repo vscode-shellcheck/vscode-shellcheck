@@ -313,11 +313,14 @@
   },
   "volta": {
     "node": "22.13.0",
-    "npm": "11.0.0"
+    "pnpm": "10.13.1"
   },
   "__metadata": {
     "id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",
     "publisherDisplayName": "Timon Wong",
     "publisherId": "04757770-dd50-443e-aae4-e1c7cf9c24f5"
+  },
+  "vsce": {
+    "dependencies": false
   }
 }

@@ -14,6 +14,9 @@ on:
 permissions:
   contents: read # for checkout
 
+env:
+  VOLTA_FEATURE_PNPM: "1"
+
 jobs:
   test:
     strategy:
@@ -27,8 +30,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup Volta, Node and NPM
-        uses: volta-cli/action@v4
-      - run: npm ci
+        uses: volta-cli/action@refs/pull/159/merge
+      - run: pnpm install --frozen
         env:
           BINDL_CURRENT_ONLY: "true"
       - name: Test with VS Code ${{ matrix.vscode-version }}
@@ -36,7 +39,7 @@ jobs:
         env:
           VSCODE_TEST_VERSION: ${{ matrix.vscode-version }}
         with:
-          run: npm test
+          run: pnpm test
 
   build:
     strategy:
@@ -87,15 +90,15 @@ jobs:
         with:
           ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
       - name: Setup Volta, Node and NPM
-        uses: volta-cli/action@v4
+        uses: volta-cli/action@refs/pull/159/merge
       - if: matrix.target != 'universal'
         name: Install dependencies (with binaries)
-        run: npm ci
+        run: pnpm install --frozen
         env:
           npm_config_arch: ${{ matrix.npm_config_arch }}
       - if: matrix.target == 'universal'
         name: Install dependencies (without binaries)
-        run: npm ci
+        run: pnpm install --frozen
         env:
           BINDL_SKIP: "true"
       - run: env GITHUB_EVENT_NAME=push GITHUB_REF='${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}' npx semantic-release --extends ./package.release.config.mjs --no-ci --branches '${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}'
@@ -136,8 +139,8 @@ jobs:
         with:
           merge-multiple: true
       - name: Setup Volta, Node and NPM
-        uses: volta-cli/action@v4
-      - run: npm ci
+        uses: volta-cli/action@refs/pull/159/merge
+      - run: pnpm install --frozen
         env:
           BINDL_SKIP: "true"
       - run: npm audit signatures
