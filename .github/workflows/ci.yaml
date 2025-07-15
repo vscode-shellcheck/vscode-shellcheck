@@ -84,6 +84,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
       - name: Setup Volta, Node and NPM
         uses: volta-cli/action@v4
       - if: matrix.target != 'universal'
@@ -96,7 +98,7 @@ jobs:
         run: npm ci
         env:
           BINDL_SKIP: "true"
-      - run: npx semantic-release --extends ./package.release.config.mjs
+      - run: env GITHUB_EVENT_NAME=push GITHUB_REF='${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}' npx semantic-release --extends ./package.release.config.mjs --no-ci --branches '${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}'
         env:
           VSCE_TARGET: ${{ matrix.target }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
