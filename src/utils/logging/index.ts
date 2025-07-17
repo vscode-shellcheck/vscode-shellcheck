@@ -5,7 +5,7 @@ import {
   LogLevel,
   LogLevelMap,
   LogLevelNameType,
-} from "./types";
+} from "./types.js";
 
 let loggers: Logger[] = [];
 let globalLogLevel: LogLevel;

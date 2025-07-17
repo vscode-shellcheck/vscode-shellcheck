@@ -1,7 +1,7 @@
-import * as semver from "semver";
+import semver from "semver";
 import * as vscode from "vscode";
-import execa from "execa";
-import * as logging from "./logging";
+import { execa } from "execa";
+import * as logging from "./logging/index.js";
 
 export const MINIMUM_TOOL_VERSION = "0.7.0";
 
