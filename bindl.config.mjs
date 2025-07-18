@@ -1,9 +1,11 @@
 // @ts-check
 
+import { defineConfig } from "bindl";
+
 const version = `v0.10.0`;
 const releaseUrl = `https://github.com/koalaman/shellcheck/releases/download/${version}/shellcheck-${version}`;
 
-export default {
+export default defineConfig({
   binaries: [
     {
       platform: "linux",
@@ -46,4 +48,4 @@ export default {
       url: `${releaseUrl}.zip`,
     },
   ],
-};
+});
