@@ -2,7 +2,7 @@
 
 import { defineConfig } from "bindl";
 
-const version = "0.10.0";
+const version = "0.11.0";
 const releaseUrl = `https://github.com/koalaman/shellcheck/releases/download/v${version}/shellcheck-v${version}`;
 
 /** @type {import("bindl").BindlBinaryTest} */
