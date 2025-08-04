@@ -1,3 +1,9 @@
+## [0.38.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.1...v0.38.2) (2025-08-04)
+
+### Dependencies
+
+* **deps:** update bundled shellcheck to 0.11.0 ([#1666](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1666)) ([2721ccf](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/2721ccf45d0883322df880d210edae7065528fe5))
+
 ## [0.38.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.0...v0.38.1) (2025-07-14)
 
 ### Dependencies
