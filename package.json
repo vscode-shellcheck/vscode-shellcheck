@@ -293,7 +293,7 @@
     "@types/vscode": "~1.66.0",
     "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2",
-    "bindl": "^6.0.1",
+    "bindl": "^7.0.0",
     "conventional-changelog-conventionalcommits": "^9.1.0",
     "cspell": "^9.2.0",
     "esbuild": "^0.25.8",
@@ -312,8 +312,8 @@
     "node": ">=16"
   },
   "volta": {
-    "node": "22.17.1",
-    "npm": "11.4.2"
+    "node": "22.18.0",
+    "npm": "11.5.2"
   },
   "__metadata": {
     "id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",
