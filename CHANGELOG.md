@@ -1,3 +1,9 @@
+## [0.38.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.2...v0.38.3) (2025-08-08)
+
+### Dependencies
+
+* **deps:** refresh deps ([1ced964](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/1ced9645f5b0738a3440459a1f2a2089db3425ac))
+
 ## [0.38.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.1...v0.38.2) (2025-08-04)
 
 ### Dependencies
