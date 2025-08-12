@@ -25,7 +25,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Setup Volta, Node and NPM
         uses: volta-cli/action@v4
       - run: npm ci
@@ -83,7 +83,7 @@ jobs:
       pull-requests: write # to be able to comment on released pull requests
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Setup Volta, Node and NPM
         uses: volta-cli/action@v4
       - if: matrix.target != 'universal'
@@ -127,7 +127,7 @@ jobs:
       pull-requests: write # to be able to comment on released pull requests
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           token: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE || github.token }}
       - uses: actions/download-artifact@v5
