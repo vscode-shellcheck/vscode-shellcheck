@@ -1,7 +1,7 @@
-import * as fs from "node:fs";
+import fs from "node:fs/promises";
 import * as vscode from "vscode";
-import { FileMatcher, FileSettings } from "./utils/filematcher";
-import { substitutePath } from "./utils/path";
+import { FileMatcher, FileSettings } from "./utils/filematcher.js";
+import { substitutePath } from "./utils/path.js";
 
 export interface Executable {
   path: string;
@@ -120,11 +120,8 @@ async function getExecutable(
       `./binaries/${process.platform}/${process.arch}/shellcheck${suffix}`,
     );
     try {
-      await fs.promises.access(executablePath, fs.constants.X_OK);
-      return {
-        path: executablePath,
-        bundled: true,
-      };
+      await fs.access(executablePath, fs.constants.X_OK);
+      return { path: executablePath, bundled: true };
     } catch (error) {
       return {
         path: "shellcheck", // Fallback to default shellcheck path.
@@ -133,8 +130,5 @@ async function getExecutable(
     }
   }
 
-  return {
-    path: substitutePath(executablePath),
-    bundled: false,
-  };
+  return { path: substitutePath(executablePath), bundled: false };
 }
