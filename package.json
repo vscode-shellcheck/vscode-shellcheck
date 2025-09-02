@@ -2,7 +2,7 @@
   "name": "shellcheck",
   "displayName": "ShellCheck",
   "description": "Integrates ShellCheck into VS Code, a linter for Shell scripts.",
-  "version": "0.38.0",
+  "version": "0.38.3",
   "publisher": "timonwong",
   "author": "Timon Wong <timon86.wang@gmail.com> (https://github.com/timonwong)",
   "contributors": [
@@ -282,38 +282,38 @@
   "dependencies": {
     "execa": "^9.6.0",
     "minimatch": "^10.0.3",
-    "remeda": "^2.25.0",
+    "remeda": "^2.30.0",
     "semver": "^7.7.2"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@types/node": "^22.16.3",
+    "@types/node": "^22.18.0",
     "@types/semver": "^7.7.0",
     "@types/vscode": "~1.100.0",
     "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2",
-    "bindl": "^5.3.0",
+    "bindl": "^7.0.0",
     "conventional-changelog-conventionalcommits": "^9.1.0",
-    "cspell": "^9.1.5",
-    "esbuild": "^0.25.6",
-    "eslint": "^9.31.0",
+    "cspell": "^9.2.1",
+    "esbuild": "^0.25.9",
+    "eslint": "^9.34.0",
     "installed-check": "^9.3.0",
     "neostandard": "^0.12.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.6.2",
     "semantic-release": "^24.2.7",
     "semantic-release-stop-before-publish": "^1.0.0",
-    "semantic-release-vsce": "^6.0.10",
-    "typescript": "^5.8.3"
+    "semantic-release-vsce": "^6.0.11",
+    "typescript": "^5.9.2"
   },
   "engines": {
     "vscode": "^1.100.0",
     "node": ">=22"
   },
   "volta": {
-    "node": "22.17.0",
-    "npm": "11.4.2"
+    "node": "22.19.0",
+    "npm": "11.5.2"
   },
   "__metadata": {
     "id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",

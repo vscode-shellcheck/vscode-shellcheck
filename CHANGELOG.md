@@ -1,3 +1,21 @@
+## [0.38.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.2...v0.38.3) (2025-08-08)
+
+### Dependencies
+
+* **deps:** refresh deps ([1ced964](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/1ced9645f5b0738a3440459a1f2a2089db3425ac))
+
+## [0.38.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.1...v0.38.2) (2025-08-04)
+
+### Dependencies
+
+* **deps:** update bundled shellcheck to 0.11.0 ([#1666](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1666)) ([2721ccf](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/2721ccf45d0883322df880d210edae7065528fe5))
+
+## [0.38.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.0...v0.38.1) (2025-07-14)
+
+### Dependencies
+
+* **deps:** download binaries directly from shellcheck releases ([#1653](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1653)) ([1ddf951](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/1ddf9519f15f52084cf6e85e6a55962a69622888))
+
 ## [0.38.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.37.7...v0.38.0) (2025-07-09)
 
 ### Features
