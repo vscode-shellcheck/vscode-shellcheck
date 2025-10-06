@@ -303,7 +303,7 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^3.6.2",
     "semantic-release": "^24.2.7",
-    "semantic-release-stop-before-publish": "^1.0.0",
+    "semantic-release-stop-before-publish": "^2.0.0",
     "semantic-release-vsce": "^6.0.12",
     "typescript": "^5.9.3"
   },
