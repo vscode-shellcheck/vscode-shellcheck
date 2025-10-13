@@ -293,7 +293,7 @@
     "@types/vscode": "~1.66.0",
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2",
-    "bindl": "^7.1.0",
+    "bindl": "^7.1.1",
     "conventional-changelog-conventionalcommits": "^9.1.0",
     "cspell": "^9.2.1",
     "esbuild": "^0.25.10",
