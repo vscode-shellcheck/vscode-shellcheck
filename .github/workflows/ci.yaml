@@ -100,14 +100,14 @@ jobs:
         env:
           VSCE_TARGET: ${{ matrix.target }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: ${{ matrix.target }}
           path: "*.vsix"
       # vsce updates the version in package.json and package-lock.json during
       # package step, so we need to save them for the publish step
       - if: matrix.target == 'universal'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: package-json
           path: |
