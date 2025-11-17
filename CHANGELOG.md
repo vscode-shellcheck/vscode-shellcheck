@@ -1,3 +1,9 @@
+## [0.38.4](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.3...v0.38.4) (2025-11-17)
+
+### Dependencies
+
+* **deps:** bump js-yaml from 4.1.0 to 4.1.1 ([#1706](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1706)) ([5c2609d](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/5c2609ded4abb9015b2742ab44914e7a793cdb76))
+
 ## [0.38.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.2...v0.38.3) (2025-08-08)
 
 ### Dependencies
