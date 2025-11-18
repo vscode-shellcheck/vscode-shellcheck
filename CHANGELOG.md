@@ -1,3 +1,9 @@
+## [0.38.5](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.4...v0.38.5) (2025-11-18)
+
+### Dependencies
+
+* **deps:** bump glob and semantic-release ([#1712](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1712)) ([2765d5a](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/2765d5a4b9b66c76d324de451ea0c45d28033c17))
+
 ## [0.38.4](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.3...v0.38.4) (2025-11-17)
 
 ### Dependencies
