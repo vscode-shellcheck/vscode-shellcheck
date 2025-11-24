@@ -287,7 +287,7 @@
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@types/lodash": "^4.17.20",
+    "@types/lodash": "^4.17.21",
     "@types/node": "^16.18.126",
     "@types/semver": "^7.7.1",
     "@types/vscode": "~1.66.0",
