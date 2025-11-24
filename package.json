@@ -304,7 +304,7 @@
     "prettier": "^3.6.2",
     "semantic-release": "^25.0.2",
     "semantic-release-stop-before-publish": "^2.0.0",
-    "semantic-release-vsce": "^6.0.16",
+    "semantic-release-vsce": "^6.0.17",
     "typescript": "^5.9.3"
   },
   "engines": {
