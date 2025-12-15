@@ -130,7 +130,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           token: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE || github.token }}
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v7
         with:
           merge-multiple: true
       - name: Setup Volta, Node and NPM
