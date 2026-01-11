@@ -1,3 +1,10 @@
+## [0.38.6](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.5...v0.38.6) (2026-01-11)
+
+### Dependencies
+
+* **deps:** bump tar and npm ([#1732](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1732)) ([b7bec06](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/b7bec069bb3cacc285de579007df99b2ef7b9302))
+* **deps:** refresh lockfile ([2c30d4c](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/2c30d4c9ce3324e73952aab8eafa3f915bf40475))
+
 ## [0.38.5](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.4...v0.38.5) (2025-11-18)
 
 ### Dependencies
