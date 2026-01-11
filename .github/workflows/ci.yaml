@@ -25,7 +25,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Setup Volta, Node and NPM
         uses: volta-cli/action@v4
       - run: npm ci
@@ -83,7 +83,7 @@ jobs:
       pull-requests: write # to be able to comment on released pull requests
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Setup Volta, Node and NPM
         uses: volta-cli/action@v4
       - if: matrix.target != 'universal'
@@ -100,14 +100,14 @@ jobs:
         env:
           VSCE_TARGET: ${{ matrix.target }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.target }}
           path: "*.vsix"
       # vsce updates the version in package.json and package-lock.json during
       # package step, so we need to save them for the publish step
       - if: matrix.target == 'universal'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: package-json
           path: |
@@ -127,10 +127,10 @@ jobs:
       pull-requests: write # to be able to comment on released pull requests
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           token: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE || github.token }}
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v7
         with:
           merge-multiple: true
       - name: Setup Volta, Node and NPM

@@ -1,3 +1,22 @@
+## [0.38.6](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.5...v0.38.6) (2026-01-11)
+
+### Dependencies
+
+* **deps:** bump tar and npm ([#1732](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1732)) ([b7bec06](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/b7bec069bb3cacc285de579007df99b2ef7b9302))
+* **deps:** refresh lockfile ([2c30d4c](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/2c30d4c9ce3324e73952aab8eafa3f915bf40475))
+
+## [0.38.5](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.4...v0.38.5) (2025-11-18)
+
+### Dependencies
+
+* **deps:** bump glob and semantic-release ([#1712](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1712)) ([2765d5a](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/2765d5a4b9b66c76d324de451ea0c45d28033c17))
+
+## [0.38.4](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.3...v0.38.4) (2025-11-17)
+
+### Dependencies
+
+* **deps:** bump js-yaml from 4.1.0 to 4.1.1 ([#1706](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1706)) ([5c2609d](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/5c2609ded4abb9015b2742ab44914e7a793cdb76))
+
 ## [0.38.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.2...v0.38.3) (2025-08-08)
 
 ### Dependencies
