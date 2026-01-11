@@ -312,8 +312,8 @@
     "node": ">=16"
   },
   "volta": {
-    "node": "22.18.0",
-    "npm": "11.5.2"
+    "node": "24.12.0",
+    "npm": "11.7.0"
   },
   "__metadata": {
     "id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",
