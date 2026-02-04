@@ -41,6 +41,8 @@ export interface ParseResult {
 export interface ParserOptions {
   toolVersion?: semver.SemVer | null;
   enableQuickFix?: boolean;
+  lineOffset?: number;
+  columnOffset?: number;
 }
 
 class JsonParserMixin {
@@ -111,12 +113,24 @@ class JsonParserMixin {
   }
 
   private createTextEdit(repl: ShellCheckReplacement): vscode.TextEdit {
-    const startPos = this.fixPosition(
+    let startPos = this.fixPosition(
       new vscode.Position(repl.line - 1, repl.column - 1),
     );
-    const endPos = this.fixPosition(
+    let endPos = this.fixPosition(
       new vscode.Position(repl.endLine - 1, repl.endColumn - 1),
     );
+    if (this.options?.lineOffset || this.options?.columnOffset) {
+      const lineOff = this.options?.lineOffset ?? 0;
+      const colOff = this.options?.columnOffset ?? 0;
+      startPos = new vscode.Position(
+        startPos.line + lineOff,
+        startPos.character + colOff,
+      );
+      endPos = new vscode.Position(
+        endPos.line + lineOff,
+        endPos.character + colOff,
+      );
+    }
     return new vscode.TextEdit(
       new vscode.Range(startPos, endPos),
       repl.replacement,
@@ -136,6 +150,19 @@ class JsonParserMixin {
     } else {
       startPos = this.fixPosition(startPos);
       endPos = this.fixPosition(endPos);
+    }
+
+    if (this.options?.lineOffset || this.options?.columnOffset) {
+      const lineOff = this.options?.lineOffset ?? 0;
+      const colOff = this.options?.columnOffset ?? 0;
+      startPos = new vscode.Position(
+        startPos.line + lineOff,
+        startPos.character + colOff,
+      );
+      endPos = new vscode.Position(
+        endPos.line + lineOff,
+        endPos.character + colOff,
+      );
     }
 
     const range = new vscode.Range(startPos, endPos);

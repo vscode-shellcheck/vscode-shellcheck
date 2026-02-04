@@ -18,6 +18,7 @@ export interface ShellCheckSettings {
   ignoreFileSchemes: Set<string>;
   useWorkspaceRootAsCwd: boolean;
   fileMatcher: FileMatcher;
+  lintGithubWorkflows: boolean;
 }
 
 export namespace ShellCheckSettings {
@@ -31,6 +32,7 @@ export namespace ShellCheckSettings {
     ignorePatterns: "ignorePatterns",
     ignoreFileSchemes: "ignoreFileSchemes",
     useWorkspaceRootAsCwd: "useWorkspaceRootAsCwd",
+    lintGithubWorkflows: "lintGithubWorkflows",
   };
 }
 
@@ -81,6 +83,7 @@ export async function getWorkspaceSettings(
     useWorkspaceRootAsCwd: section.get(keys.useWorkspaceRootAsCwd, false),
     enableQuickFix: section.get(keys.enableQuickFix, false),
     fileMatcher: new FileMatcher(),
+    lintGithubWorkflows: section.get(keys.lintGithubWorkflows, true),
   };
 
   // Filter excludes (#739), besides, tolerate error codes prefixed with "SC"

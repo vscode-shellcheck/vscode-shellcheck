@@ -41,7 +41,11 @@
   "activationEvents": [
     "onLanguage:shellscript",
     "onLanguage:bats",
-    "workspaceContains:**/.shellcheckrc"
+    "onLanguage:yaml",
+    "onLanguage:github-actions-workflow",
+    "workspaceContains:**/.shellcheckrc",
+    "workspaceContains:.github/workflows/*.yml",
+    "workspaceContains:.github/workflows/*.yaml"
   ],
   "main": "./dist/extension.js",
   "capabilities": {
@@ -252,6 +256,12 @@
           "type": "boolean",
           "scope": "machine-overridable",
           "default": false
+        },
+        "shellcheck.lintGithubWorkflows": {
+          "description": "Whether to lint shell code in GitHub Actions workflow files (.github/workflows/*.yml).",
+          "type": "boolean",
+          "scope": "resource",
+          "default": true
         }
       }
     }
@@ -280,6 +290,7 @@
   },
   "dependencies": {
     "execa": "^5.1.1",
+    "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
     "minimatch": "^9.0.5",
     "semver": "^7.7.3"
@@ -287,6 +298,7 @@
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
+    "@types/js-yaml": "^4.0.9",
     "@types/lodash": "^4.17.23",
     "@types/node": "^16.18.126",
     "@types/semver": "^7.7.1",

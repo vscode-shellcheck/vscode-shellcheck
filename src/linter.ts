@@ -20,6 +20,11 @@ import {
   RunTrigger,
   ShellCheckSettings,
 } from "./settings";
+import {
+  isGitHubWorkflowFile,
+  extractShellSnippets,
+  replaceGitHubExpressions,
+} from "./yaml-extractor";
 
 namespace CommandIds {
   export const runLint: string = "shellcheck.runLint";
@@ -88,6 +93,15 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         ),
       );
     }
+
+    // code actions for GitHub Actions workflow YAML files
+    context.subscriptions.push(
+      vscode.languages.registerCodeActionsProvider(
+        { language: "yaml", pattern: "**/.github/workflows/*.{yml,yaml}" },
+        this,
+        ShellCheckProvider.metadata,
+      ),
+    );
 
     // commands
     context.subscriptions.push(
@@ -381,6 +395,9 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   };
 
   private isAllowedTextDocument(textDocument: vscode.TextDocument): boolean {
+    if (isGitHubWorkflowFile(textDocument)) {
+      return true;
+    }
     const allowedDocumentSelector: vscode.DocumentSelector = [
       ...ShellCheckProvider.LANGUAGES,
       ...this.additionalDocumentFilters,
@@ -524,6 +541,10 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     textDocument: vscode.TextDocument,
     settings: ShellCheckSettings,
   ): Promise<void> {
+    if (isGitHubWorkflowFile(textDocument)) {
+      return this.runLintForYaml(textDocument, settings);
+    }
+
     return new Promise<void>((resolve, reject) => {
       const toolStatus: ToolStatus = this.toolStatusByPath.get(
         settings.executable.path,
@@ -614,6 +635,128 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
           handleError(error);
           resolve();
         });
+    });
+  }
+
+  private async runLintForYaml(
+    textDocument: vscode.TextDocument,
+    settings: ShellCheckSettings,
+  ): Promise<void> {
+    const toolStatus: ToolStatus = this.toolStatusByPath.get(
+      settings.executable.path,
+    )!;
+    if (!toolStatus.ok) {
+      return Promise.reject(toolStatus.reason);
+    }
+
+    if (!settings.lintGithubWorkflows) {
+      this.setResultCollections(textDocument.uri);
+      return;
+    }
+
+    const snippets = extractShellSnippets(textDocument);
+    if (!snippets.length) {
+      this.setResultCollections(textDocument.uri);
+      return;
+    }
+
+    const allResults: ParseResult[] = [];
+    const executable = settings.executable;
+
+    let cwd: string | undefined;
+    if (settings.useWorkspaceRootAsCwd) {
+      cwd = getWorkspaceFolderPath(textDocument.uri);
+    } else {
+      cwd = guessDocumentDirname(textDocument);
+    }
+    cwd = await ensureCurrentWorkingDirectory(cwd);
+
+    for (const snippet of snippets) {
+      const parser = createParser(textDocument, {
+        toolVersion: toolStatus.version,
+        enableQuickFix: settings.enableQuickFix,
+        lineOffset: snippet.startLine,
+        columnOffset: snippet.columnOffset,
+      });
+
+      let args = ["-f", parser.outputFormat];
+      if (settings.exclude.length) {
+        args = args.concat(["-e", settings.exclude.join(",")]);
+      }
+
+      // Set shell dialect from workflow
+      args = args.concat(["-s", snippet.shell]);
+
+      if (settings.customArgs.length) {
+        args = args.concat(settings.customArgs);
+      }
+
+      args.push("-");
+
+      try {
+        const results = await this.runShellCheckOnSnippet(
+          executable.path,
+          args,
+          replaceGitHubExpressions(snippet.content),
+          cwd,
+          parser,
+        );
+        allResults.push(...results);
+      } catch (error: any) {
+        logging.debug("Unable to run shellcheck on YAML snippet: %O", error);
+        this.showShellCheckError(error);
+        this.toolStatusByPath.set(executable.path, toolStatusByError(error));
+        break;
+      }
+    }
+
+    this.setResultCollections(textDocument.uri, allResults);
+  }
+
+  private runShellCheckOnSnippet(
+    executablePath: string,
+    args: string[],
+    content: string,
+    cwd: string | undefined,
+    parser: { parse(s: string): ParseResult[] },
+  ): Promise<ParseResult[]> {
+    return new Promise((resolve, reject) => {
+      logging.debug(
+        "Spawn (YAML snippet): (cwd=%s) %s %s",
+        cwd,
+        executablePath,
+        args,
+      );
+      const options: execa.Options = { cwd };
+      const childProcess = execa(executablePath, args, options);
+
+      if (childProcess.pid && childProcess.stdin && childProcess.stdout) {
+        childProcess.stdout.setEncoding("utf-8");
+
+        childProcess.stdin.write(content);
+        childProcess.stdin.end();
+
+        const buf: string[] = [];
+
+        childProcess.stdout
+          .on("data", (chunk: Buffer) => {
+            buf.push(chunk.toString());
+          })
+          .on("end", () => {
+            const output = buf.join("");
+            logging.trace("shellcheck response (YAML snippet): %s", output);
+            if (output.length) {
+              resolve(parser.parse(output));
+            } else {
+              resolve([]);
+            }
+          });
+
+        childProcess.on("error", reject);
+      } else {
+        childProcess.catch(reject);
+        resolve([]);
+      }
     });
   }
 
