@@ -677,12 +677,16 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         enableQuickFix: settings.enableQuickFix,
         lineOffset: snippet.startLine,
         columnOffset: snippet.columnOffset,
+        minSeverity: vscode.DiagnosticSeverity.Warning,
       });
 
       let args = ["-f", parser.outputFormat];
-      if (settings.exclude.length) {
-        args = args.concat(["-e", settings.exclude.join(",")]);
-      }
+
+      // Combine user excludes with workflow-specific excludes
+      // SC2194: "This word is constant" - false positive for case patterns
+      const workflowExcludes = ["2194"];
+      const allExcludes = [...settings.exclude, ...workflowExcludes];
+      args = args.concat(["-e", allExcludes.join(",")]);
 
       // Set shell dialect from workflow
       args = args.concat(["-s", snippet.shell]);

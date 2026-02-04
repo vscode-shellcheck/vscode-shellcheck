@@ -43,6 +43,7 @@ export interface ParserOptions {
   enableQuickFix?: boolean;
   lineOffset?: number;
   columnOffset?: number;
+  minSeverity?: vscode.DiagnosticSeverity;
 }
 
 class JsonParserMixin {
@@ -166,7 +167,7 @@ class JsonParserMixin {
     }
 
     const range = new vscode.Range(startPos, endPos);
-    const severity = convertSeverity(problem.level);
+    const severity = convertSeverity(problem.level, this.options?.minSeverity);
     const diagnostic = new vscode.Diagnostic(range, problem.message, severity);
     diagnostic.source = "shellcheck";
     diagnostic.code = {
@@ -232,19 +233,28 @@ class Json1Parser extends JsonParserMixin implements Parser {
   }
 }
 
-function convertSeverity(level: string): vscode.DiagnosticSeverity {
+function convertSeverity(
+  level: string,
+  minSeverity?: vscode.DiagnosticSeverity,
+): vscode.DiagnosticSeverity {
+  let severity: vscode.DiagnosticSeverity;
   switch (level) {
     case "error":
-      return vscode.DiagnosticSeverity.Error;
+      severity = vscode.DiagnosticSeverity.Error;
+      break;
     case "style":
-    /* falls through */
     case "info":
-      return vscode.DiagnosticSeverity.Information;
+      severity = vscode.DiagnosticSeverity.Information;
+      break;
     case "warning":
-    /* falls through */
     default:
-      return vscode.DiagnosticSeverity.Warning;
+      severity = vscode.DiagnosticSeverity.Warning;
   }
+  // Apply minimum severity if specified (lower number = higher severity)
+  if (minSeverity !== undefined && severity > minSeverity) {
+    severity = minSeverity;
+  }
+  return severity;
 }
 
 // https://github.com/koalaman/shellcheck/wiki

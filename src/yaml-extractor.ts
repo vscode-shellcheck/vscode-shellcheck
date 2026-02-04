@@ -23,7 +23,15 @@ interface Workflow {
   jobs?: Record<string, WorkflowJob>;
 }
 
+interface CompositeAction {
+  runs?: {
+    using?: string;
+    steps?: WorkflowStep[];
+  };
+}
+
 const WORKFLOW_PATH_PATTERN = /[/\\]\.github[/\\]workflows[/\\][^/\\]+\.ya?ml$/;
+const ACTION_FILE_PATTERN = /[/\\]action\.ya?ml$/;
 const SHELL_DIALECTS = ["bash", "sh", "dash", "ksh"];
 
 const YAML_LANGUAGE_IDS = ["yaml", "github-actions-workflow"];
@@ -32,52 +40,76 @@ export function isGitHubWorkflowFile(doc: vscode.TextDocument): boolean {
   if (!YAML_LANGUAGE_IDS.includes(doc.languageId)) {
     return false;
   }
-  return WORKFLOW_PATH_PATTERN.test(doc.uri.fsPath);
+  return (
+    WORKFLOW_PATH_PATTERN.test(doc.uri.fsPath) ||
+    ACTION_FILE_PATTERN.test(doc.uri.fsPath)
+  );
 }
 
 export function extractShellSnippets(doc: vscode.TextDocument): ShellSnippet[] {
   const text = doc.getText();
-  let workflow: Workflow;
+  let parsed: Workflow & CompositeAction;
   try {
-    workflow = yaml.load(text) as Workflow;
+    parsed = yaml.load(text) as Workflow & CompositeAction;
   } catch {
     return []; // Invalid YAML, let YAML linter handle it
   }
 
-  if (!workflow || typeof workflow !== "object" || !workflow.jobs) {
+  if (!parsed || typeof parsed !== "object") {
     return [];
   }
 
   const snippets: ShellSnippet[] = [];
-  const globalDefaultShell = workflow.defaults?.run?.shell;
 
-  for (const [, job] of Object.entries(workflow.jobs)) {
-    if (!job || !job.steps) continue;
+  // Handle workflow files (jobs.<job>.steps[].run)
+  if (parsed.jobs) {
+    const globalDefaultShell = parsed.defaults?.run?.shell;
 
-    const jobDefaultShell = job.defaults?.run?.shell ?? globalDefaultShell;
+    for (const [, job] of Object.entries(parsed.jobs)) {
+      if (!job || !job.steps) continue;
 
-    for (const step of job.steps) {
-      if (!step || typeof step.run !== "string") continue;
+      const jobDefaultShell = job.defaults?.run?.shell ?? globalDefaultShell;
 
-      const shell = step.shell ?? jobDefaultShell ?? "bash";
-      if (!SHELL_DIALECTS.includes(shell)) continue;
+      for (const step of job.steps) {
+        const snippet = extractStepSnippet(text, step, jobDefaultShell);
+        if (snippet) snippets.push(snippet);
+      }
+    }
+  }
 
-      const runContent = step.run;
-      if (!runContent.trim()) continue;
-
-      const location = findRunContentLocation(text, step.run);
-      if (!location) continue;
-
-      snippets.push({
-        content: runContent,
-        startLine: location.line,
-        columnOffset: location.column,
-        shell,
-      });
+  // Handle composite action files (runs.steps[].run)
+  if (parsed.runs?.using === "composite" && parsed.runs.steps) {
+    for (const step of parsed.runs.steps) {
+      const snippet = extractStepSnippet(text, step, "bash");
+      if (snippet) snippets.push(snippet);
     }
   }
 
   return snippets;
+}
+
+function extractStepSnippet(
+  text: string,
+  step: WorkflowStep,
+  defaultShell: string | undefined,
+): ShellSnippet | null {
+  if (!step || typeof step.run !== "string") return null;
+
+  const shell = step.shell ?? defaultShell ?? "bash";
+  if (!SHELL_DIALECTS.includes(shell)) return null;
+
+  const runContent = step.run;
+  if (!runContent.trim()) return null;
+
+  const location = findRunContentLocation(text, step.run);
+  if (!location) return null;
+
+  return {
+    content: runContent,
+    startLine: location.line,
+    columnOffset: location.column,
+    shell,
+  };
 }
 
 interface ContentLocation {
@@ -175,9 +207,18 @@ function normalizeContent(s: string): string {
  * This prevents shellcheck from complaining about syntax it doesn't understand.
  */
 export function replaceGitHubExpressions(content: string): string {
-  return content.replace(/\$\{\{[^}]*\}\}/g, (match) => {
-    // Replace with $_ followed by underscores to maintain same length
-    // ${{ x }} (8 chars) -> $_______ (8 chars)
+  // Use non-greedy match to handle nested braces like ${{ fromJSON(x).y }}
+  return content.replace(/\$\{\{[\s\S]*?\}\}/g, (match) => {
+    // Replace with ${_:-x...x} to maintain same length
+    // ${{ foo }} (11 chars) -> ${_:-xxxxx} (11 chars)
+    // The :-x provides a default value so shellcheck won't warn about unset var
+    const prefix = "${_:-";
+    const suffix = "}";
+    const fillerLen = match.length - prefix.length - suffix.length;
+    if (fillerLen >= 0) {
+      return prefix + "x".repeat(fillerLen) + suffix;
+    }
+    // Fallback for very short expressions (shouldn't happen)
     return "$" + "_".repeat(match.length - 1);
   });
 }
