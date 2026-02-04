@@ -682,11 +682,9 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
       let args = ["-f", parser.outputFormat];
 
-      // Combine user excludes with workflow-specific excludes
-      // SC2194: "This word is constant" - false positive for case patterns
-      const workflowExcludes = ["2194"];
-      const allExcludes = [...settings.exclude, ...workflowExcludes];
-      args = args.concat(["-e", allExcludes.join(",")]);
+      if (settings.exclude.length) {
+        args = args.concat(["-e", settings.exclude.join(",")]);
+      }
 
       // Set shell dialect from workflow
       args = args.concat(["-s", snippet.shell]);
