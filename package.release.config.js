@@ -1,4 +1,4 @@
-import common from "./common.release.config.mjs";
+import common from "./common.release.config.js";
 
 /**
  * @type {import('semantic-release').GlobalConfig}

@@ -8,6 +8,7 @@
   "contributors": [
     "Felipe Santos <felipecassiors@gmail.com> (https://github.com/felipecrs)"
   ],
+  "type": "module",
   "license": "MIT",
   "categories": [
     "Linters",
@@ -260,9 +261,9 @@
     "prepare": "bindl",
     "check-types": "tsc --noEmit",
     "check-types:watch": "tsc --noEmit --watch",
-    "build": "npm run check-types && node esbuild.mjs",
-    "build:watch": "node esbuild.mjs --watch",
-    "build:prod": "npm run check-types && node esbuild.mjs --production",
+    "build": "npm run check-types && node esbuild.js",
+    "build:watch": "node esbuild.js --watch",
+    "build:prod": "npm run check-types && node esbuild.js --production",
     "build:test": "tsc --project tsconfig.test.json",
     "build:test:watch": "tsc --project tsconfig.test.json --watch",
     "build:all": "run-p build build:test",
@@ -279,18 +280,17 @@
     "release": "semantic-release"
   },
   "dependencies": {
-    "execa": "^5.1.1",
-    "lodash": "^4.17.21",
-    "minimatch": "^9.0.5",
+    "execa": "^9.6.1",
+    "minimatch": "^10.1.1",
+    "remeda": "^2.33.1",
     "semver": "^7.7.3"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@types/lodash": "^4.17.23",
-    "@types/node": "^16.18.126",
+    "@types/node": "^22.19.5",
     "@types/semver": "^7.7.1",
-    "@types/vscode": "~1.66.0",
+    "@types/vscode": "~1.100.0",
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2",
     "bindl": "^7.1.3",
@@ -308,8 +308,8 @@
     "typescript": "^5.9.3"
   },
   "engines": {
-    "vscode": "^1.66.0",
-    "node": ">=16"
+    "vscode": "^1.100.0",
+    "node": ">=22"
   },
   "volta": {
     "node": "24.12.0",

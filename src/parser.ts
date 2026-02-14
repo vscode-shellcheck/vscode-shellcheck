@@ -1,6 +1,6 @@
-import * as semver from "semver";
+import semver from "semver";
 import * as vscode from "vscode";
-import { MINIMUM_TOOL_VERSION } from "./utils/tool-check";
+import { MINIMUM_TOOL_VERSION } from "./utils/tool-check.js";
 
 interface ShellCheckReplacement {
   precedence: number;
@@ -21,9 +21,7 @@ interface ShellCheckProblem {
   level: string;
   code: number;
   message: string;
-  fix?: {
-    replacements: ShellCheckReplacement[];
-  };
+  fix?: { replacements: ShellCheckReplacement[] };
 }
 
 export interface Parser {
@@ -60,10 +58,7 @@ class JsonParserMixin {
       const codeAction = this.options?.enableQuickFix
         ? this.makeCodeAction(problem, textDocument, diagnostic)
         : null;
-      result.push({
-        diagnostic,
-        codeAction,
-      });
+      result.push({ diagnostic, codeAction });
     }
 
     return result;

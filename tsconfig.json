@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "outDir": "out",
-    "target": "es2020",
-    "lib": ["es2020"],
     "sourceMap": true,
     "rootDir": ".",
     "alwaysStrict": true,
@@ -14,8 +13,7 @@
     "noUnusedLocals": true,
     "noImplicitReturns": true,
     "noImplicitAny": true,
-    "noImplicitThis": true,
-    "esModuleInterop": true
+    "noImplicitThis": true
   },
   "include": ["src"]
 }
