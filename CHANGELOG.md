@@ -1,3 +1,9 @@
+## [0.38.7](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.6...v0.38.7) (2026-02-14)
+
+### Dependencies
+
+* **deps:** update dependencies ([#1753](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1753)) ([7ced1cc](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/7ced1cccb963d0a11c59a9f1da804efb1d78c810))
+
 ## [0.38.6](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.5...v0.38.6) (2026-01-11)
 
 ### Dependencies
