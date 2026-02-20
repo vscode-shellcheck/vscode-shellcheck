@@ -1,3 +1,9 @@
+## [0.38.8](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.7...v0.38.8) (2026-02-20)
+
+### Dependencies
+
+* **deps:** bump tar and npm ([#1755](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1755)) ([415ac10](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/415ac10e68ab0d4fee4522940f495daae37e07d9))
+
 ## [0.38.7](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.6...v0.38.7) (2026-02-14)
 
 ### Dependencies
