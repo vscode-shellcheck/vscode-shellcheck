@@ -1,3 +1,9 @@
+## [0.38.9](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.8...v0.38.9) (2026-02-25)
+
+### Dependencies
+
+* **deps:** bump minimatch ([#1760](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1760)) ([c52f760](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/c52f760083ccb38832363b59f236a039c9e202f3))
+
 ## [0.38.8](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.7...v0.38.8) (2026-02-20)
 
 ### Dependencies
