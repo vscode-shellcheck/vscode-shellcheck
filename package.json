@@ -2,7 +2,7 @@
   "name": "shellcheck",
   "displayName": "ShellCheck",
   "description": "Integrates ShellCheck into VS Code, a linter for Shell scripts.",
-  "version": "0.38.8",
+  "version": "0.38.9",
   "publisher": "timonwong",
   "author": "Timon Wong <timon86.wang@gmail.com> (https://github.com/timonwong)",
   "contributors": [
@@ -281,7 +281,7 @@
   "dependencies": {
     "execa": "^5.1.1",
     "lodash": "^4.17.23",
-    "minimatch": "^9.0.5",
+    "minimatch": "^9.0.7",
     "semver": "^7.7.4"
   },
   "devDependencies": {
@@ -293,7 +293,7 @@
     "@types/vscode": "~1.66.0",
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2",
-    "bindl": "^7.1.3",
+    "bindl": "^7.1.4",
     "conventional-changelog-conventionalcommits": "^9.1.0",
     "cspell": "^9.7.0",
     "esbuild": "^0.27.3",
