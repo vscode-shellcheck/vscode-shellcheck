@@ -1,6 +1,6 @@
-import * as util from "node:util";
+import util from "node:util";
 import * as vscode from "vscode";
-import { Arguments, Logger, LogLevel } from "./types";
+import { Arguments, Logger, LogLevel } from "./types.js";
 
 function formatMessage(
   level: string,

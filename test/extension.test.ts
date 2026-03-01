@@ -4,12 +4,12 @@
 //
 
 // The module 'assert' provides assertion methods from node
-import * as assert from "node:assert";
+import assert from "node:assert";
 
 // You can import and use all API from the 'vscode' module
 // as well as import your extension to test it
 import * as vscode from "vscode";
-import { sleep } from "./utils";
+import { setTimeout } from "node:timers/promises";
 
 suite("Shellcheck extension", () => {
   test("Extension should be activated on shell script files", async () => {
@@ -22,7 +22,7 @@ suite("Shellcheck extension", () => {
     });
     const editor = await vscode.window.showTextDocument(document);
 
-    await sleep(3000);
+    await setTimeout(3000);
     const diagnostics = vscode.languages.getDiagnostics(editor.document.uri);
     assert.strictEqual(ext.isActive, true, "Extension should be activated");
     assert.strictEqual(diagnostics.length, 1);
@@ -46,7 +46,7 @@ suite("Shellcheck extension", () => {
     });
     const editor = await vscode.window.showTextDocument(document);
 
-    await sleep(3000);
+    await setTimeout(3000);
     const diagnostics = vscode.languages.getDiagnostics(editor.document.uri);
     assert.strictEqual(ext.isActive, true, "Extension should be activated");
     assert.strictEqual(diagnostics.length, 1);

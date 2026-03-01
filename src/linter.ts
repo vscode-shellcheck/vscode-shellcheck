@@ -1,25 +1,28 @@
-import * as path from "node:path";
-import * as semver from "semver";
+import { extname } from "node:path";
+import { SemVer } from "semver";
 import * as vscode from "vscode";
-import execa from "execa";
-import { ShellCheckExtensionApi } from "./api";
-import { createParser, ParseResult } from "./parser";
-import { ThrottledDelayer } from "./utils/async";
-import { getToolVersion, tryPromptForUpdatingTool } from "./utils/tool-check";
+import { execa } from "execa";
+import { ShellCheckExtensionApi } from "./api.js";
+import { createParser, ParseResult } from "./parser.js";
+import { ThrottledDelayer } from "./utils/async.js";
+import {
+  getToolVersion,
+  tryPromptForUpdatingTool,
+} from "./utils/tool-check.js";
 import {
   guessDocumentDirname,
   getWorkspaceFolderPath,
   ensureCurrentWorkingDirectory,
-} from "./utils/path";
-import { FixAllProvider } from "./fix-all";
-import { getWikiUrlForRule } from "./utils/link";
-import * as logging from "./utils/logging";
+} from "./utils/path.js";
+import { FixAllProvider } from "./fix-all.js";
+import { getWikiUrlForRule } from "./utils/link.js";
+import * as logging from "./utils/logging/index.js";
 import {
   checkIfConfigurationChanged,
   getWorkspaceSettings,
   RunTrigger,
   ShellCheckSettings,
-} from "./settings";
+} from "./settings.js";
 
 namespace CommandIds {
   export const runLint: string = "shellcheck.runLint";
@@ -29,7 +32,7 @@ namespace CommandIds {
 }
 
 type ToolStatus =
-  | { ok: true; version: semver.SemVer }
+  | { ok: true; version: SemVer }
   | { ok: false; reason: "executableNotFound" | "executionFailed" };
 
 function toolStatusByError(error: any): ToolStatus {
@@ -352,9 +355,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
   public provideApi(): ShellCheckExtensionApi {
     return {
-      apiVersion1: {
-        registerDocumentFilter: this.registerDocumentFilter,
-      },
+      apiVersion1: { registerDocumentFilter: this.registerDocumentFilter },
     };
   }
 
@@ -543,7 +544,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
       // https://github.com/timonwong/vscode-shellcheck/issues/43
       // We should explicit set shellname based on file extension name
-      const fileExt = path.extname(textDocument.fileName);
+      const fileExt = extname(textDocument.fileName);
       if (fileExt === ".bash" || fileExt === ".ksh" || fileExt === ".dash") {
         // shellcheck args: specify dialect (sh, bash, dash, ksh)
         args = args.concat(["-s", fileExt.substring(1)]);
@@ -572,8 +573,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         .then((resolvedCwd) => {
           cwd = resolvedCwd;
           logging.debug("Spawn: (cwd=%s) %s %s", cwd, executable.path, args);
-          const options: execa.Options = { cwd };
-          const childProcess = execa(executable.path, args, options);
+          const childProcess = execa(executable.path, args, { cwd });
 
           if (childProcess.pid && childProcess.stdin && childProcess.stdout) {
             childProcess.stdout.setEncoding("utf-8");

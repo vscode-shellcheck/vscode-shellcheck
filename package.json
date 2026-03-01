@@ -8,6 +8,7 @@
   "contributors": [
     "Felipe Santos <felipecassiors@gmail.com> (https://github.com/felipecrs)"
   ],
+  "type": "module",
   "license": "MIT",
   "categories": [
     "Linters",
@@ -260,9 +261,9 @@
     "prepare": "bindl",
     "check-types": "tsc --noEmit",
     "check-types:watch": "tsc --noEmit --watch",
-    "build": "npm run check-types && node esbuild.mjs",
-    "build:watch": "node esbuild.mjs --watch",
-    "build:prod": "npm run check-types && node esbuild.mjs --production",
+    "build": "npm run check-types && node esbuild.js",
+    "build:watch": "node esbuild.js --watch",
+    "build:prod": "npm run check-types && node esbuild.js --production",
     "build:test": "tsc --project tsconfig.test.json",
     "build:test:watch": "tsc --project tsconfig.test.json --watch",
     "build:all": "run-p build build:test",
@@ -274,31 +275,32 @@
     "format:check": "prettier --check .",
     "spell": "cspell \"**\"",
     "pretest": "npm run build:all",
-    "test": "vscode-test",
+    "test": "node ./out/test/runTest.js",
     "posttest": "npm run lint && npm run format:check && npm run spell && installed-check --ignore-dev",
     "release": "semantic-release"
   },
   "dependencies": {
-    "execa": "^5.1.1",
-    "lodash": "^4.17.23",
-    "minimatch": "^9.0.7",
+    "execa": "^9.6.1",
+    "minimatch": "^10.2.4",
+    "remeda": "^2.33.6",
     "semver": "^7.7.4"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@types/lodash": "^4.17.24",
-    "@types/node": "^16.18.126",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.19.13",
     "@types/semver": "^7.7.1",
-    "@types/vscode": "~1.66.0",
-    "@vscode/test-cli": "^0.0.12",
+    "@types/vscode": "~1.100.0",
     "@vscode/test-electron": "^2.5.2",
-    "bindl": "^7.1.4",
+    "bindl": "^7.1.5",
     "conventional-changelog-conventionalcommits": "^9.1.0",
     "cspell": "^9.7.0",
     "esbuild": "^0.27.3",
     "eslint": "^9.39.3",
+    "glob": "^13.0.6",
     "installed-check": "^10.0.1",
+    "mocha": "^10.8.2",
     "neostandard": "^0.12.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.8.1",
@@ -308,12 +310,12 @@
     "typescript": "^5.9.3"
   },
   "engines": {
-    "vscode": "^1.66.0",
-    "node": ">=16"
+    "vscode": "^1.100.0",
+    "node": ">=22"
   },
   "volta": {
-    "node": "24.13.1",
-    "npm": "11.10.0"
+    "node": "24.14.0",
+    "npm": "11.11.0"
   },
   "__metadata": {
     "id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",

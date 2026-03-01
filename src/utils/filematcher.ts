@@ -1,6 +1,6 @@
-// Stolen from vscode-jshint.
+// Originally stolen from vscode-jshint:
 // https://github.com/Microsoft/vscode-jshint/blob/ab784c08de7bbc6bac5b5c3fe1c1fbaa3fea110f/jshint-server/src/server.ts#L258
-import * as _ from "lodash";
+import { pickBy, keys } from "remeda";
 import { minimatch } from "minimatch";
 
 export interface FileSettings {
@@ -16,15 +16,15 @@ export class FileMatcher {
     this.excludeCache = {};
   }
 
-  private pickTrueKeys(obj?: FileSettings): string[] {
-    return _.keys(
-      _.pickBy(obj, (value) => {
+  private pickTrueKeys(obj: FileSettings): string[] {
+    return keys(
+      pickBy(obj, (value) => {
         return value === true;
       }),
     );
   }
 
-  public configure(exclude?: FileSettings): void {
+  public configure(exclude: FileSettings): void {
     this.excludeCache = {};
     this.excludePatterns = this.pickTrueKeys(exclude);
   }
@@ -50,7 +50,7 @@ export class FileMatcher {
     root?: string,
   ): boolean {
     const relativePath = this.relativeTo(path, root);
-    return _.some(excludePatterns, (pattern) => {
+    return excludePatterns.some((pattern) => {
       return minimatch(relativePath, pattern, { dot: true });
     });
   }
