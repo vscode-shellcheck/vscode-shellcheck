@@ -1,50 +1,37 @@
-import { resolve as pathResolve } from "node:path";
 import Mocha from "mocha";
-import { fileURLToPath } from "node:url";
-import { globSync } from "node:fs";
+import { glob } from "node:fs/promises";
+import { resolve } from "node:path";
 
-export function run(): Promise<void> {
+interface MochaType extends Mocha {
+  lazyLoadFiles(enable: boolean): void;
+  loadFilesAsync(options?: object): Promise<void>;
+}
+
+export async function run(): Promise<void> {
   // Create the mocha test
   const mocha = new Mocha({
     ui: "tdd",
     color: true,
     timeout: 10000,
-  });
+  }) as MochaType;
 
-  // ESM - enable async file loading
-  (mocha as any).lazyLoadFiles(true);
+  const testsRoot = import.meta.dirname;
 
-  // ESM use import.meta and URL-path instead of __dirname
-  const testsRoot = fileURLToPath(new URL(".", import.meta.url));
+  // Add files to the test suite
+  for await (const file of glob("**/**.test.js", { cwd: testsRoot })) {
+    mocha.addFile(resolve(testsRoot, file));
+  }
+
+  mocha.lazyLoadFiles(true);
+  await mocha.loadFilesAsync();
 
   return new Promise((resolve, reject) => {
-    try {
-      const files = globSync("**/**.test.js", { cwd: testsRoot });
-
-      // Add files to the test suite
-      files.forEach((f) => mocha.addFile(pathResolve(testsRoot, f)));
-
-      // ESM - kick off async file loading
-      (mocha as any)
-        .loadFilesAsync()
-        .then(() => {
-          mocha.run((failures) => {
-            if (failures > 0) {
-              reject(new Error(`${failures} tests failed.`));
-            } else {
-              resolve();
-            }
-          });
-        })
-        .catch((err: any) => {
-          console.error("loadFilesAsync failed!", err);
-          reject(err);
-        });
-
-      // Run the mocha test
-    } catch (err) {
-      console.error(err);
-      reject(err);
-    }
+    mocha.run((failures) => {
+      if (failures > 0) {
+        reject(new Error(`${failures} tests failed.`));
+      } else {
+        resolve();
+      }
+    });
   });
 }

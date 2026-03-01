@@ -1,14 +1,10 @@
 import { runTests } from "@vscode/test-electron";
-import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
 
 async function main() {
   try {
-    const extensionDevelopmentPath = fileURLToPath(
-      new URL("../../", import.meta.url),
-    );
-    const extensionTestsPath = fileURLToPath(
-      new URL("./index.js", import.meta.url),
-    );
+    const extensionDevelopmentPath = resolve(import.meta.dirname, "../..");
+    const extensionTestsPath = resolve(import.meta.dirname, "./index.js");
 
     const version = process.env.VSCODE_TEST_VERSION ?? "stable";
 
