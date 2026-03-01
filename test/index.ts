@@ -2,7 +2,7 @@ import Mocha from "mocha";
 import { glob } from "node:fs/promises";
 import { resolve } from "node:path";
 
-interface MochaType extends Mocha {
+interface MochaFixed extends Mocha {
   lazyLoadFiles(enable: boolean): void;
   loadFilesAsync(options?: object): Promise<void>;
 }
@@ -13,7 +13,7 @@ export async function run(): Promise<void> {
     ui: "tdd",
     color: true,
     timeout: 10000,
-  }) as MochaType;
+  }) as MochaFixed;
 
   const testsRoot = import.meta.dirname;
 
