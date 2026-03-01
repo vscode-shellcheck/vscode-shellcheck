@@ -275,7 +275,7 @@
     "spell": "cspell \"**\"",
     "pretest": "npm run build:all",
     "test": "vscode-test",
-    "posttest": "npm run lint && npm run format:check && npm run spell && installed-check --ignoreDev",
+    "posttest": "npm run lint && npm run format:check && npm run spell && installed-check --ignore-dev",
     "release": "semantic-release"
   },
   "dependencies": {
