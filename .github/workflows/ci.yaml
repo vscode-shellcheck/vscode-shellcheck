@@ -100,14 +100,14 @@ jobs:
         env:
           VSCE_TARGET: ${{ matrix.target }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.target }}
           path: "*.vsix"
       # vsce updates the version in package.json and package-lock.json during
       # package step, so we need to save them for the publish step
       - if: matrix.target == 'universal'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: package-json
           path: |
@@ -130,7 +130,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           token: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE || github.token }}
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           merge-multiple: true
       - name: Setup Volta, Node and NPM
