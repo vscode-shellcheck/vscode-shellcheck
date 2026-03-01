@@ -298,6 +298,7 @@
     "cspell": "^9.7.0",
     "esbuild": "^0.27.3",
     "eslint": "^9.39.3",
+    "glob": "^13.0.6",
     "installed-check": "^10.0.1",
     "mocha": "^10.8.2",
     "neostandard": "^0.12.2",

@@ -1,5 +1,5 @@
 import Mocha from "mocha";
-import { glob } from "node:fs/promises";
+import { Glob } from "glob";
 import { resolve } from "node:path";
 
 interface MochaFixed extends Mocha {
@@ -18,7 +18,7 @@ export async function run(): Promise<void> {
   const testsRoot = import.meta.dirname;
 
   // Add files to the test suite
-  for await (const file of glob("**/**.test.js", { cwd: testsRoot })) {
+  for await (const file of new Glob("**/**.test.js", { cwd: testsRoot })) {
     mocha.addFile(resolve(testsRoot, file));
   }
 
