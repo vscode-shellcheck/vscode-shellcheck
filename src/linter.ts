@@ -1,5 +1,5 @@
-import path from "node:path";
-import semver from "semver";
+import { extname } from "node:path";
+import { SemVer } from "semver";
 import * as vscode from "vscode";
 import { execa } from "execa";
 import { ShellCheckExtensionApi } from "./api.js";
@@ -32,7 +32,7 @@ namespace CommandIds {
 }
 
 type ToolStatus =
-  | { ok: true; version: semver.SemVer }
+  | { ok: true; version: SemVer }
   | { ok: false; reason: "executableNotFound" | "executionFailed" };
 
 function toolStatusByError(error: any): ToolStatus {
@@ -544,7 +544,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
       // https://github.com/timonwong/vscode-shellcheck/issues/43
       // We should explicit set shellname based on file extension name
-      const fileExt = path.extname(textDocument.fileName);
+      const fileExt = extname(textDocument.fileName);
       if (fileExt === ".bash" || fileExt === ".ksh" || fileExt === ".dash") {
         // shellcheck args: specify dialect (sh, bash, dash, ksh)
         args = args.concat(["-s", fileExt.substring(1)]);

@@ -1,5 +1,5 @@
 import fs from "node:fs/promises";
-import path from "node:path";
+import { dirname } from "node:path";
 import * as vscode from "vscode";
 
 // Stolen from vscode-go: https://github.com/microsoft/vscode-go/blob/d6a0fac4d1722367c9496fb516d2d05ec887fbd3/src/goPath.ts#L193
@@ -22,7 +22,7 @@ export function guessDocumentDirname(
   }
 
   if (isFileUriScheme(textDocument.uri)) {
-    return path.dirname(textDocument.fileName);
+    return dirname(textDocument.fileName);
   }
 
   return undefined;

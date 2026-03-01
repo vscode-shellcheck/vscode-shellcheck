@@ -1,4 +1,4 @@
-import semver from "semver";
+import { SemVer, gte as semVerGte } from "semver";
 import * as vscode from "vscode";
 import { MINIMUM_TOOL_VERSION } from "./utils/tool-check.js";
 
@@ -37,7 +37,7 @@ export interface ParseResult {
 }
 
 export interface ParserOptions {
-  toolVersion?: semver.SemVer | null;
+  toolVersion?: SemVer | null;
   enableQuickFix?: boolean;
 }
 
@@ -238,7 +238,7 @@ export function createParser(
   if (
     options &&
     options.toolVersion &&
-    semver.gte(options.toolVersion, MINIMUM_TOOL_VERSION)
+    semVerGte(options.toolVersion, MINIMUM_TOOL_VERSION)
   ) {
     return new Json1Parser(textDocument, options);
   }

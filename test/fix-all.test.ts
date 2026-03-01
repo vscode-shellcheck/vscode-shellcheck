@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import * as vscode from "vscode";
-import { sleep } from "./utils.js";
+import { setTimeout } from "node:timers/promises";
 
 suite("Fix all", () => {
   test("Extension should fix issues automatically on demand", async () => {
@@ -16,11 +16,11 @@ eval \`uname -r\`
     const editor = await vscode.window.showTextDocument(document);
 
     // some time is required to lint
-    await sleep(1500);
+    await setTimeout(1500);
 
     await vscode.commands.executeCommand("editor.action.fixAll");
     // some time is required to fix the issues
-    await sleep(1500);
+    await setTimeout(1500);
 
     assert.strictEqual(
       editor.document.getText(),
@@ -46,11 +46,11 @@ eval \`uname -r\`
     const editor = await vscode.window.showTextDocument(document);
 
     // some time is required to lint
-    await sleep(1500);
+    await setTimeout(1500);
 
     await vscode.commands.executeCommand("editor.action.fixAll");
     // some time is required to fix the issues
-    await sleep(1500);
+    await setTimeout(1500);
 
     assert.strictEqual(
       editor.document.getText(),
