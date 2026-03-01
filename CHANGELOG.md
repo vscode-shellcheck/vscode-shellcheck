@@ -1,3 +1,9 @@
+## [0.39.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.9...v0.39.0) (2026-03-01)
+
+### Features
+
+* migrate to esm ([#1614](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1614)) ([f6fbe9d](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/f6fbe9d9cf35e5aeb85c7dc2ab6f9bcb993329c8))
+
 ## [0.38.9](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.8...v0.38.9) (2026-02-25)
 
 ### Dependencies
