@@ -3,6 +3,7 @@
   "extends": ["config:recommended"],
   "dependencyDashboard": true,
   "rangeStrategy": "bump",
+  "semanticCommits": "enabled",
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true
@@ -10,9 +11,39 @@
   "packageRules": [
     {
       "description": "Automerge non-major dev updates",
-      "matchDepTypes": ["devDependencies"],
+      "matchDepTypes": ["devDependencies", "volta", "action"],
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
+    },
+    {
+      "matchDepTypes": ["dependencies"],
+      "semanticCommitType": "build"
+    },
+    {
+      "matchDepTypes": ["devDependencies", "volta"],
+      "semanticCommitType": "build",
+      "semanticCommitScope": "deps-dev"
+    },
+    {
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "semanticCommitType": "build",
+      "semanticCommitScope": "deps-dev"
+    },
+    {
+      "matchDepTypes": ["action"],
+      "semanticCommitType": "ci"
+    },
+    {
+      "description": "Disable minor updates for @types/vscode",
+      "matchPackageNames": ["@types/vscode"],
+      "matchUpdateTypes": ["major", "minor"],
+      "enabled": false
+    },
+    {
+      "description": "Disable major updates for node and @types/node",
+      "matchPackageNames": ["node", "@types/node"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     }
   ]
 }
