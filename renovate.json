@@ -34,14 +34,19 @@
       "semanticCommitType": "ci"
     },
     {
+      "description": "Disable engine updates",
+      "matchDepTypes": ["engines"],
+      "enabled": false
+    },
+    {
       "description": "Disable minor updates for @types/vscode",
       "matchPackageNames": ["@types/vscode"],
       "matchUpdateTypes": ["major", "minor"],
       "enabled": false
     },
     {
-      "description": "Disable major updates for node and @types/node",
-      "matchPackageNames": ["node", "@types/node"],
+      "description": "Disable major updates for @types/node",
+      "matchPackageNames": ["@types/node"],
       "matchUpdateTypes": ["major"],
       "enabled": false
     }
