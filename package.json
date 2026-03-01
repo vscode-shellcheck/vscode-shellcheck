@@ -275,7 +275,7 @@
     "format:check": "prettier --check .",
     "spell": "cspell \"**\"",
     "pretest": "npm run build:all",
-    "test": "vscode-test",
+    "test": "node ./out/test/runTest.js",
     "posttest": "npm run lint && npm run format:check && npm run spell && installed-check --ignore-dev",
     "release": "semantic-release"
   },
@@ -288,10 +288,10 @@
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^22.19.5",
     "@types/semver": "^7.7.1",
     "@types/vscode": "~1.100.0",
-    "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2",
     "bindl": "^7.1.2",
     "conventional-changelog-conventionalcommits": "^9.1.0",
@@ -299,6 +299,7 @@
     "esbuild": "^0.27.2",
     "eslint": "^9.39.2",
     "installed-check": "^9.3.0",
+    "mocha": "^10.8.2",
     "neostandard": "^0.12.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.7.4",
@@ -312,8 +313,8 @@
     "node": ">=22"
   },
   "volta": {
-    "node": "24.12.0",
-    "npm": "11.7.0"
+    "node": "24.14.0",
+    "npm": "11.11.0"
   },
   "__metadata": {
     "id": "f95d8fff-f70a-4ae5-bb06-5c47ddbc8fc6",
