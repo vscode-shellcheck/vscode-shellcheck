@@ -310,7 +310,7 @@
     "typescript": "^5.9.3"
   },
   "engines": {
-    "vscode": "^1.100.0",
+    "vscode": "^1.109.5",
     "node": ">=22"
   },
   "volta": {
