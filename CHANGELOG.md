@@ -1,3 +1,9 @@
+## [0.39.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.39.0...v0.39.1) (2026-03-02)
+
+### Bug Fixes
+
+* improve reliability of fix all ([#1776](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1776)) ([0936f03](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/0936f03fdc23ab605ec9fc44f8bfe0232e7d1174))
+
 ## [0.39.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.38.9...v0.39.0) (2026-03-01)
 
 ### Features
