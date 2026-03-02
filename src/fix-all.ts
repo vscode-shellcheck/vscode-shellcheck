@@ -52,27 +52,17 @@ async function getFixAllCodeAction(
         if (!fixAll.edit) {
           fixAll.edit = new vscode.WorkspaceEdit();
         }
-        for (const actionEditEntries of action.edit.entries()) {
-          // filter overlapping edits to prevent wrong behavior
-          let duplicated = false;
-          for (const actionEdit of actionEditEntries[1]) {
-            for (const fixAllEditEntries of fixAll.edit.entries()) {
-              for (const fixAllEdit of fixAllEditEntries[1]) {
-                if (fixAllEdit.range.contains(actionEdit.range)) {
-                  duplicated = true;
-                  break;
-                }
-              }
-              if (duplicated) {
-                break;
-              }
-            }
-            if (duplicated) {
-              break;
-            }
-          }
-          if (!duplicated) {
-            fixAll.edit.set(actionEditEntries[0], actionEditEntries[1]);
+        for (const [uri, edits] of action.edit.entries()) {
+          const existingEdits = fixAll.edit.get(uri);
+          // if any edit overlaps with existing edits, skip all edits for this
+          // URI to prevent wrong behavior from applying conflicting fixes
+          const hasOverlap = edits.some((edit) =>
+            existingEdits.some((existingEdit) =>
+              existingEdit.range.contains(edit.range),
+            ),
+          );
+          if (!hasOverlap) {
+            fixAll.edit.set(uri, edits);
           }
         }
       }
