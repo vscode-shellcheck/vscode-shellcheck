@@ -1,61 +1,50 @@
-//
-// Note: This example test is leveraging the Mocha test framework.
-// Please refer to their documentation on https://mochajs.org/ for help.
-//
-
-// The module 'assert' provides assertion methods from node
 import assert from "node:assert";
-
-// You can import and use all API from the 'vscode' module
-// as well as import your extension to test it
 import * as vscode from "vscode";
-import { setTimeout } from "node:timers/promises";
+import {
+  closeAllEditors,
+  openDocument,
+  waitForDiagnostics,
+} from "./helpers.js";
 
 suite("Shellcheck extension", () => {
-  test("Extension should be activated on shell script files", async () => {
-    const ext = <vscode.Extension<any>>(
-      vscode.extensions.getExtension("timonwong.shellcheck")
-    );
-    const document = await vscode.workspace.openTextDocument({
-      content: "#!/bin/bash\nx=1",
-      language: "shellscript",
-    });
-    const editor = await vscode.window.showTextDocument(document);
+  teardown(async () => {
+    await closeAllEditors();
+  });
 
-    await setTimeout(3000);
-    const diagnostics = vscode.languages.getDiagnostics(editor.document.uri);
+  test("Extension should be activated on shell script files", async () => {
+    const ext = vscode.extensions.getExtension("timonwong.shellcheck")!;
+    const document = await openDocument("#!/bin/bash\nx=1", "shellscript");
+    const diagnostics = await waitForDiagnostics(document.uri);
+
     assert.strictEqual(ext.isActive, true, "Extension should be activated");
     assert.strictEqual(diagnostics.length, 1);
-    if (typeof diagnostics[0].code !== "object") {
-      throw new Error("diagnostic.code should be an object");
-    }
-    assert.strictEqual(diagnostics[0].code?.value, "SC2034");
+    assert.strictEqual(typeof diagnostics[0].code, "object");
+    const code = diagnostics[0].code as {
+      value: string;
+      target: vscode.Uri;
+    };
+    assert.strictEqual(code.value, "SC2034");
     assert.strictEqual(
-      diagnostics[0].code?.target.toString(),
+      code.target.toString(),
       "https://www.shellcheck.net/wiki/SC2034",
     );
   });
 
   test("Extension should be activated on bats files", async () => {
-    const ext = <vscode.Extension<any>>(
-      vscode.extensions.getExtension("timonwong.shellcheck")
-    );
-    const document = await vscode.workspace.openTextDocument({
-      content: "#!/usr/bin/env bats\nx=1",
-      language: "bats",
-    });
-    const editor = await vscode.window.showTextDocument(document);
+    const ext = vscode.extensions.getExtension("timonwong.shellcheck")!;
+    const document = await openDocument("#!/usr/bin/env bats\nx=1", "bats");
+    const diagnostics = await waitForDiagnostics(document.uri);
 
-    await setTimeout(3000);
-    const diagnostics = vscode.languages.getDiagnostics(editor.document.uri);
     assert.strictEqual(ext.isActive, true, "Extension should be activated");
     assert.strictEqual(diagnostics.length, 1);
-    if (typeof diagnostics[0].code !== "object") {
-      throw new Error("diagnostic.code should be an object");
-    }
-    assert.strictEqual(diagnostics[0].code?.value, "SC2034");
+    assert.strictEqual(typeof diagnostics[0].code, "object");
+    const code = diagnostics[0].code as {
+      value: string;
+      target: vscode.Uri;
+    };
+    assert.strictEqual(code.value, "SC2034");
     assert.strictEqual(
-      diagnostics[0].code?.target.toString(),
+      code.target.toString(),
       "https://www.shellcheck.net/wiki/SC2034",
     );
   });

@@ -15,14 +15,15 @@
       "request": "launch",
       "args": [
         "--new-window",
+        "--disable-extensions",
         "--extensionDevelopmentPath=${workspaceFolder}",
-        "--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
+        "--extensionTestsPath=${workspaceFolder}/out/test/index"
       ],
       "outFiles": [
         "${workspaceFolder}/dist/**/*.js",
         "${workspaceFolder}/out/test/**/*.js"
       ],
-      "preLaunchTask": "npm: build:all:watch"
+      "preLaunchTask": "${defaultBuildTask}"
     }
   ]
 }
