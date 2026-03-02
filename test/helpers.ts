@@ -15,11 +15,12 @@ export async function openDocument(
   let document = await vscode.workspace.openTextDocument(uri);
   document = await vscode.languages.setTextDocumentLanguage(document, language);
   const editor = await vscode.window.showTextDocument(document);
-  if (content.length > 0) {
-    await editor.edit((editBuilder) => {
+  await editor.edit((editBuilder) => {
+    editBuilder.setEndOfLine(vscode.EndOfLine.LF);
+    if (content.length > 0) {
       editBuilder.insert(new vscode.Position(0, 0), content);
-    });
-  }
+    }
+  });
 
   return editor.document;
 }
