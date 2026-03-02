@@ -21,18 +21,19 @@ eval \`uname -r\`
 `,
       "shellscript",
     );
-    await waitForDiagnostics(document.uri);
-
-    const expected = `#!/bin/bash
-echo "$SHELL"
-echo "$SHELL"
-eval $(uname -r)
-`;
+    await waitForDiagnostics(document);
 
     await vscode.commands.executeCommand("editor.action.fixAll");
     const text = await waitForText(document);
 
-    assert.strictEqual(text, expected);
+    assert.strictEqual(
+      text,
+      `#!/bin/bash
+echo "$SHELL"
+echo "$SHELL"
+eval $(uname -r)
+`,
+    );
   });
 
   test("Extension should fix only one issue in a same range", async function () {
@@ -45,18 +46,19 @@ eval \`uname -r\`
 `,
       "shellscript",
     );
-    await waitForDiagnostics(document.uri);
-
-    const expected = `#!/bin/bash
-# shellcheck enable=require-variable-braces
-echo "$SHELL"
-echo "$SHELL"
-eval $(uname -r)
-`;
+    await waitForDiagnostics(document);
 
     await vscode.commands.executeCommand("editor.action.fixAll");
     const text = await waitForText(document);
 
-    assert.strictEqual(text, expected);
+    assert.strictEqual(
+      text,
+      `#!/bin/bash
+# shellcheck enable=require-variable-braces
+echo "$SHELL"
+echo "$SHELL"
+eval $(uname -r)
+`,
+    );
   });
 });

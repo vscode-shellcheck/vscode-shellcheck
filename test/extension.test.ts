@@ -14,7 +14,7 @@ suite("Shellcheck extension", () => {
   test("Extension should be activated on shell script files", async () => {
     const ext = vscode.extensions.getExtension("timonwong.shellcheck")!;
     const document = await openDocument("#!/bin/bash\nx=1", "shellscript");
-    const diagnostics = await waitForDiagnostics(document.uri);
+    const diagnostics = await waitForDiagnostics(document);
 
     assert.strictEqual(ext.isActive, true, "Extension should be activated");
     assert.strictEqual(diagnostics.length, 1);
@@ -33,7 +33,7 @@ suite("Shellcheck extension", () => {
   test("Extension should be activated on bats files", async () => {
     const ext = vscode.extensions.getExtension("timonwong.shellcheck")!;
     const document = await openDocument("#!/usr/bin/env bats\nx=1", "bats");
-    const diagnostics = await waitForDiagnostics(document.uri);
+    const diagnostics = await waitForDiagnostics(document);
 
     assert.strictEqual(ext.isActive, true, "Extension should be activated");
     assert.strictEqual(diagnostics.length, 1);
