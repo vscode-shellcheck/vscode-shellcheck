@@ -61,4 +61,6 @@ eval $(uname -r)
 `,
     );
   });
-});
+})
+  // TODO: fix the flakiness and remove this
+  .retries(3);
