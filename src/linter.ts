@@ -1,28 +1,28 @@
+import { execa } from "execa";
 import { extname } from "node:path";
 import { SemVer } from "semver";
 import * as vscode from "vscode";
-import { execa } from "execa";
 import { ShellCheckExtensionApi } from "./api.js";
-import { createParser, ParseResult } from "./parser.js";
-import { ThrottledDelayer } from "./utils/async.js";
-import {
-  getToolVersion,
-  tryPromptForUpdatingTool,
-} from "./utils/tool-check.js";
-import {
-  guessDocumentDirname,
-  getWorkspaceFolderPath,
-  ensureCurrentWorkingDirectory,
-} from "./utils/path.js";
 import { FixAllProvider } from "./fix-all.js";
-import { getWikiUrlForRule } from "./utils/link.js";
-import * as logging from "./utils/logging/index.js";
+import { createParser, ParseResult } from "./parser.js";
 import {
   checkIfConfigurationChanged,
   getWorkspaceSettings,
   RunTrigger,
   ShellCheckSettings,
 } from "./settings.js";
+import { ThrottledDelayer } from "./utils/async.js";
+import { getWikiUrlForRule } from "./utils/link.js";
+import * as logging from "./utils/logging/index.js";
+import {
+  ensureCurrentWorkingDirectory,
+  getWorkspaceFolderPath,
+  guessDocumentDirname,
+} from "./utils/path.js";
+import {
+  getToolVersion,
+  tryPromptForUpdatingTool,
+} from "./utils/tool-check.js";
 
 namespace CommandIds {
   export const runLint: string = "shellcheck.runLint";
