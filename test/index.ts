@@ -1,11 +1,18 @@
-import Mocha from "mocha";
 import { Glob } from "glob";
+import Mocha from "mocha";
 import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 
-interface MochaFixed extends Mocha {
-  lazyLoadFiles(enable: boolean): void;
-  loadFilesAsync(options?: object): Promise<void>;
-}
+// @ts-expect-error
+import mochaEsmUtils from "mocha/lib/nodejs/esm-utils.js";
+
+// https://github.com/mochajs/mocha/issues/5599#issuecomment-3982072912
+mochaEsmUtils.requireOrImport = async (file: string) => {
+  const { default: def, ...rest } = (await mochaEsmUtils.doImport(
+    pathToFileURL(file),
+  )) as Record<string, unknown>;
+  return def ?? rest;
+};
 
 export async function run(): Promise<void> {
   // Create the mocha test
@@ -13,7 +20,7 @@ export async function run(): Promise<void> {
     ui: "tdd",
     color: true,
     timeout: 10000,
-  }) as MochaFixed;
+  });
 
   const testsRoot = import.meta.dirname;
 
@@ -22,7 +29,6 @@ export async function run(): Promise<void> {
     mocha.addFile(resolve(testsRoot, file));
   }
 
-  mocha.lazyLoadFiles(true);
   await mocha.loadFilesAsync();
 
   return new Promise((resolve, reject) => {
