@@ -1,12 +1,17 @@
 import assert from "node:assert";
 import * as vscode from "vscode";
 import { LinkifyProvider } from "../src/linkify.js";
+import { closeAllEditors, openDocument } from "./helpers.js";
 
 suite("Document Link Provider", () => {
+  teardown(async () => {
+    await closeAllEditors();
+  });
+
   test("Extension should linkify shellcheck directives automatically", async () => {
     const linker = new LinkifyProvider();
-    const document = await vscode.workspace.openTextDocument({
-      content: `#!/bin/bash
+    const document = await openDocument(
+      `#!/bin/bash
 
 # shellcheck disable=SC1010
 echo $SHELL
@@ -32,15 +37,12 @@ eval \`uname -r\`
 
 # shellcheck disable=1017
 `,
-      language: "shellscript",
-    });
+      "shellscript",
+    );
 
-    await vscode.window.showTextDocument(document);
-
-    const links: vscode.ProviderResult<vscode.DocumentLink[]> =
-      await linker.provideDocumentLinks(document, {
-        isCancellationRequested: false,
-      } as vscode.CancellationToken);
+    const links = await linker.provideDocumentLinks(document, {
+      isCancellationRequested: false,
+    } as vscode.CancellationToken);
 
     assert.ok(links);
     assert.strictEqual(links.length, 8);
