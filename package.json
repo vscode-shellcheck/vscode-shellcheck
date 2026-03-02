@@ -300,7 +300,7 @@
     "eslint": "^9.39.3",
     "glob": "^13.0.6",
     "installed-check": "^10.0.1",
-    "mocha": "^10.8.2",
+    "mocha": "^11.7.5",
     "neostandard": "^0.13.0",
     "npm-run-all2": "^8.0.4",
     "prettier": "^3.8.1",
