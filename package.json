@@ -294,7 +294,7 @@
     "@types/vscode": "~1.100.0",
     "@vscode/test-electron": "^2.5.2",
     "bindl": "^7.1.6",
-    "conventional-changelog-conventionalcommits": "^9.2.0",
+    "conventional-changelog-conventionalcommits": "^9.3.0",
     "cspell": "^9.7.0",
     "esbuild": "^0.27.3",
     "eslint": "^9.39.4",
