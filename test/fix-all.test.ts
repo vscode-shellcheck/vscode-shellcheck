@@ -34,7 +34,9 @@ echo "$SHELL"
 eval $(uname -r)
 `,
     );
-  });
+  })
+    // TODO: fix the flakiness and remove this
+    .retries(3);
 
   test("Extension should fix only one issue in a same range", async function () {
     const document = await openDocument(
@@ -61,6 +63,4 @@ eval $(uname -r)
 `,
     );
   });
-})
-  // TODO: fix the flakiness and remove this
-  .retries(3);
+});
