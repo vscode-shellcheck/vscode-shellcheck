@@ -1,3 +1,9 @@
+## [0.39.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.39.1...v0.39.2) (2026-03-07)
+
+### Dependencies
+
+* **deps:** lock file maintenance ([#1784](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1784)) ([2340d4d](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/2340d4d6ca6b735e632664da333d0d73bcbefdae))
+
 ## [0.39.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.39.0...v0.39.1) (2026-03-02)
 
 ### Bug Fixes
