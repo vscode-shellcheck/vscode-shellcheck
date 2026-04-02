@@ -1,3 +1,10 @@
+## [0.39.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.39.2...v0.39.3) (2026-04-02)
+
+### Dependencies
+
+* **deps:** update dependency minimatch to ^10.2.5 ([#1806](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1806)) ([3604776](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/360477674084ae4bf00280ed96df2d052099d303))
+* **deps:** update dependency remeda to ^2.33.7 ([#1807](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1807)) ([66d2559](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/66d25597e07371065e2e12a6bdff9c199c5c6f74))
+
 ## [0.39.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.39.1...v0.39.2) (2026-03-07)
 
 ### Dependencies
