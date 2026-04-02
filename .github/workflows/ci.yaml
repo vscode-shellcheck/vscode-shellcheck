@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Setup Volta, Node and NPM
-        uses: volta-cli/action@v4
+        uses: volta-cli/action@v5
       - run: npm ci
         env:
           BINDL_CURRENT_ONLY: "true"
@@ -85,7 +85,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Setup Volta, Node and NPM
-        uses: volta-cli/action@v4
+        uses: volta-cli/action@v5
       - if: matrix.target != 'universal'
         name: Install dependencies (with binaries)
         run: npm ci
@@ -134,7 +134,7 @@ jobs:
         with:
           merge-multiple: true
       - name: Setup Volta, Node and NPM
-        uses: volta-cli/action@v4
+        uses: volta-cli/action@v5
       - run: npm ci
         env:
           BINDL_SKIP: "true"
