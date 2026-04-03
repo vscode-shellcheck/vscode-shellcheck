@@ -289,7 +289,7 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^22.19.15",
+    "@types/node": "^22.19.17",
     "@types/semver": "^7.7.1",
     "@types/vscode": "~1.100.0",
     "@vscode/test-electron": "^2.5.2",
