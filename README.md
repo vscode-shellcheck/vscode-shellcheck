@@ -107,14 +107,32 @@ By default the linter will lint as you type. Alternatively, set `shellcheck.run`
 }
 ```
 
-### Excluding Checks
+### Configuring ShellCheck
 
-By default all [ShellCheck] checks are performed and reported on as necessary. To globally ignore certain checks in all files, you can use a `.shellcheckrc` at the workspace root. For example, to exclude [SC1017](https://github.com/koalaman/shellcheck/wiki/SC1017):
+[ShellCheck] has a default set of checks, but it is also configurable using [RC files](https://github.com/koalaman/shellcheck/blob/master/shellcheck.1.md#rc-files). To configure your project, add a `.shellcheckrc` at the workspace root. If no `.shellcheckrc` is found in any of the parent directories, ShellCheck will look in `~/.shellcheckrc` followed by the `$XDG_CONFIG_HOME` (usually `~/.config/shellcheckrc`) on Unix, or `%APPDATA%/shellcheckrc` on Windows. Only the first file found will be used.
+
+Here is an example `.shellcheckrc`:
 
 ```ini
-# .shellcheckrc
+# Look for 'source'd files relative to the checked script,
+# and also look for absolute paths in /mnt/chroot
+source-path=SCRIPTDIR
+source-path=/mnt/chroot
 
-disable=SC1017
+# Since ShellCheck 0.9.0, values can be quoted with '' or "" to allow spaces
+source-path="My Documents/scripts"
+
+# Allow opening any 'source'd file, even if not specified as input
+external-sources=true
+
+# Turn on warnings for unquoted variables with safe values
+enable=quote-safe-variables
+
+# Turn on warnings for unassigned uppercase variables
+enable=check-unassigned-uppercase
+
+# Allow [ ! -z foo ] instead of suggesting -n
+disable=SC2236
 ```
 
 As last resort, you can also add the _SC_ identifiers to `shellcheck.exclude` extension setting. For example, to exclude [SC1017](https://github.com/koalaman/shellcheck/wiki/SC1017):
