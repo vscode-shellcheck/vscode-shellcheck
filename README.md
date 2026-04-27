@@ -107,7 +107,7 @@ By default the linter will lint as you type. Alternatively, set `shellcheck.run`
 }
 ```
 
-### Configure ShellCheck
+### Configuring ShellCheck
 
 [ShellCheck] has a default set of checks, but it is also configurable using [RC files](https://github.com/koalaman/shellcheck/blob/master/shellcheck.1.md#rc-files). To configure your project, add a `.shellcheckrc` at the workspace root. If no `.shellcheckrc` is found in any of the parent directories, ShellCheck will look in `~/.shellcheckrc` followed by the `$XDG_CONFIG_HOME` (usually `~/.config/shellcheckrc`) on Unix, or `%APPDATA%/shellcheckrc` on Windows. Only the first file found will be used.
 
