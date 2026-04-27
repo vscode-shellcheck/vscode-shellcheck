@@ -35,6 +35,7 @@
     "posttest",
     "precompiled",
     "ralish",
+    "SCRIPTDIR",
     "shellcheck",
     "shellcheckrc",
     "shellname",
