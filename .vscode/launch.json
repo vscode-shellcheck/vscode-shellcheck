@@ -13,12 +13,8 @@
       "name": "Extension Tests",
       "type": "extensionHost",
       "request": "launch",
-      "args": [
-        "--new-window",
-        "--disable-extensions",
-        "--extensionDevelopmentPath=${workspaceFolder}",
-        "--extensionTestsPath=${workspaceFolder}/out/test/index"
-      ],
+      "testConfiguration": "${workspaceFolder}/.vscode-test.mjs",
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
       "outFiles": [
         "${workspaceFolder}/dist/**/*.js",
         "${workspaceFolder}/out/test/**/*.js"
