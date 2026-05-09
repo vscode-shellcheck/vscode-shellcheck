@@ -13,7 +13,7 @@
       "name": "Extension Tests",
       "type": "extensionHost",
       "request": "launch",
-      "testConfiguration": "${workspaceFolder}/.vscode-test.mjs",
+      "testConfiguration": "${workspaceFolder}/.vscode-test.js",
       "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
       "outFiles": [
         "${workspaceFolder}/dist/**/*.js",
