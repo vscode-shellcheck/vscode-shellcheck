@@ -1,3 +1,9 @@
+## [0.39.5](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.39.4...v0.39.5) (2026-05-09)
+
+### Dependencies
+
+* **deps:** update dependency semver to ^7.8.0 ([#1835](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1835)) ([d09be35](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/d09be35fac2d7ffa74ea12d06496e35f80a642d0))
+
 ## [0.39.4](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.39.3...v0.39.4) (2026-05-06)
 
 ### Dependencies
