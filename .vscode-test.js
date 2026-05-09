@@ -5,6 +5,7 @@ export default defineConfig({
   version: process.env.VSCODE_TEST_VERSION ?? "stable",
   launchArgs: ["--new-window", "--disable-extensions"],
   mocha: {
+    ui: "tdd",
     timeout: 10000,
   },
 });
