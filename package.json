@@ -297,7 +297,7 @@
     "bindl": "^7.1.6",
     "conventional-changelog-conventionalcommits": "^9.3.1",
     "cspell": "^10.0.1",
-    "esbuild": "^0.28.0",
+    "esbuild": "^0.28.1",
     "eslint": "^9.39.4",
     "installed-check": "^10.0.1",
     "neostandard": "^0.13.0",
