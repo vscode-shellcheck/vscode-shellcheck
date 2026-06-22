@@ -292,7 +292,7 @@
     "@types/node": "^22.20.0",
     "@types/semver": "^7.7.1",
     "@types/vscode": "~1.100.0",
-    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^2.5.2",
     "bindl": "^7.1.6",
     "conventional-changelog-conventionalcommits": "^9.3.1",
