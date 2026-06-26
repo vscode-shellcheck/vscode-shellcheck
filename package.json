@@ -298,7 +298,7 @@
     "conventional-changelog-conventionalcommits": "^9.3.1",
     "cspell": "^10.0.1",
     "esbuild": "^0.28.1",
-    "eslint": "^9.39.4",
+    "eslint": "^10.6.0",
     "installed-check": "^10.0.1",
     "neostandard": "^0.13.0",
     "npm-run-all2": "^8.0.4",
