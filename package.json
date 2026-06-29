@@ -302,7 +302,7 @@
     "installed-check": "^10.0.1",
     "neostandard": "^0.13.0",
     "npm-run-all2": "^8.0.4",
-    "prettier": "^3.9.1",
+    "prettier": "^3.9.3",
     "semantic-release": "^25.0.5",
     "semantic-release-stop-before-publish": "^2.0.0",
     "semantic-release-vsce": "^6.1.5",
