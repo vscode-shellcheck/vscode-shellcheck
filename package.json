@@ -286,8 +286,8 @@
     "semver": "^7.8.0"
   },
   "devDependencies": {
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/changelog": "^7.0.0",
+    "@semantic-release/git": "^11.0.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.20.1",
     "@types/semver": "^7.7.1",
