@@ -303,7 +303,7 @@
     "neostandard": "^0.13.0",
     "npm-run-all2": "^9.0.3",
     "prettier": "^3.9.6",
-    "semantic-release": "^25.0.8",
+    "semantic-release": "^25.0.9",
     "semantic-release-stop-before-publish": "^2.0.0",
     "semantic-release-vsce": "^6.1.6",
     "typescript": "^5.9.3"
