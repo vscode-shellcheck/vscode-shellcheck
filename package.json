@@ -295,7 +295,7 @@
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.1.0",
     "bindl": "^7.1.6",
-    "conventional-changelog-conventionalcommits": "^10.2.1",
+    "conventional-changelog-conventionalcommits": "^10.3.0",
     "cspell": "^10.0.1",
     "esbuild": "^0.28.2",
     "eslint": "^9.39.4",
