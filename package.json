@@ -299,7 +299,7 @@
     "cspell": "^10.2.0",
     "esbuild": "^0.28.2",
     "eslint": "^9.39.4",
-    "installed-check": "^10.0.1",
+    "installed-check": "^11.0.0",
     "neostandard": "^0.13.0",
     "npm-run-all2": "^9.0.3",
     "prettier": "^3.9.6",
