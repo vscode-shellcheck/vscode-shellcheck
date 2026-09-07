@@ -1,8 +1,9 @@
 import fs from "node:fs/promises";
+import os from "node:os";
 import { dirname } from "node:path";
 import * as vscode from "vscode";
 
-// Stolen from vscode-go: https://github.com/microsoft/vscode-go/blob/d6a0fac4d1722367c9496fb516d2d05ec887fbd3/src/goPath.ts#L193
+// Stolen from vscode-go: https://github.com/golang/vscode-go/blob/46048018519b6f727e920f5f5a4335acc436bdd3/extension/src/utils/pathUtils.ts#L246-L251
 // Workaround for issue in https://github.com/Microsoft/vscode/issues/9448#issuecomment-244804026
 export function fixDriveCasingInWindows(pathToFix: string): string {
   return process.platform === "win32" && pathToFix
@@ -81,7 +82,10 @@ export function substitutePath(s: string, workspaceFolder?: string): string {
     );
   }
 
+  const userHome = fixDriveCasingInWindows(os.homedir());
+
   return s
+    .replace(/\${userHome}/g, userHome)
     .replace(/\${workspaceRoot}/g, workspaceFolder || "")
     .replace(/\${workspaceFolder}/g, workspaceFolder || "");
 }
