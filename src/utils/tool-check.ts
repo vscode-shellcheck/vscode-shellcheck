@@ -38,7 +38,7 @@ async function promptForUpdatingTool(
   disableVersionCheckUpdateSetting: DisableVersionCheckUpdateSetting,
 ) {
   const selected = await vscode.window.showInformationMessage(
-    `The ShellCheck extension is better with a newer version of "shellcheck" (you got v${currentVersion}, v${BUNDLED_TOOL_VERSION} is recommended)`,
+    `The ShellCheck extension is better with a newer version of "shellcheck" (you got v${currentVersion}, v${BUNDLED_TOOL_VERSION} or newer is recommended)`,
     "Don't Show Again",
     "Update",
   );
