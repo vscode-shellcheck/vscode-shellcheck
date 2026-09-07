@@ -1,7 +1,7 @@
 import { SemVer, gte as semVerGte } from "semver";
 import * as vscode from "vscode";
 
-const JSON1_MINIMUM_VERSION = "0.7.0";
+const JSON1_MINIMUM_TOOL_VERSION = "0.7.0";
 
 interface ShellCheckReplacement {
   precedence: number;
@@ -239,7 +239,7 @@ export function createParser(
   if (
     options &&
     options.toolVersion &&
-    semVerGte(options.toolVersion, JSON1_MINIMUM_VERSION)
+    semVerGte(options.toolVersion, JSON1_MINIMUM_TOOL_VERSION)
   ) {
     return new Json1Parser(textDocument, options);
   }
