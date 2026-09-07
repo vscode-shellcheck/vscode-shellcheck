@@ -4,6 +4,17 @@
   "dependencyDashboard": true,
   "rangeStrategy": "bump",
   "semanticCommits": "enabled",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["^bindl\\.config\\.ts$"],
+      "matchStrings": [
+        "export const version = \\\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\\\";"
+      ],
+      "depNameTemplate": "koalaman/shellcheck",
+      "datasourceTemplate": "github-releases"
+    }
+  ],
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true
