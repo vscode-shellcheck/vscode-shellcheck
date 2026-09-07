@@ -7,7 +7,7 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["^bindl\\.config\\.ts$"],
+      "managerFilePatterns": ["/^bindl\\.config\\.ts$/"],
       "matchStrings": [
         "export const version = \\\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\\\";"
       ],
