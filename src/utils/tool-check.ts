@@ -1,15 +1,14 @@
 import { execa } from "execa";
 import { SemVer, lt as semVerLt, parse as semVerParse } from "semver";
 import * as vscode from "vscode";
+import { version as BUNDLED_TOOL_VERSION } from "../../bindl.config.js";
 import * as logging from "./logging/index.js";
-
-export const MINIMUM_TOOL_VERSION = "0.7.0";
 
 export function tryPromptForUpdatingTool(version: SemVer) {
   const disableVersionCheckUpdateSetting =
     new DisableVersionCheckUpdateSetting();
   if (!disableVersionCheckUpdateSetting.isDisabled) {
-    if (semVerLt(version, MINIMUM_TOOL_VERSION)) {
+    if (semVerLt(version, BUNDLED_TOOL_VERSION)) {
       promptForUpdatingTool(version.format(), disableVersionCheckUpdateSetting);
     }
   }
@@ -39,7 +38,7 @@ async function promptForUpdatingTool(
   disableVersionCheckUpdateSetting: DisableVersionCheckUpdateSetting,
 ) {
   const selected = await vscode.window.showInformationMessage(
-    `The ShellCheck extension is better with a newer version of "shellcheck" (you got v${currentVersion}, v${MINIMUM_TOOL_VERSION} or newer is recommended)`,
+    `The ShellCheck extension is better with a newer version of "shellcheck" (you got v${currentVersion}, v${BUNDLED_TOOL_VERSION} or newer is recommended)`,
     "Don't Show Again",
     "Update",
   );
