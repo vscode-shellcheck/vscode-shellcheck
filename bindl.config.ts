@@ -1,18 +1,14 @@
-// @ts-check
+import { defineConfig, type BindlBinaryTest } from "bindl";
 
-import { defineConfig } from "bindl";
-
-const version = "0.11.0";
+export const version = "0.11.0";
 const releaseUrl = `https://github.com/koalaman/shellcheck/releases/download/v${version}/shellcheck-v${version}`;
 
-/** @type {import("bindl").BindlBinaryTest} */
-const unixTest = {
+const unixTest: BindlBinaryTest = {
   command: "./shellcheck --version",
   expectedOutputContains: `version: ${version}`,
 };
 
-/** @type {import("bindl").BindlBinaryTest} */
-const windowsTest = {
+const windowsTest: BindlBinaryTest = {
   command: ".\\shellcheck.exe --version",
   expectedOutputContains: `version: ${version}`,
 };
