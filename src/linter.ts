@@ -599,7 +599,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
                 resolve();
               });
 
-            childProcess.on("error", (error) => {
+            childProcess.nodeChildProcess.on("error", (error) => {
               handleError(error);
               resolve();
             });
