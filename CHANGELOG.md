@@ -1,3 +1,20 @@
+## [0.40.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.39.5...v0.40.0) (2026-09-07)
+
+### Features
+
+* add `${userHome}` path variable ([#1917](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1917)) ([a338d41](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/a338d4107140c6824e5cd1108f411e0ed17644d4))
+
+### Bug Fixes
+
+* warn for outdated `shellcheck` binary ([#1919](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1919)) ([1234638](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/1234638bd50fdb0193b49cb2322cf3c5aab34c96))
+
+### Dependencies
+
+* **deps:** update dependency execa to v10 ([#1881](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1881)) ([93458f4](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/93458f4a85da08a4cc809de06b7c623405e81f41))
+* **deps:** update dependency minimatch to ^10.2.6 ([#1891](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1891)) ([1285b29](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/1285b2972f73e834afc7d45cc880225a7eb60ffa))
+* **deps:** update dependency remeda to ^2.47.0 ([#1840](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1840)) ([d888289](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/d888289bb1d995b124c7caedccd2b1fcc1636a8b))
+* **deps:** update dependency semver to ^7.8.5 ([#1844](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1844)) ([54c586d](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/54c586da9b2d67a1976f3e8f053568488c400505))
+
 ## [0.39.5](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.39.4...v0.39.5) (2026-05-09)
 
 ### Dependencies
