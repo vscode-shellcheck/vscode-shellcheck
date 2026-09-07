@@ -26,8 +26,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      - name: Setup Volta, Node and NPM
-        uses: volta-cli/action@v5
+      - name: Setup Mise, Node and NPM
+        uses: jdx/mise-action@v4
+        with:
+          version: 2026.9.1
       - run: npm ci
         env:
           BINDL_CURRENT_ONLY: "true"
@@ -84,8 +86,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      - name: Setup Volta, Node and NPM
-        uses: volta-cli/action@v5
+      - name: Setup Mise, Node and NPM
+        uses: jdx/mise-action@v4
+        with:
+          version: 2026.9.1
       - if: matrix.target != 'universal'
         name: Install dependencies (with binaries)
         run: npm ci
@@ -133,8 +137,10 @@ jobs:
       - uses: actions/download-artifact@v8
         with:
           merge-multiple: true
-      - name: Setup Volta, Node and NPM
-        uses: volta-cli/action@v5
+      - name: Setup Mise, Node and NPM
+        uses: jdx/mise-action@v4
+        with:
+          version: 2026.9.1
       - run: npm ci
         env:
           BINDL_SKIP: "true"
