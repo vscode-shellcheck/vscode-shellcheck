@@ -37,6 +37,7 @@
     "precompiled",
     "ralish",
     "SCRIPTDIR",
+    "securityroles",
     "shellcheck",
     "shellcheckrc",
     "shellname",
