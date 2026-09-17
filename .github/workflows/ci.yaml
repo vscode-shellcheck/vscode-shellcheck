@@ -146,7 +146,8 @@ jobs:
           BINDL_SKIP: "true"
       - run: npm audit signatures
       # Only run on push events or pull requests coming from the same repository, except from dependabot
-      - run: npx semantic-release --extends ./publish.release.config.js
+      - name: Run semantic-release
+        run: bash .github/scripts/semantic-release-with-vsce-retry.sh
         if: github.event_name == 'push' || github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
