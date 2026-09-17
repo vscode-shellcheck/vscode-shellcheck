@@ -1,3 +1,13 @@
+## [0.40.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.40.0...v0.40.1) (2026-09-17)
+
+### Bug Fixes
+
+* **ci:** retry Marketplace security roles timeout ([#1945](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1945)) ([8ad8d29](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/8ad8d2928124bc04f7a3f2ae8bf37d211e2da3dc)), closes [#1926](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1926)
+
+### Dependencies
+
+* **deps:** update dependency remeda to ^2.50.0 ([#1931](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1931)) ([84b967d](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/84b967d777d8ad611876abf8e133994fdca82687))
+
 ## [0.40.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.39.5...v0.40.0) (2026-09-07)
 
 ### Features
