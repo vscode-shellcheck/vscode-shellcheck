@@ -23,8 +23,9 @@ eval \`uname -r\`
     );
     await waitForDiagnostics(document);
 
+    const textPromise = waitForText(document);
     await vscode.commands.executeCommand("editor.action.fixAll");
-    const text = await waitForText(document);
+    const text = await textPromise;
 
     assert.strictEqual(
       text,
@@ -50,8 +51,9 @@ eval \`uname -r\`
     );
     await waitForDiagnostics(document);
 
+    const textPromise = waitForText(document);
     await vscode.commands.executeCommand("editor.action.fixAll");
-    const text = await waitForText(document);
+    const text = await textPromise;
 
     assert.strictEqual(
       text,
