@@ -8,6 +8,7 @@
     ".vscode-test/**",
     "dist/**",
     "out/**",
+    "test/fixtures/**",
     "*.vsix",
     "package-lock.json"
   ],
