@@ -8,7 +8,6 @@
     ".vscode-test/**",
     "dist/**",
     "out/**",
-    "test/fixtures/**",
     "*.vsix",
     "package-lock.json"
   ],
@@ -33,6 +32,7 @@
     "filemanager",
     "filematcher",
     "filestat",
+    "getopts",
     "gitfs",
     "githubcommit",
     "githubpr",
@@ -49,6 +49,7 @@
     "mfile",
     "mtim",
     "nametoolong",
+    "mycmd",
     "neostandard",
     "noent",
     "nosources",

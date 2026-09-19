@@ -6,9 +6,9 @@ const launchArgs = ["--new-window", "--disable-extensions"];
 export default defineConfig([
   {
     label: "integration",
-    // Top-level suites except parity, which needs the workspace folder the
+    // Everything except the parity suite, which needs the workspace folder the
     // entry below opens.
-    files: "out/test/!(parity).test.js",
+    files: "out/test/**/!(parity).test.js",
     version,
     launchArgs,
     mocha: {
