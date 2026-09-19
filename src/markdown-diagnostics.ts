@@ -104,8 +104,10 @@ export function formatDiagnosticForHover(
     target
       ? `<a href="${escapeHtmlAttribute(target)}" title="Open ShellCheck rule documentation"><span class="codicon codicon-link-external"></span></a>`
       : undefined,
-    // Keep the same invisible marker used by pretty-ts-errors so its optional
-    // CSS workaround can recognize and order this formatted row.
+    // Inspired by pretty-ts-errors:
+    // https://github.com/yoavbls/pretty-ts-errors
+    // Keep the same invisible marker so its optional CSS workaround can
+    // recognize and order this formatted row.
     '<span class="codicon codicon-none"></span>',
   ]
     .filter((part): part is string => part !== undefined)
