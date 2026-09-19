@@ -81,7 +81,7 @@ This only changes the order. The original diagnostic remains available below the
 
 #### Why is this workaround required?
 
-VS Code currently does not expose an extension API for ordering hover providers or replacing the native diagnostic hover. The CSS file identifies the formatted row with an internal marker and moves that row before the native rows. [Pretty TypeScript Errors uses the same workaround](https://github.com/yoavbls/pretty-ts-errors/blob/main/docs/hide-original-errors.md).
+VS Code currently does not expose an extension API for ordering hover providers or replacing the native diagnostic hover. This formatted-hover implementation follows the approach used by [Pretty TypeScript Errors](https://github.com/yoavbls/pretty-ts-errors), including the internal marker and CSS workaround that moves the formatted row before the native rows. [Read more about the workaround](https://github.com/yoavbls/pretty-ts-errors/blob/main/docs/hide-original-errors.md).
 
 Formatting runs only on hover. When disabled (the default), the provider returns before reading diagnostics or formatting messages.
 
