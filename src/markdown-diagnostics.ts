@@ -5,7 +5,6 @@ import {
 } from "./pretty-diagnostic.js";
 
 const settingName = "markdownDiagnostics";
-const maxCachedMessages = 100;
 
 function escapeHtmlAttribute(text: string): string {
   return text.replace(/[&<>"']/g, (character) => {
@@ -85,24 +84,11 @@ export function formatDiagnosticForHover(
   return `${title}\n\n${prettyDiagnosticMessage(diagnostic.message)}`;
 }
 
-function diagnosticKey(diagnostic: vscode.Diagnostic): string {
-  // The cache stores only the formatted message. The hover range is supplied
-  // by the current diagnostic, so it does not affect the cached value.
-  return [
-    diagnostic.message,
-    diagnostic.severity,
-    diagnosticCode(diagnostic) ?? "",
-    diagnosticTarget(diagnostic) ?? "",
-  ].join("\u0000");
-}
-
 export type MarkdownDiagnosticsEnabled = (
   document: vscode.TextDocument,
 ) => boolean;
 
 export class MarkdownDiagnosticProvider implements vscode.HoverProvider {
-  private readonly cache = new Map<string, vscode.MarkdownString>();
-
   constructor(
     // Only the extension's own collection: vscode.languages.getDiagnostics()
     // also returns diagnostics from other extensions, which Bash IDE reports
@@ -135,23 +121,12 @@ export class MarkdownDiagnosticProvider implements vscode.HoverProvider {
     }
 
     const contents = diagnostics.map((diagnostic) => {
-      const key = diagnosticKey(diagnostic);
-      let markdown = this.cache.get(key);
-      if (!markdown) {
-        // Theme icons stay off: VS Code rewrites $(name) on the rendered
-        // HTML, which would turn literal $(...) in a message into a codicon.
-        markdown = new vscode.MarkdownString(
-          formatDiagnosticForHover(diagnostic),
-        );
-        markdown.supportHtml = true;
-        if (this.cache.size >= maxCachedMessages) {
-          const firstKey = this.cache.keys().next().value;
-          if (firstKey !== undefined) {
-            this.cache.delete(firstKey);
-          }
-        }
-        this.cache.set(key, markdown);
-      }
+      // Theme icons stay off: VS Code rewrites $(name) on the rendered HTML,
+      // which would turn literal $(...) in a message into a codicon.
+      const markdown = new vscode.MarkdownString(
+        formatDiagnosticForHover(diagnostic),
+      );
+      markdown.supportHtml = true;
       return markdown;
     });
 
