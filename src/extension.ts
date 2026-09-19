@@ -39,15 +39,12 @@ export function activate(
   );
   context.subscriptions.push(linter);
 
-  const markdownDiagnosticProvider = new MarkdownDiagnosticProvider();
-  for (const language of ShellCheckProvider.LANGUAGES) {
-    context.subscriptions.push(
-      vscode.languages.registerHoverProvider(
-        { language, scheme: "*" },
-        markdownDiagnosticProvider,
-      ),
-    );
-  }
+  context.subscriptions.push(
+    vscode.languages.registerHoverProvider(
+      ShellCheckProvider.LANGUAGES,
+      new MarkdownDiagnosticProvider((uri) => linter.getDiagnostics(uri)),
+    ),
+  );
 
   // link provider
   for (const language of ShellCheckProvider.LANGUAGES) {

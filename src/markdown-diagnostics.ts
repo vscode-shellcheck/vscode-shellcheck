@@ -6,6 +6,7 @@ import {
 
 const settingName = "markdownDiagnostics";
 const maxCachedMessages = 100;
+
 function escapeHtmlAttribute(text: string): string {
   return text.replace(/[&<>"']/g, (character) => {
     switch (character) {
@@ -103,6 +104,12 @@ export class MarkdownDiagnosticProvider implements vscode.HoverProvider {
   private readonly cache = new Map<string, vscode.MarkdownString>();
 
   constructor(
+    // Only the extension's own collection: vscode.languages.getDiagnostics()
+    // also returns diagnostics from other extensions, which Bash IDE reports
+    // under the same "shellcheck" source.
+    private readonly getDiagnostics: (
+      uri: vscode.Uri,
+    ) => readonly vscode.Diagnostic[],
     private readonly isEnabled: MarkdownDiagnosticsEnabled = (document) =>
       // Keep this setting out of ShellCheckSettings: changing it must not rerun
       // the linter for every open document.
@@ -119,13 +126,9 @@ export class MarkdownDiagnosticProvider implements vscode.HoverProvider {
       return undefined;
     }
 
-    const diagnostics = vscode.languages
-      .getDiagnostics(document.uri)
-      .filter(
-        (diagnostic) =>
-          diagnostic.source === "shellcheck" &&
-          diagnostic.range.contains(position),
-      );
+    const diagnostics = this.getDiagnostics(document.uri).filter((diagnostic) =>
+      diagnostic.range.contains(position),
+    );
 
     if (diagnostics.length === 0) {
       return undefined;
