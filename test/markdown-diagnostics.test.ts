@@ -61,8 +61,25 @@ suite("Markdown diagnostic hovers", () => {
       markdown.value,
       '<span style="color:var(--vscode-editorWarning-foreground);"><span class="codicon codicon-warning"></span> <strong>Warning</strong></span> <span style="color:var(--vscode-descriptionForeground);">(SC2006)</span> <a href="https://www.shellcheck.net/wiki/SC2006" title="Open ShellCheck rule documentation"><span class="codicon codicon-link-external"></span></a> <span class="codicon codicon-none"></span>\n\nUse \x60$(...)\x60 notation instead of legacy backticks \x60...\x60\\.',
     );
-    assert.strictEqual(markdown.supportThemeIcons, true);
+    assert.strictEqual(markdown.supportThemeIcons, false);
     assert.strictEqual(markdown.supportHtml, true);
+  });
+
+  test("keeps a literal $(...) out of the codicon syntax", async () => {
+    const document = await openDocument("echo hello", "shellscript");
+    const diagnostic = shellCheckDiagnostic(
+      "Useless echo? Instead of 'echo $(cmd)', just use 'cmd'.",
+    );
+    const provider = new MarkdownDiagnosticProvider(
+      () => [diagnostic],
+      () => true,
+    );
+
+    const markdown = hoverValue(
+      provider.provideHover(document, new vscode.Position(0, 1)),
+    );
+
+    assert.ok(markdown.value.includes("\x60'echo $(cmd)'\x60"));
   });
 
   test("does not take part in the settings that trigger a re-lint", () => {
