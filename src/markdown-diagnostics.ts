@@ -138,11 +138,11 @@ export class MarkdownDiagnosticProvider implements vscode.HoverProvider {
       const key = diagnosticKey(diagnostic);
       let markdown = this.cache.get(key);
       if (!markdown) {
+        // Theme icons stay off: VS Code rewrites $(name) on the rendered
+        // HTML, which would turn literal $(...) in a message into a codicon.
         markdown = new vscode.MarkdownString(
           formatDiagnosticForHover(diagnostic),
-          true,
         );
-        markdown.isTrusted = false;
         markdown.supportHtml = true;
         if (this.cache.size >= maxCachedMessages) {
           const firstKey = this.cache.keys().next().value;
