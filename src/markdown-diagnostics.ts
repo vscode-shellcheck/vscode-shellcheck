@@ -104,10 +104,10 @@ export function formatDiagnosticForHover(
     target
       ? `<a href="${escapeHtmlAttribute(target)}" title="Open ShellCheck rule documentation"><span class="codicon codicon-link-external"></span></a>`
       : undefined,
-    // Inspired by pretty-ts-errors:
+    // This formatted-hover implementation follows the approach used by
+    // pretty-ts-errors, including its Codicon marker and optional CSS ordering
+    // workaround:
     // https://github.com/yoavbls/pretty-ts-errors
-    // Keep the same invisible marker so its optional CSS workaround can
-    // recognize and order this formatted row.
     '<span class="codicon codicon-none"></span>',
   ]
     .filter((part): part is string => part !== undefined)
