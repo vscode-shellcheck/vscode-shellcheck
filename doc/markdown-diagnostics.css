@@ -1,0 +1,17 @@
+/*
+ * Optional Custom CSS and JS Loader workaround for shellcheck.markdownDiagnostics.
+ * The extension API cannot control the order of VS Code's native diagnostic
+ * hover row and extension-provided hover rows.
+ */
+.monaco-hover .monaco-hover-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.monaco-hover .monaco-hover-content .hover-row {
+  order: 2;
+}
+
+.monaco-hover .monaco-hover-content .hover-row:has(.codicon-none) {
+  order: 1;
+}
