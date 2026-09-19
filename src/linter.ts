@@ -233,6 +233,10 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.diagnosticCollection.dispose();
   }
 
+  public getDiagnostics(uri: vscode.Uri): readonly vscode.Diagnostic[] {
+    return this.diagnosticCollection.get(uri) ?? [];
+  }
+
   private async getSettings(
     textDocument: vscode.TextDocument,
   ): Promise<ShellCheckSettings> {
