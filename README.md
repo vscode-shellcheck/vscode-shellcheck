@@ -75,7 +75,7 @@ VS Code displays the original diagnostic alongside the formatted hover. To put t
 
 1. Install [Custom CSS and JS Loader](https://marketplace.visualstudio.com/items?itemName=be5invis.vscode-custom-css).
 2. Follow the installation instructions provided by that extension.
-3. Load [`doc/markdown-diagnostics.css`](https://github.com/vscode-shellcheck/vscode-shellcheck/blob/main/doc/markdown-diagnostics.css).
+3. Load [`doc/markdown-diagnostics.css`](https://github.com/vscode-shellcheck/vscode-shellcheck/blob/master/doc/markdown-diagnostics.css).
 
 This only changes the order. The original diagnostic remains available below the formatted hover.
 
