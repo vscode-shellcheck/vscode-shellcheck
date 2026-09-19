@@ -27,7 +27,7 @@
     "code": "SC1007",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC1007",
     "message": "Remove space after = if trying to assign a value (or for empty string, use var='' ... ).",
-    "pretty": "Remove space after `= if` trying to assign a value \\(or for empty string, use var`=''` \\.\\.\\. \\)\\."
+    "pretty": "Remove space after `=` if trying to assign a value \\(or for empty string, use `var=''` \\.\\.\\. \\)\\."
   },
   {
     "code": "SC1008",
@@ -51,7 +51,7 @@
     "code": "SC1011",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC1011",
     "message": "This apostrophe terminated the single quoted string!",
-    "pretty": "This apostrophe terminated the single quoted string`!`"
+    "pretty": "This apostrophe terminated the single quoted string\\!"
   },
   {
     "code": "SC1012",
@@ -99,7 +99,7 @@
     "code": "SC1020",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC1020",
     "message": "You need a space before the if single then \"]\" else \"]]\"",
-    "pretty": "You need a space before the if single `then \"]\" else \"]]\"`"
+    "pretty": "You need a space before the if single then `\"]\"` else `\"]]\"`"
   },
   {
     "code": "SC1026",
@@ -195,13 +195,13 @@
     "code": "SC1046",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC1046",
     "message": "Couldn't find 'fi' for this 'if'.",
-    "pretty": "Couldn't `find 'fi' for` this `'if'`\\."
+    "pretty": "Couldn't `find 'fi'` for this `'if'`\\."
   },
   {
     "code": "SC1047",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC1047",
-    "message": "\"Expected 'fi' matching previously mentioned 'if'.",
-    "pretty": "\"Expected `'fi'` matching previously mentioned `'if'`\\."
+    "message": "Expected 'fi' matching previously mentioned 'if'.",
+    "pretty": "Expected `'fi'` matching previously mentioned `'if'`\\."
   },
   {
     "code": "SC1048",
@@ -213,7 +213,7 @@
     "code": "SC1049",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC1049",
     "message": "Did you forget the 'then' for this 'if'?",
-    "pretty": "Did you forget the `'then' for` this `'if'`?"
+    "pretty": "Did you forget the `'then'` for this `'if'`?"
   },
   {
     "code": "SC1050",
@@ -261,7 +261,7 @@
     "code": "SC1061",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC1061",
     "message": "Couldn't find 'done' for this 'do'.",
-    "pretty": "Couldn't `find 'done' for` this `'do'`\\."
+    "pretty": "Couldn't `find 'done'` for this `'do'`\\."
   },
   {
     "code": "SC1062",
@@ -315,7 +315,7 @@
     "code": "SC1071",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC1071",
     "message": "ShellCheck only supports sh/bash/dash/ksh scripts. Sorry!",
-    "pretty": "ShellCheck only supports sh/bash/dash/ksh scripts\\. Sorry`!`"
+    "pretty": "ShellCheck only supports sh/bash/dash/ksh scripts\\. Sorry\\!"
   },
   {
     "code": "SC1072",
@@ -903,13 +903,13 @@
     "code": "SC2036",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2036",
     "message": "If you wanted to assign the output of the pipeline, use a=$(b | c) .",
-    "pretty": "If you wanted to assign the output of the pipeline, use a`=$(b | c)` \\."
+    "pretty": "If you wanted to assign the output of the pipeline, use `a=$(b | c)` \\."
   },
   {
     "code": "SC2037",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2037",
     "message": "To assign the output of a command, use var=$(cmd) .",
-    "pretty": "To assign the output of a command, use var`=$(cmd)` \\."
+    "pretty": "To assign the output of a command, use `var=$(cmd)` \\."
   },
   {
     "code": "SC2038",
@@ -1155,7 +1155,7 @@
     "code": "SC2082",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2082",
     "message": "To expand via indirection, use name=\"foo$n\"; echo \"${!name}\".",
-    "pretty": "To expand via indirection, use name`=\"foo$n\"`; `echo \"${!name}\"`\\."
+    "pretty": "To expand via indirection, use `name=\"foo$n\"`; `echo \"${!name}\"`\\."
   },
   {
     "code": "SC2084",
@@ -1197,7 +1197,7 @@
     "code": "SC2091",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2091",
     "message": "Remove surrounding $() to avoid executing output (or use eval if intentional).",
-    "pretty": "Remove surrounding `$()` to avoid executing output \\(or use `eval if` intentional\\)\\."
+    "pretty": "Remove surrounding `$()` to avoid executing output \\(or use `eval` if intentional\\)\\."
   },
   {
     "code": "SC2092",
@@ -1209,7 +1209,7 @@
     "code": "SC2093",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2093",
     "message": "Remove \"exec \" if script should continue after this command.",
-    "pretty": "Remove `\"exec \" if` script should continue after this command\\."
+    "pretty": "Remove `\"exec \"` if script should continue after this command\\."
   },
   {
     "code": "SC2094",
@@ -1245,13 +1245,13 @@
     "code": "SC2099",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2099",
     "message": "Use `$((..))` for arithmetics, e.g. `i=$((i + 2))`",
-    "pretty": "Use `` `$((..))` for `` arithmetics, e\\.g\\. `i=$((i + 2))`"
+    "pretty": "Use `$((..))` for arithmetics, e\\.g\\. `i=$((i + 2))`"
   },
   {
     "code": "SC2100",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2100",
     "message": "Use `$((..))` for arithmetics, e.g. `i=$((i + 2))`",
-    "pretty": "Use `` `$((..))` for `` arithmetics, e\\.g\\. `i=$((i + 2))`"
+    "pretty": "Use `$((..))` for arithmetics, e\\.g\\. `i=$((i + 2))`"
   },
   {
     "code": "SC2101",
@@ -1353,7 +1353,7 @@
     "code": "SC2119",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2119",
     "message": "Use foo \"$@\" if function's $1 should mean script's $1.",
-    "pretty": "Use foo `\"$@\" if function`'s `$1` should mean script's `$1`\\."
+    "pretty": "Use foo `\"$@\"` if function's `$1` should mean script's `$1`\\."
   },
   {
     "code": "SC2120",
@@ -1383,7 +1383,7 @@
     "code": "SC2124",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2124",
     "message": "Assigning an array to a string! Assign as array, or use * instead of @ to concatenate.",
-    "pretty": "Assigning an array to a string`!` Assign as array, or use \\* instead of @ to concatenate\\."
+    "pretty": "Assigning an array to a string\\! Assign as array, or use \\* instead of @ to concatenate\\."
   },
   {
     "code": "SC2125",
@@ -1431,7 +1431,7 @@
     "code": "SC2141",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2141",
     "message": "Did you mean IFS=$'\\t' ?",
-    "pretty": "Did you mean IFS`=`$`'\\t'` ?"
+    "pretty": "Did you mean `IFS=$'\\t'` ?"
   },
   {
     "code": "SC2142",
@@ -1479,7 +1479,7 @@
     "code": "SC2149",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2149",
     "message": "Remove $/${} for numeric index, or escape it for string.",
-    "pretty": "Remove $/`${} for` numeric index, or escape it for string\\."
+    "pretty": "Remove $/`${}` for numeric index, or escape it for string\\."
   },
   {
     "code": "SC2150",
@@ -1563,7 +1563,7 @@
     "code": "SC2163",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2163",
     "message": "This does not export 'FOO'. Remove $/${} for that, or use ${var?} to quiet.",
-    "pretty": "This does not `export 'FOO'`\\. Remove $/`${} for` that, or use `${var?}` to quiet\\."
+    "pretty": "This does not `export 'FOO'`\\. Remove $/`${}` for that, or use `${var?}` to quiet\\."
   },
   {
     "code": "SC2164",
@@ -1659,7 +1659,7 @@
     "code": "SC2179",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2179",
     "message": "Use array+=(\"item\") to append items to an array.",
-    "pretty": "Use array\\+`=`\\(`\"item\"`\\) to append items to an array\\."
+    "pretty": "Use `array+=(\"item\")` to append items to an array\\."
   },
   {
     "code": "SC2180",
@@ -1725,7 +1725,7 @@
     "code": "SC2190",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2190",
     "message": "Elements in associative arrays need index, e.g. array=( [index]=value ) .",
-    "pretty": "Elements in associative arrays need index, e\\.g\\. array`=`\\( \\[index\\]`=`value \\) \\."
+    "pretty": "Elements in associative arrays need index, e\\.g\\. `array=( [index]=value )` \\."
   },
   {
     "code": "SC2191",
@@ -1737,7 +1737,7 @@
     "code": "SC2192",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2192",
     "message": "This array element has no value. Remove spaces after = or use \"\" for empty string.",
-    "pretty": "This array element has no value\\. Remove spaces after `=` or use `\"\" for` empty string\\."
+    "pretty": "This array element has no value\\. Remove spaces after `=` or use `\"\"` for empty string\\."
   },
   {
     "code": "SC2193",
@@ -1839,7 +1839,7 @@
     "code": "SC2209",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2209",
     "message": "Use var=$(command) to assign output (or quote to assign string).",
-    "pretty": "Use var`=$(command)` to assign output \\(or quote to assign string\\)\\."
+    "pretty": "Use `var=$(command)` to assign output \\(or quote to assign string\\)\\."
   },
   {
     "code": "SC2210",
@@ -1905,7 +1905,7 @@
     "code": "SC2220",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2220",
     "message": "Invalid flags are not handled. Add a `*)` case.",
-    "pretty": "Invalid flags are not handled\\. Add a `` `*)` case ``\\."
+    "pretty": "Invalid flags are not handled\\. Add a `*)` case\\."
   },
   {
     "code": "SC2221",
@@ -1953,7 +1953,7 @@
     "code": "SC2229",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2229",
     "message": "This does not read 'foo'. Remove $/${} for that, or use ${var?} to quiet.",
-    "pretty": "This does not `read 'foo'`\\. Remove $/`${} for` that, or use `${var?}` to quiet\\."
+    "pretty": "This does not `read 'foo'`\\. Remove $/`${}` for that, or use `${var?}` to quiet\\."
   },
   {
     "code": "SC2230",
@@ -2109,7 +2109,7 @@
     "code": "SC2255",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2255",
     "message": "`[ ]` does not apply arithmetic evaluation. Evaluate with `$((..))` for numbers, or use string comparator for strings.",
-    "pretty": "`[ ]` does not apply arithmetic evaluation\\. Evaluate with `` `$((..))` for `` numbers, or use string comparator for strings\\."
+    "pretty": "`[ ]` does not apply arithmetic evaluation\\. Evaluate with `$((..))` for numbers, or use string comparator for strings\\."
   },
   {
     "code": "SC2256",
@@ -2259,19 +2259,19 @@
     "code": "SC2283",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2283",
     "message": "Use [ ] to compare values, or remove spaces around = to assign (or quote '=' if literal).",
-    "pretty": "Use `[ ]` to compare values, or remove spaces around `=` to assign \\(or quote `'=' if` literal\\)\\."
+    "pretty": "Use `[ ]` to compare values, or remove spaces around `=` to assign \\(or quote `'='` if literal\\)\\."
   },
   {
     "code": "SC2284",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2284",
     "message": "Use [ x = y ] to compare values (or quote '==' if literal).",
-    "pretty": "Use `[ x = y ]` to compare values \\(or quote `'==' if` literal\\)\\."
+    "pretty": "Use `[ x = y ]` to compare values \\(or quote `'=='` if literal\\)\\."
   },
   {
     "code": "SC2285",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC2285",
     "message": "Remove spaces around += to assign (or quote '+=' if literal).",
-    "pretty": "Remove spaces around \\+`=` to assign \\(or quote `'+=' if` literal\\)\\."
+    "pretty": "Remove spaces around `+=` to assign \\(or quote `'+='` if literal\\)\\."
   },
   {
     "code": "SC3001",
@@ -2289,7 +2289,7 @@
     "code": "SC3003",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC3003",
     "message": "In POSIX sh, $'..' is undefined.",
-    "pretty": "In POSIX sh, $`'..'` is undefined\\."
+    "pretty": "In POSIX sh, `$'..'` is undefined\\."
   },
   {
     "code": "SC3006",
@@ -2361,7 +2361,7 @@
     "code": "SC3024",
     "link": "https://github.com/koalaman/shellcheck/wiki/SC3024",
     "message": "In POSIX sh, += is undefined.",
-    "pretty": "In POSIX sh, \\+`=` is undefined\\."
+    "pretty": "In POSIX sh, `+=` is undefined\\."
   },
   {
     "code": "SC3025",

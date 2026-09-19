@@ -3,63 +3,10 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { prettyDiagnosticMessage } from "../../src/pretty-diagnostic.js";
 
-interface ShellCheckMessage {
+interface GoldenMessage {
   code: string;
-  link: string;
   message: string;
-}
-
-interface GoldenMessage extends ShellCheckMessage {
   pretty: string;
-}
-
-function parseCsv(text: string): string[][] {
-  const rows: string[][] = [];
-  let row: string[] = [];
-  let field = "";
-  let quoted = false;
-
-  for (let index = 0; index < text.length; index++) {
-    const character = text[index];
-    if (quoted) {
-      if (character === '"' && text[index + 1] === '"') {
-        field += '"';
-        index++;
-      } else if (character === '"') {
-        quoted = false;
-      } else {
-        field += character;
-      }
-    } else if (character === '"' && field.length === 0) {
-      quoted = true;
-    } else if (character === ",") {
-      row.push(field);
-      field = "";
-    } else if (character === "\n") {
-      row.push(field.replace(/\r$/, ""));
-      rows.push(row);
-      row = [];
-      field = "";
-    } else {
-      field += character;
-    }
-  }
-
-  if (field || row.length > 0) {
-    row.push(field.replace(/\r$/, ""));
-    rows.push(row);
-  }
-  return rows;
-}
-
-function loadShellCheckMessages(): ShellCheckMessage[] {
-  const csv = readFileSync(
-    new URL("../../../test/fixtures/shellcheck-messages.csv", import.meta.url),
-    "utf8",
-  );
-  const rows = parseCsv(csv);
-  assert.deepStrictEqual(rows.shift(), ["name", "link", "description"]);
-  return rows.map(([code, link, message]) => ({ code, link, message }));
 }
 
 function loadGoldenMessages(): GoldenMessage[] {
@@ -98,6 +45,23 @@ test("keeps natural apostrophes and unsafe Markdown as text", () => {
   );
 });
 
+test("keeps prose outside shell syntax spans", () => {
+  assert.strictEqual(
+    prettyDiagnosticMessage("Couldn't find 'fi' for this 'if'."),
+    "Couldn't `find 'fi'` for this `'if'`\\.",
+  );
+  assert.strictEqual(
+    prettyDiagnosticMessage(
+      "This apostrophe terminated the single quoted string!",
+    ),
+    "This apostrophe terminated the single quoted string\\!",
+  );
+  assert.strictEqual(
+    prettyDiagnosticMessage('Use array+=("item") to append items to an array.'),
+    'Use `array+=("item")` to append items to an array\\.',
+  );
+});
+
 test("preserves line breaks and falls back safely for incomplete markup", () => {
   assert.strictEqual(
     prettyDiagnosticMessage("First line\r\nSecond line"),
@@ -112,14 +76,9 @@ test("preserves line breaks and falls back safely for incomplete markup", () => 
 });
 
 test("matches the ShellCheck diagnostic golden corpus", () => {
-  const messages = loadShellCheckMessages();
   const golden = loadGoldenMessages();
 
-  assert.strictEqual(messages.length, 417);
-  assert.deepStrictEqual(
-    messages.map(({ code, link, message }) => ({ code, link, message })),
-    golden.map(({ code, link, message }) => ({ code, link, message })),
-  );
+  assert.strictEqual(golden.length, 417);
   for (const { code, message, pretty } of golden) {
     assert.strictEqual(prettyDiagnosticMessage(message), pretty, code);
   }

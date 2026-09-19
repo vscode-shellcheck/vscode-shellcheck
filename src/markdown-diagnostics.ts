@@ -85,16 +85,14 @@ export function formatDiagnosticForHover(
 }
 
 function diagnosticKey(diagnostic: vscode.Diagnostic): string {
-  return JSON.stringify([
+  // The cache stores only the formatted message. The hover range is supplied
+  // by the current diagnostic, so it does not affect the cached value.
+  return [
     diagnostic.message,
     diagnostic.severity,
-    diagnosticCode(diagnostic),
-    diagnosticTarget(diagnostic),
-    diagnostic.range.start.line,
-    diagnostic.range.start.character,
-    diagnostic.range.end.line,
-    diagnostic.range.end.character,
-  ]);
+    diagnosticCode(diagnostic) ?? "",
+    diagnosticTarget(diagnostic) ?? "",
+  ].join("\u0000");
 }
 
 export type MarkdownDiagnosticsEnabled = (

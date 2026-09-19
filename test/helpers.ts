@@ -67,6 +67,9 @@ export async function openWorkspaceDocument(
 export function waitForDiagnostics(
   document: vscode.TextDocument,
   timeout = 5000,
+  predicate: (diagnostics: readonly vscode.Diagnostic[]) => boolean = (
+    diagnostics,
+  ) => diagnostics.length > 0,
 ): Promise<vscode.Diagnostic[]> {
   const { uri } = document;
   const event = new Promise<vscode.Diagnostic[]>((resolve) => {
@@ -75,7 +78,7 @@ export function waitForDiagnostics(
         return;
       }
       const diagnostics = vscode.languages.getDiagnostics(uri);
-      if (diagnostics.length > 0) {
+      if (predicate(diagnostics)) {
         disposable.dispose();
         resolve(diagnostics);
       }

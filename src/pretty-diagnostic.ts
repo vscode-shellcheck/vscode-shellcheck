@@ -79,6 +79,22 @@ const shellWords = new Set([
   "zsh",
 ]);
 
+const shellControlWords = new Set([
+  "case",
+  "do",
+  "done",
+  "else",
+  "elif",
+  "esac",
+  "fi",
+  "for",
+  "if",
+  "in",
+  "then",
+  "until",
+  "while",
+]);
+
 interface CodeRegion {
   start: number;
   end: number;
@@ -214,6 +230,9 @@ function isLikelyShellWord(
     covered[start - 2] === 1 ||
     covered[end] === 1 ||
     covered[end + 1] === 1;
+  if (shellControlWords.has(word)) {
+    return hasCue;
+  }
   return hasCue || hasNearbyCode;
 }
 
@@ -226,10 +245,21 @@ function findCodeRegions(message: string): CodeRegion[] {
   };
 
   for (let index = 0; index < message.length; index++) {
-    const region =
+    let region =
       message[index] === "`"
         ? findBacktickRegion(message, index)
         : findQuotedRegion(message, index);
+    if (
+      !region &&
+      message[index] === "$" &&
+      (message[index + 1] === "'" || message[index + 1] === '"')
+    ) {
+      region = findQuotedRegion(message, index + 1);
+      if (region) {
+        region.start--;
+        region.value = message.slice(region.start, region.end);
+      }
+    }
     if (region) {
       addRegion(region);
       index = region.end - 1;
@@ -257,6 +287,8 @@ function findCodeRegions(message: string): CodeRegion[] {
         region.value = message.slice(region.start, region.end);
       }
     } else if (message.startsWith("((", index)) {
+      region = findBalancedRegion(message, index, "(", ")");
+    } else if (message[index] === "(" && covered[index - 1] === 1) {
       region = findBalancedRegion(message, index, "(", ")");
     }
 
@@ -292,20 +324,39 @@ function findCodeRegions(message: string): CodeRegion[] {
         message[index + 1] === "(");
     const isOption =
       message[index] === "-" && !/[A-Za-z0-9_]/.test(message[index - 1] ?? "");
+    const isNaturalExclamation =
+      message[index] === "!" &&
+      isWordCharacter(message[index - 1]) &&
+      (message[index + 1] === undefined ||
+        /[.,;:?)]/.test(message[index + 1] ?? "") ||
+        /^\s+[A-Z]/.test(message.slice(index + 1)));
     if (
       !region &&
-      (isOption || /[|&=!]/.test(message[index] ?? "") || isRedirect)
+      !isNaturalExclamation &&
+      (isOption ||
+        /[|&=!]/.test(message[index] ?? "") ||
+        (message[index] === "+" && message[index + 1] === "=") ||
+        isRedirect)
     ) {
       const operator = message
         .slice(index)
         .match(
-          /^(?:--?[A-Za-z][A-Za-z0-9-]*|\|\||\||&&|\|&|[=!]=?~?|[<>]&?)/,
+          /^(?:--?[A-Za-z][A-Za-z0-9-]*|\|\||\||&&|\|&|\+=|[<>]=?|[=!]=?~?|[<>]&?)/,
         )?.[0];
       if (operator) {
+        const assignmentValue = message[index + operator.length];
+        const assignmentPrefix =
+          /^(?:=|\+=)$/.test(operator) &&
+          (operator === "+=" ||
+            ["$", '"', "'", "(", "{", "["].includes(assignmentValue ?? "")) &&
+          message.slice(0, index).match(/[A-Za-z_][A-Za-z0-9_]*$/)?.[0];
+        const start = assignmentPrefix
+          ? index - assignmentPrefix.length
+          : index;
         region = {
-          start: index,
+          start,
           end: index + operator.length,
-          value: operator,
+          value: message.slice(start, index + operator.length),
         };
       }
     }
@@ -331,6 +382,9 @@ function mergeCodeRegions(
   message: string,
   regions: CodeRegion[],
 ): CodeRegion[] {
+  // A diagnostic can identify a shell fragment in several pieces, such as a
+  // command followed by its quoted argument. Keep adjacent pieces together so
+  // the hover shows one copyable code span, and coalesce nested detections.
   const merged: CodeRegion[] = [];
   for (const region of regions) {
     const previous = merged.at(-1);
@@ -345,6 +399,13 @@ function mergeCodeRegions(
       previous &&
       /^[ \t]*$/.test(message.slice(previous.end, region.start))
     ) {
+      if (
+        shellControlWords.has(region.value) ||
+        shellControlWords.has(previous.value)
+      ) {
+        merged.push({ ...region });
+        continue;
+      }
       previous.end = region.end;
       previous.value = message.slice(previous.start, region.end);
     } else {
