@@ -15,7 +15,7 @@ suite("Markdown diagnostic hovers", () => {
     );
     const diagnostic = new vscode.Diagnostic(
       new vscode.Range(0, 0, 0, 4),
-      "Use `$(...)` notation instead of legacy backticks `...`.",
+      "Use \x60$(...)\x60 notation instead of legacy backticks \x60...\x60.",
       vscode.DiagnosticSeverity.Warning,
     );
     diagnostic.source = "shellcheck";
@@ -43,7 +43,7 @@ suite("Markdown diagnostic hovers", () => {
     );
     const diagnostic = new vscode.Diagnostic(
       new vscode.Range(0, 0, 0, 4),
-      "Use `$(...)` notation instead of legacy backticks `...`.",
+      "Use \x60$(...)\x60 notation instead of legacy backticks \x60...\x60.",
       vscode.DiagnosticSeverity.Warning,
     );
     diagnostic.source = "shellcheck";
@@ -62,7 +62,7 @@ suite("Markdown diagnostic hovers", () => {
       assert.ok(hover.contents[0] instanceof vscode.MarkdownString);
       assert.strictEqual(
         (hover.contents[0] as vscode.MarkdownString).value,
-        '<span style="color:var(--vscode-editorWarning-foreground);"><span class="codicon codicon-warning"></span> <strong>Warning</strong></span> <span style="color:var(--vscode-descriptionForeground);">(SC2006)</span> <a href="https://www.shellcheck.net/wiki/SC2006" title="Open ShellCheck rule documentation"><span class="codicon codicon-link-external"></span></a> <span class="codicon codicon-none"></span>\n\nUse \\`$\\(\\.\\.\\.\\)\\` notation instead of legacy backticks \\`\\.\\.\\.\\`\\.',
+        '<span style="color:var(--vscode-editorWarning-foreground);"><span class="codicon codicon-warning"></span> <strong>Warning</strong></span> <span style="color:var(--vscode-descriptionForeground);">(SC2006)</span> <a href="https://www.shellcheck.net/wiki/SC2006" title="Open ShellCheck rule documentation"><span class="codicon codicon-link-external"></span></a> <span class="codicon codicon-none"></span>\n\nUse \x60$(...)\x60 notation instead of legacy backticks \x60...\x60\\.',
       );
       assert.strictEqual(
         (hover.contents[0] as vscode.MarkdownString).supportThemeIcons,

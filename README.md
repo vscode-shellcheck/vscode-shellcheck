@@ -67,7 +67,7 @@ Default options are:
 
 ### `shellcheck.markdownDiagnostics`
 
-`shellcheck.markdownDiagnostics` is experimental. Enable it to show a formatted hover with a colored severity, a muted rule code, and a link to the rule documentation. Colors follow the active editor theme. Diagnostic messages remain plain text in the Problems view.
+`shellcheck.markdownDiagnostics` is experimental. Enable it to show a formatted hover with a colored severity, a muted rule code, and a link to the rule documentation. Colors follow the active editor theme. Common ShellCheck code examples in diagnostic messages are rendered as Markdown code spans; messages remain plain text in the Problems view.
 
 #### How to put formatted diagnostics first
 

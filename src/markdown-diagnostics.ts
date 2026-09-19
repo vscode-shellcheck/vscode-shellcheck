@@ -1,43 +1,11 @@
 import * as vscode from "vscode";
+import {
+  escapeMarkdownText,
+  prettyDiagnosticMessage,
+} from "./pretty-diagnostic.js";
 
 const settingName = "markdownDiagnostics";
 const maxCachedMessages = 100;
-const markdownSpecialCharacters = new Set([
-  "\\",
-  "`",
-  "*",
-  "_",
-  "{",
-  "}",
-  "[",
-  "]",
-  "(",
-  ")",
-  "#",
-  "+",
-  "-",
-  ".",
-  "!",
-  "|",
-  ">",
-  "~",
-  "<",
-]);
-
-function escapeMarkdownText(text: string): string {
-  return Array.from(text.replace(/\r\n?/g, "\n"), (character) => {
-    if (character === "\n") {
-      return "  \n";
-    }
-    if (character === "&") {
-      return "&amp;";
-    }
-    return markdownSpecialCharacters.has(character)
-      ? `\\${character}`
-      : character;
-  }).join("");
-}
-
 function escapeHtmlAttribute(text: string): string {
   return text.replace(/[&<>"']/g, (character) => {
     switch (character) {
@@ -113,7 +81,7 @@ export function formatDiagnosticForHover(
     .filter((part): part is string => part !== undefined)
     .join(" ");
 
-  return `${title}\n\n${escapeMarkdownText(diagnostic.message)}`;
+  return `${title}\n\n${prettyDiagnosticMessage(diagnostic.message)}`;
 }
 
 function diagnosticKey(diagnostic: vscode.Diagnostic): string {

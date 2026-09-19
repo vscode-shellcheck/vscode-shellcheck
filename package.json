@@ -274,6 +274,7 @@
     "build:test:watch": "tsc --project tsconfig.test.json --watch",
     "build:all": "run-p build build:test",
     "build:all:watch": "run-p check-types:watch build:watch build:test:watch",
+    "test:unit": "npm run build:test && node --test out/test/unit/pretty-diagnostic.test.js",
     "vscode:prepublish": "npm run build:prod",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
