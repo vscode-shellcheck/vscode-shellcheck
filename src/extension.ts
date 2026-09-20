@@ -30,7 +30,7 @@ export function activate(
   );
   updateLoggingLevel();
 
-  const runtimeManager = new RuntimeManager();
+  const runtimeManager = new RuntimeManager(context);
   context.subscriptions.push(runtimeManager);
 
   const linter = new ShellCheckProvider(context, runtimeManager);

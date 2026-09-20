@@ -48,7 +48,7 @@
   "capabilities": {
     "untrustedWorkspaces": {
       "supported": "limited",
-      "description": "Only the user defined `shellcheck` executable will be taken into account when running in untrusted mode.",
+      "description": "Only the user defined `shellcheck` executable will be taken into account when running in untrusted mode. The experimental WebAssembly runtime is sandboxed and is unaffected.",
       "restrictedConfigurations": [
         "shellcheck.executablePath"
       ]
@@ -133,6 +133,23 @@
           ],
           "type": "string",
           "scope": "machine-overridable"
+        },
+        "shellcheck.runtime": {
+          "markdownDescription": "**Experimental.** Which ShellCheck runtime to use.\n\n- `native` — run the bundled or user-provided `shellcheck` executable. This is the default and the only supported mode.\n- `wasm` — run a bundled WebAssembly (WASI) build of ShellCheck inside the editor. No executable is required and it works on every platform, but linting is currently about 4x slower than native, `#shellcheck.executablePath#` is ignored, and files outside the document's workspace folder are not visible to `source` directives or `.shellcheckrc` lookup.",
+          "type": "string",
+          "enum": [
+            "native",
+            "wasm"
+          ],
+          "enumDescriptions": [
+            "Run the bundled or user-provided shellcheck executable.",
+            "Run the bundled WebAssembly build of ShellCheck (experimental, slower)."
+          ],
+          "scope": "window",
+          "default": "native",
+          "tags": [
+            "experimental"
+          ]
         },
         "shellcheck.run": {
           "description": "Whether ShellCheck is run on save, on type, or manually.",

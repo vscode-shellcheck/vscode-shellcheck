@@ -52,3 +52,6 @@ export function trace(format: string, ...args: Arguments): void {
     loggers.forEach((l) => l.trace(format, ...args));
   }
 }
+
+/** The module level log functions as a `Logger`, for code that takes one. */
+export const logger: Logger = { trace, debug, info, warn, error };

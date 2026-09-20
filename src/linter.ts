@@ -1,11 +1,17 @@
-import { extname } from "node:path";
+import { extname, isAbsolute } from "node:path";
 import { SemVer } from "semver";
 import * as vscode from "vscode";
 import { ShellCheckExtensionApi } from "./api.js";
 import { FixAllProvider } from "./fix-all.js";
 import { createParser, ParseResult } from "./parser.js";
 import { RuntimeManager } from "./runtime/manager.js";
-import { LintResult } from "./runtime/types.js";
+import {
+  LintResult,
+  RunnerDisposedError,
+  RunSupersededError,
+  WasmRuntimeError,
+} from "./runtime/types.js";
+import { WASM_TOOL_VERSION } from "./runtime/wasm/version.js";
 import {
   checkIfConfigurationChanged,
   getWorkspaceSettings,
@@ -17,6 +23,7 @@ import { getWikiUrlForRule } from "./utils/link.js";
 import * as logging from "./utils/logging/index.js";
 import {
   ensureCurrentWorkingDirectory,
+  getDocumentPreopenRoot,
   getWorkspaceFolderPath,
   guessDocumentDirname,
 } from "./utils/path.js";
@@ -30,6 +37,34 @@ namespace CommandIds {
   export const disableCheckForLine: string = "shellcheck.disableCheckForLine";
   export const openRuleDoc: string = "shellcheck.openRuleDoc";
   export const collectDiagnostics: string = "shellcheck.collectDiagnostics";
+}
+
+/**
+ * Tool status key for the wasm runtime, which has no executable path. The NUL
+ * byte cannot appear in one, so it cannot collide.
+ */
+const WASM_STATUS_KEY = "\u0000wasm";
+
+function toolStatusKey(settings: ShellCheckSettings): string {
+  return settings.runtime === "wasm"
+    ? WASM_STATUS_KEY
+    : settings.executable.path;
+}
+
+/** Debounce for `onType`, longer for wasm because a lint costs several times
+ * more there and a keystroke-rate debounce would keep it saturated. */
+function lintDelay(settings: ShellCheckSettings): number {
+  if (settings.trigger !== RunTrigger.onType) {
+    return 0;
+  }
+  return settings.runtime === "wasm" ? 750 : 250;
+}
+
+/** `--flag=/abs/path` and a bare `/abs/path` alike; the flag itself is never absolute. */
+function hasHostAbsolutePath(arg: string): boolean {
+  const separator = arg.indexOf("=");
+  const value = separator === -1 ? arg : arg.slice(separator + 1);
+  return value.length > 0 && isAbsolute(value);
 }
 
 type ToolStatus =
@@ -65,6 +100,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   private readonly diagnosticCollection: vscode.DiagnosticCollection;
   private readonly codeActionCollection: Map<string, ParseResult[]>;
   private readonly additionalDocumentFilters: Set<vscode.DocumentFilter>;
+  private wasmExecutablePathNoticed: boolean;
 
   constructor(
     private readonly context: vscode.ExtensionContext,
@@ -77,6 +113,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       vscode.languages.createDiagnosticCollection("shellcheck");
     this.codeActionCollection = new Map();
     this.additionalDocumentFilters = new Set();
+    this.wasmExecutablePathNoticed = false;
 
     // code actions
     for (const language of ShellCheckProvider.LANGUAGES) {
@@ -175,6 +212,8 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
     this.settingsByUri.clear();
     this.toolStatusByPath.clear();
+    this.wasmExecutablePathNoticed = false;
+    this.runtimeManager.refresh();
 
     // Shellcheck all open shell documents
     this.triggerLintForEntireWorkspace();
@@ -252,10 +291,23 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.settingsByUri.set(textDocument.uri.toString(), settings);
     this.setResultCollections(textDocument.uri);
 
-    if (
-      settings.enabled &&
-      !this.toolStatusByPath.has(settings.executable.path)
-    ) {
+    if (settings.runtime === "wasm") {
+      this.reportWasmLimitations(textDocument, settings);
+    }
+
+    const statusKey = toolStatusKey(settings);
+    if (settings.enabled && !this.toolStatusByPath.has(statusKey)) {
+      if (settings.runtime === "wasm") {
+        // The module is bundled, so its version is known without probing it,
+        // and there is nothing the user could update.
+        this.toolStatusByPath.set(statusKey, {
+          ok: true,
+          version: WASM_TOOL_VERSION,
+        });
+        logging.info(`shellcheck (wasm) version: ${WASM_TOOL_VERSION}`);
+        return;
+      }
+
       // Prompt user to update shellcheck binary when necessary
       let toolStatus: ToolStatus;
       try {
@@ -268,7 +320,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         this.showShellCheckError(error);
         toolStatus = toolStatusByError(error);
       }
-      this.toolStatusByPath.set(settings.executable.path, toolStatus);
+      this.toolStatusByPath.set(statusKey, toolStatus);
 
       if (toolStatus.ok) {
         if (settings.executable.bundled) {
@@ -277,6 +329,40 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
           logging.info(`shellcheck version: ${toolStatus.version}`);
           tryPromptForUpdatingTool(toolStatus.version);
         }
+      }
+    }
+  }
+
+  /** What the wasm sandbox silently cannot honour, on the settings it sees. */
+  private reportWasmLimitations(
+    textDocument: vscode.TextDocument,
+    settings: ShellCheckSettings,
+  ): void {
+    if (!this.wasmExecutablePathNoticed) {
+      const configuredPath = vscode.workspace
+        .getConfiguration("shellcheck", textDocument)
+        .get<string>(ShellCheckSettings.keys.executablePath);
+      if (configuredPath) {
+        this.wasmExecutablePathNoticed = true;
+        logging.info(
+          'shellcheck.executablePath is ignored while shellcheck.runtime is "wasm"',
+        );
+      }
+    }
+
+    if (!getDocumentPreopenRoot(textDocument)) {
+      logging.info(
+        "shellcheck (wasm): %s has no local folder to expose, so `.shellcheckrc` and `source` will not resolve for it",
+        textDocument.uri.toString(),
+      );
+    }
+
+    for (const arg of settings.customArgs) {
+      if (hasHostAbsolutePath(arg)) {
+        logging.warn(
+          "shellcheck (wasm): the custom argument `%s` names a host path, which the sandbox does not expose under that name",
+          arg,
+        );
       }
     }
   }
@@ -404,13 +490,18 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
     output.push("## ShellCheck\n");
     const settings: ShellCheckSettings = await this.getSettings(textDocument);
-    const toolStatus = this.toolStatusByPath.get(settings.executable.path);
+    const toolStatus = this.toolStatusByPath.get(toolStatusKey(settings));
     if (toolStatus && toolStatus.ok) {
-      output.push(
-        `- Version: \`${toolStatus.version}\``,
-        `- Bundled: \`${settings.executable.bundled}\``,
-        "",
-      );
+      output.push(`- Runtime: \`${settings.runtime}\``);
+      if (settings.runtime === "wasm") {
+        output.push(`- Version: \`${toolStatus.version} (bundled wasm)\``, "");
+      } else {
+        output.push(
+          `- Version: \`${toolStatus.version}\``,
+          `- Bundled: \`${settings.executable.bundled}\``,
+          "",
+        );
+      }
     } else {
       output.push("- ShellCheck is not installed or not working");
       output.push("");
@@ -493,7 +584,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     const settings: ShellCheckSettings = await this.getSettings(textDocument);
     if (
       !extraCondition(settings) ||
-      !this.toolStatusByPath.get(settings.executable.path)!.ok ||
+      !this.toolStatusByPath.get(toolStatusKey(settings))!.ok ||
       settings.ignoreFileSchemes.has(textDocument.uri.scheme)
     ) {
       return;
@@ -522,16 +613,20 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       this.delayers[key] = delayer;
     }
 
-    delayer.trigger(() => this.runLint(textDocument, settings));
+    // Per call, not per delayer: the delayers outlive a configuration change,
+    // so a delay baked in at creation would survive a runtime switch.
+    delayer.trigger(
+      () => this.runLint(textDocument, settings),
+      lintDelay(settings),
+    );
   }
 
   private async runLint(
     textDocument: vscode.TextDocument,
     settings: ShellCheckSettings,
   ): Promise<void> {
-    const toolStatus: ToolStatus = this.toolStatusByPath.get(
-      settings.executable.path,
-    )!;
+    const statusKey = toolStatusKey(settings);
+    const toolStatus: ToolStatus = this.toolStatusByPath.get(statusKey)!;
     if (!toolStatus.ok) {
       return Promise.reject(toolStatus.reason);
     }
@@ -569,17 +664,39 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     let lintResult: LintResult;
     try {
       cwd = await ensureCurrentWorkingDirectory(cwd);
-      lintResult = await this.runtimeManager.getRunner().run({
+      const runner = await this.runtimeManager.getRunner();
+      lintResult = await runner.run({
         documentKey: textDocument.uri.toString(),
         executablePath: executable.path,
         args,
         stdin: textDocument.getText(),
         cwd,
+        preopenRoot:
+          settings.runtime === "wasm"
+            ? getDocumentPreopenRoot(textDocument)
+            : undefined,
       });
     } catch (error: any) {
+      if (
+        error instanceof RunnerDisposedError ||
+        error instanceof RunSupersededError
+      ) {
+        // A newer run, or a newer runtime, owns this document now.
+        return;
+      }
+      if (error instanceof WasmRuntimeError) {
+        // Never falls back to native: a silent switch of runtimes would hide
+        // which one produced the diagnostics on screen.
+        logging.error(
+          "ShellCheck (wasm) failed: %s\n%s",
+          error.message,
+          error.detail,
+        );
+        return;
+      }
       logging.debug("Unable to start shellcheck: %O", error);
       this.showShellCheckError(error);
-      this.toolStatusByPath.set(executable.path, toolStatusByError(error));
+      this.toolStatusByPath.set(statusKey, toolStatusByError(error));
       return;
     }
 

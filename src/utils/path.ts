@@ -29,6 +29,27 @@ export function guessDocumentDirname(
   return undefined;
 }
 
+/**
+ * Host directory a sandboxed runtime may expose read-only for a document.
+ *
+ * Undefined when the document has no local directory of its own, which is what
+ * remote and virtual schemes get: exposing an unrelated local folder instead
+ * would lint the document against a `.shellcheckrc` that does not belong to
+ * it, and wrong diagnostics are worse than the missing ones.
+ */
+export function getDocumentPreopenRoot(
+  textDocument: vscode.TextDocument,
+): string | undefined {
+  if (!isFileUriScheme(textDocument.uri) && !textDocument.isUntitled) {
+    return undefined;
+  }
+
+  return (
+    getWorkspaceFolderPath(textDocument.uri) ??
+    guessDocumentDirname(textDocument)
+  );
+}
+
 export function getWorkspaceFolderPath(
   uri?: vscode.Uri,
   requireFileUri: boolean = true,
