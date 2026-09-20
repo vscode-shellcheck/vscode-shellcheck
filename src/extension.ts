@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { ShellCheckExtensionApi } from "./api.js";
 import { LinkifyProvider } from "./linkify.js";
 import ShellCheckProvider from "./linter.js";
+import { RuntimeManager } from "./runtime/manager.js";
 import { registerLogger, setLoggingLevel } from "./utils/logging/index.js";
 import { OutputChannelLogger } from "./utils/logging/logger-outputchannel.js";
 import { LogLevelNameType } from "./utils/logging/types.js";
@@ -29,7 +30,10 @@ export function activate(
   );
   updateLoggingLevel();
 
-  const linter = new ShellCheckProvider(context);
+  const runtimeManager = new RuntimeManager();
+  context.subscriptions.push(runtimeManager);
+
+  const linter = new ShellCheckProvider(context, runtimeManager);
   context.subscriptions.push(linter);
 
   // link provider

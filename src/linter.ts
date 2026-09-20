@@ -1,10 +1,11 @@
-import { execa } from "execa";
 import { extname } from "node:path";
 import { SemVer } from "semver";
 import * as vscode from "vscode";
 import { ShellCheckExtensionApi } from "./api.js";
 import { FixAllProvider } from "./fix-all.js";
 import { createParser, ParseResult } from "./parser.js";
+import { RuntimeManager } from "./runtime/manager.js";
+import { LintResult } from "./runtime/types.js";
 import {
   checkIfConfigurationChanged,
   getWorkspaceSettings,
@@ -65,7 +66,10 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   private readonly codeActionCollection: Map<string, ParseResult[]>;
   private readonly additionalDocumentFilters: Set<vscode.DocumentFilter>;
 
-  constructor(private readonly context: vscode.ExtensionContext) {
+  constructor(
+    private readonly context: vscode.ExtensionContext,
+    private readonly runtimeManager: RuntimeManager,
+  ) {
     this.delayers = Object.create(null);
     this.settingsByUri = new Map();
     this.toolStatusByPath = new Map();
@@ -521,100 +525,70 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     delayer.trigger(() => this.runLint(textDocument, settings));
   }
 
-  private runLint(
+  private async runLint(
     textDocument: vscode.TextDocument,
     settings: ShellCheckSettings,
   ): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      const toolStatus: ToolStatus = this.toolStatusByPath.get(
-        settings.executable.path,
-      )!;
-      if (!toolStatus.ok) {
-        return reject(toolStatus.reason);
-      }
-      const executable = settings.executable;
-      const parser = createParser(textDocument, {
-        toolVersion: toolStatus.version,
-        enableQuickFix: settings.enableQuickFix,
-      });
-      let args = ["-f", parser.outputFormat];
-      if (settings.exclude.length) {
-        args = args.concat(["-e", settings.exclude.join(",")]);
-      }
-
-      // https://github.com/timonwong/vscode-shellcheck/issues/43
-      // We should explicit set shellname based on file extension name
-      const fileExt = extname(textDocument.fileName);
-      if (fileExt === ".bash" || fileExt === ".ksh" || fileExt === ".dash") {
-        // shellcheck args: specify dialect (sh, bash, dash, ksh)
-        args = args.concat(["-s", fileExt.substring(1)]);
-      }
-
-      if (settings.customArgs.length) {
-        args = args.concat(settings.customArgs);
-      }
-
-      args.push("-"); // Use stdin for shellcheck
-
-      let cwd: string | undefined;
-      if (settings.useWorkspaceRootAsCwd) {
-        cwd = getWorkspaceFolderPath(textDocument.uri);
-      } else {
-        cwd = guessDocumentDirname(textDocument);
-      }
-
-      const handleError = (error: Error) => {
-        logging.debug("Unable to start shellcheck: %O", error);
-        this.showShellCheckError(error);
-        this.toolStatusByPath.set(executable.path, toolStatusByError(error));
-      };
-
-      ensureCurrentWorkingDirectory(cwd)
-        .then((resolvedCwd) => {
-          cwd = resolvedCwd;
-          logging.debug("Spawn: (cwd=%s) %s %s", cwd, executable.path, args);
-          const childProcess = execa(executable.path, args, { cwd });
-
-          if (childProcess.pid && childProcess.stdin && childProcess.stdout) {
-            childProcess.stdout.setEncoding("utf-8");
-
-            const script = textDocument.getText();
-            childProcess.stdin.write(script);
-            childProcess.stdin.end();
-
-            const buf: string[] = [];
-
-            childProcess.stdout
-              .on("data", (chunk: Buffer) => {
-                buf.push(chunk.toString());
-              })
-              .on("end", () => {
-                let result: ParseResult[] | null = null;
-                const output = buf.join("");
-                logging.trace("shellcheck response: %s", output);
-                if (output.length) {
-                  result = parser.parse(output);
-                }
-                this.setResultCollections(textDocument.uri, result);
-                resolve();
-              });
-
-            childProcess.nodeChildProcess.on("error", (error) => {
-              handleError(error);
-              resolve();
-            });
-          } else {
-            childProcess.catch((error) => {
-              handleError(error);
-            });
-            resolve();
-          }
-        })
-        .catch((error) => {
-          handleError(error);
-          resolve();
-        });
+    const toolStatus: ToolStatus = this.toolStatusByPath.get(
+      settings.executable.path,
+    )!;
+    if (!toolStatus.ok) {
+      return Promise.reject(toolStatus.reason);
+    }
+    const executable = settings.executable;
+    const parser = createParser(textDocument, {
+      toolVersion: toolStatus.version,
+      enableQuickFix: settings.enableQuickFix,
     });
+    let args = ["-f", parser.outputFormat];
+    if (settings.exclude.length) {
+      args = args.concat(["-e", settings.exclude.join(",")]);
+    }
+
+    // https://github.com/timonwong/vscode-shellcheck/issues/43
+    // We should explicit set shellname based on file extension name
+    const fileExt = extname(textDocument.fileName);
+    if (fileExt === ".bash" || fileExt === ".ksh" || fileExt === ".dash") {
+      // shellcheck args: specify dialect (sh, bash, dash, ksh)
+      args = args.concat(["-s", fileExt.substring(1)]);
+    }
+
+    if (settings.customArgs.length) {
+      args = args.concat(settings.customArgs);
+    }
+
+    args.push("-"); // Use stdin for shellcheck
+
+    let cwd: string | undefined;
+    if (settings.useWorkspaceRootAsCwd) {
+      cwd = getWorkspaceFolderPath(textDocument.uri);
+    } else {
+      cwd = guessDocumentDirname(textDocument);
+    }
+
+    let lintResult: LintResult;
+    try {
+      cwd = await ensureCurrentWorkingDirectory(cwd);
+      lintResult = await this.runtimeManager.getRunner().run({
+        documentKey: textDocument.uri.toString(),
+        executablePath: executable.path,
+        args,
+        stdin: textDocument.getText(),
+        cwd,
+      });
+    } catch (error: any) {
+      logging.debug("Unable to start shellcheck: %O", error);
+      this.showShellCheckError(error);
+      this.toolStatusByPath.set(executable.path, toolStatusByError(error));
+      return;
+    }
+
+    let result: ParseResult[] | null = null;
+    logging.trace("shellcheck response: %s", lintResult.stdout);
+    if (lintResult.stdout.length) {
+      result = parser.parse(lintResult.stdout);
+    }
+    this.setResultCollections(textDocument.uri, result);
   }
 
   private setResultCollections(
