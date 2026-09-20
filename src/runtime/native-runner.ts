@@ -22,6 +22,11 @@ export class NativeRunner implements ShellCheckRunner {
         return;
       }
 
+      // shellcheck exits 1 whenever it reports a finding, which execa treats
+      // as a failure. The result is read off stdout instead, so the promise is
+      // settled here only to keep Node from reporting an unhandled rejection.
+      childProcess.catch(() => undefined);
+
       childProcess.stdout.setEncoding("utf-8");
       childProcess.stdin.write(request.stdin);
       childProcess.stdin.end();
