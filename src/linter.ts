@@ -599,7 +599,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     const settings: ShellCheckSettings = await this.getSettings(textDocument);
     if (
       !extraCondition(settings) ||
-      !this.toolStatusByPath.get(toolStatusKey(settings))!.ok ||
+      !this.toolStatusByPath.get(toolStatusKey(settings))?.ok ||
       settings.ignoreFileSchemes.has(textDocument.uri.scheme)
     ) {
       return;
@@ -641,7 +641,13 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     settings: ShellCheckSettings,
   ): Promise<void> {
     const statusKey = toolStatusKey(settings);
-    const toolStatus: ToolStatus = this.toolStatusByPath.get(statusKey)!;
+    const toolStatus = this.toolStatusByPath.get(statusKey);
+    if (!toolStatus) {
+      // The configuration changed while this run sat in the delayer, which
+      // dropped the tool status it was queued against. Every open document is
+      // re-linted on that change, so there is nothing to salvage here.
+      return;
+    }
     if (!toolStatus.ok) {
       return Promise.reject(toolStatus.reason);
     }
