@@ -1075,6 +1075,16 @@ New: `test/parity.test.ts`, `test/fixtures/wasm-parity/**`.
 > coverage of requirement F2's upward `.shellcheckrc` walk** — it must not be
 > dropped or merged into PR 3's tree.
 
+> **Correction, from building it.** The layout sketched below is wrong and was
+> not used. It puts `.shellcheckrc` at the workspace folder root, but the guest
+> working directory falls back to that same root, so the rc is found there with
+> **no upward walk at all** — the fixture would have passed even with `PWD`
+> removed entirely, which was confirmed by mutation. The shipped fixture puts
+> the rc one level down (`rc/.shellcheckrc`) with the script two levels below
+> it, plus a second script of identical content beside a nearer rc, so the walk
+> is shown to both happen and stop at the nearest. See
+> `test/fixtures/wasm-parity/`.
+
 **Fixtures (T2).**
 
 ```
