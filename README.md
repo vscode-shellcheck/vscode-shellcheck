@@ -19,6 +19,8 @@ This VS Code extension requires [ShellCheck] (the awesome static analysis tool f
 - macOS (`x86_64`, `arm64`)
 - Windows (`x86_64`, `arm64` with the `x86_64` binary)
 
+A WebAssembly (WASI) build of [ShellCheck] is bundled for every platform as well.
+
 ## Troubleshooting
 
 If ShellCheck seems not working, a helper command _ShellCheck: Collect Diagnostics For Current Document_ from the [Command Palette](https://code.visualstudio.com/Docs/editor/codebasics#_command-palette) is provided to help troubleshooting.
@@ -188,6 +190,6 @@ This extension was originally based on [@hoovercj](https://github.com/hoovercj)'
 
 This extension is licensed under the [MIT license](./LICENSE).
 
-Bundled [ShellCheck] binaries are licensed under [GPLv3](https://github.com/koalaman/shellcheck/blob/master/LICENSE).
+The bundled [ShellCheck] binaries and the bundled [ShellCheck] WebAssembly module are licensed under [GPLv3](https://github.com/koalaman/shellcheck/blob/master/LICENSE).
 
 [ShellCheck]: https://github.com/koalaman/shellcheck

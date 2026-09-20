@@ -258,7 +258,7 @@
     }
   },
   "scripts": {
-    "prepare": "bindl",
+    "prepare": "bindl && node scripts/fetch-wasm.mjs",
     "check-types": "tsc --noEmit",
     "check-types:watch": "tsc --noEmit --watch",
     "build": "npm run check-types && node esbuild.js",

@@ -4,6 +4,7 @@
 !dist/
 !languages/
 !snippets/
+!wasm/
 
 !CHANGELOG.md
 !LICENSE
