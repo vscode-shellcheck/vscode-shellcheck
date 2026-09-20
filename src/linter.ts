@@ -2,6 +2,14 @@ import { extname, isAbsolute } from "node:path";
 import { SemVer } from "semver";
 import * as vscode from "vscode";
 import { ShellCheckExtensionApi } from "./api.js";
+import {
+  applyFailureEffect,
+  describeShellCheckError,
+  effectOfSelection,
+  FailureActionHost,
+  FailureNotification,
+  WasmFailureNotifier,
+} from "./failure-ux.js";
 import { FixAllProvider } from "./fix-all.js";
 import { createParser, ParseResult } from "./parser.js";
 import { RuntimeManager } from "./runtime/manager.js";
@@ -9,6 +17,7 @@ import {
   LintResult,
   RunnerDisposedError,
   RunSupersededError,
+  RuntimeKind,
   WasmRuntimeError,
 } from "./runtime/types.js";
 import { WASM_TOOL_VERSION } from "./runtime/wasm/version.js";
@@ -101,10 +110,15 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   private readonly codeActionCollection: Map<string, ParseResult[]>;
   private readonly additionalDocumentFilters: Set<vscode.DocumentFilter>;
   private wasmExecutablePathNoticed: boolean;
+  /** Lives as long as the extension host, so `onDidChangeConfiguration`
+   * deliberately leaves it alone. */
+  private readonly wasmFailureNotifier: WasmFailureNotifier;
 
   constructor(
     private readonly context: vscode.ExtensionContext,
     private readonly runtimeManager: RuntimeManager,
+    /** Reveals the output channel owned by `activate`. */
+    private readonly revealLog: () => void,
   ) {
     this.delayers = Object.create(null);
     this.settingsByUri = new Map();
@@ -114,6 +128,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.codeActionCollection = new Map();
     this.additionalDocumentFilters = new Set();
     this.wasmExecutablePathNoticed = false;
+    this.wasmFailureNotifier = new WasmFailureNotifier();
 
     // code actions
     for (const language of ShellCheckProvider.LANGUAGES) {
@@ -317,7 +332,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         };
       } catch (error: any) {
         logging.debug("Failed to get tool version: %O", error);
-        this.showShellCheckError(error);
+        this.showShellCheckError(error, settings.runtime);
         toolStatus = toolStatusByError(error);
       }
       this.toolStatusByPath.set(statusKey, toolStatus);
@@ -687,15 +702,11 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       if (error instanceof WasmRuntimeError) {
         // Never falls back to native: a silent switch of runtimes would hide
         // which one produced the diagnostics on screen.
-        logging.error(
-          "ShellCheck (wasm) failed: %s\n%s",
-          error.message,
-          error.detail,
-        );
+        this.showWasmRuntimeError(error);
         return;
       }
       logging.debug("Unable to start shellcheck: %O", error);
-      this.showShellCheckError(error);
+      this.showShellCheckError(error, settings.runtime);
       this.toolStatusByPath.set(statusKey, toolStatusByError(error));
       return;
     }
@@ -723,27 +734,60 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.codeActionCollection.set(uri.toString(), results);
   }
 
-  private async showShellCheckError(err: any): Promise<void> {
-    let message: string;
-    let items: string[] = [];
+  private async showShellCheckError(
+    err: unknown,
+    runtime: RuntimeKind,
+  ): Promise<void> {
+    await this.showFailureNotification(describeShellCheckError(err, runtime));
+  }
 
-    if (err && err instanceof Error) {
-      const error = err as NodeJS.ErrnoException;
-      if (error.code === "ENOENT") {
-        message = `The shellcheck program was not found (not installed?). Use the 'shellcheck.executablePath' setting to configure the location of 'shellcheck'`;
-        items = ["OK", "Installation Guide"];
-      } else {
-        message = `Failed to run shellcheck: [${error.code}] ${error.message}`;
-      }
-    } else {
-      message = `Failed to run shellcheck: unknown error`;
-    }
-
-    const selected = await vscode.window.showErrorMessage(message, ...items);
-    if (selected === "Installation Guide") {
-      vscode.env.openExternal(
-        vscode.Uri.parse("https://github.com/koalaman/shellcheck#installing"),
-      );
+  /** The wasm runtime never falls back to the native program, so the failure is
+   * always logged but only shown once a session. */
+  private async showWasmRuntimeError(error: WasmRuntimeError): Promise<void> {
+    logging.error(
+      "ShellCheck (wasm) failed: %s\n%s",
+      error.message,
+      error.detail,
+    );
+    const notification = this.wasmFailureNotifier.notificationFor(error);
+    if (notification) {
+      await this.showFailureNotification(notification);
     }
   }
+
+  private async showFailureNotification(
+    notification: FailureNotification,
+  ): Promise<void> {
+    try {
+      const selected = await vscode.window.showErrorMessage(
+        notification.message,
+        ...notification.items,
+      );
+      await applyFailureEffect(
+        effectOfSelection(selected),
+        this.failureActionHost,
+      );
+    } catch (error) {
+      // Nobody awaits a notification, so a rejection here would go nowhere.
+      logging.error("Unable to report a ShellCheck failure: %O", error);
+    }
+  }
+
+  private readonly failureActionHost: FailureActionHost = {
+    openUrl: async (url) => {
+      await vscode.env.openExternal(vscode.Uri.parse(url));
+    },
+    showLog: () => {
+      this.revealLog();
+    },
+    setRuntime: async (runtime) => {
+      await vscode.workspace
+        .getConfiguration("shellcheck")
+        .update(
+          ShellCheckSettings.keys.runtime,
+          runtime,
+          vscode.ConfigurationTarget.Global,
+        );
+    },
+  };
 }
