@@ -3,7 +3,6 @@
 /node_modules
 /.vscode-test
 /binaries
-/wasm
 
 *.vsix
 *.zip

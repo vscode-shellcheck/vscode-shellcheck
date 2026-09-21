@@ -64,21 +64,16 @@ export class RuntimeManager implements vscode.Disposable {
 
     try {
       // Imported on demand: a native session must never evaluate the wasm
-      // module graph, let alone read the 7.6 MiB module.
-      const { WasmRunner, compileWasmFile } =
+      // module graph, let alone read the 9.9 MiB module.
+      const { WasmRunner, loadPackagedModule } =
         await import("./wasm/wasm-runner.js");
-      const wasmPath = vscode.Uri.joinPath(
-        this.context.extensionUri,
-        "wasm",
-        "shellcheck.wasm",
-      ).fsPath;
       return new WasmRunner({
         workerPath: vscode.Uri.joinPath(
           this.context.extensionUri,
           "dist",
           "wasm-worker.js",
         ).fsPath,
-        loadModule: () => compileWasmFile(wasmPath),
+        loadModule: loadPackagedModule,
         logger: logging.logger,
       });
     } catch (error) {

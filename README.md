@@ -190,7 +190,7 @@ To turn it on:
 
 This runtime is experimental and unsupported. It never falls back to the native binary: if it fails to start or a check crashes, your scripts stop being checked until you switch back. The failure is reported once per session, with the actions _Switch back to native_ and _Show Log_.
 
-It is also around 4x slower than the native binary, and linting as you type correspondingly waits longer after your last keystroke. For large files, consider setting `shellcheck.run` to `onSave`.
+It is also 3-4x slower than the native binary, and linting as you type correspondingly waits longer after your last keystroke. For large files, consider setting `shellcheck.run` to `onSave`.
 
 Known limitations:
 
@@ -213,6 +213,6 @@ This extension was originally based on [@hoovercj](https://github.com/hoovercj)'
 
 This extension is licensed under the [MIT license](./LICENSE).
 
-The bundled [ShellCheck] binaries and the bundled [ShellCheck] WebAssembly module are licensed under [GPLv3](https://github.com/koalaman/shellcheck/blob/master/LICENSE).
+The bundled [ShellCheck] binaries are licensed under [GPLv3](https://github.com/koalaman/shellcheck/blob/master/LICENSE). The WebAssembly build of [ShellCheck] ships as the separate [`@vscode-shellcheck/shellcheck-wasm`](https://www.npmjs.com/package/@vscode-shellcheck/shellcheck-wasm) package, also under GPLv3, with its own `LICENSE` and `build-info.json` inside `node_modules/@vscode-shellcheck/shellcheck-wasm`.
 
 [ShellCheck]: https://github.com/koalaman/shellcheck

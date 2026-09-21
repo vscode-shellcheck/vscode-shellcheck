@@ -20,7 +20,7 @@ import {
   RuntimeKind,
   WasmRuntimeError,
 } from "./runtime/types.js";
-import { WASM_TOOL_VERSION } from "./runtime/wasm/version.js";
+import { readWasmBuildInfo } from "./runtime/wasm/build-info.js";
 import {
   checkIfConfigurationChanged,
   getWorkspaceSettings,
@@ -77,7 +77,7 @@ function hasHostAbsolutePath(arg: string): boolean {
 }
 
 type ToolStatus =
-  | { ok: true; version: SemVer }
+  | { ok: true; version: SemVer; ghcVersion?: string }
   | { ok: false; reason: "executableNotFound" | "executionFailed" };
 
 function toolStatusByError(error: any): ToolStatus {
@@ -315,11 +315,13 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       if (settings.runtime === "wasm") {
         // The module is bundled, so its version is known without probing it,
         // and there is nothing the user could update.
+        const { shellcheckVersion, ghcVersion } = readWasmBuildInfo();
         this.toolStatusByPath.set(statusKey, {
           ok: true,
-          version: WASM_TOOL_VERSION,
+          version: shellcheckVersion,
+          ghcVersion,
         });
-        logging.info(`shellcheck (wasm) version: ${WASM_TOOL_VERSION}`);
+        logging.info(`shellcheck (wasm) version: ${shellcheckVersion}`);
         return;
       }
 
@@ -507,11 +509,14 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     const settings: ShellCheckSettings = await this.getSettings(textDocument);
     const toolStatus = this.toolStatusByPath.get(toolStatusKey(settings));
     if (toolStatus && toolStatus.ok) {
-      output.push(`- Runtime: \`${settings.runtime}\``);
       if (settings.runtime === "wasm") {
-        output.push(`- Version: \`${toolStatus.version} (bundled wasm)\``, "");
+        output.push(
+          `- Runtime: \`wasm (ShellCheck ${toolStatus.version}, GHC ${toolStatus.ghcVersion})\``,
+          "",
+        );
       } else {
         output.push(
+          `- Runtime: \`${settings.runtime}\``,
           `- Version: \`${toolStatus.version}\``,
           `- Bundled: \`${settings.executable.bundled}\``,
           "",

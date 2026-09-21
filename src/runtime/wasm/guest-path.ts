@@ -20,12 +20,6 @@ export interface GuestPathMapper {
   normalizeRoot(root: string): string;
   contains(root: string, hostPath: string): boolean;
   toGuest(root: string, hostPath: string): string;
-  /** Returns undefined when `guestPath` names anything outside `root`. */
-  fromGuest(
-    root: string,
-    guestPath: string,
-    baseDir?: string,
-  ): string | undefined;
   resolveMapping(
     preopenRoot: string | undefined,
     cwd: string | undefined,
@@ -69,21 +63,6 @@ export function createGuestPathMapper(
     return "/" + relative.split(impl.sep).join("/");
   }
 
-  function fromGuest(
-    root: string,
-    guestPath: string,
-    baseDir: string = root,
-  ): string | undefined {
-    // A backslash is an ordinary filename character in a guest path, but
-    // impl.resolve reads it as a separator on win32, so "a\..\..\secret"
-    // would escape through a route the containment check cannot see.
-    if (windows && guestPath.includes("\\")) {
-      return undefined;
-    }
-    const hostPath = impl.resolve(baseDir, guestPath.replace(/^\/+/, ""));
-    return contains(root, hostPath) ? hostPath : undefined;
-  }
-
   function resolveMapping(
     preopenRoot: string | undefined,
     cwd: string | undefined,
@@ -101,7 +80,7 @@ export function createGuestPathMapper(
     return { hostRoot, pwd: toGuest(hostRoot, workingDirectory) };
   }
 
-  return { normalizeRoot, contains, toGuest, fromGuest, resolveMapping };
+  return { normalizeRoot, contains, toGuest, resolveMapping };
 }
 
 const platformMapper = createGuestPathMapper(
@@ -109,8 +88,4 @@ const platformMapper = createGuestPathMapper(
   process.platform === "win32",
 );
 
-export const normalizeRoot = platformMapper.normalizeRoot;
-export const contains = platformMapper.contains;
-export const toGuest = platformMapper.toGuest;
-export const fromGuest = platformMapper.fromGuest;
 export const resolveMapping = platformMapper.resolveMapping;

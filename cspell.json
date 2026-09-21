@@ -4,7 +4,6 @@
   "ignorePaths": [
     "node_modules/**",
     "binaries/**",
-    "wasm/**",
     "docs/plans/**",
     ".vscode-test/**",
     "dist/**",

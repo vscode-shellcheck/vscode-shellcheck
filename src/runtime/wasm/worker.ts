@@ -1,18 +1,22 @@
 import { parentPort } from "node:worker_threads";
 import {
+  createReadOnlyPreopen,
+  ReadOnlyPreopen,
+  run as runShellCheck,
+} from "@vscode-shellcheck/shellcheck-wasm/node";
+import {
   MainToWorker,
   RunMessage,
   WorkerToMain,
   InitMessage,
 } from "./protocol.js";
-import { createShimWasiHost } from "./wasi-host.js";
 
 if (!parentPort) {
   throw new Error("The ShellCheck wasm worker needs a parent thread");
 }
 const port = parentPort;
 
-const host = createShimWasiHost();
+const decoder = new TextDecoder();
 let wasmModule: WebAssembly.Module | undefined;
 
 function describe(error: unknown): { message: string; detail: string } {
@@ -48,25 +52,36 @@ function run(message: RunMessage): void {
     return;
   }
 
+  let preopen: ReadOnlyPreopen | undefined;
   try {
+    // Inside the try: the package refuses a host root it cannot realpath,
+    // which is this run's failure, not the worker's.
+    if (message.preopen) {
+      preopen = createReadOnlyPreopen(
+        message.preopen.hostRoot,
+        message.preopen.guestName,
+      );
+    }
     // Synchronous on purpose: the guest is a wasm command that runs to
     // completion, and one lint at a time per worker is the whole design.
-    const outcome = host.run({
-      module: wasmModule,
+    const outcome = runShellCheck(wasmModule, {
       args: message.args,
       stdin: message.stdin,
       env: message.env,
-      preopen: message.preopen,
+      preopens: preopen ? [preopen] : [],
     });
     post({
       type: "result",
       id: message.id,
       exitCode: outcome.exitCode,
-      stdout: outcome.stdout,
-      stderr: outcome.stderr,
+      stdout: decoder.decode(outcome.stdout),
+      stderr: decoder.decode(outcome.stderr),
     });
   } catch (error) {
     post({ type: "failed", id: message.id, ...describe(error) });
+  } finally {
+    // Host descriptors the guest left open would otherwise outlive the run.
+    preopen?.dispose();
   }
 }
 

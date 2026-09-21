@@ -135,7 +135,7 @@
           "scope": "machine-overridable"
         },
         "shellcheck.runtime": {
-          "markdownDescription": "**Experimental.** Which ShellCheck runtime to use.\n\n- `native` — run the bundled or user-provided `shellcheck` executable. This is the default and the only supported mode.\n- `wasm` — run a bundled WebAssembly (WASI) build of ShellCheck inside the editor. No executable is required and it works on every platform, but linting is currently about 4x slower than native, `#shellcheck.executablePath#` is ignored, and files outside the document's workspace folder are not visible to `source` directives or `.shellcheckrc` lookup.",
+          "markdownDescription": "**Experimental.** Which ShellCheck runtime to use.\n\n- `native` — run the bundled or user-provided `shellcheck` executable. This is the default and the only supported mode.\n- `wasm` — run a bundled WebAssembly (WASI) build of ShellCheck inside the editor. No executable is required and it works on every platform, but linting is currently 3-4x slower than native, `#shellcheck.executablePath#` is ignored, and files outside the document's workspace folder are not visible to `source` directives or `.shellcheckrc` lookup.",
           "type": "string",
           "enum": [
             "native",
@@ -275,7 +275,7 @@
     }
   },
   "scripts": {
-    "prepare": "bindl && node scripts/fetch-wasm.mjs",
+    "prepare": "bindl",
     "check-types": "tsc --noEmit",
     "check-types:watch": "tsc --noEmit --watch",
     "build": "npm run check-types && node esbuild.js",
@@ -297,7 +297,7 @@
     "release": "semantic-release"
   },
   "dependencies": {
-    "@bjorn3/browser_wasi_shim": "^0.4.2",
+    "@vscode-shellcheck/shellcheck-wasm": "^0.1.1",
     "execa": "^10.0.1",
     "minimatch": "^10.2.6",
     "remeda": "^2.50.0",

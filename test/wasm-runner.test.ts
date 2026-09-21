@@ -18,18 +18,18 @@ import type {
 import {
   WasmModuleSource,
   WasmRunner,
-  compileWasmFile,
+  loadPackagedModule,
 } from "../src/runtime/wasm/wasm-runner.js";
 import { Arguments, Logger } from "../src/utils/logging/types.js";
 
 const repoRoot = path.resolve(fileURLToPath(import.meta.url), "../../..");
-const fixtureRoot = path.join(repoRoot, "test", "fixtures", "wasi-host");
+const fixtureRoot = path.join(repoRoot, "test", "fixtures", "wasm-parity");
 const workerPath = path.join(repoRoot, "dist", "wasm-worker.js");
-const wasmPath = path.join(repoRoot, "wasm", "shellcheck.wasm");
-const shellCheckArgs = ["-f", "json1", "-s", "bash", "-"];
+// -x makes the sourced file reachable only through the preopen.
+const shellCheckArgs = ["-x", "-f", "json1", "-s", "bash", "-"];
 
 const fixtureScript = fs.readFileSync(
-  path.join(fixtureRoot, "sub", "main.sh"),
+  path.join(fixtureRoot, "src", "sources.sh"),
   "utf8",
 );
 /** Long enough that the watchdog and a supersede always win the race. */
@@ -101,7 +101,7 @@ function nativeOutput(): { stdout: string; status: number | null } {
   );
   assert.ok(fs.existsSync(binary), `bundled shellcheck missing at ${binary}`);
   const native = spawnSync(binary, shellCheckArgs, {
-    cwd: path.join(fixtureRoot, "sub"),
+    cwd: path.join(fixtureRoot, "src"),
     input: fixtureScript,
     encoding: "utf8",
   });
@@ -111,11 +111,11 @@ function nativeOutput(): { stdout: string; status: number | null } {
 
 function lintRequest(overrides: Partial<LintRequest> = {}): LintRequest {
   return {
-    documentKey: "file:///fixture/sub/main.sh",
+    documentKey: "file:///fixture/src/sources.sh",
     executablePath: "shellcheck",
     args: shellCheckArgs,
     stdin: fixtureScript,
-    cwd: path.join(fixtureRoot, "sub"),
+    cwd: path.join(fixtureRoot, "src"),
     preopenRoot: fixtureRoot,
     ...overrides,
   };
@@ -128,7 +128,7 @@ function workerThreadIds(logger: RecordingLogger): number[] {
 }
 
 suite("WASM Runner", function () {
-  // Compiling the 7.6 MiB module and terminating deliberately slow runs are
+  // Compiling the 9.9 MiB module and terminating deliberately slow runs are
   // both well past the default mocha budget.
   this.timeout(180000);
 
@@ -140,7 +140,7 @@ suite("WASM Runner", function () {
       fs.existsSync(workerPath),
       `${workerPath} is missing; run "npm run build" first`,
     );
-    source = await compileWasmFile(wasmPath);
+    source = await loadPackagedModule();
   });
 
   teardown(() => {
@@ -258,17 +258,33 @@ suite("WASM Runner", function () {
   });
 
   test("rejects when the guest cannot enter the working directory", async () => {
-    const missingRoot = path.join(repoRoot, "no-such-workspace-root");
     await assert.rejects(
       createRunner().runner.run(
+        lintRequest({ cwd: path.join(fixtureRoot, "no-such-dir") }),
+      ),
+      (error: unknown) =>
+        error instanceof WasmRuntimeError &&
+        error.detail.includes("hs_init_ghc"),
+    );
+  });
+
+  test("rejects only the run whose preopen root does not exist", async () => {
+    const { runner } = createRunner();
+    const missingRoot = path.join(repoRoot, "no-such-workspace-root");
+    await assert.rejects(
+      runner.run(
         lintRequest({
           cwd: path.join(missingRoot, "sub"),
           preopenRoot: missingRoot,
         }),
       ),
       (error: unknown) =>
-        error instanceof WasmRuntimeError &&
-        error.detail.includes("hs_init_ghc"),
+        error instanceof WasmRuntimeError && error.detail.includes("ENOENT"),
+    );
+    // The worker survives it: the next run on the same runner is unaffected.
+    assert.strictEqual(
+      (await runner.run(lintRequest())).stdout,
+      nativeOutput().stdout,
     );
   });
 
@@ -310,7 +326,7 @@ suite("WASM Worker Protocol", function () {
   let source: WasmModuleSource;
 
   suiteSetup(async () => {
-    source = await compileWasmFile(wasmPath);
+    source = await loadPackagedModule();
   });
 
   teardown(async () => {
@@ -336,7 +352,7 @@ suite("WASM Worker Protocol", function () {
       type: "run",
       id,
       args: shellCheckArgs,
-      env: { PWD: "/sub" },
+      env: { PWD: "/src" },
       stdin: new TextEncoder().encode(fixtureScript),
       preopen: { guestName: "/", hostRoot: fixtureRoot },
     });
@@ -410,16 +426,33 @@ suite("WASM Worker Protocol", function () {
 });
 
 suite("WASM Bundles", () => {
-  test("the WASI host is bundled into the worker only", () => {
+  test("the worker imports the wasm package instead of inlining it", () => {
+    const worker = fs.readFileSync(workerPath, "utf8");
     assert.match(
-      fs.readFileSync(workerPath, "utf8"),
-      /wasi_snapshot_preview1/,
-      `${workerPath} is missing the WASI host`,
+      worker,
+      /from\s*"@vscode-shellcheck\/shellcheck-wasm\/node"/,
+      `${workerPath} does not import the wasm package`,
     );
     assert.doesNotMatch(
-      fs.readFileSync(path.join(repoRoot, "dist", "extension.js"), "utf8"),
+      worker,
       /wasi_snapshot_preview1/,
-      "the extension bundle must not carry the WASI host",
+      `${workerPath} bundles the wasm package`,
+    );
+  });
+
+  test("the extension bundle carries none of the wasm package", () => {
+    const extension = fs.readFileSync(
+      path.join(repoRoot, "dist", "extension.js"),
+      "utf8",
+    );
+    assert.doesNotMatch(extension, /wasi_snapshot_preview1/);
+    assert.doesNotMatch(extension, /browser_wasi_shim/);
+    // Only a dynamic import of the package may name it; its code must not
+    // be there, and the static hoist esbuild would give a top-level import
+    // would load it in every native session.
+    assert.doesNotMatch(
+      extension,
+      /import\s*\{[^}]*\}\s*from\s*"@vscode-shellcheck/,
     );
   });
 });

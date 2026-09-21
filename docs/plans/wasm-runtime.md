@@ -82,6 +82,8 @@ per-platform binaries and unlock VS Code for the Web (#478).
 
 ### 2.5 Artifact and packaging
 
+> Superseded on 2026-09-21 by the `@vscode-shellcheck/shellcheck-wasm` package; see the note at the top of §10.
+
 | #   | Requirement                                                                                                                                                                                                                                                                                                                                                                       |
 | --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | P1  | Source: `wasilibs/go-shellcheck`, path `internal/wasm/shellcheck.wasm`, pinned by commit SHA, verified by sha256. Known-good: commit `24025c1590296bcce8e494624e8c3561740a32a4`, sha256 `f9d99fa45ae12d5b735425e6a32f6ea3cc550095b1e82ec1b770141470278c20`, 7,650,497 bytes raw (~1.68 MiB compressed), ShellCheck 0.11.0 — the same version `bindl.config.ts:3` pins for native. |
@@ -727,6 +729,20 @@ against. Passing `null` here would silently downgrade to the legacy `json`
 format and break parity.
 
 ## 10. Packaging
+
+> **2026-09-21.** Superseded: the vendored fetch (`scripts/fetch-wasm.mjs`,
+> `wasm/`, P1-P6 in §2.5) was replaced by the npm package
+> `@vscode-shellcheck/shellcheck-wasm`, which ships the module, the runner and
+> the read-only preopen, and pins its ShellCheck release through
+> `SHELLCHECK_VERSION` and `build-info.json`. The package is marked `external`
+> in both esbuild contexts and shipped under `node_modules/` via
+> `.vscodeignore`: it is GPL-3.0-or-later and the extension is MIT, so
+> bundling it into `dist/` would make that bundle a derivative work, whereas a
+> separate package is aggregation, the same posture as the native binaries. It
+> also resolves `shellcheck.wasm` relative to its own `import.meta.url`, which
+> only holds for its real files. `engines.vscode` moved to `^1.101.0`, the
+> first release on Node 22, which the package requires. The rest of this
+> section describes the replaced design.
 
 ### 10.1 Fetching the artifact
 

@@ -13,18 +13,6 @@
       ],
       "depNameTemplate": "koalaman/shellcheck",
       "datasourceTemplate": "github-releases"
-    },
-    {
-      "description": "The ShellCheck WebAssembly artifact is pinned by commit. WASM_SHA256 and WASM_SIZE in the same file describe the artifact at that commit and have to be updated along with it, otherwise scripts/fetch-wasm.mjs fails the build.",
-      "customType": "regex",
-      "managerFilePatterns": ["/^scripts\\/fetch-wasm\\.mjs$/"],
-      "matchStrings": [
-        "export const GO_SHELLCHECK_COMMIT = \\\"(?<currentDigest>[0-9a-f]{40})\\\";"
-      ],
-      "depNameTemplate": "wasilibs/go-shellcheck",
-      "packageNameTemplate": "https://github.com/wasilibs/go-shellcheck",
-      "datasourceTemplate": "git-refs",
-      "currentValueTemplate": "main"
     }
   ],
   "lockFileMaintenance": {

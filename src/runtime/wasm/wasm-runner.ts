@@ -34,7 +34,7 @@ export interface WasmModuleSource {
   /** Compiled on the main thread and posted to every worker it spawns. */
   readonly module: WebAssembly.Module;
   /**
-   * Read on demand instead of retained: the 7.6 MiB source is only needed by
+   * Read on demand instead of retained: the 9.9 MiB source is only needed by
    * hosts that refuse to structured-clone a Module, which none is known to.
    */
   readBytes(): Promise<Uint8Array<ArrayBuffer>>;
@@ -49,13 +49,19 @@ export interface WasmRunnerOptions {
   readonly runTimeoutMs?: number;
 }
 
-/** Reads and compiles the bundled module; the caller resolves the path. */
-export async function compileWasmFile(
-  wasmPath: string,
-): Promise<WasmModuleSource> {
-  const readBytes = async (): Promise<Uint8Array<ArrayBuffer>> =>
-    new Uint8Array(await fs.readFile(wasmPath));
-  return { module: await WebAssembly.compile(await readBytes()), readBytes };
+/**
+ * Compiles the module the wasm package ships. The package is imported here,
+ * dynamically, rather than at the top of the file: esbuild hoists a static
+ * external import to the top of the extension bundle, where a native session
+ * would evaluate it at activation.
+ */
+export async function loadPackagedModule(): Promise<WasmModuleSource> {
+  const { loadModule, wasmPath } =
+    await import("@vscode-shellcheck/shellcheck-wasm/node");
+  return {
+    module: await loadModule(),
+    readBytes: async () => new Uint8Array(await fs.readFile(wasmPath)),
+  };
 }
 
 type RunnerState =
