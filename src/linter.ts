@@ -1,4 +1,4 @@
-import { extname, isAbsolute } from "node:path";
+import { extname } from "node:path";
 import { SemVer } from "semver";
 import * as vscode from "vscode";
 import { ShellCheckExtensionApi } from "./api.js";
@@ -20,7 +20,8 @@ import {
   RuntimeKind,
   WasmRuntimeError,
 } from "./runtime/types.js";
-import { readWasmBuildInfo } from "./runtime/wasm/build-info.js";
+import { hasHostAbsolutePath } from "./runtime/wasm/guest-path.js";
+import { resolveDocumentMount } from "./runtime/wasm/workspace-fs.js";
 import {
   checkIfConfigurationChanged,
   getWorkspaceSettings,
@@ -32,7 +33,6 @@ import { getWikiUrlForRule } from "./utils/link.js";
 import * as logging from "./utils/logging/index.js";
 import {
   ensureCurrentWorkingDirectory,
-  getDocumentPreopenRoot,
   getWorkspaceFolderPath,
   guessDocumentDirname,
 } from "./utils/path.js";
@@ -67,13 +67,6 @@ function lintDelay(settings: ShellCheckSettings): number {
     return 0;
   }
   return settings.runtime === "wasm" ? 750 : 250;
-}
-
-/** `--flag=/abs/path` and a bare `/abs/path` alike; the flag itself is never absolute. */
-function hasHostAbsolutePath(arg: string): boolean {
-  const separator = arg.indexOf("=");
-  const value = separator === -1 ? arg : arg.slice(separator + 1);
-  return value.length > 0 && isAbsolute(value);
 }
 
 type ToolStatus =
@@ -314,14 +307,17 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     if (settings.enabled && !this.toolStatusByPath.has(statusKey)) {
       if (settings.runtime === "wasm") {
         // The module is bundled, so its version is known without probing it,
-        // and there is nothing the user could update.
-        const { shellcheckVersion, ghcVersion } = readWasmBuildInfo();
+        // and there is nothing the user could update. Imported on demand, as
+        // a static import would load the package in every native session.
+        const { SHELLCHECK_VERSION, BUILD_INFO } =
+          await import("@vscode-shellcheck/shellcheck-wasm");
+        const version = new SemVer(SHELLCHECK_VERSION);
         this.toolStatusByPath.set(statusKey, {
           ok: true,
-          version: shellcheckVersion,
-          ghcVersion,
+          version,
+          ghcVersion: BUILD_INFO.ghcVersion,
         });
-        logging.info(`shellcheck (wasm) version: ${shellcheckVersion}`);
+        logging.info(`shellcheck (wasm) version: ${version}`);
         return;
       }
 
@@ -367,9 +363,9 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       }
     }
 
-    if (!getDocumentPreopenRoot(textDocument)) {
+    if (textDocument.isUntitled) {
       logging.info(
-        "shellcheck (wasm): %s has no local folder to expose, so `.shellcheckrc` and `source` will not resolve for it",
+        "shellcheck (wasm): %s has no folder to expose, so `.shellcheckrc` and `source` will not resolve for it",
         textDocument.uri.toString(),
       );
     }
@@ -680,27 +676,28 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
     args.push("-"); // Use stdin for shellcheck
 
-    let cwd: string | undefined;
-    if (settings.useWorkspaceRootAsCwd) {
-      cwd = getWorkspaceFolderPath(textDocument.uri);
-    } else {
-      cwd = guessDocumentDirname(textDocument);
-    }
-
     let lintResult: LintResult;
     try {
-      cwd = await ensureCurrentWorkingDirectory(cwd);
       const runner = await this.runtimeManager.getRunner();
+      // The wasm runtime reads every file through workspace.fs, so it takes
+      // no host path at all.
+      const { cwd, mount } =
+        settings.runtime === "wasm"
+          ? {
+              cwd: undefined,
+              mount: await resolveDocumentMount(
+                textDocument.uri,
+                settings.useWorkspaceRootAsCwd,
+              ),
+            }
+          : { cwd: await this.nativeWorkingDirectory(textDocument, settings) };
       lintResult = await runner.run({
         documentKey: textDocument.uri.toString(),
         executablePath: executable.path,
         args,
         stdin: textDocument.getText(),
         cwd,
-        preopenRoot:
-          settings.runtime === "wasm"
-            ? getDocumentPreopenRoot(textDocument)
-            : undefined,
+        mount,
       });
     } catch (error: any) {
       if (
@@ -728,6 +725,17 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       result = parser.parse(lintResult.stdout);
     }
     this.setResultCollections(textDocument.uri, result);
+  }
+
+  private async nativeWorkingDirectory(
+    textDocument: vscode.TextDocument,
+    settings: ShellCheckSettings,
+  ): Promise<string | undefined> {
+    return await ensureCurrentWorkingDirectory(
+      settings.useWorkspaceRootAsCwd
+        ? getWorkspaceFolderPath(textDocument.uri)
+        : guessDocumentDirname(textDocument),
+    );
   }
 
   private setResultCollections(

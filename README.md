@@ -195,8 +195,8 @@ It is also 3-4x slower than the native binary, and linting as you type correspon
 Known limitations:
 
 - `shellcheck.executablePath` is ignored.
-- Only files inside the document's workspace folder are readable, so `source` targets and `.shellcheckrc` files outside that folder are not found. A file that belongs to no workspace folder sees only its own directory.
-- A document with no local folder at all — anything opened over a remote or virtual file system — gets no file access, so `source` directives and `.shellcheckrc` do not resolve for it.
+- Only files inside the document's workspace folder are readable, so `source` targets and `.shellcheckrc` files outside that folder are not found. A file that belongs to no workspace folder sees only its own directory, and an untitled document sees no files at all.
+- Symbolic links inside that folder are followed wherever they lead.
 - Path-like entries in `shellcheck.customArgs` are passed through unchanged. They name locations on your machine, which this runtime does not see under those names, so they will not resolve.
 
 ## Advanced usage
@@ -213,6 +213,6 @@ This extension was originally based on [@hoovercj](https://github.com/hoovercj)'
 
 This extension is licensed under the [MIT license](./LICENSE).
 
-The bundled [ShellCheck] binaries are licensed under [GPLv3](https://github.com/koalaman/shellcheck/blob/master/LICENSE). The WebAssembly build of [ShellCheck] ships as the separate [`@vscode-shellcheck/shellcheck-wasm`](https://www.npmjs.com/package/@vscode-shellcheck/shellcheck-wasm) package, also under GPLv3, with its own `LICENSE` and `build-info.json` inside `node_modules/@vscode-shellcheck/shellcheck-wasm`.
+The bundled [ShellCheck] binaries are licensed under [GPLv3](https://github.com/koalaman/shellcheck/blob/master/LICENSE). The WebAssembly build of [ShellCheck] ships as the separate [`@vscode-shellcheck/shellcheck-wasm`](https://www.npmjs.com/package/@vscode-shellcheck/shellcheck-wasm) package, also under GPLv3, with its own `LICENSE` inside `node_modules/@vscode-shellcheck/shellcheck-wasm`.
 
 [ShellCheck]: https://github.com/koalaman/shellcheck

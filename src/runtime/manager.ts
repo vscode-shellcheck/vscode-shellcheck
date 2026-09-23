@@ -20,8 +20,8 @@ export class RuntimeManager implements vscode.Disposable {
   private active: ActiveRunner | undefined;
 
   public constructor(private readonly context: vscode.ExtensionContext) {
-    // Started here rather than on the first lint so the wasm worker and its
-    // module are ready before the user types.
+    // Started here rather than on the first lint so the wasm module is
+    // compiled before the user types.
     this.ensure();
   }
 
@@ -65,16 +65,18 @@ export class RuntimeManager implements vscode.Disposable {
     try {
       // Imported on demand: a native session must never evaluate the wasm
       // module graph, let alone read the 9.9 MiB module.
-      const { WasmRunner, loadPackagedModule } =
-        await import("./wasm/wasm-runner.js");
+      const [{ WasmRunner }, { createPackagedShellCheck }] = await Promise.all([
+        import("./wasm/wasm-runner.js"),
+        import("./wasm/packaged.js"),
+      ]);
       return new WasmRunner({
-        workerPath: vscode.Uri.joinPath(
-          this.context.extensionUri,
-          "dist",
-          "wasm-worker.js",
-        ).fsPath,
-        loadModule: loadPackagedModule,
+        shellcheck: await createPackagedShellCheck({
+          extensionUri: this.context.extensionUri,
+          logger: logging.logger,
+        }),
         logger: logging.logger,
+        activeDocumentKey: () =>
+          vscode.window.activeTextEditor?.document.uri.toString(),
       });
     } catch (error) {
       throw new WasmRuntimeError(

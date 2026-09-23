@@ -1,88 +1,132 @@
 import assert from "node:assert";
-import path from "node:path";
+import * as vscode from "vscode";
 import {
-  createGuestPathMapper,
-  OutsidePreopenError,
+  fromGuestPath,
+  hasHostAbsolutePath,
+  planDocumentMount,
+  toGuestPath,
 } from "../src/runtime/wasm/guest-path.js";
 
-// Both platforms are exercised everywhere: the win32 rules are the ones most
-// likely to rot on a POSIX-only development machine.
-const posix = createGuestPathMapper(path.posix, false);
-const win32 = createGuestPathMapper(path.win32, true);
+const uri = (value: string) => vscode.Uri.parse(value);
+
+function plan(
+  document: string,
+  folder: string | undefined,
+  useWorkspaceRootAsCwd = false,
+): { root: string; pwd: string } | undefined {
+  const mount = planDocumentMount(
+    uri(document),
+    folder === undefined ? undefined : uri(folder),
+    useWorkspaceRootAsCwd,
+  );
+  return mount && { root: mount.root.toString(), pwd: mount.pwd };
+}
 
 suite("WASM Guest Paths", () => {
-  test("toGuest maps host paths to POSIX guest paths", () => {
-    assert.strictEqual(posix.toGuest("/proj", "/proj"), "/");
-    assert.strictEqual(posix.toGuest("/proj", "/proj/sub"), "/sub");
+  test("toGuestPath names a Uri relative to the mount", () => {
+    const root = uri("vscode-vfs://github/o/r");
+    assert.strictEqual(toGuestPath(root, root), "/");
+    assert.strictEqual(toGuestPath(root, uri("vscode-vfs://github/o/r/")), "/");
     assert.strictEqual(
-      posix.toGuest("/proj", "/proj/sub/main.sh"),
+      toGuestPath(root, uri("vscode-vfs://github/o/r/sub/main.sh")),
       "/sub/main.sh",
     );
-
-    // The worked Windows example of the plan: the drive letter is absorbed
-    // into the preopen and the separator becomes "/".
-    assert.strictEqual(win32.toGuest("C:\\proj", "C:\\proj"), "/");
-    assert.strictEqual(win32.toGuest("C:\\proj", "C:\\proj\\sub"), "/sub");
-    assert.strictEqual(
-      win32.toGuest("C:\\proj", "C:\\proj\\sub\\main.sh"),
-      "/sub/main.sh",
-    );
+    assert.strictEqual(toGuestPath(uri("mem:/"), uri("mem:/a/b")), "/a/b");
   });
 
-  test("toGuest rejects host paths outside the preopen root", () => {
-    assert.throws(
-      () => posix.toGuest("/proj", "/etc/shadow"),
-      OutsidePreopenError,
-    );
-    assert.throws(
-      () => posix.toGuest("/proj", "/proj/../etc/shadow"),
-      OutsidePreopenError,
-    );
+  test("toGuestPath absorbs a drive letter into the mount", () => {
+    // What Uri.file("C:\\proj") is on Windows. VS Code reports the drive
+    // letter in either case, and matches workspace folders regardless.
+    const root = uri("file:///c:/proj");
+    assert.strictEqual(toGuestPath(root, uri("file:///c:/proj/sub")), "/sub");
+    assert.strictEqual(toGuestPath(root, uri("file:///C:/proj/sub")), "/sub");
+  });
+
+  test("toGuestPath rejects Uris outside the mount", () => {
+    const root = uri("mem:/proj");
+    assert.strictEqual(toGuestPath(root, uri("mem:/etc/shadow")), undefined);
     // A sibling sharing the root's prefix is not inside it.
-    assert.throws(
-      () => posix.toGuest("/proj", "/projector"),
-      OutsidePreopenError,
-    );
-    assert.throws(
-      () => win32.toGuest("C:\\proj", "D:\\other"),
-      OutsidePreopenError,
+    assert.strictEqual(toGuestPath(root, uri("mem:/projector")), undefined);
+    assert.strictEqual(toGuestPath(root, uri("other:/proj/a")), undefined);
+    assert.strictEqual(toGuestPath(root, uri("mem://host/proj/a")), undefined);
+  });
+
+  test("toGuestPath accepts a directory whose name starts with a dot dot", () => {
+    assert.strictEqual(
+      toGuestPath(uri("mem:/proj"), uri("mem:/proj/..hidden")),
+      "/..hidden",
     );
   });
 
-  test("toGuest accepts a directory whose name starts with a dot dot", () => {
-    assert.strictEqual(posix.toGuest("/proj", "/proj/..hidden"), "/..hidden");
+  test("fromGuestPath maps guest paths back below the mount", () => {
+    const root = uri("vscode-vfs://github/o/r");
+    assert.strictEqual(fromGuestPath(root, "/")?.toString(), root.toString());
+    assert.strictEqual(
+      fromGuestPath(root, "/sub/./.shellcheckrc")?.toString(),
+      "vscode-vfs://github/o/r/sub/.shellcheckrc",
+    );
   });
 
-  test("resolveMapping places PWD inside the preopen", () => {
-    assert.deepStrictEqual(posix.resolveMapping("/proj", "/proj/sub"), {
-      hostRoot: "/proj",
+  test("fromGuestPath refuses a guest path that climbs out", () => {
+    const root = uri("mem:/proj");
+    assert.strictEqual(fromGuestPath(root, "/../etc/shadow"), undefined);
+    assert.strictEqual(fromGuestPath(root, "/sub/../../etc"), undefined);
+  });
+
+  test("a document in a workspace folder mounts the folder", () => {
+    assert.deepStrictEqual(plan("mem:/proj/sub/a.sh", "mem:/proj"), {
+      root: "mem:/proj",
       pwd: "/sub",
     });
-    assert.deepStrictEqual(posix.resolveMapping("/proj", "/proj"), {
-      hostRoot: "/proj",
-      pwd: "/",
-    });
-    assert.deepStrictEqual(win32.resolveMapping("c:\\proj", "C:\\proj\\sub"), {
-      hostRoot: "C:\\proj",
-      pwd: "/sub",
-    });
-  });
-
-  test("resolveMapping re-roots the preopen when the cwd is outside it", () => {
-    // Multi-root windows hand out the first workspace folder for a document
-    // that belongs to none, which would otherwise yield an unreachable PWD.
-    assert.deepStrictEqual(posix.resolveMapping("/proj", "/elsewhere/sub"), {
-      hostRoot: "/elsewhere/sub",
-      pwd: "/",
-    });
-    assert.deepStrictEqual(win32.resolveMapping("C:\\proj", "D:\\other"), {
-      hostRoot: "D:\\other",
+    assert.deepStrictEqual(plan("mem:/proj/a.sh", "mem:/proj"), {
+      root: "mem:/proj",
       pwd: "/",
     });
   });
 
-  test("resolveMapping yields no preopen without a root or a cwd", () => {
-    assert.strictEqual(posix.resolveMapping(undefined, "/proj/sub"), undefined);
-    assert.strictEqual(posix.resolveMapping("/proj", undefined), undefined);
+  test("useWorkspaceRootAsCwd runs in the folder root", () => {
+    assert.deepStrictEqual(plan("mem:/proj/sub/a.sh", "mem:/proj", true), {
+      root: "mem:/proj",
+      pwd: "/",
+    });
+  });
+
+  test("a document outside every folder mounts its own directory", () => {
+    assert.deepStrictEqual(plan("mem:/elsewhere/sub/a.sh", undefined), {
+      root: "mem:/elsewhere/sub",
+      pwd: "/",
+    });
+    assert.deepStrictEqual(plan("mem:/elsewhere/sub/a.sh", undefined, true), {
+      root: "mem:/elsewhere/sub",
+      pwd: "/",
+    });
+  });
+
+  test("a folder that does not contain the document is not mounted", () => {
+    // A PWD outside the mount would silently empty the output.
+    assert.deepStrictEqual(plan("mem:/elsewhere/a.sh", "mem:/proj"), {
+      root: "mem:/elsewhere",
+      pwd: "/",
+    });
+  });
+
+  test("an untitled document gets no files", () => {
+    assert.strictEqual(plan("untitled:Untitled-1", undefined), undefined);
+    assert.strictEqual(plan("untitled:/proj/a.sh", "mem:/proj"), undefined);
+  });
+
+  test("hasHostAbsolutePath spots host paths of either platform", () => {
+    for (const arg of [
+      "/abs/path",
+      "--source-path=/abs",
+      "-P=C:\\proj",
+      "C:/proj",
+      "\\\\server\\share",
+    ]) {
+      assert.ok(hasHostAbsolutePath(arg), arg);
+    }
+    for (const arg of ["-x", "--source-path=SCRIPTDIR", "lib", "-e", ""]) {
+      assert.ok(!hasHostAbsolutePath(arg), arg);
+    }
   });
 });

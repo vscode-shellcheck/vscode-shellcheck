@@ -1,91 +1,99 @@
-import path from "node:path";
+import * as vscode from "vscode";
 
-/** Raised when a host path cannot be named inside the preopen tree. */
-export class OutsidePreopenError extends Error {
-  public constructor(root: string, hostPath: string) {
-    super(`"${hostPath}" is outside the preopen root "${root}"`);
-    this.name = "OutsidePreopenError";
-  }
-}
-
-/** A preopen root and the guest working directory to run inside it. */
-export interface PreopenMapping {
-  /** Host directory the guest sees as `/`. */
-  readonly hostRoot: string;
-  /** Guest path handed to the guest as `PWD`. Always inside `hostRoot`. */
+/** The directory mounted at guest `/`, and the guest `PWD` inside it. */
+export interface MountPlan {
+  readonly root: vscode.Uri;
   readonly pwd: string;
 }
 
-export interface GuestPathMapper {
-  normalizeRoot(root: string): string;
-  contains(root: string, hostPath: string): boolean;
-  toGuest(root: string, hostPath: string): string;
-  resolveMapping(
-    preopenRoot: string | undefined,
-    cwd: string | undefined,
-  ): PreopenMapping | undefined;
+function trimTrailingSlash(path: string): string {
+  return path.length > 1 && path.endsWith("/") ? path.slice(0, -1) : path;
 }
 
 /**
- * The `windows` flag is separate from `impl` so the win32 rules can be
- * exercised from a test running on any platform.
+ * Guest path of `target` in a mount at `root`, or undefined when it lies
+ * outside. Works on `Uri.path`, which is POSIX for every scheme, so no host
+ * path rules are involved.
  */
-export function createGuestPathMapper(
-  impl: path.PlatformPath,
-  windows: boolean,
-): GuestPathMapper {
-  function normalizeRoot(root: string): string {
-    const resolved = impl.resolve(root);
-    // Containment is a textual comparison, so both sides must agree on the
-    // drive letter casing VS Code reports inconsistently (see
-    // fixDriveCasingInWindows in src/utils/path.ts).
-    return windows && resolved.length > 0
-      ? resolved[0].toUpperCase() + resolved.slice(1)
-      : resolved;
+export function toGuestPath(
+  root: vscode.Uri,
+  target: vscode.Uri,
+): string | undefined {
+  if (root.scheme !== target.scheme || root.authority !== target.authority) {
+    return undefined;
   }
-
-  function contains(root: string, hostPath: string): boolean {
-    return hostPath === root || hostPath.startsWith(root + impl.sep);
+  const rootPath = trimTrailingSlash(root.path);
+  const targetPath = trimTrailingSlash(target.path);
+  if (targetPath === rootPath) {
+    return "/";
   }
-
-  function toGuest(root: string, hostPath: string): string {
-    const relative = impl.relative(root, hostPath);
-    if (relative === "") {
-      return "/";
-    }
-    if (
-      relative === ".." ||
-      relative.startsWith(`..${impl.sep}`) ||
-      impl.isAbsolute(relative)
-    ) {
-      throw new OutsidePreopenError(root, hostPath);
-    }
-    return "/" + relative.split(impl.sep).join("/");
+  const prefix = rootPath === "/" ? "/" : `${rootPath}/`;
+  // VS Code matches workspace folders case-insensitively where the file
+  // system is, and reports drive letters in either case, so the folder that
+  // owns a document may differ from its path in case alone.
+  if (
+    targetPath.startsWith(prefix) ||
+    targetPath.toLowerCase().startsWith(prefix.toLowerCase())
+  ) {
+    return `/${targetPath.slice(prefix.length)}`;
   }
-
-  function resolveMapping(
-    preopenRoot: string | undefined,
-    cwd: string | undefined,
-  ): PreopenMapping | undefined {
-    if (preopenRoot === undefined || cwd === undefined) {
-      return undefined;
-    }
-    const root = normalizeRoot(preopenRoot);
-    const workingDirectory = normalizeRoot(cwd);
-    // A PWD outside the preopen makes the guest RTS chdir fail and stdout come
-    // back silently empty, so re-root the preopen rather than emit one. This
-    // happens in multi-root windows, where the workspace folder of a document
-    // belonging to no folder is the first folder, not the document's own.
-    const hostRoot = contains(root, workingDirectory) ? root : workingDirectory;
-    return { hostRoot, pwd: toGuest(hostRoot, workingDirectory) };
-  }
-
-  return { normalizeRoot, contains, toGuest, resolveMapping };
+  return undefined;
 }
 
-const platformMapper = createGuestPathMapper(
-  path,
-  process.platform === "win32",
-);
+/**
+ * The Uri a guest path names in a mount at `root`, or undefined for one that
+ * climbs out of it. The package normalizes guest paths before they get here;
+ * this only keeps `Uri.joinPath`, which resolves `..`, from being the place
+ * that relies on it.
+ */
+export function fromGuestPath(
+  root: vscode.Uri,
+  guestPath: string,
+): vscode.Uri | undefined {
+  const segments = guestPath
+    .split("/")
+    .filter((segment) => segment !== "" && segment !== ".");
+  if (segments.includes("..")) {
+    return undefined;
+  }
+  return segments.length ? vscode.Uri.joinPath(root, ...segments) : root;
+}
 
-export const resolveMapping = platformMapper.resolveMapping;
+/**
+ * What a document gets to see: its workspace folder when it has one, else its
+ * own directory. `PWD` is the document's directory, as the native runtime's
+ * working directory is, or the folder root under `useWorkspaceRootAsCwd`.
+ * Untitled documents have no directory and get no files at all.
+ */
+export function planDocumentMount(
+  document: vscode.Uri,
+  workspaceFolder: vscode.Uri | undefined,
+  useWorkspaceRootAsCwd: boolean,
+): MountPlan | undefined {
+  if (document.scheme === "untitled") {
+    return undefined;
+  }
+  const directory = vscode.Uri.joinPath(document, "..");
+  if (workspaceFolder) {
+    const pwd = useWorkspaceRootAsCwd
+      ? "/"
+      : toGuestPath(workspaceFolder, directory);
+    if (pwd !== undefined) {
+      return { root: workspaceFolder, pwd };
+    }
+  }
+  // Also the fallback for a folder that does not contain the directory after
+  // all: a PWD outside the mount makes the guest RTS chdir fail and stdout
+  // come back silently empty.
+  return { root: directory, pwd: "/" };
+}
+
+/**
+ * `--flag=/abs/path` and a bare `/abs/path` alike, in POSIX or Windows form,
+ * whatever the platform: the guest sees neither under that name.
+ */
+export function hasHostAbsolutePath(arg: string): boolean {
+  const separator = arg.indexOf("=");
+  const value = separator === -1 ? arg : arg.slice(separator + 1);
+  return /^(\/|\\\\|[A-Za-z]:[\\/])/.test(value);
+}

@@ -1,3 +1,13 @@
+import type { ShellCheckFileSystem } from "@vscode-shellcheck/shellcheck-wasm";
+
+/** What a sandboxed runtime lets ShellCheck read, and where it runs inside it. */
+export interface LintMount {
+  /** Mounted read-only at guest `/`. */
+  readonly fs: ShellCheckFileSystem;
+  /** Guest path of the working directory, handed to the guest as `PWD`. */
+  readonly pwd: string;
+}
+
 /** Everything the linter has already computed; no vscode types cross this line. */
 export interface LintRequest {
   /** Dedupe/cancellation key. Always `textDocument.uri.toString()`. */
@@ -11,12 +21,10 @@ export interface LintRequest {
   /** Working directory, already validated to exist, or undefined. */
   readonly cwd: string | undefined;
   /**
-   * Host directory a sandboxed runtime may expose read-only, normally the
-   * workspace folder owning the document. Undefined means no filesystem at
-   * all, which is what a non-`file:` document gets. The native runtime, which
-   * has the whole filesystem, ignores it.
+   * Files a sandboxed runtime may read. Undefined means stdin only. The native
+   * runtime, which has the whole local filesystem, ignores it.
    */
-  readonly preopenRoot?: string;
+  readonly mount?: LintMount;
 }
 
 export interface LintResult {
