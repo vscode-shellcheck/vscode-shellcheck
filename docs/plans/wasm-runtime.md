@@ -1,5 +1,7 @@
 # Experimental WebAssembly (WASI) runtime for ShellCheck
 
+> Superseded by [`wasm-runtime-workspace-fs.md`](./wasm-runtime-workspace-fs.md).
+
 Implementation plan for issue #1713. Evidence base:
 [`wasm-runtime-spike-report.md`](./wasm-runtime-spike-report.md) and
 [`wasm-runtime-soak-report.md`](./wasm-runtime-soak-report.md). All design
