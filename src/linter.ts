@@ -69,6 +69,30 @@ function lintDelay(settings: ShellCheckSettings): number {
   return settings.runtime === "wasm" ? 750 : 250;
 }
 
+function isVirtualWorkspace(): boolean {
+  const folders = vscode.workspace.workspaceFolders;
+  return !!folders?.length && folders.every((f) => f.uri.scheme !== "file");
+}
+
+/**
+ * The native program reads its files off the local disk, where no document of
+ * a virtual workspace lives, and may not even exist on a machine that opens
+ * one; only the wasm runtime reads through `workspace.fs`. Untitled documents
+ * need no files and are still linted.
+ */
+function isOutOfNativeReach(
+  textDocument: vscode.TextDocument,
+  settings: ShellCheckSettings,
+): boolean {
+  const { scheme } = textDocument.uri;
+  return (
+    settings.runtime === "native" &&
+    scheme !== "file" &&
+    scheme !== "untitled" &&
+    isVirtualWorkspace()
+  );
+}
+
 type ToolStatus =
   | { ok: true; version: SemVer; ghcVersion?: string }
   | { ok: false; reason: "executableNotFound" | "executionFailed" };
@@ -303,6 +327,16 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       this.reportWasmLimitations(textDocument, settings);
     }
 
+    if (isOutOfNativeReach(textDocument, settings)) {
+      // Not even the version probe: it would spawn a program for a document
+      // it cannot lint.
+      logging.info(
+        'shellcheck: %s belongs to a virtual workspace, which only shellcheck.runtime "wasm" can lint',
+        textDocument.uri.toString(),
+      );
+      return;
+    }
+
     const statusKey = toolStatusKey(settings);
     if (settings.enabled && !this.toolStatusByPath.has(statusKey)) {
       if (settings.runtime === "wasm") {
@@ -534,6 +568,12 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       );
     }
 
+    if (isOutOfNativeReach(textDocument, settings)) {
+      warnings.push(
+        '- Document belongs to a virtual workspace, which only `shellcheck.runtime` `"wasm"` can lint',
+      );
+    }
+
     if (warnings.length) {
       output.push("## Warnings\n");
       output.push(...warnings);
@@ -600,6 +640,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     const settings: ShellCheckSettings = await this.getSettings(textDocument);
     if (
       !extraCondition(settings) ||
+      isOutOfNativeReach(textDocument, settings) ||
       !this.toolStatusByPath.get(toolStatusKey(settings))?.ok ||
       settings.ignoreFileSchemes.has(textDocument.uri.scheme)
     ) {

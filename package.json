@@ -54,8 +54,8 @@
       ]
     },
     "virtualWorkspaces": {
-      "supported": false,
-      "description": "Virtual Workspaces are not supported due to dependency on a local `shellcheck` binary."
+      "supported": "limited",
+      "description": "Only the experimental WebAssembly runtime (`shellcheck.runtime`: `wasm`) can lint documents of a virtual workspace. The native runtime needs a local `shellcheck` binary and files on the local disk."
     }
   },
   "contributes": {
@@ -135,7 +135,7 @@
           "scope": "machine-overridable"
         },
         "shellcheck.runtime": {
-          "markdownDescription": "**Experimental.** Which ShellCheck runtime to use.\n\n- `native` — run the bundled or user-provided `shellcheck` executable. This is the default and the only supported mode.\n- `wasm` — run a bundled WebAssembly (WASI) build of ShellCheck inside the editor. No executable is required and it works on every platform, but linting is currently 3-4x slower than native, `#shellcheck.executablePath#` is ignored, and files outside the document's workspace folder are not visible to `source` directives or `.shellcheckrc` lookup.",
+          "markdownDescription": "**Experimental.** Which ShellCheck runtime to use.\n\n- `native` — run the bundled or user-provided `shellcheck` executable. This is the default and the only supported mode.\n- `wasm` — run a bundled WebAssembly (WASI) build of ShellCheck inside the editor. No executable is required and it works on every platform and in virtual workspaces, but linting is currently 3-4x slower than native, `#shellcheck.executablePath#` is ignored, and files outside the document's workspace folder are not visible to `source` directives or `.shellcheckrc` lookup.",
           "type": "string",
           "enum": [
             "native",

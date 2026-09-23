@@ -178,7 +178,7 @@ Just have in mind that this should come with a performance hit, as booting up a 
 
 ### Experimental WebAssembly runtime
 
-A WebAssembly build of [ShellCheck] is bundled in this extension and can check your scripts on its own. It needs no `shellcheck` executable on your machine, and it works on every platform, including those with no prebuilt ShellCheck binary.
+A WebAssembly build of [ShellCheck] is bundled in this extension and can check your scripts on its own. It needs no `shellcheck` executable on your machine, and it works on every platform, including those with no prebuilt ShellCheck binary. It reads `.shellcheckrc` and `source` targets through VS Code rather than from disk, so it also checks scripts in virtual workspaces and on any other file system VS Code can open; the native runtime cannot lint documents of a virtual workspace.
 
 To turn it on:
 
