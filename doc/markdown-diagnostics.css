@@ -1,17 +1,29 @@
 /*
  * Optional Custom CSS and JS Loader workaround for shellcheck.markdownDiagnostics.
- * The extension API cannot control the order of VS Code's native diagnostic
- * hover row and extension-provided hover rows.
+ * The extension API cannot hide VS Code's native diagnostic hover rows or
+ * control their order relative to extension-provided hover rows.
+ *
+ * VS Code renders one .hover-row per native diagnostic; ShellCheck rows are
+ * matched by their rule documentation link so diagnostics from other sources
+ * stay visible.
  */
+.monaco-hover
+  .monaco-hover-content:has(.codicon-none)
+  > .hover-row:has(
+    > .marker a.code-link[href^="https://www.shellcheck.net/wiki/SC"]
+  ) {
+  display: none !important;
+}
+
 .monaco-hover .monaco-hover-content {
   display: flex;
   flex-direction: column;
 }
 
-.monaco-hover .monaco-hover-content .hover-row {
+.monaco-hover .monaco-hover-content > .hover-row {
   order: 2;
 }
 
-.monaco-hover .monaco-hover-content .hover-row:has(.codicon-none) {
+.monaco-hover .monaco-hover-content > .hover-row:has(.codicon-none) {
   order: 1;
 }
