@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import * as vscode from "vscode";
+import { RuntimeKind } from "./runtime/types.js";
 import { FileMatcher, FileSettings } from "./utils/filematcher.js";
 import { substitutePath } from "./utils/path.js";
 
@@ -18,6 +19,7 @@ export interface ShellCheckSettings {
   ignoreFileSchemes: Set<string>;
   useWorkspaceRootAsCwd: boolean;
   fileMatcher: FileMatcher;
+  runtime: RuntimeKind;
 }
 
 export namespace ShellCheckSettings {
@@ -31,6 +33,7 @@ export namespace ShellCheckSettings {
     ignorePatterns: "ignorePatterns",
     ignoreFileSchemes: "ignoreFileSchemes",
     useWorkspaceRootAsCwd: "useWorkspaceRootAsCwd",
+    runtime: "runtime",
   };
 }
 
@@ -67,11 +70,19 @@ export async function getWorkspaceSettings(
 ): Promise<ShellCheckSettings> {
   const keys = ShellCheckSettings.keys;
   const section = vscode.workspace.getConfiguration("shellcheck", scope);
+  const runtime: RuntimeKind =
+    section.get(keys.runtime) === "wasm" ? "wasm" : "native";
   const settings = <ShellCheckSettings>{
     enabled: section.get(keys.enable, true),
     trigger: RunTrigger.from(section.get(keys.run, RunTrigger.strings.onType)),
     exclude: section.get(keys.exclude, []),
-    executable: await getExecutable(context, section.get(keys.executablePath)),
+    runtime,
+    // The wasm runtime has no executable, and looking one up would probe the
+    // bundled binaries for nothing.
+    executable:
+      runtime === "wasm"
+        ? { path: "", bundled: false }
+        : await getExecutable(context, section.get(keys.executablePath)),
     customArgs: section
       .get(keys.customArgs, [])
       .map((arg) => substitutePath(arg)),
