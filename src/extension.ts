@@ -5,6 +5,7 @@ import ShellCheckProvider from "./linter.js";
 import { registerLogger, setLoggingLevel } from "./utils/logging/index.js";
 import { OutputChannelLogger } from "./utils/logging/logger-outputchannel.js";
 import { LogLevelNameType } from "./utils/logging/types.js";
+import { MarkdownDiagnosticProvider } from "./markdown-diagnostics.js";
 
 export function activate(
   context: vscode.ExtensionContext,
@@ -31,6 +32,13 @@ export function activate(
 
   const linter = new ShellCheckProvider(context);
   context.subscriptions.push(linter);
+
+  context.subscriptions.push(
+    vscode.languages.registerHoverProvider(
+      ShellCheckProvider.LANGUAGES,
+      new MarkdownDiagnosticProvider((uri) => linter.getDiagnostics(uri)),
+    ),
+  );
 
   // link provider
   for (const language of ShellCheckProvider.LANGUAGES) {

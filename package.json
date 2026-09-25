@@ -126,6 +126,12 @@
           "scope": "resource",
           "default": true
         },
+        "shellcheck.markdownDiagnostics": {
+          "markdownDescription": "**Experimental:** Show a formatted ShellCheck hover with severity and rule documentation. VS Code also displays the original diagnostic; the Problems view is unchanged. [Read the documentation](https://github.com/vscode-shellcheck/vscode-shellcheck#shellcheckmarkdowndiagnostics).",
+          "type": "boolean",
+          "scope": "resource",
+          "default": false
+        },
         "shellcheck.executablePath": {
           "description": "Path to the `shellcheck` executable (bundled binaries will be used if empty).",
           "examples": [

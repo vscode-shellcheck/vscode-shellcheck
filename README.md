@@ -33,6 +33,7 @@ Default options are:
 {
   "shellcheck.enable": true,
   "shellcheck.enableQuickFix": true,
+  "shellcheck.markdownDiagnostics": false,
   "shellcheck.run": "onType",
   "shellcheck.executablePath": "", // Priority: user defined > bundled binary > shellcheck in PATH
   "shellcheck.exclude": [],
@@ -63,6 +64,26 @@ Default options are:
   "shellcheck.ignoreFileSchemes": ["git", "gitfs", "output"]
 }
 ```
+
+### `shellcheck.markdownDiagnostics`
+
+`shellcheck.markdownDiagnostics` is experimental. Enable it to show a formatted hover with a colored severity, a muted rule code, and a link to the rule documentation. Colors follow the active editor theme. Common ShellCheck code examples in diagnostic messages are rendered as Markdown code spans; messages remain plain text in the Problems view.
+
+#### How to hide the original diagnostics
+
+VS Code displays the original diagnostic alongside the formatted hover. To hide the original ShellCheck diagnostics and put the formatted hover first:
+
+1. Install [Custom CSS and JS Loader](https://marketplace.visualstudio.com/items?itemName=be5invis.vscode-custom-css).
+2. Follow the installation instructions provided by that extension.
+3. Load [`doc/markdown-diagnostics.css`](https://github.com/vscode-shellcheck/vscode-shellcheck/blob/master/doc/markdown-diagnostics.css).
+
+Only ShellCheck's original diagnostics are hidden; diagnostics from other sources and the Quick Fix / View Problem actions stay visible below the formatted hover.
+
+#### Why is this workaround required?
+
+VS Code currently does not expose an extension API for ordering hover providers or replacing the native diagnostic hover. This formatted-hover implementation follows the approach used by [Pretty TypeScript Errors](https://github.com/yoavbls/pretty-ts-errors), including the internal marker and CSS workaround that hides the native rows and moves the formatted row first. [Read more about the workaround](https://github.com/yoavbls/pretty-ts-errors/blob/main/docs/hide-original-errors.md).
+
+Formatting runs only on hover. When disabled (the default), the provider returns before reading diagnostics or formatting messages.
 
 ### `shellcheck.ignorePatterns`
 
