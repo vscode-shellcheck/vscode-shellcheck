@@ -266,6 +266,35 @@ suite("WASM Runner scheduling", () => {
     assert.strictEqual(shellcheck.last().signal.aborted, false);
   });
 
+  test("drops a cancelled pending request", async () => {
+    start(documentRequest("a"));
+    const cancelled = start(documentRequest("b"));
+    const next = start(documentRequest("c"));
+
+    runner.cancel("file:///b.sh");
+    await assert.rejects(cancelled, RunSupersededError);
+    shellcheck.last().resolve(clean);
+    await settled();
+    assert.deepStrictEqual(shellcheck.submitted(), ["a", "c"]);
+    shellcheck.last().resolve(clean);
+    await next;
+  });
+
+  test("lets the running lint finish when its document is cancelled", async () => {
+    const running = start(documentRequest("a"));
+    runner.cancel("file:///a.sh");
+
+    assert.strictEqual(shellcheck.last().signal.aborted, false);
+    shellcheck.last().resolve(clean);
+    assert.deepStrictEqual(await running, clean);
+  });
+
+  test("ignores a cancel with nothing to drop", () => {
+    runner.cancel("file:///unknown.sh");
+    runner.dispose();
+    runner.cancel("file:///unknown.sh");
+  });
+
   test("aborts a lint that overruns the watchdog and moves on", async () => {
     runner.dispose();
     runner = createRunner(20);

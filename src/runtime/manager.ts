@@ -29,6 +29,16 @@ export class RuntimeManager implements vscode.Disposable {
     return this.ensure();
   }
 
+  /** Never starts a runner. */
+  public cancel(documentKey: string): void {
+    this.active?.runner.then(
+      (runner) => runner.cancel(documentKey),
+      () => {
+        // A runner that never came up has nothing queued.
+      },
+    );
+  }
+
   /** Swaps the runner when `shellcheck.runtime` changed. */
   public refresh(): void {
     this.ensure();

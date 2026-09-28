@@ -233,6 +233,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
   private onDidCloseTextDocument(textDocument: vscode.TextDocument) {
     this.setResultCollections(textDocument.uri);
+    this.runtimeManager.cancel(textDocument.uri.toString());
     this.settingsByUri.delete(textDocument.uri.toString());
     delete this.delayers[textDocument.uri.toString()];
   }
@@ -764,6 +765,11 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     logging.trace("shellcheck response: %s", lintResult.stdout);
     if (lintResult.stdout.length) {
       result = parser.parse(lintResult.stdout);
+    }
+    if (textDocument.isClosed) {
+      // The run outlived its document, whose diagnostics the close handler
+      // already cleared.
+      return;
     }
     this.setResultCollections(textDocument.uri, result);
   }

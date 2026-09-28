@@ -56,6 +56,10 @@ export class NativeRunner implements ShellCheckRunner {
     });
   }
 
+  public cancel(): void {
+    // Nothing is queued: the native path spawns every run at once.
+  }
+
   public dispose(): void {
     // An in-flight child is left to finish: the native path has no cancellation.
   }

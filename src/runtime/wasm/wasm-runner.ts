@@ -82,6 +82,16 @@ export class WasmRunner implements ShellCheckRunner {
     });
   }
 
+  public cancel(documentKey: string): void {
+    // A running lint is left to finish: aborting it costs a worker respawn,
+    // and the linter discards the result of a closed document anyway.
+    const run = this.pending.get(documentKey);
+    if (run) {
+      this.pending.delete(documentKey);
+      run.reject(new RunSupersededError());
+    }
+  }
+
   public dispose(): void {
     if (this.disposed) {
       return;

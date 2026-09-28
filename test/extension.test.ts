@@ -62,3 +62,52 @@ for (const runtime of RUNTIMES) {
     });
   });
 }
+
+suite("Shellcheck extension (wasm runtime, closed documents)", function () {
+  // The wasm runtime lints one document at a time, and the first document is
+  // deliberately slow so that the closed one is still waiting behind it.
+  this.timeout(60000);
+
+  suiteSetup(async () => {
+    await setRuntime("wasm");
+  });
+
+  suiteTeardown(async () => {
+    await resetRuntime();
+  });
+
+  teardown(async () => {
+    await closeAllEditors();
+  });
+
+  test("a document closed before its lint completes keeps no diagnostics", async () => {
+    await openDocument(
+      `#!/bin/bash\n${"foo=$(ls); echo $foo\n".repeat(1000)}`,
+      "shellscript",
+    );
+    const closed = await openDocument("#!/bin/bash\nx=1", "shellscript");
+    const gone = new Promise<void>((resolve) => {
+      const disposable = vscode.workspace.onDidCloseTextDocument((document) => {
+        if (document === closed) {
+          disposable.dispose();
+          resolve();
+        }
+      });
+    });
+    await vscode.commands.executeCommand(
+      "workbench.action.revertAndCloseActiveEditor",
+    );
+    await gone;
+
+    // Not shown, so it is not the active editor's and is linted strictly
+    // after the closed document: once it has diagnostics, the runner has
+    // been through the closed document too.
+    const last = await vscode.workspace.openTextDocument({
+      language: "shellscript",
+      content: "#!/bin/bash\ny=1",
+    });
+    await waitForDiagnostics(last, 55000);
+
+    assert.deepStrictEqual(vscode.languages.getDiagnostics(closed.uri), []);
+  });
+});

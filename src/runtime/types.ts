@@ -39,6 +39,11 @@ export type RuntimeKind = "native" | "wasm";
 export interface ShellCheckRunner {
   readonly kind: RuntimeKind;
   run(request: LintRequest): Promise<LintResult>;
+  /**
+   * Drops the queued run of a document that no longer needs one; the dropped
+   * run rejects with `RunSupersededError`.
+   */
+  cancel(documentKey: string): void;
   /** Idempotent. */
   dispose(): void;
 }
