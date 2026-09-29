@@ -11,7 +11,7 @@ Measured 2026-09-29 with a throwaway extension under `@vscode/test-web`
 0.0.81 (VS Code Web 1.140.0-insider, Chrome 153):
 
 - With `--coi`, the web extension host worker has `crossOriginIsolated ===
-  true`; `SharedArrayBuffer`, a nested
+true`; `SharedArrayBuffer`, a nested
   `new Worker(Uri.joinPath(extensionUri, "…/worker.js").toString(true))`
   (classic IIFE script), `workspace.fs.readFile` of the packaged `.wasm` and
   `WebAssembly.compile` all work. A lint through the package's bridge reads
@@ -46,9 +46,8 @@ Measured 2026-09-29 with a throwaway extension under `@vscode/test-web`
 
 Derived from these:
 
-- On the web the runtime is always wasm. `shellcheck.runtime` and
-  `shellcheck.executablePath` are ignored there (logged once, as
-  `executablePath` already is under wasm).
+- On the web the runtime is always wasm; `shellcheck.runtime` and
+  `shellcheck.executablePath` are ignored there.
 - No "Switch back to native" or "Try experimental WASM runtime" item is
   ever offered on the web.
 
@@ -66,8 +65,8 @@ Repository `vscode-shellcheck/shellcheck-wasm`, branch
   `FileType`, `FileSystemErrorCode`), `BuildInfo`, `BUILD_INFO` and
   `SHELLCHECK_VERSION`.
 - It must not reference `import.meta`, nor import (even transitively) any
-  guest-side module. A vitest test asserts both by reading the built
-  `dist/client-entry.js` and every file it imports.
+  guest-side module. A vitest test bundles `dist/client-entry.js` with
+  esbuild and fails on any input without the MIT SPDX identifier.
 - `package.json` `exports` gains
   `"./client": { "types": "./dist/client-entry.d.ts", "default": "./dist/client-entry.js" }`.
   `"."` stays as it is (still exports `wasmUrl`) so 0.2.0-next.0 consumers
@@ -109,157 +108,90 @@ dist-tag. Nothing is published from an agent session.
 
 Branch `feat/web-extension`.
 
-### 4.1 Platform seam
+### 4.1 Web twins
 
-One module with two implementations, chosen at build time:
+A module `x.ts` may have a twin `x.web.ts`. The web build resolves every
+relative import of `x.js` to the twin where one exists (`webTwinPlugin` in
+`esbuild.js`); the Node builds never see twins. Two modules have one:
 
-- `src/platform/index.ts` — Node (desktop, remote).
-- `src/platform/index.web.ts` — web. Its first line is a type-level check that
-  it exports the same surface:
-  `import type * as NodePlatform from "./index.js";` plus a
-  `satisfies`/assignment check over every export, so `tsc` fails when the two
-  drift.
-- `esbuild.js` gets a web-only plugin that resolves any import of
-  `./platform/index.js` (relative, from anywhere under `src/`) to
-  `src/platform/index.web.ts`.
-
-Exports (Node behavior is today's behavior, moved, not changed):
-
-| Export | Node | Web |
-| --- | --- | --- |
-| `isWeb: boolean` | `false` | `true` |
-| `formatLogMessage(format, ...args): string` | `util.format` | small `%s %d %i %f %j %o %O %%` formatter; `%o`/`%O` JSON-stringify objects, an `Error` becomes its `stack ?? message` |
-| `resolveExecutable(context, configuredPath)` | today's `getExecutable` from `settings.ts` | never called (see 4.2); returns `{ path: "", bundled: false }` |
-| `getToolVersion(path)` | today's, from `tool-check.ts` | rejects; never called |
-| `tryPromptForUpdatingTool(version)` | today's, from `tool-check.ts` | no-op; never called. It must move behind the seam because `tool-check.ts` imports `bindl.config.ts`, which imports the Node-only `bindl` package |
-| `createNativeRunner(): ShellCheckRunner` | `new NativeRunner()` | throws; never called |
-| `homeDirectory(): string \| undefined` | `os.homedir()` with drive-casing fix | `undefined`: `${userHome}` is left unsubstituted |
-| `nativeWorkingDirectory(...)` helpers: `guessDocumentDirname`, `ensureCurrentWorkingDirectory` | today's, from `utils/path.ts` | never called; return `undefined` |
-| `startWasmWorker(extensionUri, logger): WorkerPort` | today's `startWorker` from `packaged.ts` (worker_threads, `dist/wasm-worker.js`) | `new Worker(Uri.joinPath(extensionUri, "node_modules/@vscode-shellcheck/shellcheck-wasm/dist/browser/worker.js").toString(true))`; `onMessage` unwraps `event.data`; `onError` passes `event.message ?? event`; no `onExit` |
-| `assertWasmHostSupported(): void` | no-op | throws `WasmRuntimeError("ShellCheck needs a cross-origin isolated VS Code for the Web: SharedArrayBuffer is unavailable")` unless `globalThis.crossOriginIsolated === true` |
+- `src/runtime/native.ts` exports `nativeRuntime: NativeRuntime | undefined`,
+  everything that runs a shellcheck program: resolving the executable, the
+  `-V` probe and update prompt, the working directory, and the runner. Its
+  web twin exports `undefined`. The type forces every native call site to
+  face the web; they are all behind `runtime === "native"`, which
+  `getRuntimeKind` (`settings.ts`) never returns without a native runtime, so
+  they use `nativeRuntime!`. The Node-only helpers that were in `settings.ts`
+  and `utils/path.ts` moved into `native.ts` unchanged; `utils/tool-check.ts`
+  is unchanged and only reachable from there.
+- `src/platform/index.ts` holds what differs between a Node and a browser
+  host for code both builds share: `isWindows`, `homeDirectory` (web:
+  `undefined`, so `${userHome}` is left as is), `formatLogMessage`
+  (`util.format`; web: a small formatter), `startWasmWorker`
+  (`worker_threads` on `dist/wasm-worker.js`; web: `new Worker` on the
+  package's `dist/browser/worker.js` URL) and `assertWasmHostSupported` (web:
+  throws a `WasmRuntimeError` unless `crossOriginIsolated`). The web twin
+  carries a type that fails `tsc` when the two export different things.
 
 Rules:
 
-- After the refactor, no file outside `src/platform/index.ts`,
-  `src/runtime/native-runner.ts` and `src/runtime/wasm/worker.ts` imports
-  `node:*`, `execa` or `@vscode-shellcheck/shellcheck-wasm` (root) /
-  `…/worker`. The web build enforces this for free: with
-  `platform: "browser"` esbuild fails to resolve `node:*`. Add an esbuild
-  `onResolve` guard in the web build that fails on
-  `@vscode-shellcheck/shellcheck-wasm` and `…/worker` (only `…/client` is
-  allowed), so a GPL module can never land in `dist/web/extension.js`.
-- `linter.ts`: `extname(textDocument.fileName)` becomes the extension of the
-  last segment of `textDocument.uri.path` (POSIX for every scheme). Keep the
-  `.bash`/`.ksh`/`.dash` behavior; add a unit test for a Windows `file:` URI
-  and a `vscode-vfs:` URI.
-- Both desktop and web import the package's host API from
-  `@vscode-shellcheck/shellcheck-wasm/client` (types included). On desktop
-  it stays `external` and dynamically imported; on the web it is bundled.
+- With `platform: "browser"`, esbuild fails on any `node:*` import that
+  reaches the web graph, so a Node module cannot slip in unnoticed.
+- `gplGuardPlugin` fails the web build on any import of the package other
+  than `@vscode-shellcheck/shellcheck-wasm/client`. A desktop test also
+  checks that `dist/web/extension.js` contains no WASI shim.
+- Every import of the package's host API uses `…/client`, on both builds.
+- `linter.ts` reads the `.bash`/`.ksh`/`.dash` dialect off `Uri.path`
+  (`utils/shell-dialect.ts`) instead of `node:path`.
 
 ### 4.2 Runtime selection on the web
 
-- `RuntimeManager.getRuntimeKind` and `getWorkspaceSettings` both return
-  `"wasm"` when `platform.isWeb`, whatever `shellcheck.runtime` says. On the
-  web, a configured `shellcheck.runtime: "native"` is logged once at info
-  level: `shellcheck.runtime is ignored in VS Code for the Web, which only has the wasm runtime`.
-- `RuntimeManager.create("wasm")` calls `platform.assertWasmHostSupported()`
-  first. Its `WasmRuntimeError` goes through the existing wasm failure path
-  (one notification, details logged).
-- `failure-ux.ts`: `describeWasmFailure(error, { canSwitchToNative })`.
-  Items are `[switchBackToNative, showLog]` when true (desktop, unchanged)
-  and `[showLog]` on the web. `describeShellCheckError` is unreachable on the
-  web; leave it.
-- `isOutOfNativeReach` is already false under wasm; nothing to do.
+- `getRuntimeKind` returns `"wasm"` whenever `nativeRuntime` is undefined,
+  whatever `shellcheck.runtime` says; `RuntimeManager` and
+  `getWorkspaceSettings` both use it. The manifest says so; nothing is
+  logged.
+- `RuntimeManager.create("wasm")` calls `assertWasmHostSupported()` first;
+  its error takes the existing wasm failure path.
+- `WasmFailureNotifier(canSwitchToNative)` offers `[showLog]` only where
+  there is no native runtime.
 
-### 4.3 Build
+### 4.3 Build and manifest
 
-`esbuild.js` gains a third context:
+A third esbuild context bundles `src/extension.ts` to `dist/web/extension.js`
+(`format: "cjs"`, `platform: "browser"`, `external: ["vscode"]`, no
+`createRequire` banner). `package.json` gets
+`"browser": "./dist/web/extension.js"`; `.vscodeignore` is unchanged. The
+manifest's `virtualWorkspaces` and `shellcheck.runtime` descriptions and a
+README section describe the web.
 
-```js
-{
-  entryPoints: ["src/extension.ts"],
-  outfile: "dist/web/extension.js",
-  bundle: true,
-  format: "cjs",
-  platform: "browser",
-  target: "es2022",
-  external: ["vscode"],
-  minify: production,
-  sourcemap: !production,
-  plugins: [webPlatformPlugin, gplGuardPlugin, esbuildProblemMatcherPlugin],
-}
-```
+### 4.4 Tests
 
-No `createRequire` banner (the `common` object must be split so the web
-context does not inherit it). `package.json` gets
-`"browser": "./dist/web/extension.js"`. `.vscodeignore` needs no change
-(`dist/` and the package directory are already shipped); verify with
-`npx vsce ls` (see the `vsce` UUID-path caveat: run it from a clean path).
+- Desktop: `test/platform.web.test.ts` (the web formatter, and the
+  cross-origin check, which the desktop host fails like a non-isolated page),
+  `test/shell-dialect.test.ts`, a failure-UX case, and the web bundle GPL
+  check. Everything else stays as it is.
+- Web E2E (`test/web/`), run by `@vscode/test-web` in headless Chromium with
+  `--coi`, on `test/fixtures/wasm-parity`: the desktop parity fixtures
+  (`test/parity-fixtures.ts`, shared with `parity.test.ts`) must produce
+  exactly their expected findings, with `shellcheck.runtime` set to
+  `native`; and an untitled document is linted as it is typed. The suite
+  bundle goes to `out/web-test/`, never into the VSIX.
+- Artifact: `@vscode/test-web` keeps workspace writes in memory, so the suite
+  prints its normalized diagnostics on one marked console line and
+  `test/web/run.mjs` saves them to `out/web-e2e/diagnostics.json`. Two runs
+  must produce identical files.
+- `npm run build:test:web && npm run test:web`; not part of `npm test`. CI
+  runs it in a `test-web` job on `ubuntu-latest`, which the release job
+  needs.
 
-### 4.4 Manifest and docs
-
-- `capabilities.virtualWorkspaces.description`: mention that VS Code for the
-  Web always uses the wasm runtime.
-- `shellcheck.runtime` `markdownDescription`: add "In VS Code for the Web the
-  wasm runtime is always used."
-- README: a "VS Code for the Web" section: works on vscode.dev and
-  github.dev; needs a cross-origin isolated host (self-hosted servers must
-  send COOP `same-origin` + COEP `require-corp`); Safari 18.2 or newer;
-  `.shellcheckrc` and `source` resolve within the document's workspace
-  folder, as with the desktop wasm runtime.
-
-### 4.5 Tests
-
-Desktop suites stay as they are and must stay green; they cover the Node
-platform module through the existing paths.
-
-New web E2E suite, run by `@vscode/test-web` in headless Chromium:
-
-- devDependencies: `@vscode/test-web`, `mocha` (browser build),
-  `@types/mocha` already present.
-- `test/web/index.ts`: loads `mocha/mocha.js`, `mocha.setup({ ui: "tdd",
-  reporter: undefined, timeout: 60000 })`, imports the suites, runs and
-  rejects on failures (the pattern from the `yo code` web template). Bundled
-  by esbuild (browser, CJS, `external: ["vscode"]`) to
-  `dist/web/test/index.js`; it is never shipped (`.vscodeignore` already
-  excludes everything not listed, but confirm `dist/web/test/` is excluded
-  by adding `dist/web/test/**` explicitly).
-- Workspace: `test/fixtures/wasm-parity` (it already has `.shellcheckrc` and
-  `source` targets).
-- Cases, each asserting on `vscode.languages.getDiagnostics(uri)` after
-  waiting for diagnostics to change:
-  1. A fixture that sources another file: no SC1091, and the sourced
-     variable is not SC2154.
-  2. `.shellcheckrc` in the folder root is honored (a code it disables is
-     absent).
-  3. `shellcheck.runtime: "native"` set in workspace settings still lints
-     with wasm.
-  4. Editing the document (onType) re-lints, and the new diagnostic appears.
-- Artifact: after the suite, the runner writes the collected diagnostics
-  (`{ file, code, severity, line }` sorted) to
-  `.e2e-artifacts/web-diagnostics.json` inside the mounted folder through
-  `workspace.fs.writeFile`; `test/fixtures/wasm-parity/.e2e-artifacts/` is
-  gitignored. Running the suite twice must produce byte-identical files.
-- A non-isolated run is covered by a unit test of
-  `assertWasmHostSupported` with `crossOriginIsolated` stubbed, not by a
-  second browser run.
-- Scripts: `build:test:web` (esbuild), `test:web`:
-  `vscode-test-web --browserType=chromium --headless --coi --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/index.js test/fixtures/wasm-parity`.
-  `test:web` is not part of `npm test`.
-- CI: a new `test-web` job on `ubuntu-latest`: `npm ci`,
-  `npx playwright install --with-deps chromium`, `npm run build`,
-  `npm run build:test:web`, `npm run test:web`. Add it to the `needs` of
-  the release job.
-
-### 4.6 Out of scope
+### 4.5 Out of scope
 
 Firefox and WebKit runs; self-hosted COI detection beyond the error;
 performance work; `code serve-web` verification.
 
 ## 5. Order
 
-1. Package §3 → PR on `shellcheck-wasm`, Timon merges and publishes
-   0.2.0-next.1.
-2. Extension §4.1–4.4 can start against a local `npm pack` of the package
-   branch; the dependency is switched to `0.2.0-next.1` once it is on npm.
-3. Extension §4.5, then PR.
+1. Package §3: vscode-shellcheck/shellcheck-wasm#23; Timon merges and
+   publishes 0.2.0-next.1.
+2. Extension §4 is built and tested against a local `npm pack` of that
+   branch; its dependency moves to `0.2.0-next.1` once that is on npm, before
+   the PR leaves draft.

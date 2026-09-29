@@ -1,6 +1,7 @@
 // @ts-check
 
 import { context } from "esbuild";
+import { existsSync } from "node:fs";
 import path from "node:path";
 
 const production = process.argv.includes("--production");
@@ -64,7 +65,7 @@ async function main() {
       sourcemap: !production,
       sourcesContent: false,
       logLevel: "warning",
-      plugins: [webPlatformPlugin, gplGuardPlugin, esbuildProblemMatcherPlugin],
+      plugins: [webTwinPlugin, gplGuardPlugin, esbuildProblemMatcherPlugin],
     }),
   ]);
 
@@ -80,37 +81,45 @@ async function main() {
   }
 }
 
-const nodePlatformPath = path.resolve("src/platform/index.js");
-const webPlatformPath = path.resolve("src/platform/index.web.ts");
-
-/** @type {import('esbuild').Plugin} */
-const webPlatformPlugin = {
-  name: "web-platform",
+/**
+ * Resolves a relative import of `x.js` to `x.web.ts` wherever that twin
+ * exists, which is how the web entry drops every Node-only module.
+ *
+ * @type {import('esbuild').Plugin}
+ */
+const webTwinPlugin = {
+  name: "web-twin",
   setup(build) {
-    build.onResolve({ filter: /platform\/index\.js$/ }, (args) => {
-      const resolved = path.resolve(path.dirname(args.importer), args.path);
-      if (resolved === nodePlatformPath) {
-        return { path: webPlatformPath };
-      }
+    build.onResolve({ filter: /^\.\.?\/.*\.js$/ }, (args) => {
+      const twin = path
+        .resolve(args.resolveDir, args.path)
+        .replace(/\.js$/, ".web.ts");
+      return existsSync(twin) ? { path: twin } : undefined;
     });
   },
 };
 
-/** @type {import('esbuild').Plugin} */
+/**
+ * The web entry is one MIT file, so only the package's MIT client may be
+ * bundled into it; the GPL worker is started from its own file instead.
+ *
+ * @type {import('esbuild').Plugin}
+ */
 const gplGuardPlugin = {
   name: "gpl-guard",
   setup(build) {
     build.onResolve(
-      {
-        filter: /^@vscode-shellcheck\/shellcheck-wasm(?:$|\/worker(?:\.js)?$)/,
-      },
-      (args) => ({
-        errors: [
-          {
-            text: `The web extension may only import @vscode-shellcheck/shellcheck-wasm/client, not ${args.path}`,
-          },
-        ],
-      }),
+      { filter: /^@vscode-shellcheck\/shellcheck-wasm/ },
+      (args) =>
+        args.path === "@vscode-shellcheck/shellcheck-wasm/client"
+          ? undefined
+          : {
+              errors: [
+                {
+                  text: `The web extension may only bundle @vscode-shellcheck/shellcheck-wasm/client, not ${args.path}`,
+                },
+              ],
+            },
     );
   },
 };

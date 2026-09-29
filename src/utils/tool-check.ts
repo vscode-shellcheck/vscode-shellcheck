@@ -1,4 +1,18 @@
-import { SemVer, parse as semVerParse } from "semver";
+import { execa } from "execa";
+import { SemVer, lt as semVerLt, parse as semVerParse } from "semver";
+import * as vscode from "vscode";
+import { version as BUNDLED_TOOL_VERSION } from "../../bindl.config.js";
+import * as logging from "./logging/index.js";
+
+export function tryPromptForUpdatingTool(version: SemVer) {
+  const disableVersionCheckUpdateSetting =
+    new DisableVersionCheckUpdateSetting();
+  if (!disableVersionCheckUpdateSetting.isDisabled) {
+    if (semVerLt(version, BUNDLED_TOOL_VERSION)) {
+      promptForUpdatingTool(version.format(), disableVersionCheckUpdateSetting);
+    }
+  }
+}
 
 export function parseToolVersion(s: string): SemVer {
   const match = s.match(/version: v?((?:\d+)\.(?:\d+)(?:\.\d+)*)/);
@@ -10,4 +24,48 @@ export function parseToolVersion(s: string): SemVer {
     throw new Error(`Unable to parse ShellCheck version: ${match[1]}`);
   }
   return version;
+}
+
+export async function getToolVersion(executable: string): Promise<SemVer> {
+  logging.debug(`Spawn: ${executable} -V`);
+  const { stdout } = await execa(executable, ["-V"], { timeout: 5000 });
+
+  return parseToolVersion(stdout);
+}
+
+async function promptForUpdatingTool(
+  currentVersion: string,
+  disableVersionCheckUpdateSetting: DisableVersionCheckUpdateSetting,
+) {
+  const selected = await vscode.window.showInformationMessage(
+    `The ShellCheck extension is better with a newer version of "shellcheck" (you got v${currentVersion}, v${BUNDLED_TOOL_VERSION} or newer is recommended)`,
+    "Don't Show Again",
+    "Update",
+  );
+  switch (selected) {
+    case "Don't Show Again":
+      disableVersionCheckUpdateSetting.persist();
+      break;
+    case "Update":
+      vscode.env.openExternal(
+        vscode.Uri.parse("https://github.com/koalaman/shellcheck#installing"),
+      );
+      break;
+  }
+}
+
+export class DisableVersionCheckUpdateSetting {
+  private static KEY = "disableVersionCheck";
+  private config: vscode.WorkspaceConfiguration;
+  readonly isDisabled: boolean;
+
+  constructor() {
+    this.config = vscode.workspace.getConfiguration("shellcheck", null);
+    this.isDisabled =
+      this.config.get(DisableVersionCheckUpdateSetting.KEY) || false;
+  }
+
+  persist() {
+    this.config.update(DisableVersionCheckUpdateSetting.KEY, true, true);
+  }
 }

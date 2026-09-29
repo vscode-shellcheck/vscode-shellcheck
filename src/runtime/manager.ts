@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
-import * as platform from "../platform/index.js";
+import { assertWasmHostSupported } from "../platform/index.js";
+import { getRuntimeKind } from "../settings.js";
 import * as logging from "../utils/logging/index.js";
+import { nativeRuntime } from "./native.js";
 import { RuntimeKind, ShellCheckRunner, WasmRuntimeError } from "./types.js";
 
 interface ActiveRunner {
@@ -8,16 +10,8 @@ interface ActiveRunner {
   readonly runner: Promise<ShellCheckRunner>;
 }
 
-export function selectRuntimeKind(
-  configured: string | undefined,
-  web: boolean,
-): RuntimeKind {
-  return web || configured === "wasm" ? "wasm" : "native";
-}
-
 export class RuntimeManager implements vscode.Disposable {
   private active: ActiveRunner | undefined;
-  private webRuntimeSettingNoticed = false;
 
   public constructor(private readonly context: vscode.ExtensionContext) {
     // Started here rather than on the first lint so the wasm module is
@@ -49,7 +43,10 @@ export class RuntimeManager implements vscode.Disposable {
   }
 
   private ensure(): Promise<ShellCheckRunner> {
-    const kind = this.getRuntimeKind();
+    // Window scoped, so one runner per window is always the right granularity.
+    const kind = getRuntimeKind(
+      vscode.workspace.getConfiguration("shellcheck"),
+    );
     if (this.active?.kind !== kind) {
       this.stop();
       const runner = this.create(kind);
@@ -69,11 +66,11 @@ export class RuntimeManager implements vscode.Disposable {
 
   private async create(kind: RuntimeKind): Promise<ShellCheckRunner> {
     if (kind !== "wasm") {
-      return platform.createNativeRunner();
+      return nativeRuntime!.createRunner();
     }
 
+    assertWasmHostSupported();
     try {
-      platform.assertWasmHostSupported();
       // Imported on demand: a native session must never evaluate the wasm
       // module graph, let alone read the 9.9 MiB module.
       const [{ WasmRunner }, { createPackagedShellCheck }] = await Promise.all([
@@ -90,32 +87,11 @@ export class RuntimeManager implements vscode.Disposable {
           vscode.window.activeTextEditor?.document.uri.toString(),
       });
     } catch (error) {
-      if (error instanceof WasmRuntimeError) {
-        throw error;
-      }
       throw new WasmRuntimeError(
         "The experimental ShellCheck wasm runtime could not be loaded",
         error instanceof Error ? (error.stack ?? error.message) : String(error),
       );
     }
-  }
-
-  private getRuntimeKind(): RuntimeKind {
-    // Window scoped, so one runner per window is always the right granularity.
-    const configured = vscode.workspace
-      .getConfiguration("shellcheck")
-      .get<string>("runtime");
-    if (
-      platform.isWeb &&
-      configured === "native" &&
-      !this.webRuntimeSettingNoticed
-    ) {
-      this.webRuntimeSettingNoticed = true;
-      logging.info(
-        "shellcheck.runtime is ignored in VS Code for the Web, which only has the wasm runtime",
-      );
-    }
-    return selectRuntimeKind(configured, platform.isWeb);
   }
 
   private stop(): void {

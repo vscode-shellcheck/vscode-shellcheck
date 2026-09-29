@@ -1,11 +1,8 @@
 import * as vscode from "vscode";
-import * as platform from "./platform/index.js";
-import { RuntimeKind } from "./runtime/types.js";
+import { nativeRuntime } from "./runtime/native.js";
+import { Executable, RuntimeKind } from "./runtime/types.js";
 import { FileMatcher, FileSettings } from "./utils/filematcher.js";
 import { substitutePath } from "./utils/path.js";
-
-export type { Executable } from "./platform/index.js";
-import type { Executable } from "./platform/index.js";
 
 export interface ShellCheckSettings {
   enabled: boolean;
@@ -60,6 +57,16 @@ export namespace RunTrigger {
   }
 }
 
+/** Where there is no native runtime (the web), wasm whatever the setting says. */
+export function getRuntimeKind(
+  section: vscode.WorkspaceConfiguration,
+): RuntimeKind {
+  return nativeRuntime &&
+    section.get(ShellCheckSettings.keys.runtime) !== "wasm"
+    ? "native"
+    : "wasm";
+}
+
 const validErrorCodePattern = /^(SC)?(\d{4})$/;
 
 export async function getWorkspaceSettings(
@@ -68,8 +75,7 @@ export async function getWorkspaceSettings(
 ): Promise<ShellCheckSettings> {
   const keys = ShellCheckSettings.keys;
   const section = vscode.workspace.getConfiguration("shellcheck", scope);
-  const runtime: RuntimeKind =
-    platform.isWeb || section.get(keys.runtime) === "wasm" ? "wasm" : "native";
+  const runtime = getRuntimeKind(section);
   const settings = <ShellCheckSettings>{
     enabled: section.get(keys.enable, true),
     trigger: RunTrigger.from(section.get(keys.run, RunTrigger.strings.onType)),
@@ -80,7 +86,7 @@ export async function getWorkspaceSettings(
     executable:
       runtime === "wasm"
         ? { path: "", bundled: false }
-        : await platform.resolveExecutable(
+        : await nativeRuntime!.resolveExecutable(
             context,
             section.get(keys.executablePath),
           ),

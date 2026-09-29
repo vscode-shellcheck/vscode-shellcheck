@@ -297,7 +297,7 @@
     "build:watch": "node esbuild.js --watch",
     "build:prod": "npm run check-types && node esbuild.js --production",
     "build:test": "tsc --project tsconfig.test.json",
-    "build:test:web": "esbuild test/web/index.ts --bundle --format=cjs --platform=browser --target=es2022 --external:vscode --outfile=dist/web/test/index.js && esbuild test/run-web.ts --bundle --format=esm --platform=node --target=node22 --packages=external --outfile=dist/web/test/run-web.js",
+    "build:test:web": "esbuild test/web/index.ts --bundle --format=cjs --platform=browser --target=es2022 --external:vscode --outfile=out/web-test/index.js",
     "build:test:watch": "tsc --project tsconfig.test.json --watch",
     "build:all": "run-p build build:test",
     "build:all:watch": "run-p check-types:watch build:watch build:test:watch",
@@ -309,7 +309,7 @@
     "spell": "cspell \"**\"",
     "pretest": "npm run build:all",
     "test": "vscode-test",
-    "test:web": "node dist/web/test/run-web.js",
+    "test:web": "node test/web/run.mjs",
     "posttest": "npm run lint && npm run format:check && npm run spell && installed-check --ignore-dev",
     "release": "semantic-release"
   },

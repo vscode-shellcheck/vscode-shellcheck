@@ -1,6 +1,6 @@
 import type { ShellCheck } from "@vscode-shellcheck/shellcheck-wasm/client";
 import * as vscode from "vscode";
-import * as platform from "../../platform/index.js";
+import { startWasmWorker } from "../../platform/index.js";
 import { Logger } from "../../utils/logging/types.js";
 import { WasmRuntimeError } from "../types.js";
 import { detailOf } from "./wasm-runner.js";
@@ -54,6 +54,6 @@ export async function createPackagedShellCheck(
 
   return createShellCheck({
     module,
-    createWorker: () => platform.startWasmWorker(extensionUri, logger),
+    createWorker: () => startWasmWorker(extensionUri, logger),
   });
 }

@@ -10,9 +10,9 @@ import {
   WasmFailureNotifier,
 } from "./failure-ux.js";
 import { FixAllProvider } from "./fix-all.js";
-import * as platform from "./platform/index.js";
 import { createParser, ParseResult } from "./parser.js";
 import { RuntimeManager } from "./runtime/manager.js";
+import { nativeRuntime } from "./runtime/native.js";
 import {
   LintResult,
   RunnerDisposedError,
@@ -138,7 +138,9 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.codeActionCollection = new Map();
     this.additionalDocumentFilters = new Set();
     this.wasmExecutablePathNoticed = false;
-    this.wasmFailureNotifier = new WasmFailureNotifier(!platform.isWeb);
+    this.wasmFailureNotifier = new WasmFailureNotifier(
+      nativeRuntime !== undefined,
+    );
 
     // code actions
     for (const language of ShellCheckProvider.LANGUAGES) {
@@ -358,7 +360,9 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       try {
         toolStatus = {
           ok: true,
-          version: await platform.getToolVersion(settings.executable.path),
+          version: await nativeRuntime!.getToolVersion(
+            settings.executable.path,
+          ),
         };
       } catch (error: any) {
         logging.debug("Failed to get tool version: %O", error);
@@ -372,7 +376,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
           logging.info(`shellcheck (bundled) version: ${toolStatus.version}`);
         } else {
           logging.info(`shellcheck version: ${toolStatus.version}`);
-          platform.tryPromptForUpdatingTool(toolStatus.version);
+          nativeRuntime!.tryPromptForUpdatingTool(toolStatus.version);
         }
       }
     }
@@ -775,7 +779,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     textDocument: vscode.TextDocument,
     settings: ShellCheckSettings,
   ): Promise<string | undefined> {
-    return await platform.nativeWorkingDirectory(
+    return await nativeRuntime!.workingDirectory(
       textDocument,
       settings.useWorkspaceRootAsCwd,
     );

@@ -1,101 +1,56 @@
-import type * as NodePlatform from "./index.js";
+import type { WorkerPort } from "@vscode-shellcheck/shellcheck-wasm/client";
 import * as vscode from "vscode";
-import { WorkerPort } from "@vscode-shellcheck/shellcheck-wasm/client";
-import { Logger } from "../utils/logging/types.js";
 import { WasmRuntimeError } from "../runtime/types.js";
+import { Logger } from "../utils/logging/types.js";
 
-export const isWeb: boolean = true;
+type Same<A, B> = [A, B] extends [B, A] ? true : false;
+type Assert<T extends true> = T;
+// The web build swaps this module in for ./index.js, so tsc must reject any
+// difference between what the two export.
+export type ExportsMatchNode = Assert<
+  Same<typeof import("./index.js"), typeof import("./index.web.js")>
+>;
 
-function stringify(value: unknown): string {
-  if (value instanceof Error) return value.stack ?? value.message;
-  try {
-    return JSON.stringify(value) ?? String(value);
-  } catch {
-    return "[Circular]";
+export const isWindows: boolean = false;
+
+export const homeDirectory: string | undefined = undefined;
+
+function show(value: unknown): string {
+  if (value instanceof Error) {
+    return value.stack ?? value.message;
+  }
+  if (typeof value === "object" && value !== null) {
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return String(value);
+    }
+  }
+  return String(value);
+}
+
+/** `util.format` for the placeholders the extension logs with. */
+export function formatLogMessage(format: string, ...args: unknown[]): string {
+  const text = format.replace(/%[a-zA-Z%]/g, (token) =>
+    token === "%%" ? "%" : args.length ? show(args.shift()) : token,
+  );
+  return [text, ...args.map(show)].join(" ");
+}
+
+/** Browsers only provide SharedArrayBuffer, which the package's bridge needs,
+ * to a cross-origin isolated page. */
+export function assertWasmHostSupported(): void {
+  if (!globalThis.crossOriginIsolated) {
+    throw new WasmRuntimeError(
+      "ShellCheck needs a cross-origin isolated VS Code for the Web: SharedArrayBuffer is unavailable",
+    );
   }
 }
 
-export function formatLogMessage(format: string, ...args: unknown[]): string {
-  let index = 0;
-  const formatted = format.replace(/%[sdifjoO%]/g, (token) => {
-    if (token === "%%") return "%";
-    if (index >= args.length) return token;
-    const value = args[index++];
-    if (value instanceof Error) return value.stack ?? value.message;
-    switch (token) {
-      case "%s":
-        return String(value);
-      case "%d":
-      case "%f":
-        return String(Number(value));
-      case "%i":
-        return String(Number.parseInt(String(value), 10));
-      case "%j":
-      case "%o":
-      case "%O":
-        return stringify(value);
-      default:
-        return token;
-    }
-  });
-  return `${formatted}${args
-    .slice(index)
-    .map(
-      (value) =>
-        ` ${value !== null && typeof value === "object" ? stringify(value) : String(value)}`,
-    )
-    .join("")}`;
-}
-
-export async function resolveExecutable(
-  _context: vscode.ExtensionContext,
-  _configuredPath: string | undefined,
-): Promise<{ path: string; bundled: boolean }> {
-  return { path: "", bundled: false };
-}
-
-export function getToolVersion(_path: string): Promise<never> {
-  return Promise.reject(
-    new Error("Native ShellCheck is unavailable on the Web"),
-  );
-}
-
-export function tryPromptForUpdatingTool(_version: unknown): void {}
-
-export function createNativeRunner(): never {
-  throw new Error("The native ShellCheck runtime is unavailable on the Web");
-}
-
-export function homeDirectory(): undefined {
-  return undefined;
-}
-
-export function fixDriveCasingInWindows(pathToFix: string): string {
-  return pathToFix;
-}
-
-export function guessDocumentDirname(
-  _textDocument: vscode.TextDocument,
-): undefined {
-  return undefined;
-}
-
-export function ensureCurrentWorkingDirectory(
-  _cwd: string | undefined,
-): Promise<undefined> {
-  return Promise.resolve(undefined);
-}
-
-export function nativeWorkingDirectory(
-  _textDocument: vscode.TextDocument,
-  _useWorkspaceRootAsCwd: boolean,
-): Promise<undefined> {
-  return Promise.resolve(undefined);
-}
-
+/** The package's prebuilt worker, which stays a file of its own: it is GPL. */
 export function startWasmWorker(
   extensionUri: vscode.Uri,
-  _logger: Logger,
+  logger: Logger,
 ): WorkerPort {
   const worker = new Worker(
     vscode.Uri.joinPath(
@@ -103,41 +58,19 @@ export function startWasmWorker(
       "node_modules/@vscode-shellcheck/shellcheck-wasm/dist/browser/worker.js",
     ).toString(true),
   );
+  logger.debug("ShellCheck (wasm): worker started");
   return {
     postMessage: (message) => worker.postMessage(message),
     onMessage: (listener) =>
       worker.addEventListener("message", (event) => listener(event.data)),
     onError: (listener) =>
       worker.addEventListener("error", (event) =>
-        listener(event.message ?? event),
+        // A script that fails to load fires a plain Event, not an ErrorEvent.
+        listener(event instanceof ErrorEvent ? event.message : "load failed"),
       ),
-    terminate: () => worker.terminate(),
+    terminate: () => {
+      worker.terminate();
+      logger.debug("ShellCheck (wasm): worker terminated");
+    },
   };
 }
-
-export function assertWasmHostSupported(): void {
-  if (globalThis.crossOriginIsolated !== true) {
-    throw new WasmRuntimeError(
-      "ShellCheck needs a cross-origin isolated VS Code for the Web: SharedArrayBuffer is unavailable",
-    );
-  }
-}
-
-// Keep this assignment intentionally broad: adding or removing a platform
-// export requires both implementations to be updated together.
-const platformSurfaceCheck: typeof NodePlatform = {
-  isWeb,
-  formatLogMessage,
-  resolveExecutable,
-  getToolVersion,
-  tryPromptForUpdatingTool,
-  createNativeRunner,
-  homeDirectory,
-  fixDriveCasingInWindows,
-  guessDocumentDirname,
-  ensureCurrentWorkingDirectory,
-  nativeWorkingDirectory,
-  startWasmWorker,
-  assertWasmHostSupported,
-};
-Object.freeze(platformSurfaceCheck);

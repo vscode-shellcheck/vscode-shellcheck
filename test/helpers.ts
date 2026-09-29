@@ -1,4 +1,3 @@
-import { isDeepStrictEqual } from "node:util";
 import * as vscode from "vscode";
 import { RuntimeKind } from "../src/runtime/types.js";
 
@@ -161,7 +160,9 @@ export async function updateShellCheckSetting(
   value: unknown,
 ): Promise<void> {
   const section = vscode.workspace.getConfiguration("shellcheck");
-  if (isDeepStrictEqual(section.inspect(key)?.globalValue, value)) {
+  if (
+    JSON.stringify(section.inspect(key)?.globalValue) === JSON.stringify(value)
+  ) {
     return;
   }
 
