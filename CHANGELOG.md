@@ -1,3 +1,9 @@
+## [0.42.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.41.1...v0.42.0) (2026-09-29)
+
+### Features
+
+* add optional formatted ShellCheck diagnostic hovers ([#1950](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1950)) ([7761379](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/77613797c84e760fd672620f2b49ded35895dcae)), closes [#1052](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1052)
+
 ## [0.41.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.41.0...v0.41.1) (2026-09-29)
 
 ### Bug Fixes
