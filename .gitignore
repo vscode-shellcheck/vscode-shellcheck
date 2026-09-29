@@ -3,6 +3,7 @@
 /node_modules
 /.vscode-test
 /binaries
+/test/fixtures/wasm-parity/.e2e-artifacts/
 
 *.vsix
 *.zip

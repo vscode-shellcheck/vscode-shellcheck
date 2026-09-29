@@ -229,6 +229,12 @@ Known limitations:
 - Symbolic links inside that folder are followed wherever they lead.
 - Path-like entries in `shellcheck.customArgs` are passed through unchanged. They name locations on your machine, which this runtime does not see under those names, so they will not resolve.
 
+### VS Code for the Web
+
+The extension works on [vscode.dev](https://vscode.dev) and [github.dev](https://github.dev), where it always uses the WebAssembly runtime. A self-hosted VS Code for the Web must be cross-origin isolated by sending COOP `same-origin` and COEP `require-corp` headers. Safari 18.2 or newer is required.
+
+`.shellcheckrc` and `source` paths resolve within the document's workspace folder, as they do with the desktop WebAssembly runtime.
+
 ## Advanced usage
 
 ### Integrating other VS Code extensions

@@ -1,7 +1,12 @@
 **/*
 
 !binaries/
-!dist/
+!dist/extension.js
+!dist/extension.js.map
+!dist/wasm-worker.js
+!dist/wasm-worker.js.map
+!dist/web/extension.js
+!dist/web/extension.js.map
 !languages/
 !snippets/
 !node_modules/@vscode-shellcheck/shellcheck-wasm/**
@@ -12,3 +17,5 @@
 !package.json
 !README.md
 !shellcheck.png
+
+dist/web/test/**

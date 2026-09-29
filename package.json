@@ -45,6 +45,7 @@
     "workspaceContains:**/.shellcheckrc"
   ],
   "main": "./dist/extension.js",
+  "browser": "./dist/web/extension.js",
   "capabilities": {
     "untrustedWorkspaces": {
       "supported": "limited",
@@ -55,7 +56,7 @@
     },
     "virtualWorkspaces": {
       "supported": "limited",
-      "description": "Only the experimental WebAssembly runtime (`shellcheck.runtime`: `wasm`) can lint documents of a virtual workspace. The native runtime needs a local `shellcheck` binary and files on the local disk."
+      "description": "Only the experimental WebAssembly runtime (`shellcheck.runtime`: `wasm`) can lint documents of a virtual workspace. The native runtime needs a local `shellcheck` binary and files on the local disk. VS Code for the Web always uses the WebAssembly runtime."
     }
   },
   "contributes": {
@@ -144,7 +145,7 @@
           "scope": "machine-overridable"
         },
         "shellcheck.runtime": {
-          "markdownDescription": "**Experimental.** Which ShellCheck runtime to use.\n\n- `native` — run the bundled or user-provided `shellcheck` executable. This is the default and the only supported mode.\n- `wasm` — run a bundled WebAssembly (WASI) build of ShellCheck inside the editor. No executable is required and it works on every platform and in virtual workspaces, but linting is currently 3-4x slower than native, `#shellcheck.executablePath#` is ignored, and files outside the document's workspace folder are not visible to `source` directives or `.shellcheckrc` lookup.",
+          "markdownDescription": "**Experimental.** Which ShellCheck runtime to use. In VS Code for the Web the wasm runtime is always used.\n\n- `native` — run the bundled or user-provided `shellcheck` executable. This is the default and the only supported mode.\n- `wasm` — run a bundled WebAssembly (WASI) build of ShellCheck inside the editor. No executable is required and it works on every platform and in virtual workspaces, but linting is currently 3-4x slower than native, `#shellcheck.executablePath#` is ignored, and files outside the document's workspace folder are not visible to `source` directives or `.shellcheckrc` lookup.",
           "type": "string",
           "enum": [
             "native",
@@ -296,6 +297,7 @@
     "build:watch": "node esbuild.js --watch",
     "build:prod": "npm run check-types && node esbuild.js --production",
     "build:test": "tsc --project tsconfig.test.json",
+    "build:test:web": "esbuild test/web/index.ts --bundle --format=cjs --platform=browser --target=es2022 --external:vscode --outfile=dist/web/test/index.js && esbuild test/run-web.ts --bundle --format=esm --platform=node --target=node22 --packages=external --outfile=dist/web/test/run-web.js",
     "build:test:watch": "tsc --project tsconfig.test.json --watch",
     "build:all": "run-p build build:test",
     "build:all:watch": "run-p check-types:watch build:watch build:test:watch",
@@ -307,6 +309,7 @@
     "spell": "cspell \"**\"",
     "pretest": "npm run build:all",
     "test": "vscode-test",
+    "test:web": "node dist/web/test/run-web.js",
     "posttest": "npm run lint && npm run format:check && npm run spell && installed-check --ignore-dev",
     "release": "semantic-release"
   },
@@ -326,12 +329,14 @@
     "@types/vscode": "~1.101.0",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.1.0",
+    "@vscode/test-web": "^0.0.81",
     "bindl": "^7.1.6",
     "conventional-changelog-conventionalcommits": "^9.3.1",
     "cspell": "^10.3.6",
     "esbuild": "^0.28.2",
     "eslint": "^9.39.4",
     "installed-check": "^11.0.0",
+    "mocha": "^12.0.2",
     "neostandard": "^0.13.0",
     "npm-run-all2": "^9.0.3",
     "prettier": "^3.9.9",

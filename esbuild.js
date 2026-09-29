@@ -1,12 +1,13 @@
 // @ts-check
 
 import { context } from "esbuild";
+import path from "node:path";
 
 const production = process.argv.includes("--production");
 const watch = process.argv.includes("--watch");
 
 /** @type {import('esbuild').BuildOptions} */
-const common = {
+const nodeCommon = {
   bundle: true,
   format: "esm",
   minify: production,
@@ -33,7 +34,7 @@ const common = {
 async function main() {
   const contexts = await Promise.all([
     context({
-      ...common,
+      ...nodeCommon,
       entryPoints: ["src/extension.ts"],
       outfile: "dist/extension.js",
       plugins: [
@@ -47,9 +48,23 @@ async function main() {
     // external defensively: the worker has no extension host to import it
     // from.
     context({
-      ...common,
+      ...nodeCommon,
       entryPoints: ["src/runtime/wasm/worker.ts"],
       outfile: "dist/wasm-worker.js",
+    }),
+    context({
+      entryPoints: ["src/extension.ts"],
+      outfile: "dist/web/extension.js",
+      bundle: true,
+      format: "cjs",
+      platform: "browser",
+      target: "es2022",
+      external: ["vscode"],
+      minify: production,
+      sourcemap: !production,
+      sourcesContent: false,
+      logLevel: "warning",
+      plugins: [webPlatformPlugin, gplGuardPlugin, esbuildProblemMatcherPlugin],
     }),
   ]);
 
@@ -64,6 +79,41 @@ async function main() {
     );
   }
 }
+
+const nodePlatformPath = path.resolve("src/platform/index.js");
+const webPlatformPath = path.resolve("src/platform/index.web.ts");
+
+/** @type {import('esbuild').Plugin} */
+const webPlatformPlugin = {
+  name: "web-platform",
+  setup(build) {
+    build.onResolve({ filter: /platform\/index\.js$/ }, (args) => {
+      const resolved = path.resolve(path.dirname(args.importer), args.path);
+      if (resolved === nodePlatformPath) {
+        return { path: webPlatformPath };
+      }
+    });
+  },
+};
+
+/** @type {import('esbuild').Plugin} */
+const gplGuardPlugin = {
+  name: "gpl-guard",
+  setup(build) {
+    build.onResolve(
+      {
+        filter: /^@vscode-shellcheck\/shellcheck-wasm(?:$|\/worker(?:\.js)?$)/,
+      },
+      (args) => ({
+        errors: [
+          {
+            text: `The web extension may only import @vscode-shellcheck/shellcheck-wasm/client, not ${args.path}`,
+          },
+        ],
+      }),
+    );
+  },
+};
 
 /**
  * @type {import('esbuild').Plugin}
