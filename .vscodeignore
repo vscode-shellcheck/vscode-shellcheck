@@ -4,6 +4,8 @@
 !dist/
 !languages/
 !snippets/
+!node_modules/@vscode-shellcheck/shellcheck-wasm/**
+!node_modules/@bjorn3/browser_wasi_shim/**
 
 !CHANGELOG.md
 !LICENSE

@@ -1,0 +1,2 @@
+# The nearest rc wins, so this directory does not inherit `disable=SC2034`.
+external-sources=false

@@ -1,0 +1,4 @@
+# Deliberately not at the workspace folder root: the wasm runtime's guest cwd
+# falls back to the preopen root, so an rc placed there would be found without
+# any upward walk and `rc/child/nested/uses-rc.sh` would prove nothing.
+disable=SC2034

@@ -19,6 +19,8 @@ This VS Code extension requires [ShellCheck] (the awesome static analysis tool f
 - macOS (`x86_64`, `arm64`)
 - Windows (`x86_64`, `arm64` with the `x86_64` binary)
 
+A WebAssembly (WASI) build of [ShellCheck] is bundled for every platform as well.
+
 ## Troubleshooting
 
 If ShellCheck seems not working, a helper command _ShellCheck: Collect Diagnostics For Current Document_ from the [Command Palette](https://code.visualstudio.com/Docs/editor/codebasics#_command-palette) is provided to help troubleshooting.
@@ -174,6 +176,29 @@ You can can then configure the extension to use it with:
 
 Just have in mind that this should come with a performance hit, as booting up a docker container is slower than just invoking the binary.
 
+### Experimental WebAssembly runtime
+
+A WebAssembly build of [ShellCheck] is bundled in this extension and can check your scripts on its own. It needs no `shellcheck` executable on your machine, and it works on every platform, including those with no prebuilt ShellCheck binary. It reads `.shellcheckrc` and `source` targets through VS Code rather than from disk, so it also checks scripts in virtual workspaces and on any other file system VS Code can open; the native runtime cannot lint documents of a virtual workspace.
+
+To turn it on:
+
+```jsonc
+{
+  "shellcheck.runtime": "wasm" // also: "native", the default
+}
+```
+
+This runtime is experimental and unsupported. It never falls back to the native binary: if it fails to start or a check crashes, your scripts stop being checked until you switch back. The failure is reported once per session, with the actions _Switch back to native_ and _Show Log_.
+
+It is also 3-4x slower than the native binary, and linting as you type correspondingly waits longer after your last keystroke. For large files, consider setting `shellcheck.run` to `onSave`.
+
+Known limitations:
+
+- `shellcheck.executablePath` is ignored.
+- Only files inside the document's workspace folder are readable, so `source` targets and `.shellcheckrc` files outside that folder are not found. A file that belongs to no workspace folder sees only its own directory, and an untitled document sees no files at all.
+- Symbolic links inside that folder are followed wherever they lead.
+- Path-like entries in `shellcheck.customArgs` are passed through unchanged. They name locations on your machine, which this runtime does not see under those names, so they will not resolve.
+
 ## Advanced usage
 
 ### Integrating other VS Code extensions
@@ -188,6 +213,6 @@ This extension was originally based on [@hoovercj](https://github.com/hoovercj)'
 
 This extension is licensed under the [MIT license](./LICENSE).
 
-Bundled [ShellCheck] binaries are licensed under [GPLv3](https://github.com/koalaman/shellcheck/blob/master/LICENSE).
+The bundled [ShellCheck] binaries are licensed under [GPLv3](https://github.com/koalaman/shellcheck/blob/master/LICENSE). The WebAssembly build of [ShellCheck] ships as the separate [`@vscode-shellcheck/shellcheck-wasm`](https://www.npmjs.com/package/@vscode-shellcheck/shellcheck-wasm) package, also under GPLv3, with its own `LICENSE` inside `node_modules/@vscode-shellcheck/shellcheck-wasm`.
 
 [ShellCheck]: https://github.com/koalaman/shellcheck

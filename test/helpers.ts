@@ -1,6 +1,21 @@
+import { isDeepStrictEqual } from "node:util";
 import * as vscode from "vscode";
+import { RuntimeKind } from "../src/runtime/types.js";
 
 let _documentIndex = 0;
+
+/** The runtimes every integration suite is run against. */
+export const RUNTIMES: readonly RuntimeKind[] = ["native", "wasm"];
+
+function rejectAfter(timeout: number, what: string): Promise<never> {
+  return new Promise<never>((_resolve, reject) =>
+    setTimeout(
+      () =>
+        reject(new Error(`Timed out after ${timeout}ms waiting for ${what}`)),
+      timeout,
+    ),
+  );
+}
 
 /**
  * Open a new untitled document with the given content and language,
@@ -23,6 +38,24 @@ export async function openDocument(
   });
 
   return editor.document;
+}
+
+/** Open a file from the first workspace folder and show it in an editor. */
+export async function openWorkspaceDocument(
+  relativePath: string,
+): Promise<vscode.TextDocument> {
+  const folder = vscode.workspace.workspaceFolders?.[0];
+  if (!folder) {
+    throw new Error(
+      `Cannot open ${relativePath}: no workspace folder is open. This suite needs a \`workspaceFolder\` entry in .vscode-test.js`,
+    );
+  }
+
+  const document = await vscode.workspace.openTextDocument(
+    vscode.Uri.joinPath(folder.uri, relativePath),
+  );
+  await vscode.window.showTextDocument(document);
+  return document;
 }
 
 /**
@@ -49,19 +82,26 @@ export function waitForDiagnostics(
     });
   });
 
-  const timer = new Promise<never>((_resolve, reject) =>
-    setTimeout(
-      () =>
-        reject(
-          new Error(
-            `Timed out after ${timeout}ms waiting for diagnostics on ${uri.toString()}`,
-          ),
-        ),
-      timeout,
-    ),
-  );
+  return Promise.race([
+    event,
+    rejectAfter(timeout, `diagnostics on ${uri.toString()}`),
+  ]);
+}
 
-  return Promise.race([event, timer]);
+/**
+ * Lint the active document on demand and return the diagnostics it produced.
+ *
+ * The explicit command is what makes the result attributable to the runtime in
+ * effect right now: waiting for whatever event arrives next would also accept a
+ * lint that a settings change had already started.
+ */
+export async function lintActiveDocument(
+  document: vscode.TextDocument,
+  timeout = 15000,
+): Promise<vscode.Diagnostic[]> {
+  const diagnostics = waitForDiagnostics(document, timeout);
+  await vscode.commands.executeCommand("shellcheck.runLint");
+  return await diagnostics;
 }
 
 /**
@@ -85,17 +125,64 @@ export function waitForText(
     });
   });
 
-  const timer = new Promise<never>((_resolve, reject) =>
-    setTimeout(
-      () =>
-        reject(
-          new Error(`Timed out after ${timeout}ms waiting for text change`),
-        ),
-      timeout,
-    ),
-  );
+  return Promise.race([event, rejectAfter(timeout, "a text change")]);
+}
 
-  return Promise.race([event, timer]);
+function waitForConfigurationChange(
+  section: string,
+  timeout = 10000,
+): Promise<void> {
+  const event = new Promise<void>((resolve) => {
+    const disposable = vscode.workspace.onDidChangeConfiguration((e) => {
+      if (!e.affectsConfiguration(section)) {
+        return;
+      }
+      disposable.dispose();
+      resolve();
+    });
+  });
+
+  return Promise.race([event, rejectAfter(timeout, `${section} to change`)]);
+}
+
+/**
+ * Write a `shellcheck.*` setting at global scope and wait for the extension to
+ * have processed it.
+ *
+ * The stored value is compared first because VS Code only raises a
+ * configuration change when that value really changes, so an unconditional wait
+ * would hang on a redundant write.
+ */
+export async function updateShellCheckSetting(
+  key: string,
+  value: unknown,
+): Promise<void> {
+  const section = vscode.workspace.getConfiguration("shellcheck");
+  if (isDeepStrictEqual(section.inspect(key)?.globalValue, value)) {
+    return;
+  }
+
+  const changed = waitForConfigurationChange(`shellcheck.${key}`);
+  await section.update(key, value, vscode.ConfigurationTarget.Global);
+  await changed;
+}
+
+/**
+ * Switch the extension to `runtime` and wait until it has taken effect.
+ *
+ * `native` is cleared rather than written, because it is the contributed
+ * default: that keeps every transition a real change of the effective value,
+ * which is what raises the configuration event this waits on.
+ */
+export function setRuntime(runtime: RuntimeKind): Promise<void> {
+  return updateShellCheckSetting(
+    "runtime",
+    runtime === "native" ? undefined : runtime,
+  );
+}
+
+export function resetRuntime(): Promise<void> {
+  return setRuntime("native");
 }
 
 /**
