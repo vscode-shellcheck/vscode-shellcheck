@@ -56,7 +56,6 @@ export class WasmRunner implements ShellCheckRunner {
    * without losing its place behind other documents. */
   private readonly pending = new Map<string, PendingRun>();
   private running: RunningRun | undefined;
-  private nextRunId = 0;
   private disposed = false;
 
   public constructor(private readonly options: WasmRunnerOptions) {
@@ -73,6 +72,13 @@ export class WasmRunner implements ShellCheckRunner {
       const key = request.documentKey;
       this.pending.get(key)?.reject(new RunSupersededError());
       this.pending.set(key, { request, resolve, reject });
+      this.logger.debug(
+        "lint #%d queued (wasm): %s (pending=%d, running=%s)",
+        request.runId,
+        key,
+        this.pending.size,
+        this.running?.documentKey,
+      );
       if (this.running?.documentKey === key) {
         // The package terminates the worker for this; nothing else stops a
         // wasm command mid-run.
@@ -129,15 +135,11 @@ export class WasmRunner implements ShellCheckRunner {
     const run = this.pending.get(documentKey)!;
     this.pending.delete(documentKey);
 
-    const id = ++this.nextRunId;
+    const id = run.request.runId;
     const controller = new AbortController();
     const watchdog = AbortSignal.timeout(this.runTimeoutMs);
     this.running = { documentKey, controller };
-    this.logger.debug(
-      "ShellCheck (wasm): run %d started for %s",
-      id,
-      documentKey,
-    );
+    this.logger.debug("lint #%d start (wasm): %s", id, documentKey);
 
     const { args, stdin, mount } = run.request;
     this.shellcheck
@@ -153,7 +155,14 @@ export class WasmRunner implements ShellCheckRunner {
         { signal: AbortSignal.any([controller.signal, watchdog]) },
       )
       .then(
-        (result) => this.settle(run, result),
+        (result) => {
+          this.logger.debug(
+            "lint #%d exit (wasm): code=%d",
+            id,
+            result.exitCode,
+          );
+          this.settle(run, result);
+        },
         (error: unknown) => {
           run.reject(this.failureOf(error, watchdog, id, run.request));
         },
@@ -207,7 +216,7 @@ export class WasmRunner implements ShellCheckRunner {
     }
     if (watchdog.aborted && error === watchdog.reason) {
       this.logger.error(
-        "ShellCheck (wasm): run %d for %s exceeded %d ms, terminating the worker (args: %s)",
+        "ShellCheck (wasm): lint #%d for %s exceeded %d ms, terminating the worker (args: %s)",
         id,
         request.documentKey,
         this.runTimeoutMs,

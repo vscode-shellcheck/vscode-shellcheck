@@ -12,6 +12,8 @@ export interface LintMount {
 export interface LintRequest {
   /** Dedupe/cancellation key. Always `textDocument.uri.toString()`. */
   readonly documentKey: string;
+  /** Tags every log line of this run, from trigger to result. */
+  readonly runId: number;
   /** Path of the shellcheck executable to run. */
   readonly executablePath: string;
   /** Fully built argv, excluding argv[0]. Always ends with "-". */

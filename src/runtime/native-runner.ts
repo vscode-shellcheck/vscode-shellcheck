@@ -6,11 +6,19 @@ export class NativeRunner implements ShellCheckRunner {
   public readonly kind = "native";
 
   public run(request: LintRequest): Promise<LintResult> {
-    const { executablePath, args, cwd } = request;
+    const { executablePath, args, cwd, runId, documentKey } = request;
 
     return new Promise<LintResult>((resolve, reject) => {
-      logging.debug("Spawn: (cwd=%s) %s %s", cwd, executablePath, args);
       const childProcess = execa(executablePath, args, { cwd });
+      logging.debug(
+        "lint #%d spawn (native): %s %s (cwd=%s, pid=%s, document=%s)",
+        runId,
+        executablePath,
+        args,
+        cwd,
+        childProcess.pid,
+        documentKey,
+      );
 
       if (!childProcess.pid || !childProcess.stdin || !childProcess.stdout) {
         // A spawn failure never emits "error" on the child process, it only
@@ -53,6 +61,16 @@ export class NativeRunner implements ShellCheckRunner {
         });
 
       childProcess.nodeChildProcess.on("error", reject);
+      // The run settles on end of stdout, so only this tells how the process
+      // itself ended.
+      childProcess.nodeChildProcess.on("exit", (code, signal) => {
+        logging.debug(
+          "lint #%d exit (native): code=%s, signal=%s",
+          runId,
+          code,
+          signal,
+        );
+      });
     });
   }
 
