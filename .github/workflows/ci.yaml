@@ -42,6 +42,21 @@ jobs:
         with:
           run: npm test
 
+  test-web:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup Mise, Node and NPM
+        uses: jdx/mise-action@v5
+        with:
+          version: 2026.9.16
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npm run build:test:web
+      - run: npm run test:web
+
   build:
     strategy:
       fail-fast: false
@@ -124,7 +139,7 @@ jobs:
     # dev collects changes for the next release; only master releases.
     if: github.event_name != 'schedule' && (github.ref_name == 'master' || github.base_ref == 'master')
 
-    needs: [test, build]
+    needs: [test, test-web, build]
 
     runs-on: ubuntu-latest
 
