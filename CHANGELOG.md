@@ -1,3 +1,9 @@
+## [0.41.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.40.1...v0.41.0) (2026-09-29)
+
+### Features
+
+* experimental wasm variant of shellcheck ([#1954](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1954)) ([da735c6](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/da735c60488a16de831651c32e1c312b568cf6e5)), closes [#1952](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1952) [#1952](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1952) [#478](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/478) [vscode-shellcheck/shellcheck-wasm#21](https://github.com/vscode-shellcheck/shellcheck-wasm/issues/21) [#1952](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1952) [vscode-shellcheck/shellcheck-wasm#21](https://github.com/vscode-shellcheck/shellcheck-wasm/issues/21)
+
 ## [0.40.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.40.0...v0.40.1) (2026-09-17)
 
 ### Bug Fixes
