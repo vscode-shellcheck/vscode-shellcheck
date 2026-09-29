@@ -87,7 +87,16 @@ export async function getWorkspaceSettings(
       .get(keys.customArgs, [])
       .map((arg) => substitutePath(arg)),
     ignoreFileSchemes: new Set(
-      section.get(keys.ignoreFileSchemes, ["git", "gitfs", "output"]),
+      section.get(keys.ignoreFileSchemes, [
+        "git",
+        "gitfs",
+        "output",
+        "review",
+        "pr",
+        "githubpr",
+        "gitpr",
+        "githubcommit",
+      ]),
     ),
     useWorkspaceRootAsCwd: section.get(keys.useWorkspaceRootAsCwd, false),
     enableQuickFix: section.get(keys.enableQuickFix, false),
