@@ -131,6 +131,7 @@ Exports (Node behavior is today's behavior, moved, not changed):
 | `formatLogMessage(format, ...args): string` | `util.format` | small `%s %d %i %f %j %o %O %%` formatter; `%o`/`%O` JSON-stringify objects, an `Error` becomes its `stack ?? message` |
 | `resolveExecutable(context, configuredPath)` | today's `getExecutable` from `settings.ts` | never called (see 4.2); returns `{ path: "", bundled: false }` |
 | `getToolVersion(path)` | today's, from `tool-check.ts` | rejects; never called |
+| `tryPromptForUpdatingTool(version)` | today's, from `tool-check.ts` | no-op; never called. It must move behind the seam because `tool-check.ts` imports `bindl.config.ts`, which imports the Node-only `bindl` package |
 | `createNativeRunner(): ShellCheckRunner` | `new NativeRunner()` | throws; never called |
 | `homeDirectory(): string \| undefined` | `os.homedir()` with drive-casing fix | `undefined`: `${userHome}` is left unsubstituted |
 | `nativeWorkingDirectory(...)` helpers: `guessDocumentDirname`, `ensureCurrentWorkingDirectory` | today's, from `utils/path.ts` | never called; return `undefined` |
