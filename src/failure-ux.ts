@@ -78,12 +78,15 @@ export function describeShellCheckError(
 /** The notification for a failure of the experimental WASM runtime itself. */
 export function describeWasmFailure(
   error: WasmRuntimeError,
+  options: { canSwitchToNative: boolean } = { canSwitchToNative: true },
 ): FailureNotification {
   return {
     message: `${error.message}. Shell scripts are not being checked.`,
     // The full details of every wasm failure are logged at error level, so the
     // output channel is always worth opening here.
-    items: [FailureActions.switchBackToNative, FailureActions.showLog],
+    items: options.canSwitchToNative
+      ? [FailureActions.switchBackToNative, FailureActions.showLog]
+      : [FailureActions.showLog],
   };
 }
 
@@ -132,6 +135,8 @@ export async function applyFailureEffect(
 export class WasmFailureNotifier {
   private notified = false;
 
+  public constructor(private readonly canSwitchToNative = true) {}
+
   public notificationFor(
     error: WasmRuntimeError,
   ): FailureNotification | undefined {
@@ -139,6 +144,8 @@ export class WasmFailureNotifier {
       return undefined;
     }
     this.notified = true;
-    return describeWasmFailure(error);
+    return describeWasmFailure(error, {
+      canSwitchToNative: this.canSwitchToNative,
+    });
   }
 }

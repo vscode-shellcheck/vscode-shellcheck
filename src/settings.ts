@@ -1,13 +1,11 @@
-import fs from "node:fs/promises";
 import * as vscode from "vscode";
+import * as platform from "./platform/index.js";
 import { RuntimeKind } from "./runtime/types.js";
 import { FileMatcher, FileSettings } from "./utils/filematcher.js";
 import { substitutePath } from "./utils/path.js";
 
-export interface Executable {
-  path: string;
-  bundled: boolean;
-}
+export type { Executable } from "./platform/index.js";
+import type { Executable } from "./platform/index.js";
 
 export interface ShellCheckSettings {
   enabled: boolean;
@@ -71,7 +69,7 @@ export async function getWorkspaceSettings(
   const keys = ShellCheckSettings.keys;
   const section = vscode.workspace.getConfiguration("shellcheck", scope);
   const runtime: RuntimeKind =
-    section.get(keys.runtime) === "wasm" ? "wasm" : "native";
+    platform.isWeb || section.get(keys.runtime) === "wasm" ? "wasm" : "native";
   const settings = <ShellCheckSettings>{
     enabled: section.get(keys.enable, true),
     trigger: RunTrigger.from(section.get(keys.run, RunTrigger.strings.onType)),
@@ -82,7 +80,10 @@ export async function getWorkspaceSettings(
     executable:
       runtime === "wasm"
         ? { path: "", bundled: false }
-        : await getExecutable(context, section.get(keys.executablePath)),
+        : await platform.resolveExecutable(
+            context,
+            section.get(keys.executablePath),
+          ),
     customArgs: section
       .get(keys.customArgs, [])
       .map((arg) => substitutePath(arg)),
@@ -127,28 +128,4 @@ export function checkIfConfigurationChanged(
     }
   }
   return false;
-}
-
-async function getExecutable(
-  context: vscode.ExtensionContext,
-  executablePath: string | undefined,
-): Promise<Executable> {
-  if (!executablePath) {
-    // Use bundled binaries (maybe)
-    const suffix = process.platform === "win32" ? ".exe" : "";
-    executablePath = context.asAbsolutePath(
-      `./binaries/${process.platform}/${process.arch}/shellcheck${suffix}`,
-    );
-    try {
-      await fs.access(executablePath, fs.constants.X_OK);
-      return { path: executablePath, bundled: true };
-    } catch (error) {
-      return {
-        path: "shellcheck", // Fallback to default shellcheck path.
-        bundled: false,
-      };
-    }
-  }
-
-  return { path: substitutePath(executablePath), bundled: false };
 }

@@ -2,7 +2,7 @@ import type {
   FileSystemErrorCode,
   FileType,
   ShellCheckFileSystem,
-} from "@vscode-shellcheck/shellcheck-wasm";
+} from "@vscode-shellcheck/shellcheck-wasm/client";
 import * as vscode from "vscode";
 import { LintMount } from "../types.js";
 import { fromGuestPath, planDocumentMount } from "./guest-path.js";

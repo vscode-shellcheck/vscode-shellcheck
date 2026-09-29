@@ -2,6 +2,7 @@ import assert from "node:assert";
 import {
   applyFailureEffect,
   describeShellCheckError,
+  describeWasmFailure,
   effectOfSelection,
   FailureActionHost,
   FailureActions,
@@ -162,5 +163,13 @@ suite("Failure UX", () => {
       ),
       undefined,
     );
+  });
+
+  test("a wasm failure only offers the log on the web", () => {
+    const notification = describeWasmFailure(
+      new WasmRuntimeError("The ShellCheck wasm runtime failed", "detail"),
+      { canSwitchToNative: false },
+    );
+    assert.deepStrictEqual(notification.items, [FailureActions.showLog]);
   });
 });

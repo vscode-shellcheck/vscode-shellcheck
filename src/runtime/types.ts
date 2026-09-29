@@ -1,4 +1,4 @@
-import type { ShellCheckFileSystem } from "@vscode-shellcheck/shellcheck-wasm";
+import type { ShellCheckFileSystem } from "@vscode-shellcheck/shellcheck-wasm/client";
 
 /** What a sandboxed runtime lets ShellCheck read, and where it runs inside it. */
 export interface LintMount {

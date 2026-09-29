@@ -3,7 +3,7 @@ import type {
   LintRequest as PackageLintRequest,
   LintResult as PackageLintResult,
   ShellCheck,
-} from "@vscode-shellcheck/shellcheck-wasm";
+} from "@vscode-shellcheck/shellcheck-wasm/client";
 import assert from "node:assert";
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
@@ -30,6 +30,7 @@ import { Arguments, Logger } from "../src/utils/logging/types.js";
 const repoRoot = path.resolve(fileURLToPath(import.meta.url), "../../..");
 const fixtureRoot = path.join(repoRoot, "test", "fixtures", "wasm-parity");
 const workerPath = path.join(repoRoot, "dist", "wasm-worker.js");
+const webExtensionPath = path.join(repoRoot, "dist", "web", "extension.js");
 // -x makes the sourced file reachable only through the mount.
 const shellCheckArgs = ["-x", "-f", "json1", "-s", "bash", "-"];
 
@@ -650,5 +651,17 @@ suite("WASM Bundles", () => {
       extension,
       /import\s*\{[^}]*\}\s*from\s*"@vscode-shellcheck/,
     );
+  });
+
+  test("the web extension bundle contains no Node or ESM-only import", () => {
+    const extension = fs.readFileSync(webExtensionPath, "utf8");
+    assert.doesNotMatch(extension, /(?:from\s*|require\s*\()["']node:/);
+    assert.doesNotMatch(extension, /import\.meta/);
+  });
+
+  test("the web extension bundle carries none of the GPL guest", () => {
+    const extension = fs.readFileSync(webExtensionPath, "utf8");
+    assert.doesNotMatch(extension, /wasi_snapshot_preview1/);
+    assert.doesNotMatch(extension, /browser_wasi_shim/);
   });
 });

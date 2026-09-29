@@ -1,9 +1,6 @@
-import type {
-  ShellCheck,
-  WorkerPort,
-} from "@vscode-shellcheck/shellcheck-wasm";
-import { Worker } from "node:worker_threads";
+import type { ShellCheck } from "@vscode-shellcheck/shellcheck-wasm/client";
 import * as vscode from "vscode";
+import * as platform from "../../platform/index.js";
 import { Logger } from "../../utils/logging/types.js";
 import { WasmRuntimeError } from "../types.js";
 import { detailOf } from "./wasm-runner.js";
@@ -21,22 +18,6 @@ export async function compilePackagedModule(
   );
   // Typed loosely by @types/vscode; never backed by a SharedArrayBuffer.
   return await WebAssembly.compile(bytes as Uint8Array<ArrayBuffer>);
-}
-
-function startWorker(workerPath: string, logger: Logger): WorkerPort {
-  const worker = new Worker(workerPath);
-  const threadId = worker.threadId;
-  logger.debug("ShellCheck (wasm): worker %d started", threadId);
-  return {
-    postMessage: (message) => worker.postMessage(message),
-    onMessage: (listener) => worker.on("message", listener),
-    onError: (listener) => worker.on("error", listener),
-    onExit: (listener) => worker.on("exit", listener),
-    terminate: async () => {
-      await worker.terminate();
-      logger.debug("ShellCheck (wasm): worker %d terminated", threadId);
-    },
-  };
 }
 
 export interface PackagedShellCheckOptions {
@@ -58,7 +39,7 @@ export async function createPackagedShellCheck(
   // to the top of the extension bundle, where every native session would
   // evaluate it at activation.
   const { createShellCheck } =
-    await import("@vscode-shellcheck/shellcheck-wasm");
+    await import("@vscode-shellcheck/shellcheck-wasm/client");
   const { extensionUri, logger } = options;
   const module = (
     options.loadModule?.() ?? compilePackagedModule(extensionUri)
@@ -71,13 +52,8 @@ export async function createPackagedShellCheck(
   // Surfaces on the first lint instead, which awaits it; unobserved until then.
   module.catch(() => undefined);
 
-  const workerPath = vscode.Uri.joinPath(
-    extensionUri,
-    "dist",
-    "wasm-worker.js",
-  ).fsPath;
   return createShellCheck({
     module,
-    createWorker: () => startWorker(workerPath, logger),
+    createWorker: () => platform.startWasmWorker(extensionUri, logger),
   });
 }
