@@ -62,7 +62,16 @@ Default options are:
     "**/zshenv": true,
     "**/*.zsh-theme": true
   },
-  "shellcheck.ignoreFileSchemes": ["git", "gitfs", "output"]
+  "shellcheck.ignoreFileSchemes": [
+    "git",
+    "gitfs",
+    "output",
+    "review",
+    "pr",
+    "githubpr",
+    "gitpr",
+    "githubcommit"
+  ]
 }
 ```
 

@@ -233,7 +233,7 @@
           }
         },
         "shellcheck.ignoreFileSchemes": {
-          "description": "Matching file schemes are being ignored by shellcheck.",
+          "description": "Matching file schemes are being ignored by shellcheck. The default also covers the virtual documents of the GitHub Pull Requests extension.",
           "type": "array",
           "items": {
             "type": "string"
@@ -242,7 +242,12 @@
           "default": [
             "git",
             "gitfs",
-            "output"
+            "output",
+            "review",
+            "pr",
+            "githubpr",
+            "gitpr",
+            "githubcommit"
           ]
         },
         "shellcheck.useWorkspaceRootAsCwd": {
