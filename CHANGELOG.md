@@ -1,3 +1,9 @@
+## [0.41.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.41.0...v0.41.1) (2026-09-29)
+
+### Bug Fixes
+
+* ignore github pull request virtual documents by default ([#1963](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1963)) ([20bf3cc](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/20bf3cc9771349145447266ec7332524e475bd11)), closes [#1876](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1876)
+
 ## [0.41.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.40.1...v0.41.0) (2026-09-29)
 
 ### Features
