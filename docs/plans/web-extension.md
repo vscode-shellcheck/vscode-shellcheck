@@ -22,7 +22,8 @@ true`; `SharedArrayBuffer`, a nested
   COEP `require-corp` today, so they are cross-origin isolated by default.
   Self-hosted servers (code-server, `code serve-web`) are unverified.
 - A web extension's `browser` entry must be one CommonJS file; the web
-  extension host has no ESM loader.
+  extension host has no ESM loader. In a `"type": "module"` package it must
+  end in `.cjs`, or VS Code tries to load it as ESM.
 - The package's `index.js` evaluates
   `new URL("./shellcheck.wasm", import.meta.url)` at load. In a CommonJS
   bundle `import.meta.url` is undefined and the module throws `Invalid URL`
@@ -138,7 +139,7 @@ Rules:
   reaches the web graph, so a Node module cannot slip in unnoticed.
 - `gplGuardPlugin` fails the web build on any import of the package other
   than `@vscode-shellcheck/shellcheck-wasm/client`. A desktop test also
-  checks that `dist/web/extension.js` contains no WASI shim.
+  checks that `dist/web/extension.cjs` contains no WASI shim.
 - Every import of the package's host API uses `…/client`, on both builds.
 - `linter.ts` reads the `.bash`/`.ksh`/`.dash` dialect off `Uri.path`
   (`utils/shell-dialect.ts`) instead of `node:path`.
@@ -156,10 +157,12 @@ Rules:
 
 ### 4.3 Build and manifest
 
-A third esbuild context bundles `src/extension.ts` to `dist/web/extension.js`
+A third esbuild context bundles `src/extension.ts` to `dist/web/extension.cjs`
 (`format: "cjs"`, `platform: "browser"`, `external: ["vscode"]`, no
 `createRequire` banner). `package.json` gets
-`"browser": "./dist/web/extension.js"`; `.vscodeignore` is unchanged. The
+`"browser": "./dist/web/extension.cjs"`: the package is `"type": "module"`, so
+VS Code would load a `.js` entry, and the web suite's `.js` bundle, as ESM,
+which the web extension host refuses. `.vscodeignore` is unchanged. The
 manifest's `virtualWorkspaces` and `shellcheck.runtime` descriptions and a
 README section describe the web.
 

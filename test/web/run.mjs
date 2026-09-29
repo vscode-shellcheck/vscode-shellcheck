@@ -16,7 +16,7 @@ const child = spawn(
     "--headless",
     "--coi",
     "--extensionDevelopmentPath=.",
-    "--extensionTestsPath=out/web-test/index.js",
+    "--extensionTestsPath=out/web-test/index.cjs",
     "test/fixtures/wasm-parity",
   ],
   { stdio: ["ignore", "pipe", "inherit"], shell: process.platform === "win32" },

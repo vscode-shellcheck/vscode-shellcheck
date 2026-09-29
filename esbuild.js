@@ -55,7 +55,9 @@ async function main() {
     }),
     context({
       entryPoints: ["src/extension.ts"],
-      outfile: "dist/web/extension.js",
+      // .cjs: the package is "type": "module", and VS Code would load a .js
+      // entry as ESM, which the web extension host does not support.
+      outfile: "dist/web/extension.cjs",
       bundle: true,
       format: "cjs",
       platform: "browser",

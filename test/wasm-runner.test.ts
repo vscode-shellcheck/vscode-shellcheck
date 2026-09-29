@@ -30,7 +30,7 @@ import { Arguments, Logger } from "../src/utils/logging/types.js";
 const repoRoot = path.resolve(fileURLToPath(import.meta.url), "../../..");
 const fixtureRoot = path.join(repoRoot, "test", "fixtures", "wasm-parity");
 const workerPath = path.join(repoRoot, "dist", "wasm-worker.js");
-const webExtensionPath = path.join(repoRoot, "dist", "web", "extension.js");
+const webExtensionPath = path.join(repoRoot, "dist", "web", "extension.cjs");
 // -x makes the sourced file reachable only through the mount.
 const shellCheckArgs = ["-x", "-f", "json1", "-s", "bash", "-"];
 

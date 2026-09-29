@@ -45,7 +45,7 @@
     "workspaceContains:**/.shellcheckrc"
   ],
   "main": "./dist/extension.js",
-  "browser": "./dist/web/extension.js",
+  "browser": "./dist/web/extension.cjs",
   "capabilities": {
     "untrustedWorkspaces": {
       "supported": "limited",
@@ -297,7 +297,7 @@
     "build:watch": "node esbuild.js --watch",
     "build:prod": "npm run check-types && node esbuild.js --production",
     "build:test": "tsc --project tsconfig.test.json",
-    "build:test:web": "esbuild test/web/index.ts --bundle --format=cjs --platform=browser --target=es2022 --external:vscode --outfile=out/web-test/index.js",
+    "build:test:web": "esbuild test/web/index.ts --bundle --format=cjs --platform=browser --target=es2022 --external:vscode --outfile=out/web-test/index.cjs",
     "build:test:watch": "tsc --project tsconfig.test.json --watch",
     "build:all": "run-p build build:test",
     "build:all:watch": "run-p check-types:watch build:watch build:test:watch",
