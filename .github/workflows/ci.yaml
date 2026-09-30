@@ -50,7 +50,7 @@ jobs:
       - name: Setup Mise, Node and NPM
         uses: jdx/mise-action@v5
         with:
-          version: 2026.9.16
+          version: 2026.9.17
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run build
