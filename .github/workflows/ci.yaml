@@ -77,13 +77,6 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
-    # Even though semantic-release will not publish anything, it still needs to
-    # validate the GITHUB_TOKEN
-    permissions:
-      contents: write # to be able to publish a GitHub release
-      issues: write # to be able to comment on released issues
-      pull-requests: write # to be able to comment on released pull requests
-
     steps:
       - uses: actions/checkout@v7
       - name: Setup Mise, Node and NPM
@@ -100,23 +93,11 @@ jobs:
         run: npm ci
         env:
           BINDL_SKIP: "true"
-      - run: npx semantic-release --extends ./package.release.config.js
-        env:
-          VSCE_TARGET: ${{ matrix.target }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: npx vsce package ${{ matrix.target != 'universal' && format('--target {0}', matrix.target) || '' }}
       - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.target }}
           path: "*.vsix"
-      # vsce updates the version in package.json and package-lock.json during
-      # package step, so we need to save them for the publish step
-      - if: matrix.target == 'universal'
-        uses: actions/upload-artifact@v7
-        with:
-          name: package-json
-          path: |
-            package.json
-            package-lock.json
 
   release:
     if: github.event_name != 'schedule'
@@ -125,15 +106,16 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    # A later push must not publish while an earlier release is still running
+    concurrency: release
+
     permissions:
       contents: write # to be able to publish a GitHub release
-      issues: write # to be able to comment on released issues
-      pull-requests: write # to be able to comment on released pull requests
 
     steps:
       - uses: actions/checkout@v7
         with:
-          token: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE || github.token }}
+          fetch-depth: 2
       - uses: actions/download-artifact@v8
         with:
           merge-multiple: true
@@ -145,11 +127,34 @@ jobs:
         env:
           BINDL_SKIP: "true"
       - run: npm audit signatures
-      # Only run on push events or pull requests coming from the same repository, except from dependabot
-      - name: Run semantic-release
-        run: bash .github/scripts/semantic-release-with-vsce-retry.sh
-        if: github.event_name == 'push' || github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]'
+      # Publish only from the merged release PR commit, i.e. the one that
+      # bumped the version. Re-running this job is safe: registries skip
+      # duplicates and the tag check stops a second GitHub release.
+      - name: Check for release
+        id: check
+        if: github.event_name == 'push'
+        run: |
+          version=$(node -p "require('./package.json').version")
+          previous=$(git show HEAD^:package.json | node -p "JSON.parse(require('fs').readFileSync(0)).version")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if [ "$version" != "$previous" ] && ! git ls-remote --exit-code --tags origin "refs/tags/v$version" > /dev/null; then
+            echo "release=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Publish to Visual Studio Marketplace
+        if: steps.check.outputs.release == 'true'
+        run: bash .github/scripts/vsce-publish-with-retry.sh
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      - name: Publish to Open VSX Registry
+        if: steps.check.outputs.release == 'true'
+        run: npx ovsx publish --skip-duplicate --packagePath *.vsix
+        env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
+      - name: Create GitHub release
+        if: steps.check.outputs.release == 'true'
+        run: |
+          node scripts/release.mjs notes "$VERSION" > "$RUNNER_TEMP/notes.md"
+          gh release create "v$VERSION" *.vsix --target "$GITHUB_SHA" --title "v$VERSION" --notes-file "$RUNNER_TEMP/notes.md"
+        env:
+          VERSION: ${{ steps.check.outputs.version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

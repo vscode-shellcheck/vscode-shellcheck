@@ -8,7 +8,7 @@ log_file=$(mktemp)
 trap 'rm -f "$log_file"' EXIT
 
 for ((attempt = 1; attempt <= max_attempts; attempt++)); do
-  if npx semantic-release --extends ./publish.release.config.js 2>&1 | tee "$log_file"; then
+  if npx vsce publish --skip-duplicate --packagePath *.vsix 2>&1 | tee "$log_file"; then
     exit 0
   fi
 

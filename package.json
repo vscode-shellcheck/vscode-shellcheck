@@ -307,8 +307,8 @@
     "spell": "cspell \"**\"",
     "pretest": "npm run build:all",
     "test": "vscode-test",
-    "posttest": "npm run lint && npm run format:check && npm run spell && installed-check --ignore-dev",
-    "release": "semantic-release"
+    "posttest": "npm run test:release && npm run lint && npm run format:check && npm run spell && installed-check --ignore-dev",
+    "test:release": "node --test \"scripts/*.test.mjs\""
   },
   "dependencies": {
     "@vscode-shellcheck/shellcheck-wasm": "0.2.0-next.0",
@@ -318,14 +318,15 @@
     "semver": "^7.8.5"
   },
   "devDependencies": {
-    "@semantic-release/changelog": "^7.0.0",
-    "@semantic-release/git": "^11.0.1",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/release-notes-generator": "^14.1.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.20.4",
     "@types/semver": "^7.8.0",
     "@types/vscode": "~1.101.0",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^3.9.2",
     "bindl": "^7.1.6",
     "conventional-changelog-conventionalcommits": "^9.3.1",
     "cspell": "^10.3.6",
@@ -334,10 +335,8 @@
     "installed-check": "^11.0.0",
     "neostandard": "^0.13.0",
     "npm-run-all2": "^9.0.3",
+    "ovsx": "^1.2.0",
     "prettier": "^3.9.9",
-    "semantic-release": "^25.0.9",
-    "semantic-release-stop-before-publish": "^2.0.0",
-    "semantic-release-vsce": "^6.1.8",
     "typescript": "^5.9.3"
   },
   "engines": {
