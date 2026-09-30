@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - master
+      - dev
   pull_request:
     branches:
       - master
+      - dev
   # This is to catch new releases of VS Code which could cause the extension to break
   schedule:
     - cron: 0 0 * * *
@@ -119,7 +121,8 @@ jobs:
             package-lock.json
 
   release:
-    if: github.event_name != 'schedule'
+    # dev collects changes for the next release; only master releases.
+    if: github.event_name != 'schedule' && (github.ref_name == 'master' || github.base_ref == 'master')
 
     needs: [test, build]
 
