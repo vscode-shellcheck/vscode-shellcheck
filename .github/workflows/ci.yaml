@@ -111,11 +111,13 @@ jobs:
 
     permissions:
       contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
 
     steps:
       - uses: actions/checkout@v7
         with:
-          fetch-depth: 2
+          fetch-depth: 0
       - uses: actions/download-artifact@v8
         with:
           merge-multiple: true
@@ -155,6 +157,12 @@ jobs:
         run: |
           node scripts/release.mjs notes "$VERSION" > "$RUNNER_TEMP/notes.md"
           gh release create "v$VERSION" *.vsix --target "$GITHUB_SHA" --title "v$VERSION" --notes-file "$RUNNER_TEMP/notes.md"
+        env:
+          VERSION: ${{ steps.check.outputs.version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Comment on released issues and pull requests
+        if: steps.check.outputs.release == 'true'
+        run: node scripts/release.mjs announce "$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/v$VERSION" --jq .id)"
         env:
           VERSION: ${{ steps.check.outputs.version }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

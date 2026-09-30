@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, it } from "node:test";
 
-import { prepareRelease, releaseNotes } from "./release.mjs";
+import { announceRelease, prepareRelease, releaseNotes } from "./release.mjs";
 
 const OLD_CHANGELOG = `## [1.2.3](https://github.com/o/r/compare/v1.2.2...v1.2.3) (2026-01-01)
 
@@ -39,6 +39,7 @@ beforeEach(async () => {
     JSON.stringify(
       {
         name: "ext",
+        publisher: "pub",
         version: "1.2.3",
         repository: { type: "git", url: "https://github.com/o/r.git" },
       },
@@ -174,6 +175,113 @@ describe("releaseNotes", () => {
     await assert.rejects(
       releaseNotes({ cwd, version: "9.9.9" }),
       /no CHANGELOG\.md section for 9\.9\.9/,
+    );
+  });
+});
+
+describe("announceRelease", () => {
+  // Records GitHub API calls; every commit is associated with PR #42.
+  function fakeOctokit() {
+    const calls = { shas: [], requests: [] };
+    class Octokit {
+      async request(route, params) {
+        calls.requests.push({ route, ...params });
+        if (route === "GET /repos/{owner}/{repo}") {
+          return {
+            data: {
+              full_name: "o/r",
+              clone_url: "https://github.com/o/r.git",
+              permissions: { push: true },
+            },
+          };
+        }
+        return { data: { html_url: "https://github.com/o/r/pull/42" } };
+      }
+
+      async graphql(query) {
+        const shas = [...query.matchAll(/object\(oid: "(\w+)"\)/g)].map(
+          (m) => m[1],
+        );
+        calls.shas.push(...shas);
+        const pr = {
+          __typename: "PullRequest",
+          number: 42,
+          body: "",
+          url: "https://github.com/o/r/pull/42",
+        };
+        return {
+          repository: Object.fromEntries(
+            shas.map((sha) => [
+              `commit${sha.slice(0, 12)}`,
+              {
+                associatedPullRequests: {
+                  nodes: [pr],
+                  pageInfo: { hasNextPage: false },
+                },
+              },
+            ]),
+          ),
+        };
+      }
+
+      async paginate() {
+        return calls.shas.map((sha) => ({ sha }));
+      }
+    }
+    return { calls, Octokit };
+  }
+
+  async function release(message) {
+    commit(message);
+    await prepareRelease({ cwd });
+    git("commit", "-am", "chore(release): 1.3.0");
+    git("tag", "v1.3.0");
+  }
+
+  it("comments on the released PRs and links the registries", async () => {
+    commit("feat: before");
+    git("tag", "-f", "v1.2.3");
+    await release("feat: shiny");
+    const shiny = git("rev-parse", "HEAD^").trim();
+    const { calls, Octokit } = fakeOctokit();
+
+    await announceRelease({
+      cwd,
+      releaseId: 99,
+      env: { GITHUB_TOKEN: "t" },
+      Octokit,
+    });
+
+    assert.deepEqual(calls.shas, [shiny]);
+
+    const comment = calls.requests.find(
+      (r) =>
+        r.route === "POST /repos/{owner}/{repo}/issues/{issue_number}/comments",
+    );
+    assert.equal(comment.issue_number, 42);
+    assert.match(comment.body, /This PR is included in version 1\.3\.0/);
+    assert.match(
+      comment.body,
+      /\[GitHub release\]\(https:\/\/github\.com\/o\/r\/releases\/tag\/v1\.3\.0\)/,
+    );
+
+    const labels = calls.requests.find(
+      (r) =>
+        r.route === "POST /repos/{owner}/{repo}/issues/{issue_number}/labels",
+    );
+    assert.deepEqual(labels.data, ["released"]);
+
+    const patch = calls.requests.find(
+      (r) => r.route === "PATCH /repos/{owner}/{repo}/releases/{release_id}",
+    );
+    assert.equal(patch.release_id, 99);
+    assert.equal(
+      patch.body,
+      `${await releaseNotes({ cwd, version: "1.3.0" })}
+---
+This release is also available on:
+- [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=pub.ext)
+- [Open VSX Registry](https://open-vsx.org/extension/pub/ext/1.3.0)`,
     );
   });
 });

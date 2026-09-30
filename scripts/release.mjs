@@ -1,8 +1,9 @@
 // Release PR helper: `prepare [version]` bumps the version and prepends the
 // CHANGELOG from conventional commits since the current version's tag;
 // `notes <version>` prints that version's CHANGELOG section for the GitHub
-// release. Versioning happens in the PR so hand-written release content and
-// the version it ships in are reviewed together.
+// release; `announce <release-id>` comments on the released issues and PRs.
+// Versioning happens in the PR so hand-written release content and the
+// version it ships in are reviewed together.
 
 import { execFileSync } from "node:child_process";
 import { readFile, writeFile } from "node:fs/promises";
@@ -10,6 +11,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { analyzeCommits } from "@semantic-release/commit-analyzer";
+import { success } from "@semantic-release/github";
 import { generateNotes } from "@semantic-release/release-notes-generator";
 import semver from "semver";
 
@@ -48,13 +50,13 @@ async function writeJson(cwd, file, data) {
   await writeFile(path.join(cwd, file), JSON.stringify(data, null, 2) + "\n");
 }
 
-function commitsSince(cwd, tag) {
+function commitsSince(cwd, tag, head = "HEAD") {
   try {
     git(cwd, "rev-parse", "--verify", "--quiet", `refs/tags/${tag}`);
   } catch {
     throw new Error(`tag ${tag} not found; fetch tags or fix package.json`);
   }
-  return git(cwd, "log", "--format=%H%x1f%B%x1e", `${tag}..HEAD`)
+  return git(cwd, "log", "--format=%H%x1f%B%x1e", `${tag}..${head}`)
     .split("\x1e")
     .map((entry) => entry.trim())
     .filter(Boolean)
@@ -120,15 +122,71 @@ export async function releaseNotes({ cwd, version }) {
   return section.slice(section.indexOf("\n") + 1).trim();
 }
 
+export async function announceRelease({ cwd, releaseId, env, Octokit }) {
+  const pkg = await readJson(cwd, "package.json");
+  const { version, publisher, name } = pkg;
+  const gitTag = `v${version}`;
+  // Only the commits the release PR shipped, not the release commit itself.
+  const lastTag = git(
+    cwd,
+    "describe",
+    "--tags",
+    "--abbrev=0",
+    "--match=v*",
+    "HEAD^",
+  ).trim();
+  const repositoryUrl = pkg.repository.url;
+  const repoPath = repositoryUrl.replace(
+    /^https:\/\/github\.com\/|\.git$/g,
+    "",
+  );
+
+  await success(
+    { addReleases: "bottom", failCommentCondition: false },
+    {
+      cwd,
+      env,
+      logger: console,
+      options: { repositoryUrl },
+      commits: commitsSince(cwd, lastTag, "HEAD^"),
+      nextRelease: {
+        version,
+        gitTag,
+        notes: await releaseNotes({ cwd, version }),
+      },
+      releases: [
+        {
+          name: "GitHub release",
+          id: releaseId,
+          url: `https://github.com/${repoPath}/releases/tag/${gitTag}`,
+        },
+        {
+          name: "Visual Studio Marketplace",
+          url: `https://marketplace.visualstudio.com/items?itemName=${publisher}.${name}`,
+        },
+        {
+          name: "Open VSX Registry",
+          url: `https://open-vsx.org/extension/${publisher}/${name}/${version}`,
+        },
+      ],
+    },
+    Octokit && { Octokit },
+  );
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const [command, version] = process.argv.slice(2);
+  const [command, arg] = process.argv.slice(2);
   const cwd = process.cwd();
   if (command === "prepare") {
-    console.log((await prepareRelease({ cwd, version })).version);
-  } else if (command === "notes" && version) {
-    console.log(await releaseNotes({ cwd, version }));
+    console.log((await prepareRelease({ cwd, version: arg })).version);
+  } else if (command === "notes" && arg) {
+    console.log(await releaseNotes({ cwd, version: arg }));
+  } else if (command === "announce" && arg) {
+    await announceRelease({ cwd, releaseId: Number(arg), env: process.env });
   } else {
-    console.error("usage: release.mjs prepare [version] | notes <version>");
+    console.error(
+      "usage: release.mjs prepare [version] | notes <version> | announce <release-id>",
+    );
     process.exit(2);
   }
 }
