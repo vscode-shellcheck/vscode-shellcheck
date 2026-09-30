@@ -231,7 +231,9 @@ Known limitations:
 
 ### VS Code for the Web
 
-The extension works on [vscode.dev](https://vscode.dev) and [github.dev](https://github.dev), where it always uses the WebAssembly runtime. A self-hosted VS Code for the Web must be cross-origin isolated by sending COOP `same-origin` and COEP `require-corp` headers. Safari 18.2 or newer is required.
+The extension works on [vscode.dev](https://vscode.dev) and [github.dev](https://github.dev), where it always uses the WebAssembly runtime. A self-hosted VS Code for the Web must be cross-origin isolated by sending COOP `same-origin` and COEP `require-corp` headers.
+
+Supported browsers are Chrome and Edge 112 or later, Firefox 121 or later, and Safari 18.2 or later (macOS 13 or later, iOS and iPadOS 18.2 or later). Safari 16.4 to 18.1 and Firefox ESR 115 are not supported: they lack WebAssembly tail calls, and the extension reports that instead of linting.
 
 `.shellcheckrc` and `source` paths resolve within the document's workspace folder, as they do with the desktop WebAssembly runtime.
 

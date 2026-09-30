@@ -1,4 +1,7 @@
-import type { WorkerPort } from "@vscode-shellcheck/shellcheck-wasm/client";
+import {
+  isArtifactSupported,
+  type WorkerPort,
+} from "@vscode-shellcheck/shellcheck-wasm/client";
 import * as vscode from "vscode";
 import { WasmRuntimeError } from "../runtime/types.js";
 import { Logger } from "../utils/logging/types.js";
@@ -37,12 +40,19 @@ export function formatLogMessage(format: string, ...args: unknown[]): string {
   return [text, ...args.map(show)].join(" ");
 }
 
-/** Browsers only provide SharedArrayBuffer, which the package's bridge needs,
- * to a cross-origin isolated page. */
+/**
+ * Browsers only provide SharedArrayBuffer, which the package's bridge needs, to
+ * a cross-origin isolated page, and older ones cannot compile the module.
+ */
 export function assertWasmHostSupported(): void {
   if (!globalThis.crossOriginIsolated) {
     throw new WasmRuntimeError(
       "ShellCheck needs a cross-origin isolated VS Code for the Web: SharedArrayBuffer is unavailable",
+    );
+  }
+  if (!isArtifactSupported()) {
+    throw new WasmRuntimeError(
+      "ShellCheck needs a browser with WebAssembly tail calls: Chrome or Edge 112, Firefox 121 or Safari 18.2 and later",
     );
   }
 }

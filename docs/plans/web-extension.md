@@ -150,8 +150,10 @@ Rules:
   whatever `shellcheck.runtime` says; `RuntimeManager` and
   `getWorkspaceSettings` both use it. The manifest says so; nothing is
   logged.
-- `RuntimeManager.create("wasm")` calls `assertWasmHostSupported()` first;
-  its error takes the existing wasm failure path.
+- `RuntimeManager.create("wasm")` calls `assertWasmHostSupported()` first,
+  which on the web requires cross-origin isolation and the package's
+  `isArtifactSupported()` (wasm tail calls and SIMD: no Safari before 18.2,
+  no Firefox ESR 115); its error takes the existing wasm failure path.
 - `WasmFailureNotifier(canSwitchToNative)` offers `[showLog]` only where
   there is no native runtime.
 
