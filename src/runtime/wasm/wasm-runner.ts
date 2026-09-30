@@ -1,7 +1,7 @@
 import type {
   LintResult as PackageLintResult,
   ShellCheck,
-} from "@vscode-shellcheck/shellcheck-wasm";
+} from "@vscode-shellcheck/shellcheck-wasm/client";
 import { Logger } from "../../utils/logging/types.js";
 import {
   LintRequest,

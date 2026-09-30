@@ -1,4 +1,3 @@
-import { extname } from "node:path";
 import { SemVer } from "semver";
 import * as vscode from "vscode";
 import { ShellCheckExtensionApi } from "./api.js";
@@ -13,6 +12,7 @@ import {
 import { FixAllProvider } from "./fix-all.js";
 import { createParser, ParseResult } from "./parser.js";
 import { RuntimeManager } from "./runtime/manager.js";
+import { nativeRuntime } from "./runtime/native.js";
 import {
   LintResult,
   RunnerDisposedError,
@@ -31,15 +31,8 @@ import {
 import { ThrottledDelayer } from "./utils/async.js";
 import { getWikiUrlForRule } from "./utils/link.js";
 import * as logging from "./utils/logging/index.js";
-import {
-  ensureCurrentWorkingDirectory,
-  getWorkspaceFolderPath,
-  guessDocumentDirname,
-} from "./utils/path.js";
-import {
-  getToolVersion,
-  tryPromptForUpdatingTool,
-} from "./utils/tool-check.js";
+import { getWorkspaceFolderPath } from "./utils/path.js";
+import { shellDialectForUri } from "./utils/shell-dialect.js";
 
 namespace CommandIds {
   export const runLint: string = "shellcheck.runLint";
@@ -145,7 +138,9 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.codeActionCollection = new Map();
     this.additionalDocumentFilters = new Set();
     this.wasmExecutablePathNoticed = false;
-    this.wasmFailureNotifier = new WasmFailureNotifier();
+    this.wasmFailureNotifier = new WasmFailureNotifier(
+      nativeRuntime !== undefined,
+    );
 
     // code actions
     for (const language of ShellCheckProvider.LANGUAGES) {
@@ -349,7 +344,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         // and there is nothing the user could update. Imported on demand, as
         // a static import would load the package in every native session.
         const { SHELLCHECK_VERSION, BUILD_INFO } =
-          await import("@vscode-shellcheck/shellcheck-wasm");
+          await import("@vscode-shellcheck/shellcheck-wasm/client");
         const version = new SemVer(SHELLCHECK_VERSION);
         this.toolStatusByPath.set(statusKey, {
           ok: true,
@@ -365,7 +360,9 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       try {
         toolStatus = {
           ok: true,
-          version: await getToolVersion(settings.executable.path),
+          version: await nativeRuntime!.getToolVersion(
+            settings.executable.path,
+          ),
         };
       } catch (error: any) {
         logging.debug("Failed to get tool version: %O", error);
@@ -379,7 +376,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
           logging.info(`shellcheck (bundled) version: ${toolStatus.version}`);
         } else {
           logging.info(`shellcheck version: ${toolStatus.version}`);
-          tryPromptForUpdatingTool(toolStatus.version);
+          nativeRuntime!.tryPromptForUpdatingTool(toolStatus.version);
         }
       }
     }
@@ -710,10 +707,10 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
     // https://github.com/timonwong/vscode-shellcheck/issues/43
     // We should explicit set shellname based on file extension name
-    const fileExt = extname(textDocument.fileName);
-    if (fileExt === ".bash" || fileExt === ".ksh" || fileExt === ".dash") {
+    const shellDialect = shellDialectForUri(textDocument.uri);
+    if (shellDialect) {
       // shellcheck args: specify dialect (sh, bash, dash, ksh)
-      args = args.concat(["-s", fileExt.substring(1)]);
+      args = args.concat(["-s", shellDialect]);
     }
 
     if (settings.customArgs.length) {
@@ -782,10 +779,9 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     textDocument: vscode.TextDocument,
     settings: ShellCheckSettings,
   ): Promise<string | undefined> {
-    return await ensureCurrentWorkingDirectory(
-      settings.useWorkspaceRootAsCwd
-        ? getWorkspaceFolderPath(textDocument.uri)
-        : guessDocumentDirname(textDocument),
+    return await nativeRuntime!.workingDirectory(
+      textDocument,
+      settings.useWorkspaceRootAsCwd,
     );
   }
 

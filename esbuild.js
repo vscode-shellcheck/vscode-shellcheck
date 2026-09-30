@@ -1,12 +1,14 @@
 // @ts-check
 
 import { context } from "esbuild";
+import { existsSync } from "node:fs";
+import path from "node:path";
 
 const production = process.argv.includes("--production");
 const watch = process.argv.includes("--watch");
 
 /** @type {import('esbuild').BuildOptions} */
-const common = {
+const nodeCommon = {
   bundle: true,
   format: "esm",
   minify: production,
@@ -33,7 +35,7 @@ const common = {
 async function main() {
   const contexts = await Promise.all([
     context({
-      ...common,
+      ...nodeCommon,
       entryPoints: ["src/extension.ts"],
       outfile: "dist/extension.js",
       plugins: [
@@ -47,9 +49,25 @@ async function main() {
     // external defensively: the worker has no extension host to import it
     // from.
     context({
-      ...common,
+      ...nodeCommon,
       entryPoints: ["src/runtime/wasm/worker.ts"],
       outfile: "dist/wasm-worker.js",
+    }),
+    context({
+      entryPoints: ["src/extension.ts"],
+      // .cjs: the package is "type": "module", and VS Code would load a .js
+      // entry as ESM, which the web extension host does not support.
+      outfile: "dist/web/extension.cjs",
+      bundle: true,
+      format: "cjs",
+      platform: "browser",
+      target: "es2022",
+      external: ["vscode"],
+      minify: production,
+      sourcemap: !production,
+      sourcesContent: false,
+      logLevel: "warning",
+      plugins: [webTwinPlugin, gplGuardPlugin, esbuildProblemMatcherPlugin],
     }),
   ]);
 
@@ -64,6 +82,49 @@ async function main() {
     );
   }
 }
+
+/**
+ * Resolves a relative import of `x.js` to `x.web.ts` wherever that twin
+ * exists, which is how the web entry drops every Node-only module.
+ *
+ * @type {import('esbuild').Plugin}
+ */
+const webTwinPlugin = {
+  name: "web-twin",
+  setup(build) {
+    build.onResolve({ filter: /^\.\.?\/.*\.js$/ }, (args) => {
+      const twin = path
+        .resolve(args.resolveDir, args.path)
+        .replace(/\.js$/, ".web.ts");
+      return existsSync(twin) ? { path: twin } : undefined;
+    });
+  },
+};
+
+/**
+ * The web entry is one MIT file, so only the package's MIT client may be
+ * bundled into it; the GPL worker is started from its own file instead.
+ *
+ * @type {import('esbuild').Plugin}
+ */
+const gplGuardPlugin = {
+  name: "gpl-guard",
+  setup(build) {
+    build.onResolve(
+      { filter: /^@vscode-shellcheck\/shellcheck-wasm/ },
+      (args) =>
+        args.path === "@vscode-shellcheck/shellcheck-wasm/client"
+          ? undefined
+          : {
+              errors: [
+                {
+                  text: `The web extension may only bundle @vscode-shellcheck/shellcheck-wasm/client, not ${args.path}`,
+                },
+              ],
+            },
+    );
+  },
+};
 
 /**
  * @type {import('esbuild').Plugin}

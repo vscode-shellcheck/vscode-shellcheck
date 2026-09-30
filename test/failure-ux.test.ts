@@ -2,6 +2,7 @@ import assert from "node:assert";
 import {
   applyFailureEffect,
   describeShellCheckError,
+  describeWasmFailure,
   effectOfSelection,
   FailureActionHost,
   FailureActions,
@@ -130,7 +131,7 @@ suite("Failure UX", () => {
   });
 
   test("a wasm failure is shown once per session", () => {
-    const notifier = new WasmFailureNotifier();
+    const notifier = new WasmFailureNotifier(true);
     const first = notifier.notificationFor(
       new WasmRuntimeError(
         "The bundled ShellCheck wasm module could not be loaded",
@@ -162,5 +163,13 @@ suite("Failure UX", () => {
       ),
       undefined,
     );
+  });
+
+  test("a wasm failure only offers the log on the web", () => {
+    const notification = describeWasmFailure(
+      new WasmRuntimeError("The ShellCheck wasm runtime failed", "detail"),
+      false,
+    );
+    assert.deepStrictEqual(notification.items, [FailureActions.showLog]);
   });
 });

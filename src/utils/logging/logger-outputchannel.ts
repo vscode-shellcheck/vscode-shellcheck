@@ -1,5 +1,5 @@
-import util from "node:util";
 import * as vscode from "vscode";
+import { formatLogMessage } from "../../platform/index.js";
 import { Arguments, Logger, LogLevel } from "./types.js";
 
 function formatMessage(
@@ -8,10 +8,7 @@ function formatMessage(
   ...data: Arguments
 ): string {
   const date = new Date();
-  return `[${date.toISOString()}] [${level.toUpperCase()}] ${util.format(
-    format,
-    ...data,
-  )}`;
+  return `[${date.toISOString()}] [${level.toUpperCase()}] ${formatLogMessage(format, ...data)}`;
 }
 
 export class OutputChannelLogger implements Logger {

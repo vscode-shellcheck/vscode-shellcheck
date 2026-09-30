@@ -1,32 +1,16 @@
-import fs from "node:fs/promises";
-import os from "node:os";
-import { dirname } from "node:path";
 import * as vscode from "vscode";
+import { homeDirectory, isWindows } from "../platform/index.js";
 
 // Stolen from vscode-go: https://github.com/golang/vscode-go/blob/46048018519b6f727e920f5f5a4335acc436bdd3/extension/src/utils/pathUtils.ts#L246-L251
 // Workaround for issue in https://github.com/Microsoft/vscode/issues/9448#issuecomment-244804026
 export function fixDriveCasingInWindows(pathToFix: string): string {
-  return process.platform === "win32" && pathToFix
+  return isWindows && pathToFix
     ? pathToFix.substring(0, 1).toUpperCase() + pathToFix.substring(1)
     : pathToFix;
 }
 
 function isFileUriScheme(uri: vscode.Uri): boolean {
   return uri.scheme === "file";
-}
-
-export function guessDocumentDirname(
-  textDocument: vscode.TextDocument,
-): string | undefined {
-  if (textDocument.isUntitled) {
-    return getWorkspaceFolderPath(textDocument.uri);
-  }
-
-  if (isFileUriScheme(textDocument.uri)) {
-    return dirname(textDocument.fileName);
-  }
-
-  return undefined;
 }
 
 export function getWorkspaceFolderPath(
@@ -54,27 +38,6 @@ export function getWorkspaceFolderPath(
   return undefined;
 }
 
-// Ensure the cwd exists, or it will throw ENOENT
-// https://github.com/vscode-shellcheck/vscode-shellcheck/issues/767
-export async function ensureCurrentWorkingDirectory(
-  cwd: string | undefined,
-): Promise<string | undefined> {
-  if (!cwd) {
-    return undefined;
-  }
-
-  try {
-    const fstat = await fs.stat(cwd);
-    if (!fstat.isDirectory()) {
-      return undefined;
-    }
-  } catch (error) {
-    return undefined;
-  }
-
-  return cwd;
-}
-
 export function substitutePath(s: string, workspaceFolder?: string): string {
   if (!workspaceFolder && vscode.workspace.workspaceFolders) {
     workspaceFolder = getWorkspaceFolderPath(
@@ -82,10 +45,11 @@ export function substitutePath(s: string, workspaceFolder?: string): string {
     );
   }
 
-  const userHome = fixDriveCasingInWindows(os.homedir());
+  if (homeDirectory !== undefined) {
+    s = s.replace(/\${userHome}/g, fixDriveCasingInWindows(homeDirectory));
+  }
 
   return s
-    .replace(/\${userHome}/g, userHome)
     .replace(/\${workspaceRoot}/g, workspaceFolder || "")
     .replace(/\${workspaceFolder}/g, workspaceFolder || "");
 }

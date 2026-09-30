@@ -1,19 +1,13 @@
 import * as vscode from "vscode";
+import { assertWasmHostSupported } from "../platform/index.js";
+import { getRuntimeKind } from "../settings.js";
 import * as logging from "../utils/logging/index.js";
-import { NativeRunner } from "./native-runner.js";
+import { nativeRuntime } from "./native.js";
 import { RuntimeKind, ShellCheckRunner, WasmRuntimeError } from "./types.js";
 
 interface ActiveRunner {
   readonly kind: RuntimeKind;
   readonly runner: Promise<ShellCheckRunner>;
-}
-
-function getRuntimeKind(): RuntimeKind {
-  // Window scoped, so one runner per window is always the right granularity.
-  const configured = vscode.workspace
-    .getConfiguration("shellcheck")
-    .get<string>("runtime");
-  return configured === "wasm" ? "wasm" : "native";
 }
 
 export class RuntimeManager implements vscode.Disposable {
@@ -49,7 +43,10 @@ export class RuntimeManager implements vscode.Disposable {
   }
 
   private ensure(): Promise<ShellCheckRunner> {
-    const kind = getRuntimeKind();
+    // Window scoped, so one runner per window is always the right granularity.
+    const kind = getRuntimeKind(
+      vscode.workspace.getConfiguration("shellcheck"),
+    );
     if (this.active?.kind !== kind) {
       this.stop();
       const runner = this.create(kind);
@@ -69,9 +66,10 @@ export class RuntimeManager implements vscode.Disposable {
 
   private async create(kind: RuntimeKind): Promise<ShellCheckRunner> {
     if (kind !== "wasm") {
-      return new NativeRunner();
+      return nativeRuntime!.createRunner();
     }
 
+    assertWasmHostSupported();
     try {
       // Imported on demand: a native session must never evaluate the wasm
       // module graph, let alone read the 9.9 MiB module.

@@ -1,4 +1,6 @@
-import type { ShellCheckFileSystem } from "@vscode-shellcheck/shellcheck-wasm";
+import type { ShellCheckFileSystem } from "@vscode-shellcheck/shellcheck-wasm/client";
+import type { SemVer } from "semver";
+import type * as vscode from "vscode";
 
 /** What a sandboxed runtime lets ShellCheck read, and where it runs inside it. */
 export interface LintMount {
@@ -35,6 +37,27 @@ export interface LintResult {
 }
 
 export type RuntimeKind = "native" | "wasm";
+
+export interface Executable {
+  path: string;
+  bundled: boolean;
+}
+
+/** Everything that runs a shellcheck program on the local machine. */
+export interface NativeRuntime {
+  resolveExecutable(
+    context: vscode.ExtensionContext,
+    executablePath: string | undefined,
+  ): Promise<Executable>;
+  getToolVersion(executable: string): Promise<SemVer>;
+  tryPromptForUpdatingTool(version: SemVer): void;
+  /** Validated to exist, or undefined. */
+  workingDirectory(
+    textDocument: vscode.TextDocument,
+    useWorkspaceRootAsCwd: boolean,
+  ): Promise<string | undefined>;
+  createRunner(): ShellCheckRunner;
+}
 
 export interface ShellCheckRunner {
   readonly kind: RuntimeKind;

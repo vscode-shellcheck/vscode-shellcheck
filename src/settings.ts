@@ -1,13 +1,8 @@
-import fs from "node:fs/promises";
 import * as vscode from "vscode";
-import { RuntimeKind } from "./runtime/types.js";
+import { nativeRuntime } from "./runtime/native.js";
+import { Executable, RuntimeKind } from "./runtime/types.js";
 import { FileMatcher, FileSettings } from "./utils/filematcher.js";
 import { substitutePath } from "./utils/path.js";
-
-export interface Executable {
-  path: string;
-  bundled: boolean;
-}
 
 export interface ShellCheckSettings {
   enabled: boolean;
@@ -62,6 +57,16 @@ export namespace RunTrigger {
   }
 }
 
+/** Where there is no native runtime (the web), wasm whatever the setting says. */
+export function getRuntimeKind(
+  section: vscode.WorkspaceConfiguration,
+): RuntimeKind {
+  return nativeRuntime &&
+    section.get(ShellCheckSettings.keys.runtime) !== "wasm"
+    ? "native"
+    : "wasm";
+}
+
 const validErrorCodePattern = /^(SC)?(\d{4})$/;
 
 export async function getWorkspaceSettings(
@@ -70,8 +75,7 @@ export async function getWorkspaceSettings(
 ): Promise<ShellCheckSettings> {
   const keys = ShellCheckSettings.keys;
   const section = vscode.workspace.getConfiguration("shellcheck", scope);
-  const runtime: RuntimeKind =
-    section.get(keys.runtime) === "wasm" ? "wasm" : "native";
+  const runtime = getRuntimeKind(section);
   const settings = <ShellCheckSettings>{
     enabled: section.get(keys.enable, true),
     trigger: RunTrigger.from(section.get(keys.run, RunTrigger.strings.onType)),
@@ -82,7 +86,10 @@ export async function getWorkspaceSettings(
     executable:
       runtime === "wasm"
         ? { path: "", bundled: false }
-        : await getExecutable(context, section.get(keys.executablePath)),
+        : await nativeRuntime!.resolveExecutable(
+            context,
+            section.get(keys.executablePath),
+          ),
     customArgs: section
       .get(keys.customArgs, [])
       .map((arg) => substitutePath(arg)),
@@ -127,28 +134,4 @@ export function checkIfConfigurationChanged(
     }
   }
   return false;
-}
-
-async function getExecutable(
-  context: vscode.ExtensionContext,
-  executablePath: string | undefined,
-): Promise<Executable> {
-  if (!executablePath) {
-    // Use bundled binaries (maybe)
-    const suffix = process.platform === "win32" ? ".exe" : "";
-    executablePath = context.asAbsolutePath(
-      `./binaries/${process.platform}/${process.arch}/shellcheck${suffix}`,
-    );
-    try {
-      await fs.access(executablePath, fs.constants.X_OK);
-      return { path: executablePath, bundled: true };
-    } catch (error) {
-      return {
-        path: "shellcheck", // Fallback to default shellcheck path.
-        bundled: false,
-      };
-    }
-  }
-
-  return { path: substitutePath(executablePath), bundled: false };
 }
