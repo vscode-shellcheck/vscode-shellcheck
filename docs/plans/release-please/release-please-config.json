@@ -1,0 +1,19 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "node",
+  "include-component-in-tag": false,
+  "pull-request-title-pattern": "chore(release): ${version}",
+  "pull-request-header": "Merging this PR publishes the release. Hand edits to this branch are overwritten whenever a new releasable commit lands on master.",
+  "changelog-sections": [
+    { "type": "feat", "section": "Features" },
+    { "type": "fix", "section": "Bug Fixes" },
+    { "type": "perf", "section": "Performance Improvements" },
+    { "type": "revert", "section": "Reverts" },
+    { "type": "refactor", "section": "Code Refactoring" },
+    { "type": "build", "scope": "deps", "section": "Dependencies" },
+    { "type": "deps", "section": "Dependencies" }
+  ],
+  "packages": {
+    ".": {}
+  }
+}
