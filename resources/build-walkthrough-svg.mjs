@@ -241,52 +241,72 @@ function web() {
   );
 }
 
-// Scene 3: the WebAssembly runtime is slower than native; this sets
-// expectations rather than promoting it.
+// Scene 3: the bundled WebAssembly build runs on every platform without a
+// shellcheck binary.
 function wasm() {
-  const lane = (y, name, badge, color, fillEnd) => {
-    const track = 360;
-    return [
-      `<rect x="32.5" y="${y + 0.5}" width="455" height="78" rx="8" fill="${c("editorWidget-background", "#202020")}" stroke="${c("widget-border", "#313131")}"/>`,
-      text(52, y + 30, name, {
-        size: 15,
-        weight: 600,
+  const accent = c("charts-purple", "#b180d7");
+  const pass = c("charts-green", "#89d185");
+  const from = [260, 150];
+  const cards = [
+    ["Windows", 30],
+    ["macOS", 190],
+    ["Linux", 350],
+  ];
+  return svg(
+    "The bundled WebAssembly build of ShellCheck runs on Windows, macOS and Linux without installing a binary",
+    [
+      `<rect x="214.5" y="24.5" width="91" height="91" rx="16" fill="${c("editorWidget-background", "#202020")}" stroke="${accent}" stroke-width="2"/>`,
+      `<g transform="translate(233 43) scale(3.4)" fill="${accent}"><path d="${LOGO}"/></g>`,
+      text(260, 140, "shellcheck.wasm", {
+        size: 13,
+        font: MONO,
+        anchor: "middle",
         fill: c("foreground", "#cccccc"),
       }),
-      `<rect x="${60 + name.length * 8.6}" y="${y + 16}" width="${badge.length * 7 + 14}" height="20" rx="10" fill="${color}" opacity=".18"/>`,
-      text(67 + name.length * 8.6, y + 30, badge, { size: 11, fill: color }),
-      `<rect x="52" y="${y + 50}" width="${track}" height="8" rx="4" fill="${c("input-background", "#313131")}"/>`,
-      `<rect x="52" y="${y + 50}" width="0" height="8" rx="4" fill="${color}">` +
-        anim("width", `0;0;${track};${track};0`, `0;.08;${fillEnd};.95;1`) +
-        `</rect>`,
-      `<g opacity="0" transform="translate(432 ${y + 44})">` +
-        anim(
-          "opacity",
-          "0;0;1;1;0",
-          `0;${fillEnd};${(fillEnd + 0.02).toFixed(2)};.95;1`,
-        ) +
-        `<circle cx="10" cy="10" r="10" fill="${color}"/><path d="M5.5 10.2 8.6 13.2 14.5 7.2" stroke="${c("editor-background", "#1f1f1f")}" stroke-width="2"/></g>`,
-    ];
-  };
-  const warn = c("editorWarning-foreground", "#cca700");
-  return svg(
-    "The WebAssembly runtime checks scripts several times slower than the native binary",
-    [
-      ...lane(36, "Native", "default", c("charts-blue", "#3794ff"), 0.16),
-      ...lane(132, "WebAssembly", "experimental", warn, 0.36),
-      ...[
-        [244, "3–4× slower than native"],
-        [272, "Reads only files inside the workspace folder"],
-      ]
-        .map(([y, s]) => [
-          `<path d="M${42} ${y + 2}l7 -12 7 12z" stroke="${warn}" stroke-width="1.4" stroke-linejoin="round"/>`,
-          `<path d="M49 ${y - 6}v4M49 ${y}v.5" stroke="${warn}" stroke-width="1.4" stroke-linecap="round"/>`,
-          text(66, y + 1, s, {
-            size: 13,
+      ...cards.flatMap(([name, x], i) => {
+        const to = [x + 70, 206];
+        const path = `M${from[0]} ${from[1]}C${from[0]} 180 ${to[0]} 176 ${to[0]} ${to[1]}`;
+        const start = 0.06 + i * 0.08;
+        const end = start + 0.12;
+        const lit = `0;${end};${(end + 0.02).toFixed(2)};.95;1`;
+        return [
+          `<path d="${path}" stroke="${c("widget-border", "#313131")}" stroke-width="1.5" stroke-dasharray="3 4"/>`,
+          `<circle r="4" fill="${accent}" opacity="0">` +
+            anim(
+              "opacity",
+              "0;0;1;1;0;0",
+              `0;${start};${(start + 0.01).toFixed(2)};${end};${(end + 0.01).toFixed(2)};1`,
+            ) +
+            `<animateMotion path="${path}" dur="${DUR}" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;${start};${end};1" calcMode="spline" keySplines="0 0 1 1;${EASE};0 0 1 1"/>` +
+            `</circle>`,
+          `<rect x="${x + 0.5}" y="206.5" width="139" height="55" rx="8" fill="${c("editorWidget-background", "#202020")}" stroke="${c("widget-border", "#313131")}"/>`,
+          `<rect x="${x + 0.5}" y="206.5" width="139" height="55" rx="8" stroke="${pass}" stroke-width="1.5" opacity="0">` +
+            anim("opacity", "0;0;1;1;0", lit) +
+            `</rect>`,
+          text(x + 16, 230, name, {
+            size: 15,
+            weight: 600,
+            fill: c("foreground", "#cccccc"),
+          }),
+          text(x + 16, 250, "x64 · ARM64", {
+            size: 12,
             fill: c("descriptionForeground", "#9d9d9d"),
           }),
-        ])
-        .flat(),
+          `<g opacity="0" transform="translate(${x + 106} 222)">` +
+            anim("opacity", "0;0;1;1;0", lit) +
+            `<circle cx="10" cy="10" r="10" fill="${pass}"/><path d="M5.5 10.2 8.6 13.2 14.5 7.2" stroke="${c("editor-background", "#1f1f1f")}" stroke-width="2"/></g>`,
+        ];
+      }),
+      text(
+        260,
+        296,
+        "Bundled with the extension. No shellcheck binary to install.",
+        {
+          size: 13,
+          anchor: "middle",
+          fill: c("descriptionForeground", "#9d9d9d"),
+        },
+      ),
     ],
   );
 }
