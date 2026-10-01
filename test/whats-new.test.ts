@@ -84,22 +84,22 @@ suite("What's new", () => {
   });
 
   test("switching to wasm needs confirmation", async () => {
-    const written: RuntimeKind[] = [];
+    const declined: RuntimeKind[] = [];
     await useWasmRuntime(
       async () => false,
       async (runtime) => {
-        written.push(runtime);
+        declined.push(runtime);
       },
     );
-    assert.deepStrictEqual(written, []);
-
+    const confirmed: RuntimeKind[] = [];
     await useWasmRuntime(
       async () => true,
       async (runtime) => {
-        written.push(runtime);
+        confirmed.push(runtime);
       },
     );
-    assert.deepStrictEqual(written, ["wasm"]);
+    assert.deepStrictEqual(declined, []);
+    assert.deepStrictEqual(confirmed, ["wasm"]);
   });
 
   test("every illustration is shipped and themed", async () => {

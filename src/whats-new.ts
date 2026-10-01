@@ -60,7 +60,7 @@ export function registerWhatsNew(
   context: vscode.ExtensionContext,
 ): vscode.Disposable {
   context.globalState.setKeysForSync([WHATS_NEW_SHOWN_KEY]);
-  void announceOnce(context.globalState, async () => {
+  announceOnce(context.globalState, async () => {
     const selected = await vscode.window.showInformationMessage(
       "ShellCheck now has a status bar menu, runs in VS Code for the Web, and bundles a WebAssembly build.",
       SEE_WHATS_NEW,

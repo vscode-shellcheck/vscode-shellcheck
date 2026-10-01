@@ -101,7 +101,7 @@ function codeLines(lines, firstNumber, top) {
         fill: c("editorLineNumber-foreground", "#6e7681"),
       }),
     ];
-    if (line)
+    if (line) {
       out.push(
         text(78, y, line, {
           size: 15,
@@ -109,6 +109,7 @@ function codeLines(lines, firstNumber, top) {
           fill: c("editor-foreground", "#cccccc"),
         }),
       );
+    }
     return out;
   });
 }
