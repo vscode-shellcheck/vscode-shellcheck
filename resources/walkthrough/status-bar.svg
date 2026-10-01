@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" fill="none" role="img" aria-label="Clicking the ShellCheck icon in the status bar opens its menu">
+<defs><clipPath id="frame"><rect width="520" height="320" rx="10"/></clipPath></defs>
+<g clip-path="url(#frame)">
+<rect width="520" height="320" fill="var(--vscode-editor-background, #1f1f1f)"/>
+<rect y="0" width="36" height="320" fill="var(--vscode-activityBar-background, #181818)"/>
+<rect x="10" y="14" width="16" height="16" rx="3" fill="var(--vscode-activityBar-inactiveForeground, #868686)" opacity=".5"/>
+<rect x="10" y="46" width="16" height="16" rx="3" fill="var(--vscode-activityBar-inactiveForeground, #868686)" opacity=".5"/>
+<rect x="10" y="78" width="16" height="16" rx="3" fill="var(--vscode-activityBar-inactiveForeground, #868686)" opacity=".5"/>
+<rect x="36" y="0" width="484" height="32" fill="var(--vscode-editorGroupHeader-tabsBackground, #181818)"/>
+<rect x="36" y="0" width="104" height="32" fill="var(--vscode-tab-activeBackground, #1f1f1f)"/>
+<text x="50" y="21" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-tab-activeForeground, #ffffff)" xml:space="preserve">deploy.sh</text>
+<rect y="292" width="520" height="28" fill="var(--vscode-statusBar-background, #181818)"/>
+<rect x="78" y="50" width="150" height="10" rx="5" fill="var(--vscode-editor-foreground, #cccccc)" opacity=".18"/>
+<rect x="98" y="78" width="210" height="10" rx="5" fill="var(--vscode-editor-foreground, #cccccc)" opacity=".18"/>
+<rect x="78" y="106" width="120" height="10" rx="5" fill="var(--vscode-editor-foreground, #cccccc)" opacity=".18"/>
+<rect x="98" y="134" width="180" height="10" rx="5" fill="var(--vscode-editor-foreground, #cccccc)" opacity=".18"/>
+<text x="62" y="214" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" text-anchor="end" fill="var(--vscode-editorLineNumber-foreground, #6e7681)" xml:space="preserve">9</text>
+<text x="78" y="214" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" fill="var(--vscode-editor-foreground, #cccccc)" xml:space="preserve">for f in $(ls); do</text>
+<text x="62" y="242" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" text-anchor="end" fill="var(--vscode-editorLineNumber-foreground, #6e7681)" xml:space="preserve">10</text>
+<text x="78" y="242" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" fill="var(--vscode-editor-foreground, #cccccc)" xml:space="preserve">  cp $f /bak</text>
+<text x="62" y="270" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" text-anchor="end" fill="var(--vscode-editorLineNumber-foreground, #6e7681)" xml:space="preserve">11</text>
+<text x="78" y="270" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" fill="var(--vscode-editor-foreground, #cccccc)" xml:space="preserve">done</text>
+<path d="M159 220 q1 -2.5 2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0" stroke="var(--vscode-editorWarning-foreground, #cca700)" stroke-width="1.3" stroke-dasharray="90 90" stroke-dashoffset="90"><animate attributeName="stroke-dashoffset" dur="8s" repeatCount="indefinite" values="90;90;0;0;90" keyTimes="0;.04;.14;.95;1"/></path>
+<path d="M123 248 q1 -2.5 2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0" stroke="var(--vscode-editorWarning-foreground, #cca700)" stroke-width="1.3" stroke-dasharray="36 36" stroke-dashoffset="36"><animate attributeName="stroke-dashoffset" dur="8s" repeatCount="indefinite" values="36;36;0;0;36" keyTimes="0;.06;.16;.95;1"/></path>
+<text x="392" y="311" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="12" fill="var(--vscode-statusBar-foreground, #cccccc)" xml:space="preserve">Shell Script</text>
+<circle cx="490" cy="306" r="4" fill="var(--vscode-focusBorder, #0078d4)" opacity="0"><animate attributeName="opacity" dur="8s" repeatCount="indefinite" values="0;0;.55;0;0" keyTimes="0;.32;.34;.42;1"/><animate attributeName="r" dur="8s" repeatCount="indefinite" values="4;4;4;13;13" keyTimes="0;.32;.34;.42;1"/></circle>
+<g transform="translate(482 298)" fill="var(--vscode-statusBar-foreground, #cccccc)"><path d="M1 4.2 2.2 3l4.5 4.5L2.2 12 1 10.8l3.3-3.3zM7 10.6l1.2-1.2 1.3 1.3 4.3-4.3L15 7.6l-5.5 5.5z"/></g>
+<g opacity="0"><animate attributeName="opacity" dur="8s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;.34;.38;.90;.95;1"/><animateTransform attributeName="transform" type="translate" dur="8s" repeatCount="indefinite" values="0 -6;0 -6;0 0;0 0;0 -6;0 -6" keyTimes="0;.34;.38;.90;.95;1"/>
+<rect x="120.5" y="40.5" width="320" height="148" rx="6" fill="var(--vscode-quickInput-background, #222222)" stroke="var(--vscode-widget-border, #313131)"/>
+<rect x="128.5" y="48.5" width="304" height="26" rx="3" fill="var(--vscode-input-background, #313131)" stroke="var(--vscode-focusBorder, #0078d4)"/>
+<text x="138" y="66" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-input-placeholderForeground, #989898)" xml:space="preserve">ShellCheck</text>
+<rect x="124" y="80" width="312" height="26" rx="3" fill="var(--vscode-quickInputList-focusBackground, #04395e)"><animateTransform attributeName="transform" type="translate" calcMode="spline" keySplines=".4 0 .2 1;.4 0 .2 1;.4 0 .2 1" dur="8s" repeatCount="indefinite" values="0 0;0 0;0 26;0 26" keyTimes="0;.46;.52;1"/></rect>
+<text x="136" y="98" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-quickInput-foreground, #cccccc)">Lint Current Document</text>
+<text x="136" y="124" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-quickInput-foreground, #cccccc)">Runtime: native<tspan dx="10" font-size="12" fill="var(--vscode-descriptionForeground, #9d9d9d)">Switch to wasm</tspan></text>
+<text x="136" y="150" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-quickInput-foreground, #cccccc)">Run: onType</text>
+<text x="136" y="176" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-quickInput-foreground, #cccccc)">Disable ShellCheck</text>
+</g>
+<path d="M0 0V13.6L3.4 10.2 5.95 16.15 8.5 15.3 5.95 9.35H10.2Z" fill="#ffffff" stroke="#000000" stroke-width=".85"><animateTransform attributeName="transform" type="translate" calcMode="spline" keySplines="0 0 1 1;.4 0 .2 1;0 0 1 1;0 0 1 1" dur="8s" repeatCount="indefinite" values="300 150;300 150;489 300;489 300;300 150" keyTimes="0;.18;.32;.94;1"/></path>
+</g>
+</svg>
