@@ -151,8 +151,7 @@ export function menuItems(snapshot: StatusSnapshot): MenuItem[] {
  * shadowed by it and change nothing.
  */
 export function settingTarget(
-  inspected:
-    { workspaceFolderValue?: unknown; workspaceValue?: unknown } | undefined,
+  inspected: ReturnType<vscode.WorkspaceConfiguration["inspect"]>,
   fallback: vscode.ConfigurationTarget,
   hasWorkspace: boolean,
 ): vscode.ConfigurationTarget {
