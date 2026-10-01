@@ -310,6 +310,7 @@
     "build:watch": "node esbuild.js --watch",
     "build:prod": "npm run check-types && node esbuild.js --production",
     "build:test": "tsc --project tsconfig.test.json",
+    "build:icons": "node resources/build-icon-font.mjs",
     "build:test:web": "esbuild test/web/index.ts --bundle --format=cjs --platform=browser --target=es2022 --external:vscode --outfile=out/web-test/index.cjs",
     "build:test:watch": "tsc --project tsconfig.test.json --watch",
     "build:all": "run-p build build:test",
