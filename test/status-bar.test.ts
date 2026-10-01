@@ -33,8 +33,7 @@ function actions(items: readonly MenuItem[]) {
 suite("Status bar", () => {
   test("shows the version and the runtime it runs on", () => {
     const view = statusBarView(nativeBundled);
-    assert.strictEqual(view.text, "$(shellcheck-logo) ShellCheck");
-    assert.strictEqual(view.problem, false);
+    assert.strictEqual(view.state, "ok");
     assert.match(view.tooltip, /ShellCheck 0\.11\.0/);
     assert.match(view.tooltip, /Runtime: native \(bundled\)/);
     assert.match(view.tooltip, /Run: onType/);
@@ -44,7 +43,7 @@ suite("Status bar", () => {
 
   test("a version still being probed is not a problem", () => {
     const view = statusBarView({ ...nativeBundled, tool: undefined });
-    assert.strictEqual(view.problem, false);
+    assert.strictEqual(view.state, "ok");
     assert.doesNotMatch(view.tooltip, /undefined/);
   });
 
@@ -54,14 +53,14 @@ suite("Status bar", () => {
       bundled: false,
       tool: { ok: false, reason: "executableNotFound" },
     });
-    assert.strictEqual(missing.problem, true);
+    assert.strictEqual(missing.state, "problem");
     assert.match(missing.tooltip, /not found/);
 
     const broken = statusBarView({
       ...nativeBundled,
       tool: { ok: false, reason: "executionFailed" },
     });
-    assert.strictEqual(broken.problem, true);
+    assert.strictEqual(broken.state, "problem");
     assert.match(broken.tooltip, /failed to run/);
   });
 
@@ -71,8 +70,8 @@ suite("Status bar", () => {
       enabled: false,
       tool: undefined,
     });
-    assert.strictEqual(view.text, "$(shellcheck-logo) ShellCheck (disabled)");
-    assert.strictEqual(view.problem, false);
+    assert.strictEqual(view.state, "disabled");
+    assert.match(view.tooltip, /Disabled for this document/);
   });
 });
 

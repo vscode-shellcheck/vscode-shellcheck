@@ -4,7 +4,6 @@ import { RuntimeKind } from "./runtime/types.js";
 import { RunTrigger, ShellCheckSettings } from "./settings.js";
 
 const SHOW_MENU_COMMAND = "shellcheck.showMenu";
-const ICON = "$(shellcheck-logo)";
 
 /** What the status bar and its menu show for the active document. */
 export interface StatusSnapshot {
@@ -20,10 +19,9 @@ export interface StatusSnapshot {
 }
 
 export interface StatusBarView {
-  readonly text: string;
   readonly tooltip: string;
-  /** ShellCheck cannot run at all. */
-  readonly problem: boolean;
+  /** `problem`: ShellCheck cannot run at all. */
+  readonly state: "ok" | "disabled" | "problem";
 }
 
 export type MenuAction =
@@ -77,11 +75,12 @@ export function statusBarView(snapshot: StatusSnapshot): StatusBarView {
     lines.push("Disabled for this document");
   }
   return {
-    text: snapshot.enabled
-      ? `${ICON} ShellCheck`
-      : `${ICON} ShellCheck (disabled)`,
     tooltip: lines.join("\n\n"),
-    problem: snapshot.tool?.ok === false,
+    state: !snapshot.enabled
+      ? "disabled"
+      : snapshot.tool?.ok === false
+        ? "problem"
+        : "ok",
   };
 }
 
@@ -212,6 +211,9 @@ export class StatusBar implements vscode.Disposable {
       100,
     );
     this.item.name = "ShellCheck";
+    this.item.text = "$(shellcheck-logo)";
+    // The item is an icon alone, which a screen reader has no name for.
+    this.item.accessibilityInformation = { label: "ShellCheck" };
     this.item.command = SHOW_MENU_COMMAND;
 
     this.disposables.push(
@@ -246,11 +248,15 @@ export class StatusBar implements vscode.Disposable {
     }
 
     const view = statusBarView(snapshot);
-    this.item.text = view.text;
     this.item.tooltip = new vscode.MarkdownString(view.tooltip);
-    this.item.backgroundColor = view.problem
-      ? new vscode.ThemeColor("statusBarItem.errorBackground")
-      : undefined;
+    this.item.color =
+      view.state === "disabled"
+        ? new vscode.ThemeColor("disabledForeground")
+        : undefined;
+    this.item.backgroundColor =
+      view.state === "problem"
+        ? new vscode.ThemeColor("statusBarItem.errorBackground")
+        : undefined;
     this.item.show();
   }
 
