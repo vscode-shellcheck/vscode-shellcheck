@@ -109,8 +109,21 @@
       {
         "command": "shellcheck.collectDiagnostics",
         "title": "ShellCheck: Collect Diagnostics For Current Document"
+      },
+      {
+        "command": "shellcheck.showMenu",
+        "title": "ShellCheck: Show Menu"
       }
     ],
+    "icons": {
+      "shellcheck-logo": {
+        "description": "ShellCheck logo",
+        "default": {
+          "fontPath": "./resources/shellcheck-icons.woff",
+          "fontCharacter": "\\E000"
+        }
+      }
+    },
     "configuration": {
       "title": "ShellCheck",
       "type": "object",
