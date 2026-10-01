@@ -22,7 +22,7 @@ const svgFont = await new Promise((resolve, reject) => {
   });
   fontStream
     .on("data", (chunk) => chunks.push(chunk))
-    .on("end", () => resolve(Buffer.concat(chunks).toString()))
+    .on("end", () => resolve(chunks.join("")))
     .on("error", reject);
   for (const [name, codePoint] of Object.entries(ICONS)) {
     const glyph = createReadStream(new URL(`icons/${name}.svg`, here));
