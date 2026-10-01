@@ -137,7 +137,7 @@
           ]
         },
         "shellcheck.executablePath": {
-          "description": "Path to the `shellcheck` executable (bundled binaries will be used if empty).",
+          "markdownDescription": "Path to the `shellcheck` executable (bundled binaries will be used if empty). Only used when `#shellcheck.runtime#` is `native`, so it has no effect in VS Code for the Web.",
           "examples": [
             "shellcheck"
           ],
@@ -145,7 +145,7 @@
           "scope": "machine-overridable"
         },
         "shellcheck.runtime": {
-          "markdownDescription": "**Experimental.** Which ShellCheck runtime to use. In VS Code for the Web the wasm runtime is always used.\n\n- `native` — run the bundled or user-provided `shellcheck` executable. This is the default and the only supported mode.\n- `wasm` — run a bundled WebAssembly (WASI) build of ShellCheck inside the editor. No executable is required and it works on every platform and in virtual workspaces, but linting is currently 3-4x slower than native, `#shellcheck.executablePath#` is ignored, and files outside the document's workspace folder are not visible to `source` directives or `.shellcheckrc` lookup.",
+          "markdownDescription": "**Experimental.** Which ShellCheck runtime to use. VS Code for the Web always uses `wasm` and ignores this setting.\n\n- `native` — run the bundled or user-provided `shellcheck` executable. This is the default, and the only supported runtime on desktop.\n- `wasm` — run a bundled WebAssembly (WASI) build of ShellCheck inside the editor. No executable is required and it works on every platform and in virtual workspaces, but linting is currently 3-4x slower than native, `#shellcheck.executablePath#` is ignored, and files outside the document's workspace folder are not visible to `source` directives or `.shellcheckrc` lookup.",
           "type": "string",
           "enum": [
             "native",
@@ -189,7 +189,7 @@
           ]
         },
         "shellcheck.customArgs": {
-          "markdownDescription": "Custom arguments to pass when calling the `shellcheck` binary. Always prefer to use a `.shellcheckrc` file instead of this setting.",
+          "markdownDescription": "Custom arguments to pass to ShellCheck. Always prefer to use a `.shellcheckrc` file instead of this setting. When `#shellcheck.runtime#` is `wasm`, as it always is in VS Code for the Web, paths on your machine in these arguments do not resolve.",
           "type": "array",
           "items": {
             "type": "string"
@@ -281,7 +281,7 @@
           "default": "info"
         },
         "shellcheck.disableVersionCheck": {
-          "description": "Whether to disable shellcheck binary version check, which prompts for updating when an outdated version is found.",
+          "markdownDescription": "Whether to disable shellcheck binary version check, which prompts for updating when an outdated version is found. The check only runs when `#shellcheck.runtime#` is `native`, so it has no effect in VS Code for the Web.",
           "type": "boolean",
           "scope": "machine-overridable",
           "default": false
