@@ -4,7 +4,7 @@
 // allows nonce'd styles, so <style> blocks and style="" attributes are
 // dropped. Colors therefore go in presentation attributes as
 // var(--vscode-*, fallback), and motion uses SMIL instead of CSS.
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 
 const W = 520;
 const H = 320;
@@ -56,9 +56,17 @@ const pointer = (from, to, keyTimes) =>
   }) +
   `</path>`;
 
-// The status bar icon, resources/icons/shellcheck-logo.svg.
-const LOGO =
-  "M14.15,10.3 Q14.15,11.283 13.843,11.959 L15.416,13.615 Q15.659,13.87 15.65,14.222 Q15.641,14.574 15.385,14.816 Q15.13,15.059 14.778,15.05 Q14.426,15.041 14.184,14.785 L12.635,13.154 Q11.965,13.45 11,13.45 Q7.85,13.45 7.85,10.3 Q7.85,7.15 11,7.15 Q14.15,7.15 14.15,10.3 Z M3,1 L12,1 Q14,1 14,3 L14,8.309 C13.736,7.913 13.396,7.571 13,7.306 L13,3 Q13,2 12,2 L3,2 Q2,2 2,3 L2,10 Q2,11 3,11 L7.468,11 C7.538,11.355 7.66,11.691 7.826,12 L3,12 Q1,12 1,10 L1,3 Q1,1 3,1 Z M13.05,10.3 Q13.05,8.25 11,8.25 Q8.95,8.25 8.95,10.3 Q8.95,12.35 11,12.35 Q11.619,12.35 12.05,12.163 Q12.064,11.821 12.315,11.584 Q12.549,11.361 12.863,11.35 Q13.05,10.918 13.05,10.3 Z M3.856,3.581 L5.856,5.281 Q6.03,5.428 6.048,5.656 Q6.067,5.883 5.919,6.056 Q5.89,6.09 5.856,6.119 L3.856,7.819 Q3.683,7.967 3.456,7.948 Q3.228,7.93 3.081,7.756 Q2.933,7.583 2.952,7.356 Q2.97,7.128 3.144,6.981 L4.651,5.7 L3.144,4.419 Q2.97,4.272 2.952,4.044 Q2.933,3.817 3.081,3.644 Q3.228,3.47 3.456,3.452 Q3.683,3.433 3.856,3.581 Z M6.3,6.85 L7.6,6.85 Q7.828,6.85 7.989,7.011 Q8.15,7.172 8.15,7.4 Q8.15,7.628 7.989,7.789 Q7.828,7.95 7.6,7.95 L6.3,7.95 Q6.072,7.95 5.911,7.789 Q5.75,7.628 5.75,7.4 Q5.75,7.172 5.911,7.011 Q6.072,6.85 6.3,6.85 Z";
+// The status bar icon, nested as is. It paints with currentColor, so `color`
+// sets its color.
+const ICON = readFileSync(
+  new URL("icons/shellcheck-logo.svg", import.meta.url),
+  "utf8",
+);
+const ICON_VIEW_BOX = /<svg[^>]*\sviewBox="([^"]+)"/.exec(ICON)[1];
+const ICON_CONTENT = ICON.replace(/^\s*<svg[^>]*>|<\/svg>\s*$/g, "");
+
+const logo = (x, y, size, color) =>
+  `<svg x="${x}" y="${y}" width="${size}" height="${size}" viewBox="${ICON_VIEW_BOX}" color="${color}">${ICON_CONTENT}</svg>`;
 
 function svg(label, body) {
   return [
@@ -153,7 +161,7 @@ function statusBar() {
       anim("opacity", "0;0;.55;0;0", "0;.32;.34;.42;1") +
       anim("r", "4;4;4;13;13", "0;.32;.34;.42;1") +
       `</circle>`,
-    `<g transform="translate(482 ${H - 22})" fill="${c("statusBar-foreground", "#cccccc")}"><path d="${LOGO}"/></g>`,
+    logo(482, H - 22, 16, c("statusBar-foreground", "#cccccc")),
     `<g opacity="0">` +
       anim("opacity", "0;0;1;1;0;0", qpTimes) +
       anim("transform", "0 -6;0 -6;0 0;0 0;0 -6;0 -6", qpTimes, {
@@ -288,7 +296,7 @@ function wasm() {
     "The bundled WebAssembly build of ShellCheck runs on every platform, in a sandbox, and on the web",
     [
       `<rect x="218.5" y="18.5" width="83" height="83" rx="16" fill="${c("editorWidget-background", "#202020")}" stroke="${module}" stroke-width="2"/>`,
-      `<g transform="translate(234 34) scale(3.25)" fill="${module}"><path d="${LOGO}"/></g>`,
+      logo(234, 34, 52, module),
       text(260, 124, "shellcheck.wasm", {
         size: 13,
         font: MONO,
