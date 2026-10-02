@@ -70,7 +70,7 @@ async function expectSC2034(
 }
 
 /** Run `action` and check the document's diagnostics were left alone. */
-async function expectNoRelint(
+async function expectUnchanged(
   document: vscode.TextDocument,
   action: () => Promise<void>,
 ): Promise<void> {
@@ -127,7 +127,7 @@ for (const runtime of RUNTIMES) {
 
     test("nothing is watched by default", async () => {
       const document = await openLintedScript();
-      await expectNoRelint(document, () =>
+      await expectUnchanged(document, () =>
         write(configFiles().workspace, "disable=SC2034\n"),
       );
     });
@@ -154,7 +154,7 @@ suite(
     test("an rc file above the workspace folder needs the user setting", async () => {
       await updateShellCheckSetting("watchConfigFiles.workspace", true);
       const document = await openLintedScript();
-      await expectNoRelint(document, () =>
+      await expectUnchanged(document, () =>
         write(configFiles().parent, "disable=SC2034\n"),
       );
     });

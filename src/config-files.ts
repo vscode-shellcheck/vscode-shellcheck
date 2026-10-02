@@ -103,7 +103,7 @@ export class ConfigFileWatcher implements vscode.Disposable {
       section.get(`${key}.user`, false) && nativeRuntime !== undefined;
 
     if (this.workspace) {
-      this.watch(RC_NAMES, (uri) => ({
+      this.watch(`**/${RC_NAMES}`, (uri) => ({
         kind: "search",
         folder: vscode.Uri.joinPath(uri, ".."),
         nativeOnly: false,
