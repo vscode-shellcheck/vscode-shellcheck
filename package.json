@@ -359,10 +359,10 @@
           {
             "id": "wasm",
             "title": "A bundled WebAssembly build",
-            "description": "The extension now bundles a WebAssembly build of ShellCheck. It runs on every platform, with no shellcheck binary to install.\n[Try the WebAssembly Runtime](command:shellcheck.useWasmRuntime)",
+            "description": "The extension now bundles a WebAssembly build of ShellCheck. It runs on every platform with no shellcheck binary to install, stays sandboxed to your workspace files, and powers ShellCheck on the web.\n[Try the WebAssembly Runtime](command:shellcheck.useWasmRuntime)",
             "media": {
               "svg": "resources/walkthrough/wasm.svg",
-              "altText": "The bundled WebAssembly build runs on Windows, macOS and Linux."
+              "altText": "The bundled WebAssembly build runs on every platform, in a sandbox, and on the web."
             },
             "when": "!isWeb"
           }

@@ -56,8 +56,9 @@ const pointer = (from, to, keyTimes) =>
   }) +
   `</path>`;
 
+// The status bar icon, resources/icons/shellcheck-logo.svg.
 const LOGO =
-  "M1 4.2 2.2 3l4.5 4.5L2.2 12 1 10.8l3.3-3.3zM7 10.6l1.2-1.2 1.3 1.3 4.3-4.3L15 7.6l-5.5 5.5z";
+  "M14.15,10.3 Q14.15,11.283 13.843,11.959 L15.416,13.615 Q15.659,13.87 15.65,14.222 Q15.641,14.574 15.385,14.816 Q15.13,15.059 14.778,15.05 Q14.426,15.041 14.184,14.785 L12.635,13.154 Q11.965,13.45 11,13.45 Q7.85,13.45 7.85,10.3 Q7.85,7.15 11,7.15 Q14.15,7.15 14.15,10.3 Z M3,1 L12,1 Q14,1 14,3 L14,8.309 C13.736,7.913 13.396,7.571 13,7.306 L13,3 Q13,2 12,2 L3,2 Q2,2 2,3 L2,10 Q2,11 3,11 L7.468,11 C7.538,11.355 7.66,11.691 7.826,12 L3,12 Q1,12 1,10 L1,3 Q1,1 3,1 Z M13.05,10.3 Q13.05,8.25 11,8.25 Q8.95,8.25 8.95,10.3 Q8.95,12.35 11,12.35 Q11.619,12.35 12.05,12.163 Q12.064,11.821 12.315,11.584 Q12.549,11.361 12.863,11.35 Q13.05,10.918 13.05,10.3 Z M3.856,3.581 L5.856,5.281 Q6.03,5.428 6.048,5.656 Q6.067,5.883 5.919,6.056 Q5.89,6.09 5.856,6.119 L3.856,7.819 Q3.683,7.967 3.456,7.948 Q3.228,7.93 3.081,7.756 Q2.933,7.583 2.952,7.356 Q2.97,7.128 3.144,6.981 L4.651,5.7 L3.144,4.419 Q2.97,4.272 2.952,4.044 Q2.933,3.817 3.081,3.644 Q3.228,3.47 3.456,3.452 Q3.683,3.433 3.856,3.581 Z M6.3,6.85 L7.6,6.85 Q7.828,6.85 7.989,7.011 Q8.15,7.172 8.15,7.4 Q8.15,7.628 7.989,7.789 Q7.828,7.95 7.6,7.95 L6.3,7.95 Q6.072,7.95 5.911,7.789 Q5.75,7.628 5.75,7.4 Q5.75,7.172 5.911,7.011 Q6.072,6.85 6.3,6.85 Z";
 
 function svg(label, body) {
   return [
@@ -117,11 +118,15 @@ function codeLines(lines, firstNumber, top) {
 // Scene 1: the status bar icon opens the ShellCheck menu.
 function statusBar() {
   const qpTimes = "0;.34;.38;.90;.95;1";
+  const ROW = 22;
+  // [label, description, top]; null is the "Settings" separator.
   const rows = [
-    ["Lint Current Document", ""],
-    ["Runtime: native", "Switch to wasm"],
-    ["Run: onType", ""],
-    ["Disable ShellCheck", ""],
+    ["Lint Current Document", "", 94],
+    ["Collect Diagnostics", "", 116],
+    null,
+    ["Runtime: native", "Switch to wasm", 158],
+    ["Run: onType", "Change when ShellCheck runs", 180],
+    ["Disable ShellCheck", "For this workspace", 202],
   ];
   return svg("Clicking the ShellCheck icon in the status bar opens its menu", [
     ...workbench(0, "deploy.sh"),
@@ -131,13 +136,15 @@ function statusBar() {
       [88, 210],
       [116, 120],
       [144, 180],
+      [172, 140],
+      [200, 190],
     ].map(
       ([y, w], i) =>
         `<rect x="${i % 2 ? 98 : 78}" y="${y - 10}" width="${w}" height="10" rx="5" fill="${c("editor-foreground", "#cccccc")}" opacity=".18"/>`,
     ),
-    ...codeLines(["for f in $(ls); do", "  cp $f /bak", "done"], 9, 214),
-    squiggle(78 + 9 * CH, 220, 5 * CH, ".04", ".14"),
-    squiggle(78 + 5 * CH, 248, 2 * CH, ".06", ".16"),
+    ...codeLines(["for f in $(ls); do", "  cp $f /bak"], 9, 246),
+    squiggle(78 + 9 * CH, 252, 5 * CH, ".04", ".14"),
+    squiggle(78 + 5 * CH, 280, 2 * CH, ".06", ".16"),
     text(392, H - 9, "Shell Script", {
       size: 12,
       fill: c("statusBar-foreground", "#cccccc"),
@@ -152,28 +159,37 @@ function statusBar() {
       anim("transform", "0 -6;0 -6;0 0;0 0;0 -6;0 -6", qpTimes, {
         type: "translate",
       }),
-    `<rect x="120.5" y="40.5" width="320" height="148" rx="6" fill="${c("quickInput-background", "#222222")}" stroke="${c("widget-border", "#313131")}"/>`,
-    `<rect x="128.5" y="48.5" width="304" height="26" rx="3" fill="${c("input-background", "#313131")}" stroke="${c("focusBorder", "#0078d4")}"/>`,
-    text(138, 66, "ShellCheck", {
-      size: 13,
-      fill: c("input-placeholderForeground", "#989898"),
+    `<rect x="110.5" y="36.5" width="340" height="196" rx="6" fill="${c("quickInput-background", "#222222")}" stroke="${c("widget-border", "#313131")}"/>`,
+    text(280, 54, "ShellCheck 0.11.0 · native (bundled)", {
+      size: 12,
+      anchor: "middle",
+      fill: c("quickInput-foreground", "#cccccc"),
     }),
-    `<rect x="124" y="80" width="312" height="26" rx="3" fill="${c("quickInputList-focusBackground", "#04395e")}">` +
-      anim("transform", "0 0;0 0;0 26;0 26", "0;.46;.52;1", {
+    `<rect x="118.5" y="62.5" width="324" height="24" rx="3" fill="${c("input-background", "#313131")}" stroke="${c("focusBorder", "#0078d4")}"/>`,
+    `<rect x="114" y="94" width="332" height="${ROW}" rx="3" fill="${c("quickInputList-focusBackground", "#04395e")}">` +
+      anim("transform", "0 0;0 0;0 64;0 64", "0;.46;.52;1", {
         type: "translate",
         splines: easeAll(3),
       }) +
       `</rect>`,
-    ...rows.map(
-      ([label, desc], i) =>
-        `<text x="136" y="${98 + i * 26}" font-family="${SANS}" font-size="13" fill="${c("quickInput-foreground", "#cccccc")}">${esc(label)}` +
-        (desc
-          ? `<tspan dx="10" font-size="12" fill="${c("descriptionForeground", "#9d9d9d")}">${esc(desc)}</tspan>`
-          : "") +
-        `</text>`,
-    ),
+    `<path d="M124 148.5H372" stroke="${c("pickerGroup-border", "#3c3c3c")}"/>`,
+    text(436, 152, "Settings", {
+      size: 11,
+      anchor: "end",
+      fill: c("pickerGroup-foreground", "#3794ff"),
+    }),
+    ...rows
+      .filter((row) => row !== null)
+      .map(
+        ([label, desc, top]) =>
+          `<text x="126" y="${top + 15}" font-family="${SANS}" font-size="13" fill="${c("quickInput-foreground", "#cccccc")}">${esc(label)}` +
+          (desc
+            ? `<tspan dx="10" font-size="12" fill="${c("descriptionForeground", "#9d9d9d")}">${esc(desc)}</tspan>`
+            : "") +
+          `</text>`,
+      ),
     `</g>`,
-    pointer("300 150", "489 300", "0;.18;.32;.94;1"),
+    pointer("300 120", "489 300", "0;.18;.32;.94;1"),
   ]);
 }
 
@@ -242,72 +258,88 @@ function web() {
   );
 }
 
-// Scene 3: the bundled WebAssembly build runs on every platform without a
-// shellcheck binary.
+// Scene 3: what the bundled WebAssembly build brings.
 function wasm() {
-  const accent = c("charts-purple", "#b180d7");
-  const pass = c("charts-green", "#89d185");
-  const from = [260, 150];
+  const module = c("charts-purple", "#b180d7");
+  const from = [260, 134];
+  const icons = {
+    platforms:
+      "M2.5 2.5h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1zM5 14.5h6M8 11.5v3",
+    sandbox:
+      "M8 1.5 2.5 3.5v4c0 3.4 2.3 5.9 5.5 7 3.2-1.1 5.5-3.6 5.5-7v-4zM5.5 8l1.8 1.8L10.8 6.2",
+    web: "M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM8 1.5c-1.8 1.8-2.7 4-2.7 6.5s.9 4.7 2.7 6.5c1.8-1.8 2.7-4 2.7-6.5S9.8 3.3 8 1.5zM1.5 8h13",
+  };
   const cards = [
-    ["Windows", 30],
-    ["macOS", 190],
-    ["Linux", 350],
+    [
+      "Every platform",
+      "Windows, macOS, Linux",
+      icons.platforms,
+      c("charts-blue", "#3794ff"),
+    ],
+    [
+      "Sandboxed",
+      "Workspace files only",
+      icons.sandbox,
+      c("charts-green", "#89d185"),
+    ],
+    ["On the web", "vscode.dev, github.dev", icons.web, module],
   ];
   return svg(
-    "The bundled WebAssembly build of ShellCheck runs on Windows, macOS and Linux without installing a binary",
+    "The bundled WebAssembly build of ShellCheck runs on every platform, in a sandbox, and on the web",
     [
-      `<rect x="214.5" y="24.5" width="91" height="91" rx="16" fill="${c("editorWidget-background", "#202020")}" stroke="${accent}" stroke-width="2"/>`,
-      `<g transform="translate(233 43) scale(3.4)" fill="${accent}"><path d="${LOGO}"/></g>`,
-      text(260, 140, "shellcheck.wasm", {
+      `<rect x="218.5" y="18.5" width="83" height="83" rx="16" fill="${c("editorWidget-background", "#202020")}" stroke="${module}" stroke-width="2"/>`,
+      `<g transform="translate(234 34) scale(3.25)" fill="${module}"><path d="${LOGO}"/></g>`,
+      text(260, 124, "shellcheck.wasm", {
         size: 13,
         font: MONO,
         anchor: "middle",
         fill: c("foreground", "#cccccc"),
       }),
-      ...cards.flatMap(([name, x], i) => {
-        const to = [x + 70, 206];
-        const path = `M${from[0]} ${from[1]}C${from[0]} 180 ${to[0]} 176 ${to[0]} ${to[1]}`;
-        const start = 0.06 + i * 0.08;
-        const end = start + 0.12;
-        const lit = `0;${end};${(end + 0.02).toFixed(2)};.95;1`;
+      ...cards.flatMap(([title, subtitle, icon, color], i) => {
+        const x = 16 + i * 166;
+        const to = [x + 78, 186];
+        const path = `M${from[0]} ${from[1]}C${from[0]} 166 ${to[0]} 160 ${to[0]} ${to[1]}`;
+        const start = 0.06 + i * 0.1;
+        const end = start + 0.1;
+        const lit = `0;${end.toFixed(2)};${(end + 0.02).toFixed(2)};.95;1`;
+        const iconPath = (stroke) =>
+          `<path d="${icon}" stroke="${stroke}" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>`;
         return [
           `<path d="${path}" stroke="${c("widget-border", "#313131")}" stroke-width="1.5" stroke-dasharray="3 4"/>`,
-          `<circle r="4" fill="${accent}" opacity="0">` +
+          `<circle r="4" fill="${color}" opacity="0">` +
             anim(
               "opacity",
               "0;0;1;1;0;0",
-              `0;${start};${(start + 0.01).toFixed(2)};${end};${(end + 0.01).toFixed(2)};1`,
+              `0;${start.toFixed(2)};${(start + 0.01).toFixed(2)};${end.toFixed(2)};${(end + 0.01).toFixed(2)};1`,
             ) +
-            `<animateMotion path="${path}" dur="${DUR}" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;${start};${end};1" calcMode="spline" keySplines="0 0 1 1;${EASE};0 0 1 1"/>` +
+            `<animateMotion path="${path}" dur="${DUR}" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;${start.toFixed(2)};${end.toFixed(2)};1" calcMode="spline" keySplines="0 0 1 1;${EASE};0 0 1 1"/>` +
             `</circle>`,
-          `<rect x="${x + 0.5}" y="206.5" width="139" height="55" rx="8" fill="${c("editorWidget-background", "#202020")}" stroke="${c("widget-border", "#313131")}"/>`,
-          `<rect x="${x + 0.5}" y="206.5" width="139" height="55" rx="8" stroke="${pass}" stroke-width="1.5" opacity="0">` +
+          `<rect x="${x + 0.5}" y="186.5" width="155" height="84" rx="8" fill="${c("editorWidget-background", "#202020")}" stroke="${c("widget-border", "#313131")}"/>`,
+          `<rect x="${x + 0.5}" y="186.5" width="155" height="84" rx="8" stroke="${color}" stroke-width="1.5" opacity="0">` +
             anim("opacity", "0;0;1;1;0", lit) +
             `</rect>`,
-          text(x + 16, 230, name, {
-            size: 15,
+          `<g transform="translate(${x + 12} 198) scale(1.25)">` +
+            iconPath(c("descriptionForeground", "#9d9d9d")) +
+            `<g opacity="0">` +
+            anim("opacity", "0;0;1;1;0", lit) +
+            iconPath(color) +
+            `</g></g>`,
+          text(x + 12, 240, title, {
+            size: 14,
             weight: 600,
             fill: c("foreground", "#cccccc"),
           }),
-          text(x + 16, 250, "x64 · ARM64", {
-            size: 12,
+          text(x + 12, 258, subtitle, {
+            size: 11,
             fill: c("descriptionForeground", "#9d9d9d"),
           }),
-          `<g opacity="0" transform="translate(${x + 106} 222)">` +
-            anim("opacity", "0;0;1;1;0", lit) +
-            `<circle cx="10" cy="10" r="10" fill="${pass}"/><path d="M5.5 10.2 8.6 13.2 14.5 7.2" stroke="${c("editor-background", "#1f1f1f")}" stroke-width="2"/></g>`,
         ];
       }),
-      text(
-        260,
-        296,
-        "Bundled with the extension. No shellcheck binary to install.",
-        {
-          size: 13,
-          anchor: "middle",
-          fill: c("descriptionForeground", "#9d9d9d"),
-        },
-      ),
+      text(260, 302, "One bundled build. No shellcheck binary to install.", {
+        size: 13,
+        anchor: "middle",
+        fill: c("descriptionForeground", "#9d9d9d"),
+      }),
     ],
   );
 }
