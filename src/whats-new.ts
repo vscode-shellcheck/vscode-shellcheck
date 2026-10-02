@@ -4,26 +4,32 @@ import { ShellCheckSettings } from "./settings.js";
 import * as logging from "./utils/logging/index.js";
 
 export const WALKTHROUGH_ID = "timonwong.shellcheck#whatsNew";
-export const WHATS_NEW_SHOWN_KEY = "whatsNewShown";
+export const WHATS_NEW_EDITION_KEY = "whatsNewEdition";
+/**
+ * Bump, along with the walkthrough's content, to announce it again to
+ * everyone who saw an earlier edition.
+ */
+export const WHATS_NEW_EDITION = 1;
 export const USE_WASM_RUNTIME_COMMAND = "shellcheck.useWasmRuntime";
 
 const SEE_WHATS_NEW = "See What's New";
 
 /**
- * Runs `announce` unless any earlier activation did, on any synced machine.
+ * Runs `announce` unless this edition, or a newer one from a newer version on
+ * another synced machine, was announced before.
  *
- * The flag is written before announcing and the announcement is not awaited,
- * so a notification left open across a reload, or one that fails, is not
- * shown again.
+ * The edition is recorded before announcing and the announcement is not
+ * awaited, so a notification left open across a reload, or one that fails,
+ * is not shown again.
  */
 export async function announceOnce(
   state: vscode.Memento,
   announce: () => Thenable<unknown>,
 ): Promise<void> {
-  if (state.get<boolean>(WHATS_NEW_SHOWN_KEY)) {
+  if (state.get<number>(WHATS_NEW_EDITION_KEY, 0) >= WHATS_NEW_EDITION) {
     return;
   }
-  await state.update(WHATS_NEW_SHOWN_KEY, true);
+  await state.update(WHATS_NEW_EDITION_KEY, WHATS_NEW_EDITION);
   Promise.resolve(announce()).catch((error: unknown) => {
     logging.error("Unable to announce what's new: %O", error);
   });
@@ -59,7 +65,7 @@ async function confirmWasmRuntime(): Promise<boolean> {
 export function registerWhatsNew(
   context: vscode.ExtensionContext,
 ): vscode.Disposable {
-  context.globalState.setKeysForSync([WHATS_NEW_SHOWN_KEY]);
+  context.globalState.setKeysForSync([WHATS_NEW_EDITION_KEY]);
   announceOnce(context.globalState, async () => {
     const selected = await vscode.window.showInformationMessage(
       "ShellCheck now has a status bar menu, runs in VS Code for the Web, and bundles a WebAssembly build.",

@@ -5,7 +5,8 @@ import {
   USE_WASM_RUNTIME_COMMAND,
   useWasmRuntime,
   WALKTHROUGH_ID,
-  WHATS_NEW_SHOWN_KEY,
+  WHATS_NEW_EDITION,
+  WHATS_NEW_EDITION_KEY,
 } from "../src/whats-new.js";
 import { RuntimeKind } from "../src/runtime/types.js";
 
@@ -56,7 +57,7 @@ suite("What's new", () => {
     assert.strictEqual(announced, 1);
   });
 
-  test("never announces again, whatever the version", async () => {
+  test("never announces the same edition again, whatever the version", async () => {
     const state = memento();
     let announced = 0;
     const announce = async () => {
@@ -67,12 +68,35 @@ suite("What's new", () => {
     assert.strictEqual(announced, 1);
   });
 
+  test("announces an edition newer than the one last announced", async () => {
+    const state = memento();
+    await state.update(WHATS_NEW_EDITION_KEY, WHATS_NEW_EDITION - 1);
+    let announced = 0;
+    await announceOnce(state, async () => {
+      announced++;
+    });
+    assert.strictEqual(announced, 1);
+    assert.strictEqual(state.get(WHATS_NEW_EDITION_KEY), WHATS_NEW_EDITION);
+  });
+
+  test("does not announce after a newer edition was announced", async () => {
+    // Another synced machine may run a newer extension version.
+    const state = memento();
+    await state.update(WHATS_NEW_EDITION_KEY, WHATS_NEW_EDITION + 1);
+    let announced = 0;
+    await announceOnce(state, async () => {
+      announced++;
+    });
+    assert.strictEqual(announced, 0);
+    assert.strictEqual(state.get(WHATS_NEW_EDITION_KEY), WHATS_NEW_EDITION + 1);
+  });
+
   test("records the announcement before the user answers it", async () => {
     // A window reloaded while the notification is still open must not show it
     // again.
     const state = memento();
     await announceOnce(state, () => new Promise<never>(() => {}));
-    assert.strictEqual(state.get(WHATS_NEW_SHOWN_KEY), true);
+    assert.strictEqual(state.get(WHATS_NEW_EDITION_KEY), WHATS_NEW_EDITION);
   });
 
   test("a failed announcement is not retried", async () => {
@@ -80,7 +104,7 @@ suite("What's new", () => {
     await announceOnce(state, async () => {
       throw new Error("no notifications today");
     });
-    assert.strictEqual(state.get(WHATS_NEW_SHOWN_KEY), true);
+    assert.strictEqual(state.get(WHATS_NEW_EDITION_KEY), WHATS_NEW_EDITION);
   });
 
   test("switching to wasm needs confirmation", async () => {
