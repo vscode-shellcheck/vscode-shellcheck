@@ -171,6 +171,10 @@ suite(
       await expectSC2034(document, true, () =>
         write(custom, "disable=SC2154\n"),
       );
+      await expectSC2034(document, false, () =>
+        write(custom, "disable=SC2034\n"),
+      );
+      await expectSC2034(document, true, () => remove(custom));
     });
   },
 );

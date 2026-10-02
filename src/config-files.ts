@@ -30,15 +30,13 @@ export type ConfigFileChange =
    * lives, or undefined for a user-level one, which every document falls back
    * to. */
   | { kind: "search"; folder: vscode.Uri | undefined; nativeOnly: boolean }
-  /** A file passed with `--rcfile`. */
-  | { kind: "rcfile"; file: vscode.Uri };
+  /** A file passed with `--rcfile`, and the documents that pass it. */
+  | { kind: "rcfile"; documents: ReadonlySet<string> };
 
 export interface DocumentRc {
   uri: vscode.Uri;
   runtime: RuntimeKind;
   rcArgs: RcArgs;
-  /** `rcArgs.rcfile` resolved against the document's working directory. */
-  rcfile: vscode.Uri | undefined;
 }
 
 export function isAffected(
@@ -49,7 +47,7 @@ export function isAffected(
     return false;
   }
   if (change.kind === "rcfile") {
-    return document.rcfile?.toString() === change.file.toString();
+    return change.documents.has(document.uri.toString());
   }
   // `--rcfile` replaces the search altogether.
   if (document.rcArgs.rcfile !== undefined) {
@@ -74,14 +72,19 @@ export function isAffected(
   );
 }
 
+interface RcfileWatch {
+  watcher: vscode.Disposable;
+  documents: Set<string>;
+}
+
 /**
  * Watches the rc files shellcheck reads, as far as
  * `shellcheck.watchConfigFiles.*` allows.
  */
 export class ConfigFileWatcher implements vscode.Disposable {
-  private watchers: vscode.Disposable[] = [];
-  /** Keyed by `Uri.toString()`, filled lazily as lints come across them. */
-  private readonly rcfileWatchers = new Map<string, vscode.Disposable>();
+  private searchWatchers: vscode.Disposable[] = [];
+  /** Keyed by `Uri.toString()`, filled as native lints come across them. */
+  private readonly rcfileWatches = new Map<string, RcfileWatch>();
   private readonly folderListener: vscode.Disposable;
   private workspace = false;
   private user = false;
@@ -103,70 +106,63 @@ export class ConfigFileWatcher implements vscode.Disposable {
       section.get(`${key}.user`, false) && nativeRuntime !== undefined;
 
     if (this.workspace) {
-      this.watch(`**/${RC_NAMES}`, (uri) => ({
+      this.watchSearch(`**/${RC_NAMES}`, (uri) => ({
         kind: "search",
         folder: vscode.Uri.joinPath(uri, ".."),
         nativeOnly: false,
       }));
     }
-    if (this.user) {
-      for (const folder of vscode.workspace.workspaceFolders ?? []) {
-        if (folder.uri.scheme !== "file") {
-          continue;
-        }
-        // The wasm runtime only sees the workspace folder itself.
-        for (const parent of nativeRuntime!.parentDirectories(
-          folder.uri.fsPath,
-        )) {
-          this.watch(
-            new vscode.RelativePattern(vscode.Uri.file(parent), RC_NAMES),
-            () => ({
-              kind: "search",
-              folder: vscode.Uri.file(parent),
-              nativeOnly: true,
-            }),
-          );
-        }
+    if (!this.user) {
+      return;
+    }
+    // The wasm runtime only sees the workspace folder itself, so everything
+    // from here on is native only.
+    for (const folder of vscode.workspace.workspaceFolders ?? []) {
+      if (folder.uri.scheme !== "file") {
+        continue;
       }
-      for (const file of nativeRuntime!.userConfigFiles()) {
-        const uri = vscode.Uri.file(file);
-        this.watch(
-          new vscode.RelativePattern(
-            vscode.Uri.joinPath(uri, ".."),
-            uri.path.slice(uri.path.lastIndexOf("/") + 1),
-          ),
-          () => ({ kind: "search", folder: undefined, nativeOnly: true }),
+      for (const parent of nativeRuntime!.parentDirectories(
+        folder.uri.fsPath,
+      )) {
+        const change: ConfigFileChange = {
+          kind: "search",
+          folder: vscode.Uri.file(parent),
+          nativeOnly: true,
+        };
+        this.watchSearch(
+          new vscode.RelativePattern(change.folder!, RC_NAMES),
+          () => change,
         );
       }
     }
+    for (const file of nativeRuntime!.userConfigFiles()) {
+      this.watchSearch(
+        new vscode.RelativePattern(vscode.Uri.file(file), "*"),
+        () => ({ kind: "search", folder: undefined, nativeOnly: true }),
+      );
+    }
   }
 
-  /** Watches a file a document passes with `--rcfile`. */
-  public watchRcfile(file: vscode.Uri): void {
+  /** Watches the file `document` passes with `--rcfile`. */
+  public watchRcfile(file: vscode.Uri, document: vscode.Uri): void {
     const key = file.toString();
-    if (this.rcfileWatchers.has(key)) {
-      return;
+    let watch = this.rcfileWatches.get(key);
+    if (!watch) {
+      const inWorkspace =
+        vscode.workspace.getWorkspaceFolder(file) !== undefined;
+      if (!(inWorkspace ? this.workspace : this.user)) {
+        return;
+      }
+      const documents = new Set<string>();
+      watch = {
+        documents,
+        watcher: this.watch(new vscode.RelativePattern(file, "*"), () =>
+          this.onChange({ kind: "rcfile", documents }),
+        ),
+      };
+      this.rcfileWatches.set(key, watch);
     }
-    const inWorkspace = vscode.workspace.getWorkspaceFolder(file) !== undefined;
-    if (!(inWorkspace ? this.workspace : this.user)) {
-      return;
-    }
-    const watcher = vscode.workspace.createFileSystemWatcher(
-      new vscode.RelativePattern(
-        vscode.Uri.joinPath(file, ".."),
-        file.path.slice(file.path.lastIndexOf("/") + 1),
-      ),
-    );
-    const onEvent = () => this.onChange({ kind: "rcfile", file });
-    this.rcfileWatchers.set(
-      key,
-      vscode.Disposable.from(
-        watcher,
-        watcher.onDidCreate(onEvent),
-        watcher.onDidChange(onEvent),
-        watcher.onDidDelete(onEvent),
-      ),
-    );
+    watch.documents.add(document.toString());
   }
 
   public dispose(): void {
@@ -174,13 +170,21 @@ export class ConfigFileWatcher implements vscode.Disposable {
     this.folderListener.dispose();
   }
 
-  private watch(
+  private watchSearch(
     pattern: vscode.GlobPattern,
     change: (uri: vscode.Uri) => ConfigFileChange,
   ): void {
+    this.searchWatchers.push(
+      this.watch(pattern, (uri) => this.onChange(change(uri))),
+    );
+  }
+
+  private watch(
+    pattern: vscode.GlobPattern,
+    onEvent: (uri: vscode.Uri) => void,
+  ): vscode.Disposable {
     const watcher = vscode.workspace.createFileSystemWatcher(pattern);
-    const onEvent = (uri: vscode.Uri) => this.onChange(change(uri));
-    this.watchers.push(
+    return vscode.Disposable.from(
       watcher,
       watcher.onDidCreate(onEvent),
       watcher.onDidChange(onEvent),
@@ -189,11 +193,13 @@ export class ConfigFileWatcher implements vscode.Disposable {
   }
 
   private disposeWatchers(): void {
-    vscode.Disposable.from(
-      ...this.watchers,
-      ...this.rcfileWatchers.values(),
-    ).dispose();
-    this.watchers = [];
-    this.rcfileWatchers.clear();
+    for (const watcher of this.searchWatchers) {
+      watcher.dispose();
+    }
+    for (const { watcher } of this.rcfileWatches.values()) {
+      watcher.dispose();
+    }
+    this.searchWatchers = [];
+    this.rcfileWatches.clear();
   }
 }

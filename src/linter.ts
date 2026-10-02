@@ -266,37 +266,18 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       }
       try {
         const settings = await this.getSettings(textDocument);
-        const rcArgs = parseRcArgs(settings.customArgs);
-        const rcfile = await this.resolveRcfile(textDocument, settings);
-        if (
-          isAffected(change, {
-            uri: textDocument.uri,
-            runtime: settings.runtime,
-            rcArgs,
-            rcfile,
-          })
-        ) {
+        const document = {
+          uri: textDocument.uri,
+          runtime: settings.runtime,
+          rcArgs: parseRcArgs(settings.customArgs),
+        };
+        if (isAffected(change, document)) {
           await this.triggerLint(textDocument);
         }
       } catch (error) {
         logging.error(`onDidChangeConfigFile: ${error}`);
       }
     }
-  }
-
-  /** The file a document passes with `--rcfile`, as the native runtime would
-   * open it. The wasm runtime resolves it inside its sandbox instead, so it is
-   * not watched there. */
-  private async resolveRcfile(
-    textDocument: vscode.TextDocument,
-    settings: ShellCheckSettings,
-  ): Promise<vscode.Uri | undefined> {
-    const { rcfile } = parseRcArgs(settings.customArgs);
-    if (rcfile === undefined || settings.runtime !== "native") {
-      return undefined;
-    }
-    const cwd = await this.nativeWorkingDirectory(textDocument, settings);
-    return vscode.Uri.file(nativeRuntime!.resolvePath(cwd ?? "", rcfile));
   }
 
   private async onDidOpenTextDocument(textDocument: vscode.TextDocument) {
@@ -787,10 +768,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
               ),
             }
           : { cwd: await this.nativeWorkingDirectory(textDocument, settings) };
-      const rcfile = await this.resolveRcfile(textDocument, settings);
-      if (rcfile) {
-        this.configFileWatcher.watchRcfile(rcfile);
-      }
+      this.watchRcfile(textDocument, settings, cwd);
       lintResult = await runner.run({
         documentKey: textDocument.uri.toString(),
         executablePath: executable.path,
@@ -830,6 +808,25 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       return;
     }
     this.setResultCollections(textDocument.uri, result);
+  }
+
+  /** Only on the native runtime: the wasm runtime resolves `--rcfile` inside
+   * its sandbox, out of a watcher's reach. */
+  private watchRcfile(
+    textDocument: vscode.TextDocument,
+    settings: ShellCheckSettings,
+    cwd: string | undefined,
+  ) {
+    const { rcfile } = parseRcArgs(settings.customArgs);
+    if (rcfile === undefined || settings.runtime !== "native") {
+      return;
+    }
+    // Without a cwd shellcheck inherits the extension host's, which
+    // `resolvePath` falls back to as well.
+    this.configFileWatcher.watchRcfile(
+      vscode.Uri.file(nativeRuntime!.resolvePath(cwd ?? "", rcfile)),
+      textDocument.uri,
+    );
   }
 
   private async nativeWorkingDirectory(

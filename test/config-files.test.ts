@@ -4,60 +4,35 @@ import {
   ConfigFileChange,
   isAffected,
   parseRcArgs,
+  RcArgs,
 } from "../src/config-files.js";
 
 const script = vscode.Uri.file("/repo/src/deep/script.sh");
 
 function affects(
   change: ConfigFileChange,
-  options: {
-    args?: string[];
-    runtime?: "native" | "wasm";
-    rcfile?: string;
-  } = {},
+  options: { args?: string[]; runtime?: "native" | "wasm" } = {},
 ): boolean {
   return isAffected(change, {
     uri: script,
     runtime: options.runtime ?? "native",
     rcArgs: parseRcArgs(options.args ?? []),
-    rcfile: options.rcfile ? vscode.Uri.file(options.rcfile) : undefined,
   });
 }
 
 suite("Config files", () => {
-  suite("parseRcArgs", () => {
-    test("no rc arguments", () => {
-      assert.deepStrictEqual(parseRcArgs(["-x", "-e", "SC2034"]), {
-        norc: false,
-        rcfile: undefined,
-      });
-    });
-
-    test("--norc", () => {
-      assert.strictEqual(parseRcArgs(["-x", "--norc"]).norc, true);
-    });
-
-    test("--rcfile as two arguments", () => {
-      assert.strictEqual(
-        parseRcArgs(["--rcfile", "conf/rc", "-x"]).rcfile,
-        "conf/rc",
-      );
-    });
-
-    test("--rcfile=", () => {
-      assert.strictEqual(parseRcArgs(["--rcfile=conf/rc"]).rcfile, "conf/rc");
-    });
-
-    test("the last --rcfile wins", () => {
-      assert.strictEqual(
-        parseRcArgs(["--rcfile=a", "--rcfile", "b"]).rcfile,
-        "b",
-      );
-    });
-
-    test("a trailing --rcfile without a value is ignored", () => {
-      assert.strictEqual(parseRcArgs(["--rcfile"]).rcfile, undefined);
-    });
+  test("parseRcArgs", () => {
+    const cases: [string[], RcArgs][] = [
+      [["-x", "-e", "SC2034"], { norc: false, rcfile: undefined }],
+      [["-x", "--norc"], { norc: true, rcfile: undefined }],
+      [["--rcfile", "conf/rc", "-x"], { norc: false, rcfile: "conf/rc" }],
+      [["--rcfile=conf/rc"], { norc: false, rcfile: "conf/rc" }],
+      [["--rcfile=a", "--rcfile", "b"], { norc: false, rcfile: "b" }],
+      [["--rcfile"], { norc: false, rcfile: undefined }],
+    ];
+    for (const [args, expected] of cases) {
+      assert.deepStrictEqual(parseRcArgs(args), expected, args.join(" "));
+    }
   });
 
   suite("isAffected", () => {
@@ -71,6 +46,10 @@ suite("Config files", () => {
       folder: undefined,
       nativeOnly: true,
     };
+    const rcfileOf = (...documents: vscode.Uri[]): ConfigFileChange => ({
+      kind: "rcfile",
+      documents: new Set(documents.map((uri) => uri.toString())),
+    });
 
     test("an rc file in the document's folder or above", () => {
       assert.ok(affects(inFolder("/repo/src/deep")));
@@ -106,34 +85,19 @@ suite("Config files", () => {
     });
 
     test("--norc ignores every change", () => {
-      assert.ok(!affects(inFolder("/repo"), { args: ["--norc"] }));
-      assert.ok(!affects(userLevel, { args: ["--norc"] }));
-      assert.ok(
-        !affects(
-          { kind: "rcfile", file: vscode.Uri.file("/conf/rc") },
-          { args: ["--norc", "--rcfile", "/conf/rc"], rcfile: "/conf/rc" },
-        ),
-      );
+      const args = ["--norc", "--rcfile", "/conf/rc"];
+      assert.ok(!affects(inFolder("/repo"), { args }));
+      assert.ok(!affects(userLevel, { args }));
+      assert.ok(!affects(rcfileOf(script), { args }));
     });
 
     test("--rcfile ignores the search and follows its own file", () => {
-      const options = { args: ["--rcfile", "/conf/rc"], rcfile: "/conf/rc" };
-      assert.ok(!affects(inFolder("/repo"), options));
-      assert.ok(!affects(userLevel, options));
+      const args = ["--rcfile", "/conf/rc"];
+      assert.ok(!affects(inFolder("/repo"), { args }));
+      assert.ok(!affects(userLevel, { args }));
+      assert.ok(affects(rcfileOf(script), { args }));
       assert.ok(
-        affects({ kind: "rcfile", file: vscode.Uri.file("/conf/rc") }, options),
-      );
-      assert.ok(
-        !affects(
-          { kind: "rcfile", file: vscode.Uri.file("/conf/other") },
-          options,
-        ),
-      );
-    });
-
-    test("an --rcfile change does not reach documents without one", () => {
-      assert.ok(
-        !affects({ kind: "rcfile", file: vscode.Uri.file("/conf/rc") }),
+        !affects(rcfileOf(vscode.Uri.file("/repo/other.sh")), { args }),
       );
     });
   });
