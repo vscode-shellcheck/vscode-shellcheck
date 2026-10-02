@@ -68,7 +68,7 @@ export function registerWhatsNew(
   context.globalState.setKeysForSync([WHATS_NEW_EDITION_KEY]);
   announceOnce(context.globalState, async () => {
     const selected = await vscode.window.showInformationMessage(
-      "ShellCheck now has a status bar menu, runs in VS Code for the Web, and bundles a WebAssembly build.",
+      "ShellCheck has new features. Take a look at what's new?",
       SEE_WHATS_NEW,
     );
     if (selected === SEE_WHATS_NEW) {
