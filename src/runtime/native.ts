@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
-import { dirname } from "node:path";
+import os from "node:os";
+import path, { dirname } from "node:path";
 import * as vscode from "vscode";
 import { getWorkspaceFolderPath, substitutePath } from "../utils/path.js";
 import {
@@ -68,6 +69,35 @@ async function ensureCurrentWorkingDirectory(
   return cwd;
 }
 
+// Mirrors shellcheck's getAppUserDataDirectory and getXdgDirectory XdgConfig,
+// which both resolve to %APPDATA% on Windows.
+function userConfigFiles(): string[] {
+  if (process.platform === "win32") {
+    const appData = process.env.APPDATA;
+    return appData ? [path.join(appData, "shellcheckrc")] : [];
+  }
+  const home = os.homedir();
+  const xdgConfigHome = process.env.XDG_CONFIG_HOME;
+  return [
+    path.join(home, ".shellcheckrc"),
+    path.join(
+      xdgConfigHome && path.isAbsolute(xdgConfigHome)
+        ? xdgConfigHome
+        : path.join(home, ".config"),
+      "shellcheckrc",
+    ),
+  ];
+}
+
+function parentDirectories(folder: string): string[] {
+  const parents: string[] = [];
+  for (let dir = dirname(folder); dir !== folder; dir = dirname(dir)) {
+    parents.push(dir);
+    folder = dir;
+  }
+  return parents;
+}
+
 export const nativeRuntime: NativeRuntime | undefined = {
   resolveExecutable,
   getToolVersion,
@@ -79,4 +109,7 @@ export const nativeRuntime: NativeRuntime | undefined = {
         : guessDocumentDirname(textDocument),
     ),
   createRunner: () => new NativeRunner(),
+  userConfigFiles,
+  parentDirectories,
+  resolvePath: (base, p) => path.resolve(base, p),
 };
