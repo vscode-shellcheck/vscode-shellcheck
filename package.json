@@ -336,7 +336,7 @@
       {
         "id": "whatsNew",
         "title": "What's New in ShellCheck",
-        "description": "A status bar menu, VS Code for the Web, a bundled WebAssembly build, and linting again when config files change.",
+        "description": "A status bar menu, VS Code for the Web, and more.",
         "steps": [
           {
             "id": "statusBar",

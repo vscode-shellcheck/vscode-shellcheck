@@ -56,17 +56,21 @@ const pointer = (from, to, keyTimes) =>
   }) +
   `</path>`;
 
-// The status bar icon, nested as is. It paints with currentColor, so `color`
-// sets its color.
+// The status bar icon. Not nested as an <svg>: the walkthrough styles every
+// svg element in the page as the media itself, which moves a nested one away.
 const ICON = readFileSync(
   new URL("icons/shellcheck-logo.svg", import.meta.url),
   "utf8",
 );
-const ICON_VIEW_BOX = /<svg[^>]*\sviewBox="([^"]+)"/.exec(ICON)[1];
+const ICON_WIDTH = Number(
+  /<svg[^>]*\sviewBox="[\d.]+ [\d.]+ ([\d.]+)/.exec(ICON)[1],
+);
 const ICON_CONTENT = ICON.replace(/^\s*<svg[^>]*>|<\/svg>\s*$/g, "");
 
 const logo = (x, y, size, color) =>
-  `<svg x="${x}" y="${y}" width="${size}" height="${size}" viewBox="${ICON_VIEW_BOX}" color="${color}">${ICON_CONTENT}</svg>`;
+  `<g transform="translate(${x} ${y}) scale(${size / ICON_WIDTH})">` +
+  ICON_CONTENT.replaceAll("currentColor", color) +
+  `</g>`;
 
 function svg(label, body) {
   return [

@@ -136,6 +136,9 @@ suite("What's new", () => {
       // media.svg runs under a CSP that drops <style> and style="".
       assert.doesNotMatch(svg, /<style|\sstyle=/, step.media.svg);
       assert.match(svg, /var\(--vscode-/, step.media.svg);
+      // The walkthrough positions every svg element as the media, so a nested
+      // one renders elsewhere.
+      assert.strictEqual(svg.match(/<svg[\s>]/g)?.length, 1, step.media.svg);
     }
   });
 
