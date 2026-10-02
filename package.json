@@ -266,6 +266,12 @@
           "scope": "resource",
           "default": false
         },
+        "shellcheck.lintOnShellcheckrcChange": {
+          "markdownDescription": "Whether to lint open documents again when a `.shellcheckrc` or `shellcheckrc` file in the workspace is created, changed or deleted. Only documents in that file's folder or below are linted again.",
+          "type": "boolean",
+          "scope": "window",
+          "default": true
+        },
         "shellcheck.logLevel": {
           "description": "The trace level the extension logs at, defaults to 'info'.",
           "type": "string",

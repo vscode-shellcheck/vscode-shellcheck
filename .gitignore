@@ -9,3 +9,4 @@
 *.orig
 
 .envrc
+/test/fixtures/rc-watch/.shellcheckrc

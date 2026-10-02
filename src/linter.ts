@@ -123,6 +123,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   /** Lives as long as the extension host, so `onDidChangeConfiguration`
    * deliberately leaves it alone. */
   private readonly wasmFailureNotifier: WasmFailureNotifier;
+  private shellcheckrcWatcher: vscode.Disposable | undefined;
 
   constructor(
     private readonly context: vscode.ExtensionContext,
@@ -222,6 +223,8 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       context.subscriptions,
     );
 
+    this.updateShellcheckrcWatcher();
+
     // Shellcheck all open shell documents
     this.triggerLintForEntireWorkspace();
   }
@@ -242,9 +245,53 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.toolStatusByPath.clear();
     this.wasmExecutablePathNoticed = false;
     this.runtimeManager.refresh();
+    this.updateShellcheckrcWatcher();
 
     // Shellcheck all open shell documents
     this.triggerLintForEntireWorkspace();
+  }
+
+  private updateShellcheckrcWatcher() {
+    const enabled = vscode.workspace
+      .getConfiguration("shellcheck")
+      .get(ShellCheckSettings.keys.lintOnShellcheckrcChange, true);
+    if (enabled === (this.shellcheckrcWatcher !== undefined)) {
+      return;
+    }
+    if (!enabled) {
+      this.shellcheckrcWatcher!.dispose();
+      this.shellcheckrcWatcher = undefined;
+      return;
+    }
+
+    const watcher = vscode.workspace.createFileSystemWatcher(
+      "**/{.shellcheckrc,shellcheckrc}",
+    );
+    const onEvent = (uri: vscode.Uri) => this.onDidChangeShellcheckrc(uri);
+    this.shellcheckrcWatcher = vscode.Disposable.from(
+      watcher,
+      watcher.onDidCreate(onEvent),
+      watcher.onDidChange(onEvent),
+      watcher.onDidDelete(onEvent),
+    );
+  }
+
+  private onDidChangeShellcheckrc(rcUri: vscode.Uri) {
+    // shellcheck looks for its rc file from the script's folder upwards, so
+    // only documents at or below this folder can be affected.
+    const folder = rcUri.path.slice(0, rcUri.path.lastIndexOf("/") + 1);
+    for (const textDocument of vscode.workspace.textDocuments) {
+      const { uri } = textDocument;
+      if (
+        uri.scheme === rcUri.scheme &&
+        uri.authority === rcUri.authority &&
+        uri.path.startsWith(folder)
+      ) {
+        this.triggerLint(textDocument).catch((error) =>
+          logging.error(`onDidChangeShellcheckrc: ${error}`),
+        );
+      }
+    }
   }
 
   private async onDidOpenTextDocument(textDocument: vscode.TextDocument) {
@@ -300,6 +347,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   }
 
   public dispose(): void {
+    this.shellcheckrcWatcher?.dispose();
     this.codeActionCollection.clear();
     this.diagnosticCollection.dispose();
   }
