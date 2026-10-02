@@ -9,6 +9,12 @@ import {
   FailureNotification,
   WasmFailureNotifier,
 } from "./failure-ux.js";
+import {
+  ConfigFileChange,
+  ConfigFileWatcher,
+  isAffected,
+  parseRcArgs,
+} from "./config-files.js";
 import { FixAllProvider } from "./fix-all.js";
 import { createParser, ParseResult } from "./parser.js";
 import { RuntimeManager } from "./runtime/manager.js";
@@ -123,7 +129,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   /** Lives as long as the extension host, so `onDidChangeConfiguration`
    * deliberately leaves it alone. */
   private readonly wasmFailureNotifier: WasmFailureNotifier;
-  private shellcheckrcWatcher: vscode.Disposable | undefined;
+  private readonly configFileWatcher: ConfigFileWatcher;
 
   constructor(
     private readonly context: vscode.ExtensionContext,
@@ -223,7 +229,9 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       context.subscriptions,
     );
 
-    this.updateShellcheckrcWatcher();
+    this.configFileWatcher = new ConfigFileWatcher((change) =>
+      this.onDidChangeConfigFile(change),
+    );
 
     // Shellcheck all open shell documents
     this.triggerLintForEntireWorkspace();
@@ -245,53 +253,50 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.toolStatusByPath.clear();
     this.wasmExecutablePathNoticed = false;
     this.runtimeManager.refresh();
-    this.updateShellcheckrcWatcher();
+    this.configFileWatcher.update();
 
     // Shellcheck all open shell documents
     this.triggerLintForEntireWorkspace();
   }
 
-  private updateShellcheckrcWatcher() {
-    const enabled = vscode.workspace
-      .getConfiguration("shellcheck")
-      .get(ShellCheckSettings.keys.lintOnShellcheckrcChange, true);
-    if (enabled === (this.shellcheckrcWatcher !== undefined)) {
-      return;
-    }
-    if (!enabled) {
-      this.shellcheckrcWatcher!.dispose();
-      this.shellcheckrcWatcher = undefined;
-      return;
-    }
-
-    const watcher = vscode.workspace.createFileSystemWatcher(
-      "**/{.shellcheckrc,shellcheckrc}",
-    );
-    const onEvent = (uri: vscode.Uri) => this.onDidChangeShellcheckrc(uri);
-    this.shellcheckrcWatcher = vscode.Disposable.from(
-      watcher,
-      watcher.onDidCreate(onEvent),
-      watcher.onDidChange(onEvent),
-      watcher.onDidDelete(onEvent),
-    );
-  }
-
-  private onDidChangeShellcheckrc(rcUri: vscode.Uri) {
-    // shellcheck looks for its rc file from the script's folder upwards, so
-    // only documents at or below this folder can be affected.
-    const folder = rcUri.path.slice(0, rcUri.path.lastIndexOf("/") + 1);
+  private async onDidChangeConfigFile(change: ConfigFileChange) {
     for (const textDocument of vscode.workspace.textDocuments) {
-      const { uri } = textDocument;
-      if (
-        uri.scheme === rcUri.scheme &&
-        uri.authority === rcUri.authority &&
-        uri.path.startsWith(folder)
-      ) {
-        this.triggerLint(textDocument).catch((error) =>
-          logging.error(`onDidChangeShellcheckrc: ${error}`),
-        );
+      if (!this.isAllowedTextDocument(textDocument)) {
+        continue;
+      }
+      try {
+        const settings = await this.getSettings(textDocument);
+        const rcArgs = parseRcArgs(settings.customArgs);
+        const rcfile = await this.resolveRcfile(textDocument, settings);
+        if (
+          isAffected(change, {
+            uri: textDocument.uri,
+            runtime: settings.runtime,
+            rcArgs,
+            rcfile,
+          })
+        ) {
+          await this.triggerLint(textDocument);
+        }
+      } catch (error) {
+        logging.error(`onDidChangeConfigFile: ${error}`);
       }
     }
+  }
+
+  /** The file a document passes with `--rcfile`, as the native runtime would
+   * open it. The wasm runtime resolves it inside its sandbox instead, so it is
+   * not watched there. */
+  private async resolveRcfile(
+    textDocument: vscode.TextDocument,
+    settings: ShellCheckSettings,
+  ): Promise<vscode.Uri | undefined> {
+    const { rcfile } = parseRcArgs(settings.customArgs);
+    if (rcfile === undefined || settings.runtime !== "native") {
+      return undefined;
+    }
+    const cwd = await this.nativeWorkingDirectory(textDocument, settings);
+    return vscode.Uri.file(nativeRuntime!.resolvePath(cwd ?? "", rcfile));
   }
 
   private async onDidOpenTextDocument(textDocument: vscode.TextDocument) {
@@ -347,7 +352,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   }
 
   public dispose(): void {
-    this.shellcheckrcWatcher?.dispose();
+    this.configFileWatcher.dispose();
     this.codeActionCollection.clear();
     this.diagnosticCollection.dispose();
   }
@@ -782,6 +787,10 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
               ),
             }
           : { cwd: await this.nativeWorkingDirectory(textDocument, settings) };
+      const rcfile = await this.resolveRcfile(textDocument, settings);
+      if (rcfile) {
+        this.configFileWatcher.watchRcfile(rcfile);
+      }
       lintResult = await runner.run({
         documentKey: textDocument.uri.toString(),
         executablePath: executable.path,

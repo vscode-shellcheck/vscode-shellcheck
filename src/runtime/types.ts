@@ -57,6 +57,12 @@ export interface NativeRuntime {
     useWorkspaceRootAsCwd: boolean,
   ): Promise<string | undefined>;
   createRunner(): ShellCheckRunner;
+  /** The user-level rc files shellcheck falls back to once its search from the
+   * script's folder reaches the root. */
+  userConfigFiles(): string[];
+  /** Every folder above `folder`, up to the root. */
+  parentDirectories(folder: string): string[];
+  resolvePath(base: string, path: string): string;
 }
 
 export interface ShellCheckRunner {

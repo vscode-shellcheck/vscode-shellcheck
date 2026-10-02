@@ -37,9 +37,9 @@ export default defineConfig([
     files: "out/test/rc-watch.test.js",
     version,
     launchArgs,
-    // VS Code only reports file events inside an open workspace folder, and
-    // the test writes its `.shellcheckrc` there.
-    workspaceFolder: "test/fixtures/rc-watch",
+    // The workspace watcher needs a folder open, and the folder above it holds
+    // the rc file that stands in for one outside the workspace.
+    workspaceFolder: "test/fixtures/rc-watch/workspace",
     mocha: {
       ui: "tdd",
       timeout: 10000,

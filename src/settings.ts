@@ -29,7 +29,7 @@ export namespace ShellCheckSettings {
     ignoreFileSchemes: "ignoreFileSchemes",
     useWorkspaceRootAsCwd: "useWorkspaceRootAsCwd",
     runtime: "runtime",
-    lintOnShellcheckrcChange: "lintOnShellcheckrcChange",
+    watchConfigFiles: "watchConfigFiles",
   };
 }
 

@@ -72,7 +72,9 @@ Default options are:
     "githubpr",
     "gitpr",
     "githubcommit"
-  ]
+  ],
+  "shellcheck.watchConfigFiles.workspace": false,
+  "shellcheck.watchConfigFiles.user": false
 }
 ```
 

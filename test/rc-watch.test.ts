@@ -17,79 +17,160 @@ const hasSC2034 = (diagnostics: readonly vscode.Diagnostic[]) =>
       typeof diagnostic.code === "object" && diagnostic.code.value === "SC2034",
   );
 
-function rcUri(): vscode.Uri {
-  return vscode.Uri.joinPath(
-    vscode.workspace.workspaceFolders![0].uri,
-    ".shellcheckrc",
-  );
+function workspaceFolder(): vscode.Uri {
+  return vscode.workspace.workspaceFolders![0].uri;
 }
 
-async function writeRc(content: string): Promise<void> {
-  await vscode.workspace.fs.writeFile(
-    rcUri(),
-    new TextEncoder().encode(content),
-  );
+/** Every config file the suite writes, so teardown can remove them all. */
+function configFiles() {
+  return {
+    workspace: vscode.Uri.joinPath(workspaceFolder(), ".shellcheckrc"),
+    parent: vscode.Uri.joinPath(workspaceFolder(), "..", ".shellcheckrc"),
+    custom: vscode.Uri.joinPath(workspaceFolder(), "custom.rc"),
+  };
 }
 
-async function deleteRc(): Promise<void> {
+async function write(uri: vscode.Uri, content: string): Promise<void> {
+  await vscode.workspace.fs.writeFile(uri, new TextEncoder().encode(content));
+}
+
+async function remove(uri: vscode.Uri): Promise<void> {
   try {
-    await vscode.workspace.fs.delete(rcUri());
+    await vscode.workspace.fs.delete(uri);
   } catch {
     // Already gone.
   }
 }
 
+async function removeConfigFiles(): Promise<void> {
+  for (const uri of Object.values(configFiles())) {
+    await remove(uri);
+  }
+}
+
+async function openLintedScript(): Promise<vscode.TextDocument> {
+  const document = await openWorkspaceDocument("script.sh");
+  assert.ok(hasSC2034(await lintActiveDocument(document)));
+  return document;
+}
+
+/** Run `action` and wait for the document's SC2034 to come or go. */
+async function expectSC2034(
+  document: vscode.TextDocument,
+  present: boolean,
+  action: () => Promise<void>,
+): Promise<void> {
+  const settled = waitForDiagnostics(
+    document,
+    15000,
+    (diagnostics) => hasSC2034(diagnostics) === present,
+  );
+  await action();
+  await settled;
+}
+
+/** Run `action` and check the document's diagnostics were left alone. */
+async function expectNoRelint(
+  document: vscode.TextDocument,
+  action: () => Promise<void>,
+): Promise<void> {
+  await action();
+  // A re-lint would have dropped SC2034 well within this window.
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+  assert.ok(hasSC2034(vscode.languages.getDiagnostics(document.uri)));
+}
+
+function setupSuite(runtime: "native" | "wasm") {
+  suiteSetup(async () => {
+    await setRuntime(runtime);
+  });
+
+  suiteTeardown(async () => {
+    await resetRuntime();
+  });
+
+  setup(async () => {
+    await removeConfigFiles();
+  });
+
+  teardown(async () => {
+    await updateShellCheckSetting("watchConfigFiles.workspace", undefined);
+    await updateShellCheckSetting("watchConfigFiles.user", undefined);
+    await updateShellCheckSetting("customArgs", undefined);
+    await closeAllEditors();
+    await removeConfigFiles();
+  });
+}
+
 for (const runtime of RUNTIMES) {
-  suite(`.shellcheckrc changes (${runtime} runtime)`, function () {
+  suite(`Config file changes (${runtime} runtime)`, function () {
     // Each case waits on file watcher events on top of a lint.
     this.timeout(30000);
+    setupSuite(runtime);
 
-    suiteSetup(async () => {
-      await setRuntime(runtime);
+    test("a workspace .shellcheckrc being created, changed or deleted re-lints", async () => {
+      await updateShellCheckSetting("watchConfigFiles.workspace", true);
+      const { workspace } = configFiles();
+      const document = await openLintedScript();
+
+      await expectSC2034(document, false, () =>
+        write(workspace, "disable=SC2034\n"),
+      );
+      await expectSC2034(document, true, () =>
+        write(workspace, "disable=SC2154\n"),
+      );
+      await expectSC2034(document, false, () =>
+        write(workspace, "disable=SC2034\n"),
+      );
+      await expectSC2034(document, true, () => remove(workspace));
     });
 
-    suiteTeardown(async () => {
-      await resetRuntime();
-    });
-
-    teardown(async () => {
-      await updateShellCheckSetting("lintOnShellcheckrcChange", undefined);
-      await closeAllEditors();
-      await deleteRc();
-    });
-
-    test("open documents are re-linted when .shellcheckrc is created, changed or deleted", async () => {
-      await deleteRc();
-      const document = await openWorkspaceDocument("script.sh");
-      assert.ok(hasSC2034(await lintActiveDocument(document)));
-
-      let cleared = waitForDiagnostics(document, 15000, (d) => !hasSC2034(d));
-      await writeRc("disable=SC2034\n");
-      await cleared;
-
-      const restored = waitForDiagnostics(document, 15000, hasSC2034);
-      await writeRc("disable=SC2154\n");
-      await restored;
-
-      cleared = waitForDiagnostics(document, 15000, (d) => !hasSC2034(d));
-      await writeRc("disable=SC2034\n");
-      await cleared;
-
-      const afterDelete = waitForDiagnostics(document, 15000, hasSC2034);
-      await deleteRc();
-      await afterDelete;
-    });
-
-    test("nothing is re-linted when the setting is off", async () => {
-      await deleteRc();
-      await updateShellCheckSetting("lintOnShellcheckrcChange", false);
-      const document = await openWorkspaceDocument("script.sh");
-      assert.ok(hasSC2034(await lintActiveDocument(document)));
-
-      await writeRc("disable=SC2034\n");
-      // A re-lint would have dropped SC2034 well within this window.
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-      assert.ok(hasSC2034(vscode.languages.getDiagnostics(document.uri)));
+    test("nothing is watched by default", async () => {
+      const document = await openLintedScript();
+      await expectNoRelint(document, () =>
+        write(configFiles().workspace, "disable=SC2034\n"),
+      );
     });
   });
 }
+
+suite(
+  "Config file changes outside the workspace (native runtime)",
+  function () {
+    this.timeout(30000);
+    setupSuite("native");
+
+    test("an rc file above the workspace folder re-lints", async () => {
+      await updateShellCheckSetting("watchConfigFiles.user", true);
+      const { parent } = configFiles();
+      const document = await openLintedScript();
+
+      await expectSC2034(document, false, () =>
+        write(parent, "disable=SC2034\n"),
+      );
+      await expectSC2034(document, true, () => remove(parent));
+    });
+
+    test("an rc file above the workspace folder needs the user setting", async () => {
+      await updateShellCheckSetting("watchConfigFiles.workspace", true);
+      const document = await openLintedScript();
+      await expectNoRelint(document, () =>
+        write(configFiles().parent, "disable=SC2034\n"),
+      );
+    });
+
+    test("the file passed with --rcfile re-lints", async () => {
+      const { custom } = configFiles();
+      await updateShellCheckSetting("watchConfigFiles.workspace", true);
+      await updateShellCheckSetting("customArgs", ["--rcfile", custom.fsPath]);
+      const document = await openLintedScript();
+
+      await expectSC2034(document, false, () =>
+        write(custom, "disable=SC2034\n"),
+      );
+      await expectSC2034(document, true, () =>
+        write(custom, "disable=SC2154\n"),
+      );
+    });
+  },
+);
