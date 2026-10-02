@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" fill="none" role="img" aria-label="Changing .shellcheckrc lints the open scripts again">
+<defs><clipPath id="frame"><rect width="520" height="320" rx="10"/></clipPath></defs>
+<g clip-path="url(#frame)">
+<rect width="520" height="320" fill="var(--vscode-editor-background, #1f1f1f)"/>
+<rect y="0" width="36" height="320" fill="var(--vscode-activityBar-background, #181818)"/>
+<rect x="10" y="14" width="16" height="16" rx="3" fill="var(--vscode-activityBar-inactiveForeground, #868686)" opacity=".5"/>
+<rect x="10" y="46" width="16" height="16" rx="3" fill="var(--vscode-activityBar-inactiveForeground, #868686)" opacity=".5"/>
+<rect x="10" y="78" width="16" height="16" rx="3" fill="var(--vscode-activityBar-inactiveForeground, #868686)" opacity=".5"/>
+<rect x="36" y="0" width="484" height="32" fill="var(--vscode-editorGroupHeader-tabsBackground, #181818)"/>
+<rect x="36" y="0" width="104" height="32" fill="var(--vscode-tab-activeBackground, #1f1f1f)"/>
+<text x="50" y="21" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-tab-activeForeground, #ffffff)" xml:space="preserve">.shellcheckrc</text>
+<rect y="292" width="520" height="28" fill="var(--vscode-statusBar-background, #181818)"/>
+<rect x="36" width="140" height="292" fill="var(--vscode-sideBar-background, #181818)"/>
+<rect x="176" width="110" height="32" fill="var(--vscode-tab-activeBackground, #1f1f1f)"/>
+<text x="190" y="21" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-tab-activeForeground, #ffffff)" xml:space="preserve">.shellcheckrc</text>
+<text x="50" y="21" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="11" fill="var(--vscode-sideBarTitle-foreground, #cccccc)" xml:space="preserve">EXPLORER</text>
+<rect x="36" y="62" width="140" height="24" fill="var(--vscode-list-inactiveSelectionBackground, #37373d)"/>
+<text x="56" y="79" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-sideBar-foreground, #cccccc)" xml:space="preserve">.shellcheckrc</text>
+<text x="56" y="103" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-sideBar-foreground, #cccccc)" xml:space="preserve">build.sh</text>
+<g transform="translate(150 90)"><path d="M12.5 8a4.5 4.5 0 1 1-1.32-3.18M12.5 3v2.5H10" stroke="var(--vscode-textLink-foreground, #4daafc)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="56" y="127" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-sideBar-foreground, #cccccc)" xml:space="preserve">deploy.sh</text>
+<g transform="translate(150 114)"><path d="M12.5 8a4.5 4.5 0 1 1-1.32-3.18M12.5 3v2.5H10" stroke="var(--vscode-textLink-foreground, #4daafc)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="56" y="151" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-sideBar-foreground, #cccccc)" xml:space="preserve">test.sh</text>
+<g transform="translate(150 138)"><path d="M12.5 8a4.5 4.5 0 1 1-1.32-3.18M12.5 3v2.5H10" stroke="var(--vscode-textLink-foreground, #4daafc)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="206" y="66" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" text-anchor="end" fill="var(--vscode-editorLineNumber-foreground, #6e7681)" xml:space="preserve">1</text>
+<text x="220" y="66" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" fill="var(--vscode-descriptionForeground, #9d9d9d)" xml:space="preserve"># Shared by every script</text>
+<text x="206" y="94" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" text-anchor="end" fill="var(--vscode-editorLineNumber-foreground, #6e7681)" xml:space="preserve">2</text>
+<text x="220" y="94" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" fill="var(--vscode-editor-foreground, #cccccc)" xml:space="preserve">disable=SC2086</text>
+<text x="206" y="122" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" text-anchor="end" fill="var(--vscode-editorLineNumber-foreground, #6e7681)" xml:space="preserve">3</text>
+<text x="220" y="122" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" fill="var(--vscode-editor-foreground, #cccccc)" xml:space="preserve">shell=bash</text>
+<rect x="180" y="78" width="3" height="20" fill="var(--vscode-editorGutter-addedBackground, #2ea043)"/>
+<text x="492" y="311" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="12" text-anchor="end" fill="var(--vscode-statusBar-foreground, #cccccc)" xml:space="preserve">Plain Text</text>
+</g>
+</svg>

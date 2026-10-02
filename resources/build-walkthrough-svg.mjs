@@ -344,11 +344,76 @@ function wasm() {
   );
 }
 
+// Scene 4: open scripts are linted again when a .shellcheckrc changes. Static.
+function configFiles() {
+  const side = 176;
+  const refresh = "M12.5 8a4.5 4.5 0 1 1-1.32-3.18M12.5 3v2.5H10";
+  const files = [".shellcheckrc", "build.sh", "deploy.sh", "test.sh"];
+  const code = ["# Shared by every script", "disable=SC2086", "shell=bash"];
+  return svg("Changing .shellcheckrc lints the open scripts again", [
+    ...workbench(0, ".shellcheckrc"),
+    // The tab belongs to the editor, right of the side bar.
+    `<rect x="36" width="${side - 36}" height="${H - 28}" fill="${c("sideBar-background", "#181818")}"/>`,
+    `<rect x="${side}" width="110" height="32" fill="${c("tab-activeBackground", "#1f1f1f")}"/>`,
+    text(side + 14, 21, ".shellcheckrc", {
+      size: 13,
+      fill: c("tab-activeForeground", "#ffffff"),
+    }),
+    text(50, 21, "EXPLORER", {
+      size: 11,
+      fill: c("sideBarTitle-foreground", "#cccccc"),
+    }),
+    `<rect x="36" y="62" width="${side - 36}" height="24" fill="${c("list-inactiveSelectionBackground", "#37373d")}"/>`,
+    ...files.flatMap((name, i) => {
+      const y = 79 + i * 24;
+      const out = [
+        text(56, y, name, {
+          size: 13,
+          fill: c("sideBar-foreground", "#cccccc"),
+        }),
+      ];
+      if (i > 0) {
+        out.push(
+          `<g transform="translate(${side - 26} ${y - 13})"><path d="${refresh}" stroke="${c("textLink-foreground", "#4daafc")}" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></g>`,
+        );
+      }
+      return out;
+    }),
+    ...code.flatMap((line, i) => {
+      const y = 66 + i * 28;
+      return [
+        text(side + 30, y, String(i + 1), {
+          size: 15,
+          font: MONO,
+          anchor: "end",
+          fill: c("editorLineNumber-foreground", "#6e7681"),
+        }),
+        text(side + 44, y, line, {
+          size: 15,
+          font: MONO,
+          fill:
+            i === 0
+              ? c("descriptionForeground", "#9d9d9d")
+              : c("editor-foreground", "#cccccc"),
+        }),
+      ];
+    }),
+    // The line just added.
+    `<rect x="${side + 4}" y="78" width="3" height="20" fill="${c("editorGutter-addedBackground", "#2ea043")}"/>`,
+    text(492, H - 9, "Plain Text", {
+      size: 12,
+      anchor: "end",
+      fill: c("statusBar-foreground", "#cccccc"),
+    }),
+  ]);
+}
+
 const out = new URL("walkthrough/", import.meta.url);
 for (const [name, render] of [
   ["status-bar.svg", statusBar],
   ["web.svg", web],
   ["wasm.svg", wasm],
+  ["config-files.svg", configFiles],
 ]) {
   writeFileSync(new URL(name, out), render());
 }
