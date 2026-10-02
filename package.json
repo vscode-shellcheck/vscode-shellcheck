@@ -109,8 +109,21 @@
       {
         "command": "shellcheck.collectDiagnostics",
         "title": "ShellCheck: Collect Diagnostics For Current Document"
+      },
+      {
+        "command": "shellcheck.showMenu",
+        "title": "ShellCheck: Show Menu"
       }
     ],
+    "icons": {
+      "shellcheck-logo": {
+        "description": "ShellCheck logo",
+        "default": {
+          "fontPath": "./resources/shellcheck-icons.woff",
+          "fontCharacter": "\\E000"
+        }
+      }
+    },
     "configuration": [
       {
         "title": "ShellCheck",
@@ -316,6 +329,7 @@
     "build:watch": "node esbuild.js --watch",
     "build:prod": "npm run check-types && node esbuild.js --production",
     "build:test": "tsc --project tsconfig.test.json",
+    "build:icons": "node resources/build-icon-font.mjs",
     "build:test:web": "esbuild test/web/index.ts --bundle --format=cjs --platform=browser --target=es2022 --external:vscode --outfile=out/web-test/index.cjs",
     "build:test:watch": "tsc --project tsconfig.test.json --watch",
     "build:all": "run-p build build:test",
@@ -362,6 +376,9 @@
     "semantic-release": "^25.0.9",
     "semantic-release-stop-before-publish": "^2.0.0",
     "semantic-release-vsce": "^6.1.8",
+    "svg2ttf": "^6.1.0",
+    "svgicons2svgfont": "^16.0.0",
+    "ttf2woff": "^3.0.0",
     "typescript": "^5.9.3"
   },
   "engines": {

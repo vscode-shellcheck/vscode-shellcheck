@@ -7,6 +7,7 @@ import { registerLogger, setLoggingLevel } from "./utils/logging/index.js";
 import { OutputChannelLogger } from "./utils/logging/logger-outputchannel.js";
 import { LogLevelNameType } from "./utils/logging/types.js";
 import { MarkdownDiagnosticProvider } from "./markdown-diagnostics.js";
+import { StatusBar } from "./status-bar.js";
 
 export function activate(
   context: vscode.ExtensionContext,
@@ -38,6 +39,10 @@ export function activate(
     outputChannel.show(true),
   );
   context.subscriptions.push(linter);
+
+  context.subscriptions.push(
+    new StatusBar(linter, () => outputChannel.show(true)),
+  );
 
   context.subscriptions.push(
     vscode.languages.registerHoverProvider(

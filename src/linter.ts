@@ -39,6 +39,7 @@ import { getWikiUrlForRule } from "./utils/link.js";
 import * as logging from "./utils/logging/index.js";
 import { getWorkspaceFolderPath } from "./utils/path.js";
 import { shellDialectForUri } from "./utils/shell-dialect.js";
+import type { StatusSnapshot, StatusSource } from "./status-bar.js";
 
 namespace CommandIds {
   export const runLint: string = "shellcheck.runLint";
@@ -92,7 +93,7 @@ function isOutOfNativeReach(
   );
 }
 
-type ToolStatus =
+export type ToolStatus =
   | { ok: true; version: SemVer; ghcVersion?: string }
   | { ok: false; reason: "executableNotFound" | "executionFailed" };
 
@@ -107,7 +108,9 @@ function toolStatusByError(error: any): ToolStatus {
   return { ok: false, reason: "executionFailed" };
 }
 
-export default class ShellCheckProvider implements vscode.CodeActionProvider {
+export default class ShellCheckProvider
+  implements vscode.CodeActionProvider, StatusSource
+{
   public static readonly LANGUAGES = ["shellscript", "bats"];
 
   public static readonly providedCodeActionKinds = [
@@ -130,6 +133,8 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
    * deliberately leaves it alone. */
   private readonly wasmFailureNotifier: WasmFailureNotifier;
   private readonly configFileWatcher: ConfigFileWatcher;
+  private readonly statusEmitter = new vscode.EventEmitter<vscode.Uri>();
+  public readonly onDidChangeStatus = this.statusEmitter.event;
 
   constructor(
     private readonly context: vscode.ExtensionContext,
@@ -336,6 +341,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.configFileWatcher.dispose();
     this.codeActionCollection.clear();
     this.diagnosticCollection.dispose();
+    this.statusEmitter.dispose();
   }
 
   public getDiagnostics(uri: vscode.Uri): readonly vscode.Diagnostic[] {
@@ -347,6 +353,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   ): Promise<ShellCheckSettings> {
     if (!this.settingsByUri.has(textDocument.uri.toString())) {
       await this.updateConfiguration(textDocument);
+      this.statusEmitter.fire(textDocument.uri);
     }
     return this.settingsByUri.get(textDocument.uri.toString())!;
   }
@@ -554,7 +561,24 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     };
   };
 
-  private isAllowedTextDocument(textDocument: vscode.TextDocument): boolean {
+  public getStatus(
+    textDocument: vscode.TextDocument,
+  ): StatusSnapshot | undefined {
+    const settings = this.settingsByUri.get(textDocument.uri.toString());
+    if (!settings) {
+      return undefined;
+    }
+    return {
+      runtime: settings.runtime,
+      canSwitchRuntime: nativeRuntime !== undefined,
+      enabled: settings.enabled,
+      trigger: settings.trigger,
+      bundled: settings.executable.bundled,
+      tool: this.toolStatusByPath.get(toolStatusKey(settings)),
+    };
+  }
+
+  public isAllowedTextDocument(textDocument: vscode.TextDocument): boolean {
     const allowedDocumentSelector: vscode.DocumentSelector = [
       ...ShellCheckProvider.LANGUAGES,
       ...this.additionalDocumentFilters,
