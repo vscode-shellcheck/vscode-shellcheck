@@ -9,3 +9,5 @@
 *.orig
 
 .envrc
+/test/fixtures/rc-watch/**/.shellcheckrc
+/test/fixtures/rc-watch/workspace/custom.rc

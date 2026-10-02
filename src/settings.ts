@@ -29,6 +29,7 @@ export namespace ShellCheckSettings {
     ignoreFileSchemes: "ignoreFileSchemes",
     useWorkspaceRootAsCwd: "useWorkspaceRootAsCwd",
     runtime: "runtime",
+    watchConfigFiles: "watchConfigFiles",
   };
 }
 

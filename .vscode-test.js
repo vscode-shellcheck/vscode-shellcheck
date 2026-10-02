@@ -6,9 +6,9 @@ const launchArgs = ["--new-window", "--disable-extensions"];
 export default defineConfig([
   {
     label: "integration",
-    // Everything except the parity suite, which needs the workspace folder the
-    // entry below opens.
-    files: "out/test/**/!(parity).test.js",
+    // Everything except the suites that need the workspace folders the entries
+    // below open.
+    files: "out/test/**/!(parity|rc-watch).test.js",
     version,
     launchArgs,
     mocha: {
@@ -30,6 +30,19 @@ export default defineConfig([
       // A parity case pays for two runtime switches and a wasm cold start on
       // top of the lint itself.
       timeout: 30000,
+    },
+  },
+  {
+    label: "rc-watch",
+    files: "out/test/rc-watch.test.js",
+    version,
+    launchArgs,
+    // The workspace watcher needs a folder open, and the folder above it holds
+    // the rc file that stands in for one outside the workspace.
+    workspaceFolder: "test/fixtures/rc-watch/workspace",
+    mocha: {
+      ui: "tdd",
+      timeout: 10000,
     },
   },
 ]);

@@ -124,183 +124,202 @@
         }
       }
     },
-    "configuration": {
-      "title": "ShellCheck",
-      "type": "object",
-      "properties": {
-        "shellcheck.enable": {
-          "description": "Whether ShellCheck is enabled or not.",
-          "type": "boolean",
-          "scope": "resource",
-          "default": true
-        },
-        "shellcheck.enableQuickFix": {
-          "description": "Whether to enable the _Quick Fix_ feature or not.",
-          "type": "boolean",
-          "scope": "resource",
-          "default": true
-        },
-        "shellcheck.markdownDiagnostics": {
-          "markdownDescription": "**Experimental:** Show a formatted ShellCheck hover with severity and rule documentation. VS Code also displays the original diagnostic; the Problems view is unchanged. [Read the documentation](https://github.com/vscode-shellcheck/vscode-shellcheck#shellcheckmarkdowndiagnostics).",
-          "type": "boolean",
-          "scope": "resource",
-          "default": false,
-          "tags": [
-            "experimental"
-          ]
-        },
-        "shellcheck.executablePath": {
-          "markdownDescription": "Path to the `shellcheck` executable (bundled binaries will be used if empty). Only used when `#shellcheck.runtime#` is `native`, so it has no effect in VS Code for the Web.",
-          "examples": [
-            "shellcheck"
-          ],
-          "type": "string",
-          "scope": "machine-overridable"
-        },
-        "shellcheck.runtime": {
-          "markdownDescription": "**Experimental.** Which ShellCheck runtime to use. VS Code for the Web always uses `wasm` and ignores this setting.\n\n- `native` — run the bundled or user-provided `shellcheck` executable. This is the default, and the only supported runtime on desktop.\n- `wasm` — run a bundled WebAssembly (WASI) build of ShellCheck inside the editor. No executable is required and it works on every platform and in virtual workspaces, but linting is currently 3-4x slower than native, `#shellcheck.executablePath#` is ignored, and files outside the document's workspace folder are not visible to `source` directives or `.shellcheckrc` lookup.",
-          "type": "string",
-          "enum": [
-            "native",
-            "wasm"
-          ],
-          "enumDescriptions": [
-            "Run the bundled or user-provided shellcheck executable.",
-            "Run the bundled WebAssembly build of ShellCheck (experimental, slower)."
-          ],
-          "scope": "window",
-          "default": "native",
-          "tags": [
-            "experimental"
-          ]
-        },
-        "shellcheck.run": {
-          "description": "Whether ShellCheck is run on save, on type, or manually.",
-          "type": "string",
-          "enum": [
-            "onSave",
-            "onType",
-            "manual"
-          ],
-          "scope": "resource",
-          "default": "onType"
-        },
-        "shellcheck.exclude": {
-          "markdownDescription": "Exclude certain error codes. For example, to exclude [SC1017](https://shellcheck.net/wiki/SC1017), enter _1017_. Enumerated error codes can be found [in this gist](https://gist.github.com/nicerobot/53cee11ee0abbdc997661e65b348f375). Always prefer to use a `.shellcheckrc` file instead of this setting.",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "pattern": "^(SC)?\\d{4}$",
-            "patternErrorMessage": "Valid shellcheck error code should be 4-digit numbers, 1017 for example.\n"
-          },
-          "scope": "resource",
-          "default": [],
-          "examples": [
-            [
-              "1017"
-            ]
-          ]
-        },
-        "shellcheck.customArgs": {
-          "markdownDescription": "Custom arguments to pass to ShellCheck. Always prefer to use a `.shellcheckrc` file instead of this setting. When `#shellcheck.runtime#` is `wasm`, as it always is in VS Code for the Web, paths on your machine in these arguments do not resolve.",
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "scope": "resource",
-          "default": [],
-          "examples": [
-            [
-              "--external-sources"
-            ]
-          ]
-        },
-        "shellcheck.ignorePatterns": {
-          "markdownDescription": "Configure glob patterns for excluding files and folders by ShellCheck. Glob patterns are interpreted relative to the workspace's root folder. Read more about glob patterns [here](https://code.visualstudio.com/docs/editor/glob-patterns).",
-          "examples": [
-            {
-              "**/*.zsh": true,
-              "**/*.zsh*": true,
-              "**/.git/*.sh": true,
-              "**/folder/**/*.sh": true
-            }
-          ],
-          "type": "object",
-          "scope": "resource",
-          "additionalProperties": {
+    "configuration": [
+      {
+        "title": "ShellCheck",
+        "type": "object",
+        "properties": {
+          "shellcheck.enable": {
+            "description": "Whether ShellCheck is enabled or not.",
             "type": "boolean",
-            "description": "The glob pattern to match file paths against. Set to true or false to enable or disable the pattern."
+            "scope": "resource",
+            "default": true
           },
-          "default": {
-            "**/*.csh": true,
-            "**/*.cshrc": true,
-            "**/*.fish": true,
-            "**/*.login": true,
-            "**/*.logout": true,
-            "**/*.tcsh": true,
-            "**/*.tcshrc": true,
-            "**/*.xonshrc": true,
-            "**/*.xsh": true,
-            "**/*.zsh": true,
-            "**/*.zshrc": true,
-            "**/zshrc": true,
-            "**/*.zprofile": true,
-            "**/zprofile": true,
-            "**/*.zlogin": true,
-            "**/zlogin": true,
-            "**/*.zlogout": true,
-            "**/zlogout": true,
-            "**/*.zshenv": true,
-            "**/zshenv": true,
-            "**/*.zsh-theme": true
+          "shellcheck.enableQuickFix": {
+            "description": "Whether to enable the _Quick Fix_ feature or not.",
+            "type": "boolean",
+            "scope": "resource",
+            "default": true
+          },
+          "shellcheck.markdownDiagnostics": {
+            "markdownDescription": "**Experimental:** Show a formatted ShellCheck hover with severity and rule documentation. VS Code also displays the original diagnostic; the Problems view is unchanged. [Read the documentation](https://github.com/vscode-shellcheck/vscode-shellcheck#shellcheckmarkdowndiagnostics).",
+            "type": "boolean",
+            "scope": "resource",
+            "default": false,
+            "tags": [
+              "experimental"
+            ]
+          },
+          "shellcheck.executablePath": {
+            "markdownDescription": "Path to the `shellcheck` executable (bundled binaries will be used if empty). Only used when `#shellcheck.runtime#` is `native`, so it has no effect in VS Code for the Web.",
+            "examples": [
+              "shellcheck"
+            ],
+            "type": "string",
+            "scope": "machine-overridable"
+          },
+          "shellcheck.runtime": {
+            "markdownDescription": "**Experimental.** Which ShellCheck runtime to use. VS Code for the Web always uses `wasm` and ignores this setting.\n\n- `native` — run the bundled or user-provided `shellcheck` executable. This is the default, and the only supported runtime on desktop.\n- `wasm` — run a bundled WebAssembly (WASI) build of ShellCheck inside the editor. No executable is required and it works on every platform and in virtual workspaces, but linting is currently 3-4x slower than native, `#shellcheck.executablePath#` is ignored, and files outside the document's workspace folder are not visible to `source` directives or `.shellcheckrc` lookup.",
+            "type": "string",
+            "enum": [
+              "native",
+              "wasm"
+            ],
+            "enumDescriptions": [
+              "Run the bundled or user-provided shellcheck executable.",
+              "Run the bundled WebAssembly build of ShellCheck (experimental, slower)."
+            ],
+            "scope": "window",
+            "default": "native",
+            "tags": [
+              "experimental"
+            ]
+          },
+          "shellcheck.run": {
+            "description": "Whether ShellCheck is run on save, on type, or manually.",
+            "type": "string",
+            "enum": [
+              "onSave",
+              "onType",
+              "manual"
+            ],
+            "scope": "resource",
+            "default": "onType"
+          },
+          "shellcheck.exclude": {
+            "markdownDescription": "Exclude certain error codes. For example, to exclude [SC1017](https://shellcheck.net/wiki/SC1017), enter _1017_. Enumerated error codes can be found [in this gist](https://gist.github.com/nicerobot/53cee11ee0abbdc997661e65b348f375). Always prefer to use a `.shellcheckrc` file instead of this setting.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^(SC)?\\d{4}$",
+              "patternErrorMessage": "Valid shellcheck error code should be 4-digit numbers, 1017 for example.\n"
+            },
+            "scope": "resource",
+            "default": [],
+            "examples": [
+              [
+                "1017"
+              ]
+            ]
+          },
+          "shellcheck.customArgs": {
+            "markdownDescription": "Custom arguments to pass to ShellCheck. Always prefer to use a `.shellcheckrc` file instead of this setting. When `#shellcheck.runtime#` is `wasm`, as it always is in VS Code for the Web, paths on your machine in these arguments do not resolve.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "scope": "resource",
+            "default": [],
+            "examples": [
+              [
+                "--external-sources"
+              ]
+            ]
+          },
+          "shellcheck.ignorePatterns": {
+            "markdownDescription": "Configure glob patterns for excluding files and folders by ShellCheck. Glob patterns are interpreted relative to the workspace's root folder. Read more about glob patterns [here](https://code.visualstudio.com/docs/editor/glob-patterns).",
+            "examples": [
+              {
+                "**/*.zsh": true,
+                "**/*.zsh*": true,
+                "**/.git/*.sh": true,
+                "**/folder/**/*.sh": true
+              }
+            ],
+            "type": "object",
+            "scope": "resource",
+            "additionalProperties": {
+              "type": "boolean",
+              "description": "The glob pattern to match file paths against. Set to true or false to enable or disable the pattern."
+            },
+            "default": {
+              "**/*.csh": true,
+              "**/*.cshrc": true,
+              "**/*.fish": true,
+              "**/*.login": true,
+              "**/*.logout": true,
+              "**/*.tcsh": true,
+              "**/*.tcshrc": true,
+              "**/*.xonshrc": true,
+              "**/*.xsh": true,
+              "**/*.zsh": true,
+              "**/*.zshrc": true,
+              "**/zshrc": true,
+              "**/*.zprofile": true,
+              "**/zprofile": true,
+              "**/*.zlogin": true,
+              "**/zlogin": true,
+              "**/*.zlogout": true,
+              "**/zlogout": true,
+              "**/*.zshenv": true,
+              "**/zshenv": true,
+              "**/*.zsh-theme": true
+            }
+          },
+          "shellcheck.ignoreFileSchemes": {
+            "description": "Matching file schemes are being ignored by shellcheck. The default also covers the virtual documents of the GitHub Pull Requests extension.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "scope": "application",
+            "default": [
+              "git",
+              "gitfs",
+              "output",
+              "review",
+              "pr",
+              "githubpr",
+              "gitpr",
+              "githubcommit"
+            ]
+          },
+          "shellcheck.useWorkspaceRootAsCwd": {
+            "description": "Whether to use the workspace root directory as the current working directory when launching `shellcheck`. Otherwise, the directory of the file being linted will be used.",
+            "type": "boolean",
+            "scope": "resource",
+            "default": false
+          },
+          "shellcheck.logLevel": {
+            "description": "The trace level the extension logs at, defaults to 'info'.",
+            "type": "string",
+            "scope": "window",
+            "enum": [
+              "trace",
+              "debug",
+              "info",
+              "warn",
+              "error",
+              "off"
+            ],
+            "default": "info"
+          },
+          "shellcheck.disableVersionCheck": {
+            "markdownDescription": "Whether to disable shellcheck binary version check, which prompts for updating when an outdated version is found. The check only runs when `#shellcheck.runtime#` is `native`, so it has no effect in VS Code for the Web.",
+            "type": "boolean",
+            "scope": "machine-overridable",
+            "default": false
           }
-        },
-        "shellcheck.ignoreFileSchemes": {
-          "description": "Matching file schemes are being ignored by shellcheck. The default also covers the virtual documents of the GitHub Pull Requests extension.",
-          "type": "array",
-          "items": {
-            "type": "string"
+        }
+      },
+      {
+        "title": "Config Files",
+        "properties": {
+          "shellcheck.watchConfigFiles.workspace": {
+            "markdownDescription": "Lint open documents again when a `.shellcheckrc` or `shellcheckrc` in the workspace is created, changed or deleted, along with a file passed with `--rcfile` in `#shellcheck.customArgs#` that lives in the workspace. Only the documents that can pick up the changed file are linted again, and never those passed `--norc`.",
+            "type": "boolean",
+            "scope": "window",
+            "default": false
           },
-          "scope": "application",
-          "default": [
-            "git",
-            "gitfs",
-            "output",
-            "review",
-            "pr",
-            "githubpr",
-            "gitpr",
-            "githubcommit"
-          ]
-        },
-        "shellcheck.useWorkspaceRootAsCwd": {
-          "description": "Whether to use the workspace root directory as the current working directory when launching `shellcheck`. Otherwise, the directory of the file being linted will be used.",
-          "type": "boolean",
-          "scope": "resource",
-          "default": false
-        },
-        "shellcheck.logLevel": {
-          "description": "The trace level the extension logs at, defaults to 'info'.",
-          "type": "string",
-          "scope": "window",
-          "enum": [
-            "trace",
-            "debug",
-            "info",
-            "warn",
-            "error",
-            "off"
-          ],
-          "default": "info"
-        },
-        "shellcheck.disableVersionCheck": {
-          "markdownDescription": "Whether to disable shellcheck binary version check, which prompts for updating when an outdated version is found. The check only runs when `#shellcheck.runtime#` is `native`, so it has no effect in VS Code for the Web.",
-          "type": "boolean",
-          "scope": "machine-overridable",
-          "default": false
+          "shellcheck.watchConfigFiles.user": {
+            "markdownDescription": "Lint open documents again when a ShellCheck config file outside the workspace is created, changed or deleted: a `.shellcheckrc` or `shellcheckrc` in a folder above a workspace folder, `~/.shellcheckrc` and `$XDG_CONFIG_HOME/shellcheckrc` (`%APPDATA%\\shellcheckrc` on Windows), and a file passed with `--rcfile` in `#shellcheck.customArgs#` that lives outside the workspace. Only used when `#shellcheck.runtime#` is `native`, the only runtime that can read these files, so it has no effect in VS Code for the Web.",
+            "type": "boolean",
+            "scope": "window",
+            "default": false
+          }
         }
       }
-    }
+    ]
   },
   "scripts": {
     "prepare": "bindl",
