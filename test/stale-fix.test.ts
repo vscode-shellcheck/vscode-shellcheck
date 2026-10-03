@@ -22,12 +22,33 @@ async function insertCommentLine(document: vscode.TextDocument) {
   assert.ok(await vscode.workspace.applyEdit(edit));
 }
 
-function findSC2086(diagnostics: readonly vscode.Diagnostic[]): vscode.Range {
-  const diagnostic = diagnostics.find(
-    ({ code }) => typeof code === "object" && code.value === "SC2086",
+function findSC2086(
+  diagnostics: readonly vscode.Diagnostic[],
+  line: number,
+): vscode.Diagnostic | undefined {
+  return diagnostics.find(
+    ({ code, range }) =>
+      typeof code === "object" &&
+      code.value === "SC2086" &&
+      range.start.line === line,
   );
-  assert.ok(diagnostic, "SC2086 should be reported");
-  return diagnostic.range;
+}
+
+/**
+ * Lints the document until SC2086 is reported on `line`, where the current
+ * text has it: the lint started when the document was opened, empty, may still
+ * be running.
+ */
+async function lintForSC2086(
+  document: vscode.TextDocument,
+  line: number,
+): Promise<vscode.Range> {
+  const diagnostics = await lintActiveDocument(
+    document,
+    undefined,
+    (diagnostics) => findSC2086(diagnostics, line) !== undefined,
+  );
+  return findSC2086(diagnostics, line)!.range;
 }
 
 async function getShellCheckFixes(
@@ -78,14 +99,14 @@ for (const runtime of RUNTIMES) {
 
     test("A quick fix is not applied to lines that moved since the lint", async () => {
       const document = await openDocument(SCRIPT, "shellscript");
-      const linted = findSC2086(await lintActiveDocument(document));
+      const linted = await lintForSC2086(document, 1);
 
       await insertCommentLine(document);
       const edited = document.getText();
       await applyAll(await getShellCheckFixes(document, linted));
       assert.strictEqual(document.getText(), edited);
 
-      const fresh = findSC2086(await lintActiveDocument(document));
+      const fresh = await lintForSC2086(document, 2);
       await applyAll(await getShellCheckFixes(document, fresh));
       assert.strictEqual(
         document.getText(),
@@ -99,7 +120,7 @@ eval \`uname -r\`
 
     test("Fix all is not applied to lines that moved since the lint", async () => {
       const document = await openDocument(SCRIPT, "shellscript");
-      await lintActiveDocument(document);
+      await lintForSC2086(document, 1);
 
       await insertCommentLine(document);
       const edited = document.getText();
@@ -112,7 +133,7 @@ eval \`uname -r\`
       );
       assert.strictEqual(document.getText(), edited);
 
-      await lintActiveDocument(document);
+      await lintForSC2086(document, 2);
       await applyAll(
         await getShellCheckFixes(
           document,

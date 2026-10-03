@@ -95,13 +95,16 @@ export function waitForDiagnostics(
  *
  * The explicit command is what makes the result attributable to the runtime in
  * effect right now: waiting for whatever event arrives next would also accept a
- * lint that a settings change had already started.
+ * lint that a settings change had already started. A lint that was already
+ * running still reports the text it was given, so a document edited since it
+ * was opened needs a `predicate` that only the current text satisfies.
  */
 export async function lintActiveDocument(
   document: vscode.TextDocument,
   timeout = 15000,
+  predicate?: (diagnostics: readonly vscode.Diagnostic[]) => boolean,
 ): Promise<vscode.Diagnostic[]> {
-  const diagnostics = waitForDiagnostics(document, timeout);
+  const diagnostics = waitForDiagnostics(document, timeout, predicate);
   await vscode.commands.executeCommand("shellcheck.runLint");
   return await diagnostics;
 }
