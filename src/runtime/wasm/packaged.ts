@@ -49,8 +49,9 @@ export async function createPackagedShellCheck(
       detailOf(error),
     );
   });
-  // Surfaces on the first lint instead, which awaits it; unobserved until then.
-  module.catch(() => undefined);
+  // Settled before any lint starts its watchdog, which would otherwise count
+  // the download and compile. A failure surfaces on every lint instead.
+  await module.catch(() => undefined);
 
   return createShellCheck({
     module,
