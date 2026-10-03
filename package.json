@@ -41,8 +41,7 @@
   "icon": "shellcheck.png",
   "activationEvents": [
     "onLanguage:shellscript",
-    "onLanguage:bats",
-    "workspaceContains:**/.shellcheckrc"
+    "onLanguage:bats"
   ],
   "main": "./dist/extension.js",
   "browser": "./dist/web/extension.cjs",
