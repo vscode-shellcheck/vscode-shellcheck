@@ -26,7 +26,7 @@ export interface StatusBarView {
 
 export type MenuAction =
   | { readonly kind: "command"; readonly command: string }
-  | { readonly kind: "setRuntime"; readonly runtime: RuntimeKind }
+  | { readonly kind: "pickRuntime" }
   | { readonly kind: "setEnabled"; readonly enabled: boolean }
   | { readonly kind: "pickTrigger" }
   | { readonly kind: "openSettings" }
@@ -35,6 +35,17 @@ export type MenuAction =
 export interface MenuItem extends vscode.QuickPickItem {
   readonly action?: MenuAction;
 }
+
+export interface Choice<T> extends vscode.QuickPickItem {
+  readonly value: T;
+  readonly current: boolean;
+}
+
+const triggerLabels: Record<RunTrigger, string> = {
+  [RunTrigger.onType]: "On Type",
+  [RunTrigger.onSave]: "On Save",
+  [RunTrigger.manual]: "Manually",
+};
 
 /** Where the active document's status comes from. */
 export interface StatusSource {
@@ -69,7 +80,7 @@ export function statusBarView(snapshot: StatusSnapshot): StatusBarView {
   const lines = [
     `**${describeTool(snapshot.tool)}**`,
     `Runtime: ${describeRuntime(snapshot)}`,
-    `Run: ${RunTrigger[snapshot.trigger]}`,
+    `Lint: ${triggerLabels[snapshot.trigger]}`,
   ];
   if (!snapshot.enabled) {
     lines.push("Disabled for this document");
@@ -89,31 +100,27 @@ export function menuItems(snapshot: StatusSnapshot): MenuItem[] {
     label,
     kind: vscode.QuickPickItemKind.Separator,
   });
-  const items: MenuItem[] = [];
-
-  if (snapshot.enabled) {
-    items.push({
-      label: "$(play) Lint Current Document",
-      action: { kind: "command", command: "shellcheck.runLint" },
-    });
-  }
-  items.push({
-    label: "$(report) Collect Diagnostics",
-    detail: "Open a report on how ShellCheck sees this document",
-    action: { kind: "command", command: "shellcheck.collectDiagnostics" },
-  });
+  const items: MenuItem[] = [
+    {
+      label: "$(gear) Open Settings",
+      action: { kind: "openSettings" },
+    },
+    {
+      label: "$(output) Show Extension Log",
+      action: { kind: "showOutput" },
+    },
+  ];
 
   items.push(separator("Settings"));
   if (snapshot.canSwitchRuntime) {
-    const other: RuntimeKind = snapshot.runtime === "wasm" ? "native" : "wasm";
     items.push({
       label: `$(server-process) Runtime: ${snapshot.runtime}`,
-      description: `Switch to ${other}`,
-      action: { kind: "setRuntime", runtime: other },
+      description: "Change how ShellCheck runs",
+      action: { kind: "pickRuntime" },
     });
   }
   items.push({
-    label: `$(zap) Run: ${RunTrigger[snapshot.trigger]}`,
+    label: `$(zap) Lint: ${triggerLabels[snapshot.trigger]}`,
     description: "Change when ShellCheck runs",
     action: { kind: "pickTrigger" },
   });
@@ -131,17 +138,11 @@ export function menuItems(snapshot: StatusSnapshot): MenuItem[] {
         },
   );
 
-  items.push(separator(""));
-  items.push(
-    {
-      label: "$(gear) Open Settings",
-      action: { kind: "openSettings" },
-    },
-    {
-      label: "$(output) Show Output",
-      action: { kind: "showOutput" },
-    },
-  );
+  items.push(separator(""), {
+    label: "$(report) Collect Diagnostics",
+    detail: "Open a report on how ShellCheck sees this document",
+    action: { kind: "command", command: "shellcheck.collectDiagnostics" },
+  });
   return items;
 }
 
@@ -181,19 +182,68 @@ async function updateSetting(
   );
 }
 
-async function pickTrigger(
-  current: RunTrigger,
-): Promise<RunTrigger | undefined> {
-  const triggers = [RunTrigger.onType, RunTrigger.onSave, RunTrigger.manual];
-  const picked = await vscode.window.showQuickPick(
-    triggers.map((trigger) => ({
-      label: RunTrigger[trigger],
-      description: trigger === current ? "$(check) current" : undefined,
-      trigger,
-    })),
-    { title: "Run ShellCheck" },
-  );
-  return picked?.trigger;
+function choice<T>(
+  value: T,
+  current: T,
+  label: string,
+  detail: string,
+): Choice<T> {
+  return {
+    label,
+    description: value === current ? "$(check) current" : undefined,
+    detail,
+    value,
+    current: value === current,
+  };
+}
+
+export function runtimeChoices(current: RuntimeKind): Choice<RuntimeKind>[] {
+  return [
+    choice<RuntimeKind>(
+      "native",
+      current,
+      "native",
+      "Run the bundled or user-provided shellcheck executable",
+    ),
+    choice<RuntimeKind>(
+      "wasm",
+      current,
+      "wasm",
+      "Run the bundled WebAssembly build of ShellCheck (experimental, slower)",
+    ),
+  ];
+}
+
+export function triggerChoices(current: RunTrigger): Choice<RunTrigger>[] {
+  return [
+    choice(
+      RunTrigger.onType,
+      current,
+      triggerLabels[RunTrigger.onType],
+      "Lint as you type",
+    ),
+    choice(
+      RunTrigger.onSave,
+      current,
+      triggerLabels[RunTrigger.onSave],
+      "Lint when the document is saved",
+    ),
+    choice(
+      RunTrigger.manual,
+      current,
+      triggerLabels[RunTrigger.manual],
+      "Lint only with ShellCheck: Lint Current Document",
+    ),
+  ];
+}
+
+/** Resolves to the picked value, or undefined if dismissed or unchanged. */
+async function pickChange<T>(
+  choices: Choice<T>[],
+  title: string,
+): Promise<T | undefined> {
+  const picked = await vscode.window.showQuickPick(choices, { title });
+  return picked && !picked.current ? picked.value : undefined;
 }
 
 export class StatusBar implements vscode.Disposable {
@@ -281,14 +331,24 @@ export class StatusBar implements vscode.Disposable {
       case "command":
         await vscode.commands.executeCommand(action.command);
         break;
-      case "setRuntime":
-        await updateSetting(document, keys.runtime, action.runtime, Global);
+      case "pickRuntime": {
+        const runtime = await pickChange(
+          runtimeChoices(snapshot.runtime),
+          "ShellCheck Runtime",
+        );
+        if (runtime !== undefined) {
+          await updateSetting(document, keys.runtime, runtime, Global);
+        }
         break;
+      }
       case "setEnabled":
         await updateSetting(document, keys.enable, action.enabled, Workspace);
         break;
       case "pickTrigger": {
-        const trigger = await pickTrigger(snapshot.trigger);
+        const trigger = await pickChange(
+          triggerChoices(snapshot.trigger),
+          "When to Lint",
+        );
         if (trigger !== undefined) {
           await updateSetting(document, keys.run, RunTrigger[trigger], Global);
         }
