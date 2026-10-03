@@ -250,6 +250,7 @@ export default class ShellCheckProvider
     this.setResultCollections(textDocument.uri);
     this.runtimeManager.cancel(textDocument.uri.toString());
     this.settingsByUri.delete(textDocument.uri.toString());
+    this.delayers[textDocument.uri.toString()]?.cancel();
     delete this.delayers[textDocument.uri.toString()];
   }
 
@@ -342,6 +343,9 @@ export default class ShellCheckProvider
   }
 
   public dispose(): void {
+    for (const delayer of Object.values(this.delayers)) {
+      delayer.cancel();
+    }
     this.configFileWatcher.dispose();
     this.codeActionCollection.clear();
     this.diagnosticCollection.dispose();
