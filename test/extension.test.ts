@@ -26,12 +26,16 @@ for (const runtime of RUNTIMES) {
     test("Extension should be activated on shell script files", async () => {
       const ext = vscode.extensions.getExtension("timonwong.shellcheck")!;
       const document = await openDocument("#!/bin/bash\nx=1", "shellscript");
-      const diagnostics = await waitForDiagnostics(document, 5000, (items) =>
-        items.some(
-          (diagnostic) =>
-            typeof diagnostic.code === "object" &&
-            diagnostic.code.value === "SC2034",
-        ),
+      const diagnostics = await waitForDiagnostics(
+        document,
+        5000,
+        (items) =>
+          items.some(
+            (diagnostic) =>
+              typeof diagnostic.code === "object" &&
+              diagnostic.code.value === "SC2034",
+          ),
+        { acceptCurrent: true },
       );
 
       assert.strictEqual(ext.isActive, true, "Extension should be activated");
@@ -51,12 +55,16 @@ for (const runtime of RUNTIMES) {
     test("Extension should be activated on bats files", async () => {
       const ext = vscode.extensions.getExtension("timonwong.shellcheck")!;
       const document = await openDocument("#!/usr/bin/env bats\nx=1", "bats");
-      const diagnostics = await waitForDiagnostics(document, 5000, (items) =>
-        items.some(
-          (diagnostic) =>
-            typeof diagnostic.code === "object" &&
-            diagnostic.code.value === "SC2034",
-        ),
+      const diagnostics = await waitForDiagnostics(
+        document,
+        5000,
+        (items) =>
+          items.some(
+            (diagnostic) =>
+              typeof diagnostic.code === "object" &&
+              diagnostic.code.value === "SC2034",
+          ),
+        { acceptCurrent: true },
       );
 
       assert.strictEqual(ext.isActive, true, "Extension should be activated");

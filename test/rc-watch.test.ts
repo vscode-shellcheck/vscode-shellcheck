@@ -2,7 +2,6 @@ import assert from "node:assert";
 import * as vscode from "vscode";
 import {
   closeAllEditors,
-  lintActiveDocument,
   openWorkspaceDocument,
   resetRuntime,
   RUNTIMES,
@@ -48,9 +47,19 @@ async function removeConfigFiles(): Promise<void> {
   }
 }
 
+/**
+ * Opens the script and waits until it has no lint left to run, as one still
+ * pending would re-read the rc files the caller is about to change.
+ */
 async function openLintedScript(): Promise<vscode.TextDocument> {
+  await updateShellCheckSetting("exclude", ["2034"]);
   const document = await openWorkspaceDocument("script.sh");
-  assert.ok(hasSC2034(await lintActiveDocument(document)));
+  // A lint keeps the settings it was triggered with, so only the one that
+  // lifting the exclusion triggers reports SC2034, and every lint triggered
+  // before it has either run already or been merged into it.
+  await expectSC2034(document, true, () =>
+    updateShellCheckSetting("exclude", undefined),
+  );
   return document;
 }
 
@@ -94,6 +103,7 @@ function setupSuite(runtime: "native" | "wasm") {
   });
 
   teardown(async () => {
+    await updateShellCheckSetting("exclude", undefined);
     await updateShellCheckSetting("watchConfigFiles.workspace", undefined);
     await updateShellCheckSetting("watchConfigFiles.user", undefined);
     await updateShellCheckSetting("customArgs", undefined);

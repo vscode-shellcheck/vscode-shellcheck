@@ -62,6 +62,12 @@ export async function openWorkspaceDocument(
  *
  * Registers the listener synchronously so events are never missed.
  * Uses `vscode.languages.onDidChangeDiagnostics` instead of arbitrary delays.
+ *
+ * Only a change counts by default, as a settings change clears the
+ * diagnostics before linting again and the old ones must not pass for the
+ * new lint. `acceptCurrent` also accepts the diagnostics already there, for a
+ * document whose lint may have finished before this was called; its
+ * `predicate` must then only hold for the document's current text.
  */
 export function waitForDiagnostics(
   document: vscode.TextDocument,
@@ -69,6 +75,7 @@ export function waitForDiagnostics(
   predicate: (diagnostics: readonly vscode.Diagnostic[]) => boolean = (
     diagnostics,
   ) => diagnostics.length > 0,
+  { acceptCurrent = false } = {},
 ): Promise<vscode.Diagnostic[]> {
   const { uri } = document;
   const event = new Promise<vscode.Diagnostic[]>((resolve) => {
@@ -82,6 +89,11 @@ export function waitForDiagnostics(
         resolve(diagnostics);
       }
     });
+    const diagnostics = vscode.languages.getDiagnostics(uri);
+    if (acceptCurrent && predicate(diagnostics)) {
+      disposable.dispose();
+      resolve(diagnostics);
+    }
   });
 
   return Promise.race([
