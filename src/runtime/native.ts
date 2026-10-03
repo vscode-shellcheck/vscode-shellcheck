@@ -108,7 +108,7 @@ export const nativeRuntime: NativeRuntime | undefined = {
         ? getWorkspaceFolderPath(textDocument.uri)
         : guessDocumentDirname(textDocument),
     ),
-  createRunner: () => new NativeRunner(),
+  createRunner: (limiter) => new NativeRunner(limiter),
   userConfigFiles,
   parentDirectories,
   resolvePath: (base, p) => path.resolve(base, p),

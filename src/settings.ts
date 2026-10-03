@@ -71,6 +71,14 @@ export function getRuntimeKind(
     : "wasm";
 }
 
+/** Window scoped; 0 means no limit. */
+export function getMaxConcurrentRuns(): number {
+  const value = vscode.workspace
+    .getConfiguration("shellcheck")
+    .get("maxConcurrentRuns", 0);
+  return Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
+}
+
 const validErrorCodePattern = /^(SC)?(\d{4})$/;
 
 export async function getWorkspaceSettings(

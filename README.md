@@ -41,6 +41,7 @@ Default options are:
   "shellcheck.runTimeout": 0, // Seconds before a native run is stopped, 0 for no limit
   "shellcheck.exclude": [],
   "shellcheck.customArgs": [],
+  "shellcheck.maxConcurrentRuns": 0, // 0 for no limit
   "shellcheck.ignorePatterns": {
     "**/*.csh": true,
     "**/*.cshrc": true,
@@ -208,6 +209,16 @@ You can can then configure the extension to use it with:
 ```
 
 Just have in mind that this should come with a performance hit, as booting up a docker container is slower than just invoking the binary.
+
+### Limiting concurrent ShellCheck processes
+
+Changing a setting or a `.shellcheckrc` lints every open script again, which starts one `shellcheck` process per script. With many scripts open, set `shellcheck.maxConcurrentRuns` to cap how many run at once; the others wait their turn. The default, `0`, sets no limit. A run that never finishes keeps its slot, so pair this with `shellcheck.runTimeout`. Only the native runtime is affected: the WebAssembly runtime always lints one script at a time.
+
+```jsonc
+{
+  "shellcheck.maxConcurrentRuns": 4
+}
+```
 
 ### Experimental WebAssembly runtime
 
