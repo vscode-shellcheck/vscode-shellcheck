@@ -41,6 +41,16 @@ jobs:
           VSCODE_TEST_VERSION: ${{ matrix.vscode-version }}
         with:
           run: npm test
+      # An extension host that dies on a signal leaves mocha with only
+      # "Canceled"; the native stack is in the macOS crash report.
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-logs-${{ matrix.os }}-${{ matrix.vscode-version }}
+          path: |
+            ~/Library/Logs/DiagnosticReports/
+            .vscode-test/user-data/logs/
+          if-no-files-found: ignore
 
   test-web:
     runs-on: ubuntu-latest
