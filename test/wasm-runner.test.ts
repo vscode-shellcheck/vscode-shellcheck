@@ -562,6 +562,37 @@ suite("WASM Runner on the packaged module", function () {
     assert.strictEqual(workerThreadIds(logger).length, 2);
   });
 
+  test("does not count loading the module against the watchdog", async () => {
+    const baseline = await createRunner();
+    const startedAt = Date.now();
+    await baseline.runner.run(fixtureRequest());
+    const budget = Math.max(1000, (Date.now() - startedAt) * 4);
+    baseline.runner.dispose();
+
+    // A module that takes longer to arrive than a lint may take, as a slow
+    // download on the web would.
+    const logger = new RecordingLogger();
+    const runner = new WasmRunner({
+      shellcheck: await createPackagedShellCheck({
+        extensionUri,
+        logger,
+        loadModule: () =>
+          new Promise((resolve) =>
+            setTimeout(() => resolve(module), budget * 2),
+          ),
+      }),
+      logger,
+      runTimeoutMs: budget,
+      activeDocumentKey: () => undefined,
+    });
+    started.push(runner);
+
+    assert.strictEqual(
+      (await runner.run(fixtureRequest())).stdout,
+      nativeOutput().stdout,
+    );
+  });
+
   test("rejects when the guest cannot enter the working directory", async () => {
     const { runner } = await createRunner();
     await assert.rejects(
