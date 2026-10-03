@@ -15,6 +15,8 @@ export interface ShellCheckSettings {
   useWorkspaceRootAsCwd: boolean;
   fileMatcher: FileMatcher;
   runtime: RuntimeKind;
+  /** Seconds; 0 for no limit. */
+  runTimeout: number;
 }
 
 export namespace ShellCheckSettings {
@@ -29,6 +31,7 @@ export namespace ShellCheckSettings {
     ignoreFileSchemes: "ignoreFileSchemes",
     useWorkspaceRootAsCwd: "useWorkspaceRootAsCwd",
     runtime: "runtime",
+    runTimeout: "runTimeout",
     watchConfigFiles: "watchConfigFiles",
   };
 }
@@ -108,6 +111,7 @@ export async function getWorkspaceSettings(
     ),
     useWorkspaceRootAsCwd: section.get(keys.useWorkspaceRootAsCwd, false),
     enableQuickFix: section.get(keys.enableQuickFix, false),
+    runTimeout: section.get(keys.runTimeout, 0),
     fileMatcher: new FileMatcher(),
   };
 

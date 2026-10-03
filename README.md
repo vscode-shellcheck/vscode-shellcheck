@@ -38,6 +38,7 @@ Default options are:
   "shellcheck.markdownDiagnostics": false,
   "shellcheck.run": "onType",
   "shellcheck.executablePath": "", // Priority: user defined > bundled binary > shellcheck in PATH
+  "shellcheck.runTimeout": 0, // Seconds before a native run is stopped, 0 for no limit
   "shellcheck.exclude": [],
   "shellcheck.customArgs": [],
   "shellcheck.ignorePatterns": {

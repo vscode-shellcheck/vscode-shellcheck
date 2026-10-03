@@ -291,6 +291,14 @@
             "scope": "resource",
             "default": false
           },
+          "shellcheck.runTimeout": {
+            "markdownDescription": "Seconds a `shellcheck` run may take before it is stopped, or `0` for no limit. A stopped run leaves the document's problems as they were. Only runs started after a change are stopped: a document whose run already hangs is linted again once it is closed and reopened. Only used when `#shellcheck.runtime#` is `native`, so it has no effect in VS Code for the Web; the `wasm` runtime always stops a run after 30 seconds.",
+            "type": "number",
+            "scope": "window",
+            "minimum": 0,
+            "maximum": 3600,
+            "default": 0
+          },
           "shellcheck.logLevel": {
             "description": "The trace level the extension logs at, defaults to 'info'.",
             "type": "string",
