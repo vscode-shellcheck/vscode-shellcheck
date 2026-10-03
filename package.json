@@ -113,8 +113,20 @@
       {
         "command": "shellcheck.showMenu",
         "title": "ShellCheck: Show Menu"
+      },
+      {
+        "command": "shellcheck.useWasmRuntime",
+        "title": "ShellCheck: Use the Experimental WebAssembly Runtime"
       }
     ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "shellcheck.useWasmRuntime",
+          "when": "!isWeb"
+        }
+      ]
+    },
     "icons": {
       "shellcheck-logo": {
         "description": "ShellCheck logo",
@@ -318,6 +330,52 @@
             "default": false
           }
         }
+      }
+    ],
+    "walkthroughs": [
+      {
+        "id": "whatsNew",
+        "title": "What's New in ShellCheck",
+        "description": "A status bar menu, VS Code for the Web, and more.",
+        "steps": [
+          {
+            "id": "statusBar",
+            "title": "ShellCheck in the status bar",
+            "description": "Click the ShellCheck icon on the right of the status bar to lint the current document, change when ShellCheck runs, or turn it off for this workspace.",
+            "media": {
+              "svg": "resources/walkthrough/status-bar.svg",
+              "altText": "Clicking the ShellCheck icon in the status bar opens its menu."
+            }
+          },
+          {
+            "id": "web",
+            "title": "VS Code for the Web",
+            "description": "ShellCheck now checks your scripts on [vscode.dev](https://vscode.dev) and [github.dev](https://github.dev), with nothing to install.",
+            "media": {
+              "svg": "resources/walkthrough/web.svg",
+              "altText": "ShellCheck reports a problem while typing in VS Code for the Web."
+            }
+          },
+          {
+            "id": "wasm",
+            "title": "A bundled WebAssembly build",
+            "description": "The extension now bundles a WebAssembly build of ShellCheck. It runs on every platform with no shellcheck binary to install, stays sandboxed to your workspace files, and powers ShellCheck on the web.\n[Try the WebAssembly Runtime](command:shellcheck.useWasmRuntime)",
+            "media": {
+              "svg": "resources/walkthrough/wasm.svg",
+              "altText": "The bundled WebAssembly build runs on every platform, in a sandbox, and on the web."
+            },
+            "when": "!isWeb"
+          },
+          {
+            "id": "configFiles",
+            "title": "Lint again when .shellcheckrc changes",
+            "description": "ShellCheck can lint your open scripts again as soon as a .shellcheckrc changes, so new rules apply without reopening files. Turn on shellcheck.watchConfigFiles.workspace for config files in your workspace, and shellcheck.watchConfigFiles.user for ones outside it, such as ~/.shellcheckrc. Both are off by default.\n[Open Config File Settings](command:workbench.action.openSettings?%5B%22shellcheck.watchConfigFiles%22%5D)",
+            "media": {
+              "svg": "resources/walkthrough/config-files.svg",
+              "altText": "Changing .shellcheckrc lints the open scripts again."
+            }
+          }
+        ]
       }
     ]
   },

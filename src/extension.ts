@@ -8,6 +8,7 @@ import { OutputChannelLogger } from "./utils/logging/logger-outputchannel.js";
 import { LogLevelNameType } from "./utils/logging/types.js";
 import { MarkdownDiagnosticProvider } from "./markdown-diagnostics.js";
 import { StatusBar } from "./status-bar.js";
+import { registerWhatsNew } from "./whats-new.js";
 
 export function activate(
   context: vscode.ExtensionContext,
@@ -59,6 +60,8 @@ export function activate(
     );
     context.subscriptions.push(linker);
   }
+
+  context.subscriptions.push(registerWhatsNew(context));
 
   // public API surface
   return linter.provideApi();

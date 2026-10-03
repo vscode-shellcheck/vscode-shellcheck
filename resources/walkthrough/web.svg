@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" fill="none" role="img" aria-label="ShellCheck reports a problem while you type in VS Code for the Web">
+<defs><clipPath id="frame"><rect width="520" height="320" rx="10"/></clipPath></defs>
+<g clip-path="url(#frame)">
+<rect width="520" height="320" fill="var(--vscode-editor-background, #1f1f1f)"/>
+<rect width="520" height="44" fill="var(--vscode-titleBar-activeBackground, #181818)"/>
+<circle cx="18" cy="22" r="5" fill="#ff5f57"/>
+<circle cx="34" cy="22" r="5" fill="#febc2e"/>
+<circle cx="50" cy="22" r="5" fill="#28c840"/>
+<rect x="120" y="11" width="280" height="22" rx="11" fill="var(--vscode-input-background, #313131)"/>
+<path d="M135 20.5v-2a3 3 0 0 1 6 0v2" stroke="var(--vscode-descriptionForeground, #9d9d9d)" stroke-width="1.4"/>
+<rect x="133" y="20" width="10" height="8" rx="1.5" fill="var(--vscode-descriptionForeground, #9d9d9d)"/>
+<text x="150" y="27" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-input-foreground, #cccccc)" xml:space="preserve">vscode.dev</text>
+<rect y="44" width="36" height="276" fill="var(--vscode-activityBar-background, #181818)"/>
+<rect x="10" y="58" width="16" height="16" rx="3" fill="var(--vscode-activityBar-inactiveForeground, #868686)" opacity=".5"/>
+<rect x="10" y="90" width="16" height="16" rx="3" fill="var(--vscode-activityBar-inactiveForeground, #868686)" opacity=".5"/>
+<rect x="10" y="122" width="16" height="16" rx="3" fill="var(--vscode-activityBar-inactiveForeground, #868686)" opacity=".5"/>
+<rect x="36" y="44" width="484" height="32" fill="var(--vscode-editorGroupHeader-tabsBackground, #181818)"/>
+<rect x="36" y="44" width="104" height="32" fill="var(--vscode-tab-activeBackground, #1f1f1f)"/>
+<text x="50" y="65" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-tab-activeForeground, #ffffff)" xml:space="preserve">greet.sh</text>
+<rect y="292" width="520" height="28" fill="var(--vscode-statusBar-background, #181818)"/>
+<text x="62" y="96" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" text-anchor="end" fill="var(--vscode-editorLineNumber-foreground, #6e7681)" xml:space="preserve">1</text>
+<text x="78" y="96" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" fill="var(--vscode-editor-foreground, #cccccc)" xml:space="preserve">#!/bin/bash</text>
+<text x="62" y="124" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" text-anchor="end" fill="var(--vscode-editorLineNumber-foreground, #6e7681)" xml:space="preserve">2</text>
+<text x="78" y="124" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" fill="var(--vscode-editor-foreground, #cccccc)" xml:space="preserve">name=$1</text>
+<text x="62" y="152" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" text-anchor="end" fill="var(--vscode-editorLineNumber-foreground, #6e7681)" xml:space="preserve">3</text>
+<clipPath id="typed"><rect x="78" y="136" height="22" width="0"><animate attributeName="width" calcMode="discrete" dur="8s" repeatCount="indefinite" values="0;0;9;18;27;36;45;54;63;72;81;90;99;108;117;126;135;144;0" keyTimes="0;0.06;0.0725;0.085;0.0975;0.11;0.1225;0.135;0.1475;0.16;0.1725;0.185;0.1975;0.21;0.2225;0.235;0.2475;0.26;0.97"/></rect></clipPath>
+<g clip-path="url(#typed)"><text x="78" y="152" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" fill="var(--vscode-editor-foreground, #cccccc)" xml:space="preserve">echo Hello $name</text></g>
+<rect y="138" width="2" height="19" fill="var(--vscode-editorCursor-foreground, #aeafad)"><animate attributeName="x" calcMode="discrete" dur="8s" repeatCount="indefinite" values="78;78;87;96;105;114;123;132;141;150;159;168;177;186;195;204;213;222;78" keyTimes="0;0.06;0.0725;0.085;0.0975;0.11;0.1225;0.135;0.1475;0.16;0.1725;0.185;0.1975;0.21;0.2225;0.235;0.2475;0.26;0.97"/></rect>
+<path d="M177 158 q1 -2.5 2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0 t2 0" stroke="var(--vscode-editorWarning-foreground, #cca700)" stroke-width="1.3" stroke-dasharray="90 90" stroke-dashoffset="90"><animate attributeName="stroke-dashoffset" dur="8s" repeatCount="indefinite" values="90;90;0;0;90" keyTimes="0;.30;.37;.95;1"/></path>
+<g opacity="0"><animate attributeName="opacity" dur="8s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;.40;.44;.92;.96;1"/>
+<rect x="150.5" y="168.5" width="300" height="52" rx="4" fill="var(--vscode-editorHoverWidget-background, #202020)" stroke="var(--vscode-editorHoverWidget-border, #454545)"/>
+<text x="162" y="190" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-editorHoverWidget-foreground, #cccccc)" xml:space="preserve">Double quote to prevent globbing</text>
+<text x="162" y="209" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="12" fill="var(--vscode-descriptionForeground, #9d9d9d)" xml:space="preserve">and word splitting.  shellcheck(SC2086)</text>
+</g>
+<text x="492" y="311" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="12" text-anchor="end" fill="var(--vscode-statusBar-foreground, #cccccc)" xml:space="preserve">Shell Script</text>
+</g>
+</svg>
