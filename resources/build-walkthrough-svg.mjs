@@ -131,14 +131,14 @@ function codeLines(lines, firstNumber, top) {
 function statusBar() {
   const qpTimes = "0;.34;.38;.90;.95;1";
   const ROW = 22;
-  // [label, description, top]; null is the "Settings" separator.
+  // [label, description, top]
   const rows = [
-    ["Lint Current Document", "", 94],
-    ["Collect Diagnostics", "", 116],
-    null,
-    ["Runtime: native", "Switch to wasm", 158],
-    ["Run: onType", "Change when ShellCheck runs", 180],
+    ["Open Settings", "", 94],
+    ["Show Extension Log", "", 116],
+    ["Runtime: native", "Change how ShellCheck runs", 158],
+    ["Lint: On Type", "Change when ShellCheck runs", 180],
     ["Disable ShellCheck", "For this workspace", 202],
+    ["Collect Diagnostics", "", 234],
   ];
   return svg("Clicking the ShellCheck icon in the status bar opens its menu", [
     ...workbench(0, "deploy.sh"),
@@ -171,7 +171,7 @@ function statusBar() {
       anim("transform", "0 -6;0 -6;0 0;0 0;0 -6;0 -6", qpTimes, {
         type: "translate",
       }),
-    `<rect x="110.5" y="36.5" width="340" height="196" rx="6" fill="${c("quickInput-background", "#222222")}" stroke="${c("widget-border", "#313131")}"/>`,
+    `<rect x="110.5" y="36.5" width="340" height="228" rx="6" fill="${c("quickInput-background", "#222222")}" stroke="${c("widget-border", "#313131")}"/>`,
     text(280, 54, "ShellCheck 0.11.0 · native (bundled)", {
       size: 12,
       anchor: "middle",
@@ -185,21 +185,20 @@ function statusBar() {
       }) +
       `</rect>`,
     `<path d="M124 148.5H372" stroke="${c("pickerGroup-border", "#3c3c3c")}"/>`,
+    `<path d="M124 228.5H436" stroke="${c("pickerGroup-border", "#3c3c3c")}"/>`,
     text(436, 152, "Settings", {
       size: 11,
       anchor: "end",
       fill: c("pickerGroup-foreground", "#3794ff"),
     }),
-    ...rows
-      .filter((row) => row !== null)
-      .map(
-        ([label, desc, top]) =>
-          `<text x="126" y="${top + 15}" font-family="${SANS}" font-size="13" fill="${c("quickInput-foreground", "#cccccc")}">${esc(label)}` +
-          (desc
-            ? `<tspan dx="10" font-size="12" fill="${c("descriptionForeground", "#9d9d9d")}">${esc(desc)}</tspan>`
-            : "") +
-          `</text>`,
-      ),
+    ...rows.map(
+      ([label, desc, top]) =>
+        `<text x="126" y="${top + 15}" font-family="${SANS}" font-size="13" fill="${c("quickInput-foreground", "#cccccc")}">${esc(label)}` +
+        (desc
+          ? `<tspan dx="10" font-size="12" fill="${c("descriptionForeground", "#9d9d9d")}">${esc(desc)}</tspan>`
+          : "") +
+        `</text>`,
+    ),
     `</g>`,
     pointer("300 120", "489 300", "0;.18;.32;.94;1"),
   ]);

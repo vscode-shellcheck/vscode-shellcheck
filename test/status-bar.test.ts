@@ -5,9 +5,11 @@ import { RunTrigger } from "../src/settings.js";
 import {
   menuItems,
   MenuItem,
+  runtimeChoices,
   settingTarget,
   StatusSnapshot,
   statusBarView,
+  triggerChoices,
 } from "../src/status-bar.js";
 
 const nativeBundled: StatusSnapshot = {
@@ -36,7 +38,7 @@ suite("Status bar", () => {
     assert.strictEqual(view.state, "ok");
     assert.match(view.tooltip, /ShellCheck 0\.11\.0/);
     assert.match(view.tooltip, /Runtime: native \(bundled\)/);
-    assert.match(view.tooltip, /Run: onType/);
+    assert.match(view.tooltip, /Lint: On Type/);
 
     assert.match(statusBarView(wasm).tooltip, /Runtime: wasm \(GHC 9\.12\.2\)/);
   });
@@ -76,36 +78,36 @@ suite("Status bar", () => {
 });
 
 suite("Status menu", () => {
-  test("offers the other runtime, the other run triggers and disabling", () => {
+  test("offers settings, the log, choosing the runtime and the trigger, disabling and diagnostics", () => {
     assert.deepStrictEqual(actions(menuItems(nativeBundled)), [
-      { kind: "command", command: "shellcheck.runLint" },
-      { kind: "command", command: "shellcheck.collectDiagnostics" },
-      { kind: "setRuntime", runtime: "wasm" },
-      { kind: "pickTrigger" },
-      { kind: "setEnabled", enabled: false },
       { kind: "openSettings" },
       { kind: "showOutput" },
+      { kind: "pickRuntime" },
+      { kind: "pickTrigger" },
+      { kind: "setEnabled", enabled: false },
+      { kind: "command", command: "shellcheck.collectDiagnostics" },
     ]);
+  });
+
+  test("labels the settings with their current values", () => {
+    const labels = menuItems(nativeBundled).map((item) => item.label);
+    assert.ok(labels.includes("$(server-process) Runtime: native"));
+    assert.ok(labels.includes("$(zap) Lint: On Type"));
     assert.ok(
-      actions(menuItems(wasm)).some(
-        (a) => a.kind === "setRuntime" && a.runtime === "native",
-      ),
+      menuItems({ ...wasm, trigger: RunTrigger.manual })
+        .map((item) => item.label)
+        .includes("$(zap) Lint: Manually"),
     );
   });
 
-  test("has no runtime to switch to where only wasm exists", () => {
+  test("has no runtime to choose where only wasm exists", () => {
     const items = menuItems({ ...wasm, canSwitchRuntime: false });
-    assert.ok(!actions(items).some((a) => a.kind === "setRuntime"));
+    assert.ok(!actions(items).some((a) => a.kind === "pickRuntime"));
   });
 
-  test("offers enabling a disabled document, and no lint for it", () => {
+  test("offers enabling a disabled document", () => {
     const items = actions(menuItems({ ...nativeBundled, enabled: false }));
     assert.ok(items.some((a) => a.kind === "setEnabled" && a.enabled === true));
-    assert.ok(
-      !items.some(
-        (a) => a.kind === "command" && a.command === "shellcheck.runLint",
-      ),
-    );
   });
 
   test("only separators and actions, so every pick does something", () => {
@@ -115,6 +117,36 @@ suite("Status menu", () => {
         `${item.label} has no action`,
       );
     }
+  });
+});
+
+suite("Status menu pickers", () => {
+  test("offer every runtime and mark the current one", () => {
+    const choices = runtimeChoices("wasm");
+    assert.deepStrictEqual(
+      choices.map((choice) => choice.value),
+      ["native", "wasm"],
+    );
+    assert.deepStrictEqual(
+      choices.map((choice) => choice.current),
+      [false, true],
+    );
+  });
+
+  test("offer every trigger and mark the current one", () => {
+    const choices = triggerChoices(RunTrigger.onSave);
+    assert.deepStrictEqual(
+      choices.map((choice) => [choice.label, choice.value]),
+      [
+        ["On Type", RunTrigger.onType],
+        ["On Save", RunTrigger.onSave],
+        ["Manually", RunTrigger.manual],
+      ],
+    );
+    assert.deepStrictEqual(
+      choices.map((choice) => choice.current),
+      [false, true, false],
+    );
   });
 });
 
