@@ -25,6 +25,11 @@ export class RuntimeManager implements vscode.Disposable {
     this.ensure();
   }
 
+  /** The runtime of the current runner, which may still be starting. */
+  public get kind(): RuntimeKind | undefined {
+    return this.active?.kind;
+  }
+
   public getRunner(): Promise<ShellCheckRunner> {
     return this.ensure();
   }

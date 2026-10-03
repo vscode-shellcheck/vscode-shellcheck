@@ -146,6 +146,7 @@ function settled(): Promise<void> {
 function lintRequest(overrides: Partial<LintRequest> = {}): LintRequest {
   return {
     documentKey: "file:///fixture/src/sources.sh",
+    runId: 0,
     executablePath: "shellcheck",
     args: shellCheckArgs,
     stdin: fixtureScript,

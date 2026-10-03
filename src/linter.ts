@@ -48,6 +48,16 @@ namespace CommandIds {
   export const collectDiagnostics: string = "shellcheck.collectDiagnostics";
 }
 
+/** What made the linter look at a document, as logged. */
+type LintTrigger =
+  | "open"
+  | "change"
+  | "save"
+  | "config-change"
+  | "workspace-initial"
+  | "document-filter-registered"
+  | "manual";
+
 /**
  * Tool status key for the wasm runtime, which has no executable path. The NUL
  * byte cannot appear in one, so it cannot collide.
@@ -130,6 +140,8 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   /** Lives as long as the extension host, so `onDidChangeConfiguration`
    * deliberately leaves it alone. */
   private readonly wasmFailureNotifier: WasmFailureNotifier;
+  /** Tags the log lines of one run, across both runtimes. */
+  private nextRunId: number;
 
   constructor(
     private readonly context: vscode.ExtensionContext,
@@ -146,6 +158,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.additionalDocumentFilters = new Set();
     this.wasmExecutablePathNoticed = false;
     this.wasmFailureNotifier = new WasmFailureNotifier();
+    this.nextRunId = 0;
 
     // code actions
     for (const language of ShellCheckProvider.LANGUAGES) {
@@ -189,7 +202,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       vscode.commands.registerTextEditorCommand(
         CommandIds.runLint,
         async (editor) => {
-          return await this.triggerLint(editor.document);
+          return await this.triggerLint(editor.document, "manual");
         },
       ),
       vscode.commands.registerTextEditorCommand(
@@ -228,10 +241,20 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     );
 
     // Shellcheck all open shell documents
-    this.triggerLintForEntireWorkspace();
+    this.triggerLintForEntireWorkspace("workspace-initial");
   }
 
   private onDidCloseTextDocument(textDocument: vscode.TextDocument) {
+    // Paired with the open record, this is what shows a document that
+    // something keeps reopening.
+    if (this.isAllowedTextDocument(textDocument)) {
+      logging.debug(
+        "document closed: %s (scheme=%s, language=%s)",
+        textDocument.uri.toString(),
+        textDocument.uri.scheme,
+        textDocument.languageId,
+      );
+    }
     this.setResultCollections(textDocument.uri);
     this.runtimeManager.cancel(textDocument.uri.toString());
     this.settingsByUri.delete(textDocument.uri.toString());
@@ -249,12 +272,20 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.runtimeManager.refresh();
 
     // Shellcheck all open shell documents
-    this.triggerLintForEntireWorkspace();
+    this.triggerLintForEntireWorkspace("config-change");
   }
 
   private async onDidOpenTextDocument(textDocument: vscode.TextDocument) {
+    if (this.isAllowedTextDocument(textDocument)) {
+      logging.debug(
+        "document opened: %s (scheme=%s, language=%s)",
+        textDocument.uri.toString(),
+        textDocument.uri.scheme,
+        textDocument.languageId,
+      );
+    }
     try {
-      await this.triggerLint(textDocument);
+      await this.triggerLint(textDocument, "open");
     } catch (error) {
       logging.error(`onDidOpenTextDocument: ${error}`);
     }
@@ -276,6 +307,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     try {
       await this.triggerLint(
         textDocumentChangeEvent.document,
+        "change",
         (settings) => settings.trigger === RunTrigger.onType,
       );
     } catch (error) {
@@ -287,6 +319,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     try {
       await this.triggerLint(
         textDocument,
+        "save",
         (settings) => settings.trigger === RunTrigger.onSave,
       );
     } catch (error) {
@@ -294,10 +327,10 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     }
   }
 
-  private async triggerLintForEntireWorkspace() {
+  private async triggerLintForEntireWorkspace(trigger: LintTrigger) {
     for await (const textDocument of vscode.workspace.textDocuments) {
       try {
-        await this.triggerLint(textDocument);
+        await this.triggerLint(textDocument, trigger);
       } catch (error) {
         logging.error(`triggerLintForEntireWorkspace: ${error}`);
       }
@@ -511,7 +544,7 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     this.settingsByUri.clear();
     this.toolStatusByPath.clear();
     // Re-evaluate all open shell documents due to updated filters
-    this.triggerLintForEntireWorkspace();
+    this.triggerLintForEntireWorkspace("document-filter-registered");
 
     return {
       dispose: () => {
@@ -532,13 +565,25 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
   }
 
   private async collectDiagnostics(textDocument: vscode.TextDocument) {
+    const { uri } = textDocument;
     const output: string[] = [
       "# ShellCheck Diagnostics Report\n",
       "## Document\n",
-      `- URI: \`${textDocument.uri.toString()}\``,
+      `- URI: \`${uri.toString()}\``,
+      `- Scheme: \`${uri.scheme}\``,
       `- Language: \`${textDocument.languageId}\``,
       "",
     ];
+
+    const { extension } = this.context;
+    output.push(
+      "## Environment\n",
+      `- Extension: \`${extension.id} ${extension.packageJSON.version}\``,
+      `- Editor: \`${vscode.env.appName} ${vscode.version}\` (host: \`${vscode.env.appHost}\`, remote: \`${vscode.env.remoteName ?? "none"}\`, UI: \`${vscode.UIKind[vscode.env.uiKind]}\`)`,
+      `- Platform: \`${process.platform} ${process.arch}\``,
+      `- Workspace: ${vscode.workspace.workspaceFolders?.length ?? 0} folder(s), virtual: \`${isVirtualWorkspace()}\`, trusted: \`${vscode.workspace.isTrusted}\``,
+      "",
+    );
 
     output.push("## ShellCheck\n");
     const settings: ShellCheckSettings = await this.getSettings(textDocument);
@@ -547,20 +592,23 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
       if (settings.runtime === "wasm") {
         output.push(
           `- Runtime: \`wasm (ShellCheck ${toolStatus.version}, GHC ${toolStatus.ghcVersion})\``,
-          "",
         );
       } else {
         output.push(
           `- Runtime: \`${settings.runtime}\``,
           `- Version: \`${toolStatus.version}\``,
           `- Bundled: \`${settings.executable.bundled}\``,
-          "",
         );
       }
     } else {
       output.push("- ShellCheck is not installed or not working");
-      output.push("");
     }
+    output.push(
+      `- Active runner: \`${this.runtimeManager.kind ?? "none"}\``,
+      "",
+    );
+
+    output.push(...this.describeSettings(textDocument, settings));
 
     const warnings: string[] = [];
     if (!this.isAllowedTextDocument(textDocument)) {
@@ -606,6 +654,35 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
     await vscode.window.showTextDocument(doc, { preview: true });
   }
 
+  /** The effective settings, never the document or environment variables. */
+  private describeSettings(
+    textDocument: vscode.TextDocument,
+    settings: ShellCheckSettings,
+  ): string[] {
+    const section = vscode.workspace.getConfiguration(
+      "shellcheck",
+      textDocument,
+    );
+    const entry = (key: string, value: unknown) =>
+      `- \`shellcheck.${key}\`: \`${JSON.stringify(value)}\``;
+    const { keys } = ShellCheckSettings;
+    return [
+      "## Settings\n",
+      entry(keys.enable, settings.enabled),
+      entry(keys.runtime, settings.runtime),
+      entry(keys.run, RunTrigger[settings.trigger]),
+      `${entry(keys.executablePath, settings.executable.path)} (bundled: \`${settings.executable.bundled}\`)`,
+      entry(keys.exclude, settings.exclude),
+      entry(keys.customArgs, settings.customArgs),
+      entry(keys.ignoreFileSchemes, [...settings.ignoreFileSchemes]),
+      entry(keys.ignorePatterns, section.get(keys.ignorePatterns, {})),
+      entry(keys.useWorkspaceRootAsCwd, settings.useWorkspaceRootAsCwd),
+      entry(keys.enableQuickFix, settings.enableQuickFix),
+      entry("logLevel", section.get("logLevel")),
+      "",
+    ];
+  }
+
   private async disableCheckForLine(
     textDocument: vscode.TextDocument,
     ruleId: string,
@@ -636,23 +713,75 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
   private async triggerLint(
     textDocument: vscode.TextDocument,
+    trigger: LintTrigger,
     extraCondition: (settings: ShellCheckSettings) => boolean = (_) => true,
   ) {
+    const key = textDocument.uri.toString();
     if (!this.isAllowedTextDocument(textDocument)) {
+      // Every keystroke in any other document gets here.
+      logging.trace(
+        "skip [%s] %s: language %s is not linted (scheme=%s)",
+        trigger,
+        key,
+        textDocument.languageId,
+        textDocument.uri.scheme,
+      );
       return;
     }
 
+    logging.debug(
+      "trigger [%s] %s (scheme=%s, language=%s)",
+      trigger,
+      key,
+      textDocument.uri.scheme,
+      textDocument.languageId,
+    );
+
     const settings: ShellCheckSettings = await this.getSettings(textDocument);
-    if (
-      !extraCondition(settings) ||
-      isOutOfNativeReach(textDocument, settings) ||
-      !this.toolStatusByPath.get(toolStatusKey(settings))?.ok ||
-      settings.ignoreFileSchemes.has(textDocument.uri.scheme)
-    ) {
+    if (!extraCondition(settings)) {
+      logging.debug(
+        "skip [%s] %s: shellcheck.run is %s",
+        trigger,
+        key,
+        RunTrigger[settings.trigger],
+      );
+      return;
+    }
+    if (isOutOfNativeReach(textDocument, settings)) {
+      logging.debug(
+        'skip [%s] %s: virtual workspace documents need shellcheck.runtime "wasm"',
+        trigger,
+        key,
+      );
+      return;
+    }
+    const toolStatus = this.toolStatusByPath.get(toolStatusKey(settings));
+    if (!toolStatus?.ok) {
+      // A disabled document never has its tool probed.
+      if (!settings.enabled) {
+        logging.debug("skip [%s] %s: shellcheck.enable is false", trigger, key);
+      } else {
+        logging.debug(
+          "skip [%s] %s: shellcheck is unavailable (%s)",
+          trigger,
+          key,
+          toolStatus?.reason ?? "not checked",
+        );
+      }
+      return;
+    }
+    if (settings.ignoreFileSchemes.has(textDocument.uri.scheme)) {
+      logging.debug(
+        "skip [%s] %s: scheme %s is in shellcheck.ignoreFileSchemes",
+        trigger,
+        key,
+        textDocument.uri.scheme,
+      );
       return;
     }
 
     if (!settings.enabled) {
+      logging.debug("skip [%s] %s: shellcheck.enable is false", trigger, key);
       this.setResultCollections(textDocument.uri);
       return;
     }
@@ -663,11 +792,16 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         getWorkspaceFolderPath(textDocument.uri, false),
       )
     ) {
+      logging.debug(
+        "skip [%s] %s: excluded by shellcheck.ignorePatterns",
+        trigger,
+        key,
+      );
       return;
     }
 
-    const key = textDocument.uri.toString();
     let delayer = this.delayers[key];
+    const created = !delayer;
     if (!delayer) {
       delayer = new ThrottledDelayer<void>(
         settings.trigger === RunTrigger.onType ? 250 : 0,
@@ -677,25 +811,43 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
 
     // Per call, not per delayer: the delayers outlive a configuration change,
     // so a delay baked in at creation would survive a runtime switch.
-    delayer.trigger(
-      () => this.runLint(textDocument, settings),
-      lintDelay(settings),
+    const delay = lintDelay(settings);
+    logging.debug(
+      "queue [%s] %s: lint in %d ms (new delayer=%s, replaces pending=%s)",
+      trigger,
+      key,
+      delay,
+      created,
+      delayer.isTriggered(),
     );
+    delayer.trigger(() => this.runLint(textDocument, settings, trigger), delay);
   }
 
   private async runLint(
     textDocument: vscode.TextDocument,
     settings: ShellCheckSettings,
+    trigger: LintTrigger,
   ): Promise<void> {
+    const runId = ++this.nextRunId;
+    const key = textDocument.uri.toString();
+    logging.debug(
+      "lint #%d start: %s (trigger=%s, runtime=%s)",
+      runId,
+      key,
+      trigger,
+      settings.runtime,
+    );
     const statusKey = toolStatusKey(settings);
     const toolStatus = this.toolStatusByPath.get(statusKey);
     if (!toolStatus) {
       // The configuration changed while this run sat in the delayer, which
       // dropped the tool status it was queued against. Every open document is
       // re-linted on that change, so there is nothing to salvage here.
+      logging.debug("lint #%d stale: the configuration changed", runId);
       return;
     }
     if (!toolStatus.ok) {
+      logging.debug("lint #%d failed: %s", runId, toolStatus.reason);
       return Promise.reject(toolStatus.reason);
     }
     const executable = settings.executable;
@@ -738,7 +890,8 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
             }
           : { cwd: await this.nativeWorkingDirectory(textDocument, settings) };
       lintResult = await runner.run({
-        documentKey: textDocument.uri.toString(),
+        documentKey: key,
+        runId,
         executablePath: executable.path,
         args,
         stdin: textDocument.getText(),
@@ -751,31 +904,41 @@ export default class ShellCheckProvider implements vscode.CodeActionProvider {
         error instanceof RunSupersededError
       ) {
         // A newer run, or a newer runtime, owns this document now.
+        logging.debug("lint #%d dropped: %s", runId, error.message);
         return;
       }
+      logging.debug("lint #%d failed: %O", runId, error);
       if (error instanceof WasmRuntimeError) {
         // Never falls back to native: a silent switch of runtimes would hide
         // which one produced the diagnostics on screen.
         this.showWasmRuntimeError(error);
         return;
       }
-      logging.debug("Unable to start shellcheck: %O", error);
       this.showShellCheckError(error, settings.runtime);
       this.toolStatusByPath.set(statusKey, toolStatusByError(error));
       return;
     }
 
     let result: ParseResult[] | null = null;
-    logging.trace("shellcheck response: %s", lintResult.stdout);
+    logging.trace("lint #%d response: %s", runId, lintResult.stdout);
+    if (lintResult.stderr.length) {
+      logging.trace("lint #%d stderr: %s", runId, lintResult.stderr);
+    }
     if (lintResult.stdout.length) {
       result = parser.parse(lintResult.stdout);
     }
     if (textDocument.isClosed) {
       // The run outlived its document, whose diagnostics the close handler
       // already cleared.
+      logging.debug("lint #%d discarded: the document was closed", runId);
       return;
     }
     this.setResultCollections(textDocument.uri, result);
+    logging.debug(
+      "lint #%d done: %d diagnostic(s)",
+      runId,
+      result?.length ?? 0,
+    );
   }
 
   private async nativeWorkingDirectory(
