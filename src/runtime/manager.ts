@@ -1,7 +1,8 @@
 import * as vscode from "vscode";
 import { assertWasmHostSupported } from "../platform/index.js";
-import { getRuntimeKind } from "../settings.js";
+import { getMaxConcurrentRuns, getRuntimeKind } from "../settings.js";
 import * as logging from "../utils/logging/index.js";
+import { Semaphore } from "../utils/semaphore.js";
 import { nativeRuntime } from "./native.js";
 import { RuntimeKind, ShellCheckRunner, WasmRuntimeError } from "./types.js";
 
@@ -12,6 +13,18 @@ interface ActiveRunner {
 
 export class RuntimeManager implements vscode.Disposable {
   private active: ActiveRunner | undefined;
+  /**
+   * Shared by every native runner, so a child left running after a runtime
+   * switch still counts against the window's limit.
+   */
+  private readonly nativeLimiter = new Semaphore(getMaxConcurrentRuns());
+  // Not one of ShellCheckSettings.keys: a new limit needs no re-lint.
+  private readonly configurationListener =
+    vscode.workspace.onDidChangeConfiguration((e) => {
+      if (e.affectsConfiguration("shellcheck.maxConcurrentRuns")) {
+        this.nativeLimiter.setLimit(getMaxConcurrentRuns());
+      }
+    });
 
   public constructor(private readonly context: vscode.ExtensionContext) {
     // Started here rather than on the first lint so the wasm module is
@@ -39,6 +52,7 @@ export class RuntimeManager implements vscode.Disposable {
   }
 
   public dispose(): void {
+    this.configurationListener.dispose();
     this.stop();
   }
 
@@ -66,7 +80,7 @@ export class RuntimeManager implements vscode.Disposable {
 
   private async create(kind: RuntimeKind): Promise<ShellCheckRunner> {
     if (kind !== "wasm") {
-      return nativeRuntime!.createRunner();
+      return nativeRuntime!.createRunner(this.nativeLimiter);
     }
 
     assertWasmHostSupported();

@@ -1,16 +1,45 @@
 import { execa } from "execa";
 import * as logging from "../utils/logging/index.js";
+import { Semaphore } from "../utils/semaphore.js";
 import {
   LintRequest,
   LintResult,
   NativeRunTimeoutError,
+  RunnerDisposedError,
+  RunSupersededError,
   ShellCheckRunner,
 } from "./types.js";
 
 export class NativeRunner implements ShellCheckRunner {
   public readonly kind = "native";
+  private readonly disposed = new AbortController();
+  /** Runs waiting for a slot, by document key. */
+  private readonly queued = new Map<string, AbortController>();
+
+  public constructor(private readonly limiter: Semaphore) {}
 
   public run(request: LintRequest): Promise<LintResult> {
+    const { documentKey } = request;
+    const queued = new AbortController();
+    this.queued.set(documentKey, queued);
+    const dequeue = () => {
+      if (this.queued.get(documentKey) === queued) {
+        this.queued.delete(documentKey);
+      }
+    };
+    return this.limiter
+      .run(
+        () => {
+          dequeue();
+          return this.spawn(request);
+        },
+        AbortSignal.any([this.disposed.signal, queued.signal]),
+      )
+      .finally(dequeue);
+  }
+
+  /** Runs once admitted, so the timeout never counts time spent queued. */
+  private spawn(request: LintRequest): Promise<LintResult> {
     const { executablePath, args, cwd, timeoutMs = 0 } = request;
 
     return new Promise<LintResult>((resolve, reject) => {
@@ -81,11 +110,13 @@ export class NativeRunner implements ShellCheckRunner {
     });
   }
 
-  public cancel(): void {
-    // Nothing is queued: the native path spawns every run at once.
+  /** A run whose process already started is left to finish. */
+  public cancel(documentKey: string): void {
+    this.queued.get(documentKey)?.abort(new RunSupersededError());
   }
 
   public dispose(): void {
-    // An in-flight child is left to finish: the native path has no cancellation.
+    // Rejects the queued runs; children already running are left to finish.
+    this.disposed.abort(new RunnerDisposedError());
   }
 }

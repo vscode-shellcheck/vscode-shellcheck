@@ -1,6 +1,7 @@
 import type { ShellCheckFileSystem } from "@vscode-shellcheck/shellcheck-wasm/client";
 import type { SemVer } from "semver";
 import type * as vscode from "vscode";
+import type { Semaphore } from "../utils/semaphore.js";
 
 /** What a sandboxed runtime lets ShellCheck read, and where it runs inside it. */
 export interface LintMount {
@@ -61,7 +62,7 @@ export interface NativeRuntime {
     textDocument: vscode.TextDocument,
     useWorkspaceRootAsCwd: boolean,
   ): Promise<string | undefined>;
-  createRunner(): ShellCheckRunner;
+  createRunner(limiter: Semaphore): ShellCheckRunner;
   /** The user-level rc files shellcheck falls back to once its search from the
    * script's folder reaches the root. */
   userConfigFiles(): string[];

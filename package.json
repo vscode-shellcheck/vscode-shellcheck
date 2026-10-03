@@ -299,6 +299,13 @@
             "maximum": 3600,
             "default": 0
           },
+          "shellcheck.maxConcurrentRuns": {
+            "markdownDescription": "The most `shellcheck` processes to run at once, or `0` for no limit. Lints beyond it wait for a running one to finish. Only used when `#shellcheck.runtime#` is `native`, so it has no effect in VS Code for the Web; the `wasm` runtime always lints one document at a time.",
+            "type": "integer",
+            "minimum": 0,
+            "scope": "window",
+            "default": 0
+          },
           "shellcheck.logLevel": {
             "description": "The trace level the extension logs at, defaults to 'info'.",
             "type": "string",
