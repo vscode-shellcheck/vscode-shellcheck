@@ -80,7 +80,6 @@ class JsonParserMixin {
     }
 
     const fix = new vscode.CodeAction(
-      // We use the "ShellCheck:" prefix to filter code actions in Fix All.
       `ShellCheck: Apply fix for SC${problem.code}`,
       vscode.CodeActionKind.QuickFix,
     );

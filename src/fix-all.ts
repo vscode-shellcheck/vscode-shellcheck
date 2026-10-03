@@ -1,39 +1,12 @@
 import * as vscode from "vscode";
+import type { ParseResult } from "./parser.js";
 
-function executeCodeActionProvider(uri: vscode.Uri, range: vscode.Range) {
-  return vscode.commands.executeCommand<vscode.CodeAction[]>(
-    "vscode.executeCodeActionProvider",
-    uri,
-    range,
+function getFixAllCodeAction(
+  results: readonly ParseResult[],
+): vscode.CodeAction | undefined {
+  const codeActions = results.flatMap(({ codeAction }) =>
+    codeAction ? [codeAction] : [],
   );
-}
-
-async function getFixAllCodeAction(
-  document: vscode.TextDocument,
-): Promise<vscode.CodeAction | undefined> {
-  const actionRanges = vscode.languages
-    .getDiagnostics(document.uri)
-    .filter((diagnostic) => diagnostic.source === "shellcheck")
-    .map((diagnostic) => diagnostic.range);
-
-  const codeActions: vscode.CodeAction[] = [];
-  for (const range of actionRanges) {
-    const codeActionsForDiagnostic = await executeCodeActionProvider(
-      document.uri,
-      range,
-    );
-
-    if (codeActionsForDiagnostic) {
-      // get only code actions from shellcheck which perform edits and isPreferred
-      const actionToFix = codeActionsForDiagnostic.filter(
-        (action) =>
-          action.title.startsWith("ShellCheck: ") &&
-          action.isPreferred &&
-          action.edit,
-      );
-      codeActions.push(...actionToFix);
-    }
-  }
 
   if (codeActions.length > 0) {
     const fixAll = new vscode.CodeAction(
@@ -81,12 +54,19 @@ export class FixAllProvider implements vscode.CodeActionProvider {
     providedCodeActionKinds: [FixAllProvider.fixAllCodeActionKind],
   };
 
-  public async provideCodeActions(
+  public constructor(
+    /** The linter's own results for a document, which carry its fixes. */
+    private readonly resultsFor: (
+      document: vscode.TextDocument,
+    ) => readonly ParseResult[] | undefined,
+  ) {}
+
+  public provideCodeActions(
     document: vscode.TextDocument,
     _range: vscode.Range | vscode.Selection,
     context: vscode.CodeActionContext,
     _token: vscode.CancellationToken,
-  ): Promise<vscode.CodeAction[]> {
+  ): vscode.CodeAction[] {
     if (!context.only) {
       return [];
     }
@@ -98,7 +78,7 @@ export class FixAllProvider implements vscode.CodeActionProvider {
       return [];
     }
 
-    const fixAllAction = await getFixAllCodeAction(document);
+    const fixAllAction = getFixAllCodeAction(this.resultsFor(document) ?? []);
     if (!fixAllAction) {
       return [];
     }

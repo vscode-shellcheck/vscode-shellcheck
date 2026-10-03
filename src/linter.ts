@@ -166,7 +166,9 @@ export default class ShellCheckProvider
       context.subscriptions.push(
         vscode.languages.registerCodeActionsProvider(
           language,
-          new FixAllProvider(),
+          new FixAllProvider((document) =>
+            this.codeActionCollection.get(document.uri.toString()),
+          ),
           FixAllProvider.metadata,
         ),
       );
