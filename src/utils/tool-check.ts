@@ -4,11 +4,18 @@ import * as vscode from "vscode";
 import { version as BUNDLED_TOOL_VERSION } from "../../bindl.config.js";
 import * as logging from "./logging/index.js";
 
+/** Once a session: every change of a `shellcheck.*` setting probes again. */
+const promptedVersions = new Set<string>();
+
 export function tryPromptForUpdatingTool(version: SemVer) {
   const disableVersionCheckUpdateSetting =
     new DisableVersionCheckUpdateSetting();
   if (!disableVersionCheckUpdateSetting.isDisabled) {
-    if (semVerLt(version, BUNDLED_TOOL_VERSION)) {
+    if (
+      semVerLt(version, BUNDLED_TOOL_VERSION) &&
+      !promptedVersions.has(version.format())
+    ) {
+      promptedVersions.add(version.format());
       promptForUpdatingTool(version.format(), disableVersionCheckUpdateSetting);
     }
   }
