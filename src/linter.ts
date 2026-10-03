@@ -910,18 +910,17 @@ export default class ShellCheckProvider
     uri: vscode.Uri,
     linted?: { version: number; results: ParseResult[] | null },
   ) {
-    const results = linted?.results;
-    if (!linted || !results?.length) {
+    if (!linted?.results?.length) {
       this.diagnosticCollection.delete(uri);
       this.codeActionCollection.delete(uri.toString());
       return;
     }
 
-    const diagnostics = results.map((result) => result.diagnostic);
+    const diagnostics = linted.results.map((result) => result.diagnostic);
     this.diagnosticCollection.set(uri, diagnostics);
     this.codeActionCollection.set(uri.toString(), {
       version: linted.version,
-      results,
+      results: linted.results,
     });
   }
 
