@@ -128,7 +128,10 @@ export default class ShellCheckProvider
   private readonly toolStatusByPath: Map<string, ToolStatus>;
   private readonly toolProbes: Map<string, Promise<void>>;
   private readonly diagnosticCollection: vscode.DiagnosticCollection;
-  private readonly codeActionCollection: Map<string, ParseResult[]>;
+  private readonly codeActionCollection: Map<
+    string,
+    { version: number; results: ParseResult[] }
+  >;
   private readonly additionalDocumentFilters: Set<vscode.DocumentFilter>;
   private wasmExecutablePathNoticed: boolean;
   /** Lives as long as the extension host, so `onDidChangeConfiguration`
@@ -169,9 +172,7 @@ export default class ShellCheckProvider
       context.subscriptions.push(
         vscode.languages.registerCodeActionsProvider(
           language,
-          new FixAllProvider((document) =>
-            this.codeActionCollection.get(document.uri.toString()),
-          ),
+          new FixAllProvider((document) => this.freshResults(document)),
           FixAllProvider.metadata,
         ),
       );
@@ -480,6 +481,16 @@ export default class ShellCheckProvider
     }
   }
 
+  /** Results only while the document is still the text that was linted:
+   * their ranges point into that text, so after an edit any action that edits
+   * the document at them hits the wrong text. */
+  private freshResults(
+    document: vscode.TextDocument,
+  ): readonly ParseResult[] | undefined {
+    const linted = this.codeActionCollection.get(document.uri.toString());
+    return linted?.version === document.version ? linted.results : undefined;
+  }
+
   public provideCodeActions(
     document: vscode.TextDocument,
     range: vscode.Range | vscode.Selection,
@@ -513,6 +524,11 @@ export default class ShellCheckProvider
       }
     }
 
+    const results = this.freshResults(document);
+    if (!results) {
+      return actions;
+    }
+
     for (const diagnostic of context.diagnostics) {
       if (diagnostic.source !== "shellcheck") {
         continue;
@@ -538,19 +554,16 @@ export default class ShellCheckProvider
       }
     }
 
-    const results = this.codeActionCollection.get(document.uri.toString());
-    if (results && results.length) {
-      for (const result of results) {
-        if (!result.codeAction) {
-          continue;
-        }
-
-        if (!result.diagnostic.range.contains(range)) {
-          continue;
-        }
-
-        actions.push(result.codeAction);
+    for (const result of results) {
+      if (!result.codeAction) {
+        continue;
       }
+
+      if (!result.diagnostic.range.contains(range)) {
+        continue;
+      }
+
+      actions.push(result.codeAction);
     }
 
     return actions;
@@ -801,6 +814,7 @@ export default class ShellCheckProvider
     args.push("-"); // Use stdin for shellcheck
 
     let lintResult: LintResult;
+    let version: number;
     try {
       const runner = await this.runtimeManager.getRunner();
       // The wasm runtime reads every file through workspace.fs, so it takes
@@ -816,6 +830,7 @@ export default class ShellCheckProvider
             }
           : { cwd: await this.nativeWorkingDirectory(textDocument, settings) };
       this.watchRcfile(textDocument, settings, cwd);
+      version = textDocument.version;
       lintResult = await runner.run({
         documentKey: textDocument.uri.toString(),
         executablePath: executable.path,
@@ -866,7 +881,7 @@ export default class ShellCheckProvider
       // already cleared.
       return;
     }
-    this.setResultCollections(textDocument.uri, result);
+    this.setResultCollections(textDocument.uri, { version, results: result });
   }
 
   /** Only on the native runtime: the wasm runtime resolves `--rcfile` inside
@@ -900,17 +915,20 @@ export default class ShellCheckProvider
 
   private setResultCollections(
     uri: vscode.Uri,
-    results?: ParseResult[] | null,
+    linted?: { version: number; results: ParseResult[] | null },
   ) {
-    if (!results || !results.length) {
+    if (!linted?.results?.length) {
       this.diagnosticCollection.delete(uri);
       this.codeActionCollection.delete(uri.toString());
       return;
     }
 
-    const diagnostics = results.map((result) => result.diagnostic);
+    const diagnostics = linted.results.map((result) => result.diagnostic);
     this.diagnosticCollection.set(uri, diagnostics);
-    this.codeActionCollection.set(uri.toString(), results);
+    this.codeActionCollection.set(uri.toString(), {
+      version: linted.version,
+      results: linted.results,
+    });
   }
 
   private async showShellCheckError(

@@ -10,6 +10,16 @@ import {
   waitForText,
 } from "./helpers.js";
 
+/**
+ * The lint started when the document was opened, empty, may report after the
+ * content is in, so only a result that has the script's findings will do.
+ */
+function hasSC2086(diagnostics: readonly vscode.Diagnostic[]): boolean {
+  return diagnostics.some(
+    ({ code }) => typeof code === "object" && code.value === "SC2086",
+  );
+}
+
 for (const runtime of RUNTIMES) {
   suite(`Fix all (${runtime} runtime)`, () => {
     suiteSetup(async () => {
@@ -33,7 +43,7 @@ eval \`uname -r\`
 `,
         "shellscript",
       );
-      await waitForDiagnostics(document);
+      await waitForDiagnostics(document, undefined, hasSC2086);
 
       const textPromise = waitForText(document);
       await vscode.commands.executeCommand("editor.action.fixAll");
@@ -47,9 +57,7 @@ echo "$SHELL"
 eval $(uname -r)
 `,
       );
-    })
-      // TODO: fix the flakiness and remove this
-      .retries(3);
+    });
 
     test("Extension should fix only one issue in a same range", async function () {
       const document = await openDocument(
@@ -61,7 +69,7 @@ eval \`uname -r\`
 `,
         "shellscript",
       );
-      await waitForDiagnostics(document);
+      await waitForDiagnostics(document, undefined, hasSC2086);
 
       const textPromise = waitForText(document);
       await vscode.commands.executeCommand("editor.action.fixAll");
