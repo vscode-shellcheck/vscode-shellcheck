@@ -125,6 +125,7 @@ export default class ShellCheckProvider
   private delayers: { [key: string]: ThrottledDelayer<void> };
   private readonly settingsByUri: Map<string, ShellCheckSettings>;
   private readonly toolStatusByPath: Map<string, ToolStatus>;
+  private readonly toolProbes: Map<string, Promise<void>>;
   private readonly diagnosticCollection: vscode.DiagnosticCollection;
   private readonly codeActionCollection: Map<string, ParseResult[]>;
   private readonly additionalDocumentFilters: Set<vscode.DocumentFilter>;
@@ -145,6 +146,7 @@ export default class ShellCheckProvider
     this.delayers = Object.create(null);
     this.settingsByUri = new Map();
     this.toolStatusByPath = new Map();
+    this.toolProbes = new Map();
     this.diagnosticCollection =
       vscode.languages.createDiagnosticCollection("shellcheck");
     this.codeActionCollection = new Map();
@@ -382,45 +384,59 @@ export default class ShellCheckProvider
 
     const statusKey = toolStatusKey(settings);
     if (settings.enabled && !this.toolStatusByPath.has(statusKey)) {
-      if (settings.runtime === "wasm") {
-        // The module is bundled, so its version is known without probing it,
-        // and there is nothing the user could update. Imported on demand, as
-        // a static import would load the package in every native session.
-        const { SHELLCHECK_VERSION, BUILD_INFO } =
-          await import("@vscode-shellcheck/shellcheck-wasm/client");
-        const version = new SemVer(SHELLCHECK_VERSION);
-        this.toolStatusByPath.set(statusKey, {
-          ok: true,
-          version,
-          ghcVersion: BUILD_INFO.ghcVersion,
-        });
-        logging.info(`shellcheck (wasm) version: ${version}`);
-        return;
+      // Shared, or documents opened together would each spawn a probe and
+      // report each of its failures.
+      let probe = this.toolProbes.get(statusKey);
+      if (!probe) {
+        probe = this.probeTool(settings, statusKey).finally(() =>
+          this.toolProbes.delete(statusKey),
+        );
+        this.toolProbes.set(statusKey, probe);
       }
+      await probe;
+    }
+  }
 
-      // Prompt user to update shellcheck binary when necessary
-      let toolStatus: ToolStatus;
-      try {
-        toolStatus = {
-          ok: true,
-          version: await nativeRuntime!.getToolVersion(
-            settings.executable.path,
-          ),
-        };
-      } catch (error: any) {
-        logging.debug("Failed to get tool version: %O", error);
-        this.showShellCheckError(error, settings.runtime);
-        toolStatus = toolStatusByError(error);
-      }
-      this.toolStatusByPath.set(statusKey, toolStatus);
+  private async probeTool(
+    settings: ShellCheckSettings,
+    statusKey: string,
+  ): Promise<void> {
+    if (settings.runtime === "wasm") {
+      // The module is bundled, so its version is known without probing it,
+      // and there is nothing the user could update. Imported on demand, as
+      // a static import would load the package in every native session.
+      const { SHELLCHECK_VERSION, BUILD_INFO } =
+        await import("@vscode-shellcheck/shellcheck-wasm/client");
+      const version = new SemVer(SHELLCHECK_VERSION);
+      this.toolStatusByPath.set(statusKey, {
+        ok: true,
+        version,
+        ghcVersion: BUILD_INFO.ghcVersion,
+      });
+      logging.info(`shellcheck (wasm) version: ${version}`);
+      return;
+    }
 
-      if (toolStatus.ok) {
-        if (settings.executable.bundled) {
-          logging.info(`shellcheck (bundled) version: ${toolStatus.version}`);
-        } else {
-          logging.info(`shellcheck version: ${toolStatus.version}`);
-          nativeRuntime!.tryPromptForUpdatingTool(toolStatus.version);
-        }
+    // Prompt user to update shellcheck binary when necessary
+    let toolStatus: ToolStatus;
+    try {
+      toolStatus = {
+        ok: true,
+        version: await nativeRuntime!.getToolVersion(settings.executable.path),
+      };
+    } catch (error: any) {
+      logging.debug("Failed to get tool version: %O", error);
+      this.showShellCheckError(error, settings.runtime);
+      toolStatus = toolStatusByError(error);
+    }
+    this.toolStatusByPath.set(statusKey, toolStatus);
+
+    if (toolStatus.ok) {
+      if (settings.executable.bundled) {
+        logging.info(`shellcheck (bundled) version: ${toolStatus.version}`);
+      } else {
+        logging.info(`shellcheck version: ${toolStatus.version}`);
+        nativeRuntime!.tryPromptForUpdatingTool(toolStatus.version);
       }
     }
   }
