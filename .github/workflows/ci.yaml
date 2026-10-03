@@ -31,7 +31,7 @@ jobs:
       - name: Setup Mise, Node and NPM
         uses: jdx/mise-action@v5
         with:
-          version: 2026.10.0
+          version: 2026.10.1
       - run: npm ci
         env:
           BINDL_CURRENT_ONLY: "true"
@@ -50,7 +50,7 @@ jobs:
       - name: Setup Mise, Node and NPM
         uses: jdx/mise-action@v5
         with:
-          version: 2026.9.17
+          version: 2026.10.1
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run build
@@ -106,7 +106,7 @@ jobs:
       - name: Setup Mise, Node and NPM
         uses: jdx/mise-action@v5
         with:
-          version: 2026.10.0
+          version: 2026.10.1
       - if: matrix.target != 'universal'
         name: Install dependencies (with binaries)
         run: npm ci
@@ -158,7 +158,7 @@ jobs:
       - name: Setup Mise, Node and NPM
         uses: jdx/mise-action@v5
         with:
-          version: 2026.10.0
+          version: 2026.10.1
       - run: npm ci
         env:
           BINDL_SKIP: "true"
