@@ -110,10 +110,14 @@ suite("Concurrent native runs", function () {
         await openDocument(`#!/bin/bash\nx${i}=1\necho "$y"`, "shellscript"),
       );
     }
+    // The first documents are linted while the later ones are being opened.
     await Promise.all(
       documents.map((document) =>
-        waitForDiagnostics(document, 15000, (diagnostics) =>
-          has(diagnostics, "SC2034"),
+        waitForDiagnostics(
+          document,
+          15000,
+          (diagnostics) => has(diagnostics, "SC2034"),
+          { acceptCurrent: true },
         ),
       ),
     );

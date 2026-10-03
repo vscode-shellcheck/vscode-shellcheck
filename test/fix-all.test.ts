@@ -43,7 +43,9 @@ eval \`uname -r\`
 `,
         "shellscript",
       );
-      await waitForDiagnostics(document, undefined, hasSC2086);
+      await waitForDiagnostics(document, undefined, hasSC2086, {
+        acceptCurrent: true,
+      });
 
       const textPromise = waitForText(document);
       await vscode.commands.executeCommand("editor.action.fixAll");
@@ -69,7 +71,9 @@ eval \`uname -r\`
 `,
         "shellscript",
       );
-      await waitForDiagnostics(document, undefined, hasSC2086);
+      await waitForDiagnostics(document, undefined, hasSC2086, {
+        acceptCurrent: true,
+      });
 
       const textPromise = waitForText(document);
       await vscode.commands.executeCommand("editor.action.fixAll");
