@@ -27,6 +27,11 @@ export interface LintRequest {
    * runtime, which has the whole local filesystem, ignores it.
    */
   readonly mount?: LintMount;
+  /**
+   * Milliseconds before a native run is killed; 0 or undefined for no limit.
+   * The wasm runtime ignores it in favour of its own watchdog.
+   */
+  readonly timeoutMs?: number;
 }
 
 export interface LintResult {
@@ -92,6 +97,14 @@ export class RunSupersededError extends Error {
   ) {
     super(message);
     this.name = "RunSupersededError";
+  }
+}
+
+/** A native run killed for taking too long. Fails that run only. */
+export class NativeRunTimeoutError extends Error {
+  public constructor(seconds: number) {
+    super(`ShellCheck timed out after ${seconds} s`);
+    this.name = "NativeRunTimeoutError";
   }
 }
 
