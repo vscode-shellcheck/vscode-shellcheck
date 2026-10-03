@@ -824,7 +824,13 @@ export default class ShellCheckProvider
     let result: ParseResult[] | null = null;
     logging.trace("shellcheck response: %s", lintResult.stdout);
     if (lintResult.stdout.length) {
-      result = parser.parse(lintResult.stdout);
+      try {
+        result = parser.parse(lintResult.stdout);
+      } catch (error) {
+        // An output format chosen in customArgs overrides the one asked for.
+        logging.error("Unable to parse the ShellCheck output: %O", error);
+        return;
+      }
     }
     if (textDocument.isClosed) {
       // The run outlived its document, whose diagnostics the close handler
