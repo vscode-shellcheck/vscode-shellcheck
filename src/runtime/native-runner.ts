@@ -22,11 +22,6 @@ export class NativeRunner implements ShellCheckRunner {
         return;
       }
 
-      // shellcheck exits 1 whenever it reports a finding, which execa treats
-      // as a failure. The result is read off stdout instead, so the promise is
-      // settled here only to keep Node from reporting an unhandled rejection.
-      childProcess.catch(() => undefined);
-
       childProcess.stdout.setEncoding("utf-8");
       childProcess.stdin.write(request.stdin);
       childProcess.stdin.end();
@@ -38,19 +33,27 @@ export class NativeRunner implements ShellCheckRunner {
         stderr.push(chunk.toString());
       });
 
-      childProcess.stdout
-        .on("data", (chunk: Buffer) => {
-          stdout.push(chunk.toString());
-        })
-        .on("end", () => {
-          // Settling on end of stdout instead of on child exit: stderr is
-          // whatever arrived by then and the exit code is not known yet.
-          resolve({
-            stdout: stdout.join(""),
-            stderr: stderr.join(""),
-            exitCode: null,
-          });
+      childProcess.stdout.on("data", (chunk: Buffer) => {
+        stdout.push(chunk.toString());
+      });
+
+      // Exit 1 means findings, which execa rejects, so either outcome carries
+      // the result; 2 or more is an error that only stderr explains.
+      const settle = ({ exitCode }: { exitCode?: number }) => {
+        if (exitCode !== undefined && exitCode >= 2) {
+          logging.error(
+            "ShellCheck exited with %d: %s",
+            exitCode,
+            stderr.join("").trim(),
+          );
+        }
+        resolve({
+          stdout: stdout.join(""),
+          stderr: stderr.join(""),
+          exitCode: exitCode ?? null,
         });
+      };
+      childProcess.then(settle, settle);
 
       childProcess.nodeChildProcess.on("error", reject);
     });
