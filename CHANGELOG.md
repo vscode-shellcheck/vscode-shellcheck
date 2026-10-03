@@ -1,3 +1,33 @@
+## [0.43.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.42.0...v0.43.0) (2026-10-03)
+
+### Features
+
+* add a status bar item with a shellcheck menu ([#1973](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1973)) ([9c4d17d](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/9c4d17dcc4ac590f1f2b75301c7414a13134bf09)), closes [#1559](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1559)
+* add shellcheck.maxConcurrentRuns to cap concurrent native runs ([#1980](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1980)) ([b0ee704](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/b0ee704786420c88b9c7cd28c391554195427eca)), closes [#1978](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1978)
+* add shellcheck.runTimeout to stop hung native runs ([2ceecfa](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/2ceecfab47f09e9d6ebb210f8417bb71956985c3))
+* add support to vscode web ([#1967](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1967)) ([64dda51](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/64dda5199ca2eb94fbfdf916203cf54c0eaf1349)), closes [vscode-shellcheck/shellcheck-wasm#23](https://github.com/vscode-shellcheck/shellcheck-wasm/issues/23)
+* announce new features with a what's-new walkthrough ([#1974](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1974)) ([376c049](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/376c0499e176eb6e4ceae2bb670963c46ff08b1d)), closes [#1977](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1977)
+* lint open documents again when .shellcheckrc changes ([#1977](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1977)) ([b370c21](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/b370c21cf2aa5780d188f05f12224a10573cc7e5)), closes [#608](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/608)
+* pick the runtime and lint trigger from their own status menu lists ([#1984](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1984)) ([47651a3](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/47651a3c6be8daf52f893b1a99c8c7b799b8a4d2)), closes [#1973](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1973)
+
+### Bug Fixes
+
+* don't apply quick fixes to lines that moved since the lint ([#1979](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1979)) ([671813d](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/671813d2c54afe4422474e0413d5a67264cccffc)), closes [#1981](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1981)
+* log shellcheck errors that used to look like a clean file ([#1981](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1981)) ([4fdac22](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/4fdac22f0d164aff8e989797382c30cb1fba82c1))
+* probe the shellcheck version once when many documents open ([#1981](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1981)) ([6fab1a0](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/6fab1a0a3cb56abfe808a0c6712e0cc23e7d70ae))
+* skip the pending lint of a document closed during the delay ([#1981](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1981)) ([e74b3e0](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/e74b3e0fa6bbb3a4d81e86fdcc03bf4473d35218))
+* stop repeating the shellcheck update prompt on settings changes ([#1981](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1981)) ([a8d5355](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/a8d5355e05ec3ef57263dfbd01f69c0a57a8e605))
+* **wasm:** don't count module loading against the lint timeout ([#1981](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1981)) ([a658417](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/a658417d751307c8d6ccee6715d95d29272c5e89))
+
+### Performance Improvements
+
+* build fix all from cached results instead of per-finding queries ([#1981](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1981)) ([278c8cf](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/278c8cf34f6e9a07d571f29a7a21f5cdbf7505b0))
+* don't activate just because the workspace has a .shellcheckrc ([#1981](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1981)) ([7132e9d](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/7132e9d275afd22bfea9669d9b85bea7bf20fc34))
+
+### Dependencies
+
+* **deps:** update dependency @vscode-shellcheck/shellcheck-wasm to v0.3.0 ([#1982](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1982)) ([bde246a](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/bde246a7a5ef1ab1f73913541937fd86a69cf375))
+
 ## [0.42.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.41.1...v0.42.0) (2026-09-29)
 
 ### Features
