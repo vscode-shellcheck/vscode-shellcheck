@@ -41,10 +41,10 @@ export interface Choice<T> extends vscode.QuickPickItem {
   readonly current: boolean;
 }
 
-const triggerLabels: Record<RunTrigger, string> = {
-  [RunTrigger.onType]: "On Type",
-  [RunTrigger.onSave]: "On Save",
-  [RunTrigger.manual]: "Manually",
+const triggerLabels: Record<RunTrigger, () => string> = {
+  [RunTrigger.onType]: () => vscode.l10n.t("On Type"),
+  [RunTrigger.onSave]: () => vscode.l10n.t("On Save"),
+  [RunTrigger.manual]: () => vscode.l10n.t("Manual"),
 };
 
 /** Where the active document's status comes from. */
@@ -61,7 +61,7 @@ function describeRuntime(snapshot: StatusSnapshot): string {
       ? `wasm (GHC ${snapshot.tool.ghcVersion})`
       : "wasm";
   }
-  return snapshot.bundled ? "native (bundled)" : "native";
+  return snapshot.bundled ? vscode.l10n.t("native (bundled)") : "native";
 }
 
 function describeTool(tool: ToolStatus | undefined): string {
@@ -72,18 +72,18 @@ function describeTool(tool: ToolStatus | undefined): string {
     return `ShellCheck ${tool.version}`;
   }
   return tool.reason === "executableNotFound"
-    ? "ShellCheck: executable not found"
-    : "ShellCheck: failed to run";
+    ? vscode.l10n.t("ShellCheck: executable not found")
+    : vscode.l10n.t("ShellCheck: failed to run");
 }
 
 export function statusBarView(snapshot: StatusSnapshot): StatusBarView {
   const lines = [
     `**${describeTool(snapshot.tool)}**`,
-    `Runtime: ${describeRuntime(snapshot)}`,
-    `Lint: ${triggerLabels[snapshot.trigger]}`,
+    vscode.l10n.t("Runtime: {0}", describeRuntime(snapshot)),
+    vscode.l10n.t("Lint Trigger: {0}", triggerLabels[snapshot.trigger]()),
   ];
   if (!snapshot.enabled) {
-    lines.push("Disabled for this document");
+    lines.push(vscode.l10n.t("Disabled for this document"));
   }
   return {
     tooltip: lines.join("\n\n"),
@@ -102,45 +102,45 @@ export function menuItems(snapshot: StatusSnapshot): MenuItem[] {
   });
   const items: MenuItem[] = [
     {
-      label: "$(gear) Open Settings",
+      label: `$(gear) ${vscode.l10n.t("Open Settings")}`,
       action: { kind: "openSettings" },
     },
     {
-      label: "$(output) Show Extension Log",
+      label: `$(output) ${vscode.l10n.t("Show Extension Log")}`,
       action: { kind: "showOutput" },
     },
   ];
 
-  items.push(separator("Settings"));
+  items.push(separator(vscode.l10n.t("Settings")));
   if (snapshot.canSwitchRuntime) {
     items.push({
-      label: `$(server-process) Runtime: ${snapshot.runtime}`,
-      description: "Change how ShellCheck runs",
+      label: `$(server-process) ${vscode.l10n.t("Runtime: {0}", snapshot.runtime)}`,
+      description: vscode.l10n.t("Change how ShellCheck runs"),
       action: { kind: "pickRuntime" },
     });
   }
   items.push({
-    label: `$(zap) Lint: ${triggerLabels[snapshot.trigger]}`,
-    description: "Change when ShellCheck runs",
+    label: `$(zap) ${vscode.l10n.t("Lint Trigger: {0}", triggerLabels[snapshot.trigger]())}`,
+    description: vscode.l10n.t("Change what triggers a lint"),
     action: { kind: "pickTrigger" },
   });
   items.push(
     snapshot.enabled
       ? {
-          label: "$(circle-slash) Disable ShellCheck",
-          description: "For this workspace",
+          label: `$(circle-slash) ${vscode.l10n.t("Disable ShellCheck")}`,
+          description: vscode.l10n.t("For this workspace"),
           action: { kind: "setEnabled", enabled: false },
         }
       : {
-          label: "$(check) Enable ShellCheck",
-          description: "For this workspace",
+          label: `$(check) ${vscode.l10n.t("Enable ShellCheck")}`,
+          description: vscode.l10n.t("For this workspace"),
           action: { kind: "setEnabled", enabled: true },
         },
   );
 
   items.push(separator(""), {
-    label: "$(report) Collect Diagnostics",
-    detail: "Open a report on how ShellCheck sees this document",
+    label: `$(report) ${vscode.l10n.t("Collect Diagnostics")}`,
+    detail: vscode.l10n.t("Open a report on how ShellCheck sees this document"),
     action: { kind: "command", command: "shellcheck.collectDiagnostics" },
   });
   return items;
@@ -190,7 +190,13 @@ function choice<T>(
 ): Choice<T> {
   return {
     label,
-    description: value === current ? "$(check) current" : undefined,
+    description:
+      value === current
+        ? `$(check) ${vscode.l10n.t({
+            message: "current",
+            comment: ["Marks the value a setting has now in a picker."],
+          })}`
+        : undefined,
     detail,
     value,
     current: value === current,
@@ -203,13 +209,15 @@ export function runtimeChoices(current: RuntimeKind): Choice<RuntimeKind>[] {
       "native",
       current,
       "native",
-      "Run the bundled or user-provided shellcheck executable",
+      vscode.l10n.t("Run the bundled or user-provided shellcheck executable"),
     ),
     choice<RuntimeKind>(
       "wasm",
       current,
       "wasm",
-      "Run the bundled WebAssembly build of ShellCheck (experimental, slower)",
+      vscode.l10n.t(
+        "Run the bundled WebAssembly build of ShellCheck (experimental, slower)",
+      ),
     ),
   ];
 }
@@ -219,20 +227,22 @@ export function triggerChoices(current: RunTrigger): Choice<RunTrigger>[] {
     choice(
       RunTrigger.onType,
       current,
-      triggerLabels[RunTrigger.onType],
-      "Lint as you type",
+      triggerLabels[RunTrigger.onType](),
+      vscode.l10n.t("Lint as you type"),
     ),
     choice(
       RunTrigger.onSave,
       current,
-      triggerLabels[RunTrigger.onSave],
-      "Lint when the document is saved",
+      triggerLabels[RunTrigger.onSave](),
+      vscode.l10n.t("Lint when the document is saved"),
     ),
     choice(
       RunTrigger.manual,
       current,
-      triggerLabels[RunTrigger.manual],
-      "Lint only with ShellCheck: Lint Current Document",
+      triggerLabels[RunTrigger.manual](),
+      vscode.l10n.t(
+        'Lint only when you run "ShellCheck: Lint Current Document"',
+      ),
     ),
   ];
 }
@@ -334,7 +344,7 @@ export class StatusBar implements vscode.Disposable {
       case "pickRuntime": {
         const runtime = await pickChange(
           runtimeChoices(snapshot.runtime),
-          "ShellCheck Runtime",
+          vscode.l10n.t("ShellCheck Runtime"),
         );
         if (runtime !== undefined) {
           await updateSetting(document, keys.runtime, runtime, Global);
@@ -347,7 +357,7 @@ export class StatusBar implements vscode.Disposable {
       case "pickTrigger": {
         const trigger = await pickChange(
           triggerChoices(snapshot.trigger),
-          "When to Lint",
+          vscode.l10n.t("Lint Trigger"),
         );
         if (trigger !== undefined) {
           await updateSetting(document, keys.run, RunTrigger[trigger], Global);

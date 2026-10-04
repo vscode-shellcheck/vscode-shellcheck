@@ -38,6 +38,13 @@ jobs:
           VSCODE_TEST_VERSION: ${{ matrix.vscode-version }}
         with:
           run: npm test
+      - if: matrix.os == 'ubuntu-latest' && matrix.vscode-version == 'stable'
+        name: Test the localized UI
+        uses: GabrielBB/xvfb-action@v1
+        env:
+          VSCODE_TEST_L10N: "true"
+        with:
+          run: npx vscode-test --label l10n-zh-cn
       # An extension host that dies on a signal leaves mocha with only
       # "Canceled"; the native stack is in the macOS crash report.
       - if: failure()
@@ -59,6 +66,9 @@ jobs:
         with:
           version: 2026.10.2
       - run: npm ci
+      # The translations are keyed on these English sources.
+      - run: npm run l10n:check
+      - run: node .github/scripts/check-nls-keys.mjs
       - run: npx playwright install --with-deps chromium
       - run: npm run build
       - run: npm run build:test:web

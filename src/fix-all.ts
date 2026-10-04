@@ -10,7 +10,7 @@ function getFixAllCodeAction(
 
   if (codeActions.length > 0) {
     const fixAll = new vscode.CodeAction(
-      "ShellCheck: Fix all auto-fixable issues",
+      `ShellCheck: ${vscode.l10n.t("Fix all auto-fixable issues")}`,
       FixAllProvider.fixAllCodeActionKind,
     );
 

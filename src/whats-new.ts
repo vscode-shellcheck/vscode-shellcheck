@@ -12,8 +12,6 @@ export const WHATS_NEW_EDITION_KEY = "whatsNewEdition";
 export const WHATS_NEW_EDITION = 1;
 export const USE_WASM_RUNTIME_COMMAND = "shellcheck.useWasmRuntime";
 
-const SEE_WHATS_NEW = "See What's New";
-
 /**
  * Runs `announce` unless this edition, or a newer one from a newer version on
  * another synced machine, was announced before.
@@ -45,16 +43,22 @@ export async function useWasmRuntime(
 }
 
 async function confirmWasmRuntime(): Promise<boolean> {
-  const switchLabel = "Switch to WebAssembly";
+  const switchLabel = vscode.l10n.t("Switch to WebAssembly");
   const selected = await vscode.window.showWarningMessage(
-    "Switch ShellCheck to the experimental WebAssembly runtime?",
+    vscode.l10n.t("Switch ShellCheck to the experimental WebAssembly runtime?"),
     {
       modal: true,
       detail: [
-        "It checks scripts 3-4x slower than the native binary.",
-        "It never falls back to the native binary: if it fails, scripts are not checked until you switch back.",
-        "It reads only files inside the document's workspace folder, so source targets and .shellcheckrc files outside it are not found.",
-        "shellcheck.executablePath is ignored, and paths in shellcheck.customArgs are not resolved.",
+        vscode.l10n.t("It checks scripts 3-4x slower than the native binary."),
+        vscode.l10n.t(
+          "It never falls back to the native binary: if it fails, scripts are not checked until you switch back.",
+        ),
+        vscode.l10n.t(
+          "It reads only files inside the document's workspace folder, so source targets and .shellcheckrc files outside it are not found.",
+        ),
+        vscode.l10n.t(
+          "shellcheck.executablePath is ignored, and paths in shellcheck.customArgs are not resolved.",
+        ),
       ].join("\n\n"),
     },
     switchLabel,
@@ -67,11 +71,12 @@ export function registerWhatsNew(
 ): vscode.Disposable {
   context.globalState.setKeysForSync([WHATS_NEW_EDITION_KEY]);
   announceOnce(context.globalState, async () => {
+    const seeWhatsNew = vscode.l10n.t("See What's New");
     const selected = await vscode.window.showInformationMessage(
-      "ShellCheck has new features. Take a look at what's new?",
-      SEE_WHATS_NEW,
+      vscode.l10n.t("ShellCheck has new features. Take a look at what's new?"),
+      seeWhatsNew,
     );
-    if (selected === SEE_WHATS_NEW) {
+    if (selected === seeWhatsNew) {
       await vscode.commands.executeCommand(
         "workbench.action.openWalkthrough",
         WALKTHROUGH_ID,

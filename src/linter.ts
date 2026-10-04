@@ -510,7 +510,7 @@ export default class ShellCheckProvider
         diagnostic.code.value.startsWith("SC")
       ) {
         const ruleId = diagnostic.code.value;
-        const title = `ShellCheck: Show wiki for ${ruleId}`;
+        const title = `ShellCheck: ${vscode.l10n.t("Show wiki for {0}", ruleId)}`;
         const action = new vscode.CodeAction(
           title,
           vscode.CodeActionKind.QuickFix,
@@ -540,7 +540,7 @@ export default class ShellCheckProvider
         diagnostic.code.value.startsWith("SC")
       ) {
         const ruleId = diagnostic.code.value;
-        const title = `ShellCheck: Disable ${ruleId} for this line`;
+        const title = `ShellCheck: ${vscode.l10n.t("Disable {0} for this line", ruleId)}`;
         const action = new vscode.CodeAction(
           title,
           vscode.CodeActionKind.QuickFix,
@@ -961,7 +961,7 @@ export default class ShellCheckProvider
         ...notification.items,
       );
       await applyFailureEffect(
-        effectOfSelection(selected),
+        effectOfSelection(selected?.action),
         this.failureActionHost,
       );
     } catch (error) {
