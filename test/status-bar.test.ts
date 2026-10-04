@@ -38,7 +38,7 @@ suite("Status bar", () => {
     assert.strictEqual(view.state, "ok");
     assert.match(view.tooltip, /ShellCheck 0\.11\.0/);
     assert.match(view.tooltip, /Runtime: native \(bundled\)/);
-    assert.match(view.tooltip, /Lint: On Type/);
+    assert.match(view.tooltip, /Lint Trigger: On Type/);
 
     assert.match(statusBarView(wasm).tooltip, /Runtime: wasm \(GHC 9\.12\.2\)/);
   });
@@ -92,11 +92,11 @@ suite("Status menu", () => {
   test("labels the settings with their current values", () => {
     const labels = menuItems(nativeBundled).map((item) => item.label);
     assert.ok(labels.includes("$(server-process) Runtime: native"));
-    assert.ok(labels.includes("$(zap) Lint: On Type"));
+    assert.ok(labels.includes("$(zap) Lint Trigger: On Type"));
     assert.ok(
       menuItems({ ...wasm, trigger: RunTrigger.manual })
         .map((item) => item.label)
-        .includes("$(zap) Lint: Manually"),
+        .includes("$(zap) Lint Trigger: Manual"),
     );
   });
 
@@ -140,7 +140,7 @@ suite("Status menu pickers", () => {
       [
         ["On Type", RunTrigger.onType],
         ["On Save", RunTrigger.onSave],
-        ["Manually", RunTrigger.manual],
+        ["Manual", RunTrigger.manual],
       ],
     );
     assert.deepStrictEqual(

@@ -44,7 +44,7 @@ suite("Simplified Chinese", () => {
   test("the status bar is translated", () => {
     assert.strictEqual(
       statusBarView(snapshot).tooltip,
-      "**ShellCheck 0.11.0**\n\n运行时：native（内置）\n\n检查：键入时",
+      "**ShellCheck 0.11.0**\n\n运行时：native（内置）\n\n检查触发方式：键入时",
     );
     assert.strictEqual(menuItems(snapshot)[0].label, "$(gear) 打开设置");
   });

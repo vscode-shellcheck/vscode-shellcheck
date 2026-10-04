@@ -136,7 +136,7 @@ function statusBar() {
     ["Open Settings", "", 94],
     ["Show Extension Log", "", 116],
     ["Runtime: native", "Change how ShellCheck runs", 158],
-    ["Lint: On Type", "Change when ShellCheck runs", 180],
+    ["Lint Trigger: On Type", "Change what triggers a lint", 180],
     ["Disable ShellCheck", "For this workspace", 202],
     ["Collect Diagnostics", "", 234],
   ];

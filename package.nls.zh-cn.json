@@ -17,7 +17,7 @@
   "config.runtime.markdownDescription": "**实验性。** 要使用的 ShellCheck 运行时。VS Code for the Web 始终使用 `wasm`，并忽略此设置。\n\n- `native` — 运行内置或用户提供的 `shellcheck` 可执行文件。这是默认值，也是桌面版唯一受支持的运行时。\n- `wasm` — 在编辑器内运行内置的 ShellCheck WebAssembly (WASI) 构建。它无需可执行文件，可在所有平台和虚拟工作区中使用，但目前检查速度比 native 慢 3-4 倍，会忽略 `#shellcheck.executablePath#`，并且 `source` 指令和 `.shellcheckrc` 查找都看不到文档所在工作区文件夹之外的文件。",
   "config.runtime.enumDescriptions.0": "运行内置或用户提供的 shellcheck 可执行文件。",
   "config.runtime.enumDescriptions.1": "运行内置的 ShellCheck WebAssembly 构建（实验性，较慢）。",
-  "config.run.description": "ShellCheck 在保存时、键入时还是手动运行。",
+  "config.run.description": "触发检查的方式：键入、保存，或仅通过“检查当前文档”命令。",
   "config.exclude.markdownDescription": "排除特定的错误代码。例如，要排除 [SC1017](https://shellcheck.net/wiki/SC1017)，请输入 _1017_。错误代码列表见[此 gist](https://gist.github.com/nicerobot/53cee11ee0abbdc997661e65b348f375)。应始终优先使用 `.shellcheckrc` 文件，而不是此设置。",
   "config.exclude.items.patternErrorMessage": "有效的 shellcheck 错误代码应为 4 位数字，例如 1017。\n",
   "config.customArgs.markdownDescription": "传递给 ShellCheck 的自定义参数。应始终优先使用 `.shellcheckrc` 文件，而不是此设置。当 `#shellcheck.runtime#` 为 `wasm` 时（在 VS Code for the Web 中始终如此），这些参数中指向你本机的路径无法解析。",

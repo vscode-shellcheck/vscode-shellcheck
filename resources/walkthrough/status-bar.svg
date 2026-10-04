@@ -36,7 +36,7 @@
 <text x="126" y="109" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-quickInput-foreground, #cccccc)">Open Settings</text>
 <text x="126" y="131" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-quickInput-foreground, #cccccc)">Show Extension Log</text>
 <text x="126" y="173" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-quickInput-foreground, #cccccc)">Runtime: native<tspan dx="10" font-size="12" fill="var(--vscode-descriptionForeground, #9d9d9d)">Change how ShellCheck runs</tspan></text>
-<text x="126" y="195" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-quickInput-foreground, #cccccc)">Lint: On Type<tspan dx="10" font-size="12" fill="var(--vscode-descriptionForeground, #9d9d9d)">Change when ShellCheck runs</tspan></text>
+<text x="126" y="195" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-quickInput-foreground, #cccccc)">Lint Trigger: On Type<tspan dx="10" font-size="12" fill="var(--vscode-descriptionForeground, #9d9d9d)">Change what triggers a lint</tspan></text>
 <text x="126" y="217" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-quickInput-foreground, #cccccc)">Disable ShellCheck<tspan dx="10" font-size="12" fill="var(--vscode-descriptionForeground, #9d9d9d)">For this workspace</tspan></text>
 <text x="126" y="249" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" fill="var(--vscode-quickInput-foreground, #cccccc)">Collect Diagnostics</text>
 </g>

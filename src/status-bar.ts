@@ -44,7 +44,7 @@ export interface Choice<T> extends vscode.QuickPickItem {
 const triggerLabels: Record<RunTrigger, () => string> = {
   [RunTrigger.onType]: () => vscode.l10n.t("On Type"),
   [RunTrigger.onSave]: () => vscode.l10n.t("On Save"),
-  [RunTrigger.manual]: () => vscode.l10n.t("Manually"),
+  [RunTrigger.manual]: () => vscode.l10n.t("Manual"),
 };
 
 /** Where the active document's status comes from. */
@@ -80,7 +80,7 @@ export function statusBarView(snapshot: StatusSnapshot): StatusBarView {
   const lines = [
     `**${describeTool(snapshot.tool)}**`,
     vscode.l10n.t("Runtime: {0}", describeRuntime(snapshot)),
-    vscode.l10n.t("Lint: {0}", triggerLabels[snapshot.trigger]()),
+    vscode.l10n.t("Lint Trigger: {0}", triggerLabels[snapshot.trigger]()),
   ];
   if (!snapshot.enabled) {
     lines.push(vscode.l10n.t("Disabled for this document"));
@@ -120,8 +120,8 @@ export function menuItems(snapshot: StatusSnapshot): MenuItem[] {
     });
   }
   items.push({
-    label: `$(zap) ${vscode.l10n.t("Lint: {0}", triggerLabels[snapshot.trigger]())}`,
-    description: vscode.l10n.t("Change when ShellCheck runs"),
+    label: `$(zap) ${vscode.l10n.t("Lint Trigger: {0}", triggerLabels[snapshot.trigger]())}`,
+    description: vscode.l10n.t("Change what triggers a lint"),
     action: { kind: "pickTrigger" },
   });
   items.push(
@@ -240,7 +240,9 @@ export function triggerChoices(current: RunTrigger): Choice<RunTrigger>[] {
       RunTrigger.manual,
       current,
       triggerLabels[RunTrigger.manual](),
-      vscode.l10n.t("Lint only with ShellCheck: Lint Current Document"),
+      vscode.l10n.t(
+        'Lint only when you run "ShellCheck: Lint Current Document"',
+      ),
     ),
   ];
 }
@@ -355,7 +357,7 @@ export class StatusBar implements vscode.Disposable {
       case "pickTrigger": {
         const trigger = await pickChange(
           triggerChoices(snapshot.trigger),
-          vscode.l10n.t("When to Lint"),
+          vscode.l10n.t("Lint Trigger"),
         );
         if (trigger !== undefined) {
           await updateSetting(document, keys.run, RunTrigger[trigger], Global);
