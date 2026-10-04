@@ -1,16 +1,24 @@
+import * as vscode from "vscode";
 import { RuntimeKind, WasmRuntimeError } from "./runtime/types.js";
 
-/**
- * Item titles are also their identity: a notification hands back the chosen
- * title and nothing else.
- */
-export const FailureActions = {
+const failureTitles = {
   ok: "OK",
   installationGuide: "Installation Guide",
   tryWasmRuntime: "Try experimental WASM runtime",
   switchBackToNative: "Switch back to native",
   showLog: "Show Log",
-} as const;
+};
+
+export type FailureAction = keyof typeof failureTitles;
+
+/** Picks are told apart by `action`; the title is only for display. */
+export interface FailureItem extends vscode.MessageItem {
+  readonly action: FailureAction;
+}
+
+function failureItem(action: FailureAction): FailureItem {
+  return { action, title: failureTitles[action] };
+}
 
 export const INSTALLATION_GUIDE_URL =
   "https://github.com/koalaman/shellcheck#installing";
@@ -18,7 +26,7 @@ export const INSTALLATION_GUIDE_URL =
 /** An error notification: the text and the items offered with it. */
 export interface FailureNotification {
   readonly message: string;
-  readonly items: readonly string[];
+  readonly items: readonly FailureItem[];
 }
 
 /** What picking an item on an error notification has to do. */
@@ -51,14 +59,11 @@ export function describeShellCheckError(
   if (error instanceof Error) {
     const e = error as NodeJS.ErrnoException;
     if (e.code === "ENOENT") {
-      const items: string[] = [
-        FailureActions.ok,
-        FailureActions.installationGuide,
-      ];
+      const items = [failureItem("ok"), failureItem("installationGuide")];
       // Offering a runtime that needs no program only helps where a missing
       // program is what stopped the lint.
       if (runtime === "native") {
-        items.push(FailureActions.tryWasmRuntime);
+        items.push(failureItem("tryWasmRuntime"));
       }
       return {
         message:
@@ -85,20 +90,22 @@ export function describeWasmFailure(
     // The full details of every wasm failure are logged at error level, so the
     // output channel is always worth opening here.
     items: canSwitchToNative
-      ? [FailureActions.switchBackToNative, FailureActions.showLog]
-      : [FailureActions.showLog],
+      ? [failureItem("switchBackToNative"), failureItem("showLog")]
+      : [failureItem("showLog")],
   };
 }
 
-export function effectOfSelection(selected: string | undefined): FailureEffect {
+export function effectOfSelection(
+  selected: FailureAction | undefined,
+): FailureEffect {
   switch (selected) {
-    case FailureActions.installationGuide:
+    case "installationGuide":
       return { kind: "openUrl", url: INSTALLATION_GUIDE_URL };
-    case FailureActions.tryWasmRuntime:
+    case "tryWasmRuntime":
       return { kind: "setRuntime", runtime: "wasm" };
-    case FailureActions.switchBackToNative:
+    case "switchBackToNative":
       return { kind: "setRuntime", runtime: "native" };
-    case FailureActions.showLog:
+    case "showLog":
       return { kind: "showLog" };
     default:
       return { kind: "dismiss" };

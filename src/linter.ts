@@ -961,7 +961,7 @@ export default class ShellCheckProvider
         ...notification.items,
       );
       await applyFailureEffect(
-        effectOfSelection(selected),
+        effectOfSelection(selected?.action),
         this.failureActionHost,
       );
     } catch (error) {
