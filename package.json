@@ -103,19 +103,23 @@
     "commands": [
       {
         "command": "shellcheck.runLint",
-        "title": "ShellCheck: Lint Current Document"
+        "title": "Lint Current Document",
+        "category": "ShellCheck"
       },
       {
         "command": "shellcheck.collectDiagnostics",
-        "title": "ShellCheck: Collect Diagnostics For Current Document"
+        "title": "Collect Diagnostics For Current Document",
+        "category": "ShellCheck"
       },
       {
         "command": "shellcheck.showMenu",
-        "title": "ShellCheck: Show Menu"
+        "title": "Show Menu",
+        "category": "ShellCheck"
       },
       {
         "command": "shellcheck.useWasmRuntime",
-        "title": "ShellCheck: Use the Experimental WebAssembly Runtime"
+        "title": "Use the Experimental WebAssembly Runtime",
+        "category": "ShellCheck"
       }
     ],
     "menus": {
