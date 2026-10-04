@@ -152,7 +152,7 @@
             "default": true
           },
           "shellcheck.enableQuickFix": {
-            "description": "%config.enableQuickFix.description%",
+            "markdownDescription": "%config.enableQuickFix.markdownDescription%",
             "type": "boolean",
             "scope": "resource",
             "default": true
@@ -291,7 +291,7 @@
             ]
           },
           "shellcheck.useWorkspaceRootAsCwd": {
-            "description": "%config.useWorkspaceRootAsCwd.description%",
+            "markdownDescription": "%config.useWorkspaceRootAsCwd.markdownDescription%",
             "type": "boolean",
             "scope": "resource",
             "default": false
