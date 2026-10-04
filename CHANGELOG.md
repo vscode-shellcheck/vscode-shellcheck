@@ -1,3 +1,9 @@
+## [0.44.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.43.1...v0.44.0) (2026-10-04)
+
+### Features
+
+* localize the extension UI into Simplified Chinese ([#1990](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1990)) ([38a6e14](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/38a6e14a093c254f6e0d7bac66ea4d07480d9c6d))
+
 ## [0.43.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.43.0...v0.43.1) (2026-10-04)
 
 ### Dependencies
