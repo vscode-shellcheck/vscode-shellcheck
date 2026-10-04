@@ -1,3 +1,9 @@
+## [0.43.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.43.0...v0.43.1) (2026-10-04)
+
+### Dependencies
+
+* **deps:** update dependency remeda to ^2.51.0 ([#1991](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1991)) ([3d4c1d7](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/3d4c1d72ddd804aafc9e75089cc8846f21df4c9a))
+
 ## [0.43.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.42.0...v0.43.0) (2026-10-03)
 
 ### Features
