@@ -4,11 +4,8 @@ on:
   push:
     branches:
       - master
-      - dev
+  # Any base, so PRs stacked on another PR's branch get checked too.
   pull_request:
-    branches:
-      - master
-      - dev
   # This is to catch new releases of VS Code which could cause the extension to break
   schedule:
     - cron: 0 0 * * *
@@ -146,7 +143,7 @@ jobs:
             package-lock.json
 
   release:
-    # dev collects changes for the next release; only master releases.
+    # Only master releases; PRs stacked on other branches just run the checks.
     if: github.event_name != 'schedule' && (github.ref_name == 'master' || github.base_ref == 'master')
 
     needs: [test, test-web, build]
