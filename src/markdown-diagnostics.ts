@@ -25,19 +25,38 @@ function escapeHtmlAttribute(text: string): string {
   });
 }
 
+const severityStyles: Record<
+  vscode.DiagnosticSeverity,
+  { color: string; icon: string; label: () => string }
+> = {
+  [vscode.DiagnosticSeverity.Error]: {
+    color: "editorError",
+    icon: "error",
+    label: () => vscode.l10n.t("Error"),
+  },
+  [vscode.DiagnosticSeverity.Warning]: {
+    color: "editorWarning",
+    icon: "warning",
+    label: () => vscode.l10n.t("Warning"),
+  },
+  [vscode.DiagnosticSeverity.Information]: {
+    color: "editorInfo",
+    icon: "info",
+    label: () => vscode.l10n.t("Information"),
+  },
+  [vscode.DiagnosticSeverity.Hint]: {
+    color: "editorHint",
+    icon: "light-bulb",
+    label: () => vscode.l10n.t("Hint"),
+  },
+};
+
 function severityLabel(severity: vscode.DiagnosticSeverity): string {
-  switch (severity) {
-    case vscode.DiagnosticSeverity.Error:
-      return '<span style="color:var(--vscode-editorError-foreground);"><span class="codicon codicon-error"></span> <strong>Error</strong></span>';
-    case vscode.DiagnosticSeverity.Warning:
-      return '<span style="color:var(--vscode-editorWarning-foreground);"><span class="codicon codicon-warning"></span> <strong>Warning</strong></span>';
-    case vscode.DiagnosticSeverity.Information:
-      return '<span style="color:var(--vscode-editorInfo-foreground);"><span class="codicon codicon-info"></span> <strong>Information</strong></span>';
-    case vscode.DiagnosticSeverity.Hint:
-      return '<span style="color:var(--vscode-editorHint-foreground);"><span class="codicon codicon-light-bulb"></span> <strong>Hint</strong></span>';
-    default:
-      return "<strong>Diagnostic</strong>";
+  const style = severityStyles[severity];
+  if (!style) {
+    return `<strong>${vscode.l10n.t("Diagnostic")}</strong>`;
   }
+  return `<span style="color:var(--vscode-${style.color}-foreground);"><span class="codicon codicon-${style.icon}"></span> <strong>${style.label()}</strong></span>`;
 }
 
 function diagnosticCode(diagnostic: vscode.Diagnostic): string | undefined {
@@ -70,7 +89,7 @@ export function formatDiagnosticForHover(
       ? `<span style="color:var(--vscode-descriptionForeground);">(${escapeMarkdownText(code)})</span>`
       : undefined,
     target
-      ? `<a href="${escapeHtmlAttribute(target)}" title="Open ShellCheck rule documentation"><span class="codicon codicon-link-external"></span></a>`
+      ? `<a href="${escapeHtmlAttribute(target)}" title="${escapeHtmlAttribute(vscode.l10n.t("Open ShellCheck rule documentation"))}"><span class="codicon codicon-link-external"></span></a>`
       : undefined,
     // This formatted-hover implementation follows the approach used by
     // pretty-ts-errors, including its Codicon marker and optional CSS ordering

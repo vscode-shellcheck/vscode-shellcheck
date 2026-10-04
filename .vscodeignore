@@ -11,6 +11,8 @@
 !CHANGELOG.md
 !LICENSE
 !package.json
+!package.nls*.json
+!l10n/*.json
 !README.md
 !shellcheck.png
 !resources/walkthrough/*.svg

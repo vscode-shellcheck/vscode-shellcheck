@@ -1,23 +1,24 @@
 import * as vscode from "vscode";
 import { RuntimeKind, WasmRuntimeError } from "./runtime/types.js";
 
+// Thunks, so each title is translated when it is shown.
 const failureTitles = {
-  ok: "OK",
-  installationGuide: "Installation Guide",
-  tryWasmRuntime: "Try experimental WASM runtime",
-  switchBackToNative: "Switch back to native",
-  showLog: "Show Log",
+  ok: () => vscode.l10n.t("OK"),
+  installationGuide: () => vscode.l10n.t("Installation Guide"),
+  tryWasmRuntime: () => vscode.l10n.t("Try experimental WASM runtime"),
+  switchBackToNative: () => vscode.l10n.t("Switch back to native"),
+  showLog: () => vscode.l10n.t("Show Log"),
 };
 
 export type FailureAction = keyof typeof failureTitles;
 
-/** Picks are told apart by `action`; the title is only for display. */
+/** Picks are told apart by `action`, as the title is translated. */
 export interface FailureItem extends vscode.MessageItem {
   readonly action: FailureAction;
 }
 
 function failureItem(action: FailureAction): FailureItem {
-  return { action, title: failureTitles[action] };
+  return { action, title: failureTitles[action]() };
 }
 
 export const INSTALLATION_GUIDE_URL =
@@ -66,18 +67,25 @@ export function describeShellCheckError(
         items.push(failureItem("tryWasmRuntime"));
       }
       return {
-        message:
+        message: vscode.l10n.t(
           "The shellcheck program was not found (not installed?). Use the 'shellcheck.executablePath' setting to configure the location of 'shellcheck'",
+        ),
         items,
       };
     }
     return {
-      message: `Failed to run shellcheck: [${e.code}] ${e.message}`,
+      message: vscode.l10n.t(
+        "Failed to run shellcheck: {0}",
+        `[${e.code}] ${e.message}`,
+      ),
       items: [],
     };
   }
 
-  return { message: "Failed to run shellcheck: unknown error", items: [] };
+  return {
+    message: vscode.l10n.t("Failed to run shellcheck: unknown error"),
+    items: [],
+  };
 }
 
 /** The notification for a failure of the experimental WASM runtime itself. */
@@ -86,7 +94,10 @@ export function describeWasmFailure(
   canSwitchToNative: boolean,
 ): FailureNotification {
   return {
-    message: `${error.message}. Shell scripts are not being checked.`,
+    message: vscode.l10n.t(
+      "{0}. Shell scripts are not being checked.",
+      error.message,
+    ),
     // The full details of every wasm failure are logged at error level, so the
     // output channel is always worth opening here.
     items: canSwitchToNative

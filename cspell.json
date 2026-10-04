@@ -10,6 +10,8 @@
     "out/**",
     "*.vsix",
     "package-lock.json",
+    "package.nls.*.json",
+    "l10n/bundle.l10n.*.json",
     "resources/walkthrough/*.svg"
   ],
   "words": [
@@ -20,6 +22,7 @@
     "badf",
     "bindl",
     "bjorn",
+    "CEINTL",
     "COEP",
     "Consolas",
     "conventionalcommits",
@@ -49,6 +52,7 @@
     "isdir",
     "keytar",
     "koalaman",
+    "languagepacks",
     "libc",
     "linecap",
     "linejoin",

@@ -80,7 +80,7 @@ class JsonParserMixin {
     }
 
     const fix = new vscode.CodeAction(
-      `ShellCheck: Apply fix for SC${problem.code}`,
+      `ShellCheck: ${vscode.l10n.t("Apply fix for {0}", `SC${problem.code}`)}`,
       vscode.CodeActionKind.QuickFix,
     );
     fix.diagnostics = [diagnostic];
