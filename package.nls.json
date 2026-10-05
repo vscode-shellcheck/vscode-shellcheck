@@ -10,6 +10,7 @@
   "icon.shellcheck-logo.description": "ShellCheck logo",
   "config.title": "ShellCheck",
   "config.configFiles.title": "Config Files",
+  "config.nativeRuntime.title": "Native Runtime",
   "config.enable.description": "Whether ShellCheck is enabled or not.",
   "config.enableQuickFix.markdownDescription": "Whether to enable the _Quick Fix_ feature or not.",
   "config.markdownDiagnostics.markdownDescription": "**Experimental:** Show a formatted ShellCheck hover with severity and rule documentation. VS Code also displays the original diagnostic; the Problems view is unchanged. [Read the documentation](https://github.com/vscode-shellcheck/vscode-shellcheck#shellcheckmarkdowndiagnostics).",

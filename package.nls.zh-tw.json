@@ -10,6 +10,7 @@
   "icon.shellcheck-logo.description": "ShellCheck 標誌",
   "config.title": "ShellCheck",
   "config.configFiles.title": "設定檔",
+  "config.nativeRuntime.title": "native 執行階段",
   "config.enable.description": "是否啟用 ShellCheck。",
   "config.enableQuickFix.markdownDescription": "是否啟用「快速修正」功能。",
   "config.markdownDiagnostics.markdownDescription": "**實驗性：** 顯示格式化的 ShellCheck 暫留提示，其中包含嚴重性與規則說明文件。VS Code 仍會顯示原始診斷；「問題」檢視維持不變。[閱讀說明文件](https://github.com/vscode-shellcheck/vscode-shellcheck#shellcheckmarkdowndiagnostics)。",

@@ -10,6 +10,7 @@
   "icon.shellcheck-logo.description": "ShellCheck 로고",
   "config.title": "ShellCheck",
   "config.configFiles.title": "구성 파일",
+  "config.nativeRuntime.title": "native 런타임",
   "config.enable.description": "ShellCheck를 사용할지 여부입니다.",
   "config.enableQuickFix.markdownDescription": "_빠른 수정_ 기능을 사용할지 여부입니다.",
   "config.markdownDiagnostics.markdownDescription": "**실험적 기능:** 심각도와 규칙 문서가 포함된 서식 있는 ShellCheck 가리키기를 표시합니다. VS Code는 원래 진단도 함께 표시하며, 문제 보기는 변경되지 않습니다. [설명서 보기](https://github.com/vscode-shellcheck/vscode-shellcheck#shellcheckmarkdowndiagnostics).",

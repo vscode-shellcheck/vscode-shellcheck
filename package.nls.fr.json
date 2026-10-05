@@ -10,6 +10,7 @@
   "icon.shellcheck-logo.description": "Logo ShellCheck",
   "config.title": "ShellCheck",
   "config.configFiles.title": "Fichiers de configuration",
+  "config.nativeRuntime.title": "Runtime native",
   "config.enable.description": "Indique si ShellCheck est activé.",
   "config.enableQuickFix.markdownDescription": "Indique si la fonctionnalité _Correctif rapide_ est activée.",
   "config.markdownDiagnostics.markdownDescription": "**Expérimental :** affiche un pointage ShellCheck mis en forme, avec la gravité et la documentation de la règle. VS Code affiche également le diagnostic d'origine ; la vue Problèmes reste inchangée. [Lire la documentation](https://github.com/vscode-shellcheck/vscode-shellcheck#shellcheckmarkdowndiagnostics).",

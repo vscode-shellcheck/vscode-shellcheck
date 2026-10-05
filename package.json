@@ -166,14 +166,6 @@
               "experimental"
             ]
           },
-          "shellcheck.executablePath": {
-            "markdownDescription": "%config.executablePath.markdownDescription%",
-            "examples": [
-              "shellcheck"
-            ],
-            "type": "string",
-            "scope": "machine-overridable"
-          },
           "shellcheck.runtime": {
             "markdownDescription": "%config.runtime.markdownDescription%",
             "type": "string",
@@ -296,6 +288,33 @@
             "scope": "resource",
             "default": false
           },
+          "shellcheck.logLevel": {
+            "description": "%config.logLevel.description%",
+            "type": "string",
+            "scope": "window",
+            "enum": [
+              "trace",
+              "debug",
+              "info",
+              "warn",
+              "error",
+              "off"
+            ],
+            "default": "info"
+          }
+        }
+      },
+      {
+        "title": "%config.nativeRuntime.title%",
+        "properties": {
+          "shellcheck.executablePath": {
+            "markdownDescription": "%config.executablePath.markdownDescription%",
+            "examples": [
+              "shellcheck"
+            ],
+            "type": "string",
+            "scope": "machine-overridable"
+          },
           "shellcheck.runTimeout": {
             "markdownDescription": "%config.runTimeout.markdownDescription%",
             "type": "number",
@@ -310,20 +329,6 @@
             "minimum": 0,
             "scope": "window",
             "default": 0
-          },
-          "shellcheck.logLevel": {
-            "description": "%config.logLevel.description%",
-            "type": "string",
-            "scope": "window",
-            "enum": [
-              "trace",
-              "debug",
-              "info",
-              "warn",
-              "error",
-              "off"
-            ],
-            "default": "info"
           },
           "shellcheck.disableVersionCheck": {
             "markdownDescription": "%config.disableVersionCheck.markdownDescription%",
