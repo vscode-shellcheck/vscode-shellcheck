@@ -188,3 +188,28 @@ Brazilian Portuguese, addressing the user as "você" (arquivo, tela, salvar). Co
 | Output          | 输出     |
 
 Put a half-width space between Chinese and Latin words or numbers.
+
+### Traditional Chinese (`zh-tw`)
+
+| English         | zh-tw        |
+| --------------- | ------------ |
+| lint            | 檢查         |
+| runtime         | 執行階段     |
+| shebang         | (as is)      |
+| Settings        | 設定         |
+| Command Palette | 命令選擇區   |
+| workspace       | 工作區       |
+| status bar      | 狀態列       |
+| Quick Fix       | 快速修正     |
+| Output          | 輸出         |
+| Problems view   | 「問題」檢視 |
+| hover           | 暫留提示     |
+| walkthrough     | 逐步解說     |
+| config file     | 設定檔       |
+| script          | 指令碼       |
+| executable      | 可執行檔     |
+| build (noun)    | 組建         |
+| extension       | 延伸模組     |
+| menu            | 功能表       |
+
+Use Taiwan terms and address the user as 您. Use full-width punctuation, including （）, ：, and 「」, and put a half-width space between Chinese and Latin words or numbers.
