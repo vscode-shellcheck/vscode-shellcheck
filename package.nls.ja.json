@@ -10,6 +10,7 @@
   "icon.shellcheck-logo.description": "ShellCheck のロゴ",
   "config.title": "ShellCheck",
   "config.configFiles.title": "構成ファイル",
+  "config.nativeRuntime.title": "native ランタイム",
   "config.enable.description": "ShellCheck を有効にするかどうかを制御します。",
   "config.enableQuickFix.markdownDescription": "_クイック フィックス_ 機能を有効にするかどうかを制御します。",
   "config.markdownDiagnostics.markdownDescription": "**試験段階:** 重大度とルールのドキュメントを含む、書式設定された ShellCheck のホバーを表示します。VS Code では元の診断も引き続き表示されます。[問題] ビューは変わりません。[ドキュメントを読む](https://github.com/vscode-shellcheck/vscode-shellcheck#shellcheckmarkdowndiagnostics)。",
