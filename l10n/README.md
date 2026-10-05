@@ -63,6 +63,28 @@ Packaging, spell-checking, and Prettier already cover every locale through globs
 
 Address the user as "Sie". Use German quotation marks („…“) and a spaced en dash (–) where English has an em dash. Before a noun, the runtime name keeps its base form: "die native Laufzeit".
 
+### Spanish (`es`)
+
+| English         | es                          |
+| --------------- | --------------------------- |
+| lint            | analizar / análisis         |
+| runtime         | entorno de ejecución        |
+| Settings        | Configuración               |
+| Command Palette | Paleta de comandos          |
+| workspace       | área de trabajo             |
+| status bar      | barra de estado             |
+| Quick Fix       | Corrección rápida           |
+| Output          | Salida                      |
+| Problems view   | vista Problemas             |
+| walkthrough     | tutorial                    |
+| bundled         | incluido                    |
+| build (noun)    | compilación                 |
+| sandbox         | espacio aislado             |
+| glob pattern    | patrón glob                 |
+| lint trigger    | desencadenador del análisis |
+
+Use VS Code's impersonal style without "usted": commands and buttons take the infinitive ("Abrir configuración"), descriptions the third person or a "se" construction ("Controla si…"). Use sentence case, opening ¿ and ¡, and straight double quotes.
+
 ### Simplified Chinese (`zh-cn`)
 
 | English         | zh-cn    |
