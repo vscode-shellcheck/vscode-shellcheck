@@ -107,6 +107,28 @@ Use VS Code's impersonal style without "usted": commands and buttons take the in
 
 Address the user as "vous"; setting descriptions start with "Indique si…" or a third-person verb, and commands use the infinitive. Put a space before `:` `;` `?` `!` and inside « », except in the "ShellCheck: …" command prefix VS Code renders. Use the straight apostrophe.
 
+### Japanese (`ja`)
+
+| English          | ja                        |
+| ---------------- | ------------------------- |
+| lint             | チェック                  |
+| runtime          | ランタイム                |
+| Settings         | 設定                      |
+| Command Palette  | コマンド パレット         |
+| workspace        | ワークスペース            |
+| workspace folder | ワークスペース フォルダー |
+| status bar       | ステータス バー           |
+| Quick Fix        | クイック フィックス       |
+| Output           | 出力                      |
+| Problems view    | [問題] ビュー             |
+| walkthrough      | チュートリアル            |
+| config file      | 構成ファイル              |
+| bundled          | 同梱の                    |
+| experimental     | 試験段階                  |
+| default (value)  | 既定値                    |
+
+Write sentences in polite です/ます; commands, buttons, and menu items are short phrases without it ("設定を開く"), and boolean settings read "〜かどうかを制御します". Use full-width 。、「」（）？ but a half-width `: ` after labels ("ランタイム: {0}"), and put a half-width space between Japanese and Latin words, numbers, or code. Split katakana compounds as VS Code does (ステータス バー).
+
 ### Simplified Chinese (`zh-cn`)
 
 | English         | zh-cn    |
