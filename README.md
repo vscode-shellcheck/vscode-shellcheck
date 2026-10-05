@@ -98,7 +98,7 @@ Only ShellCheck's original diagnostics are hidden; diagnostics from other source
 
 VS Code currently does not expose an extension API for ordering hover providers or replacing the native diagnostic hover. This formatted-hover implementation follows the approach used by [Pretty TypeScript Errors](https://github.com/yoavbls/pretty-ts-errors), including the internal marker and CSS workaround that hides the native rows and moves the formatted row first. [Read more about the workaround](https://github.com/yoavbls/pretty-ts-errors/blob/main/docs/hide-original-errors.md).
 
-Formatting runs only on hover. When disabled (the default), the provider returns before reading diagnostics or formatting messages.
+Messages are formatted only when you hover, and not at all while the setting is off.
 
 ### `shellcheck.ignorePatterns`
 
@@ -256,6 +256,10 @@ Supported browsers are Chrome and Edge 112 or later, Firefox 121 or later, and S
 ### Integrating other VS Code extensions
 
 This extension provides a small API, which allows other VS Code extensions to interact with the ShellCheck extension. For details, see [API.md](./doc/API.md).
+
+## Contributing
+
+To build, test, or translate the extension, see [DEVELOP.md](./DEVELOP.md).
 
 ## Acknowledgements
 
