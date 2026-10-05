@@ -1,3 +1,9 @@
+## [0.46.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.45.0...v0.46.0) (2026-10-05)
+
+### Features
+
+* group native-only settings under a Native Runtime section ([6945a09](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/6945a09ba09e42bb259346d1964f06b626335d4f))
+
 ## [0.45.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.44.0...v0.45.0) (2026-10-05)
 
 ### Features

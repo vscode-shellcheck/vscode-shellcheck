@@ -2,7 +2,7 @@
   "name": "shellcheck",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "0.45.0",
+  "version": "0.46.0",
   "publisher": "timonwong",
   "author": "Timon Wong <timon86.wang@gmail.com> (https://github.com/timonwong)",
   "contributors": [
