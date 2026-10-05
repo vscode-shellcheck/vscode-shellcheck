@@ -1,0 +1,3 @@
+{
+  "shellcheck.executablePath": "${workspaceFolder}/missing-shellcheck"
+}

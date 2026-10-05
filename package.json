@@ -420,8 +420,9 @@
     "l10n:export": "vscode-l10n-dev export --outDir ./l10n ./src",
     "l10n:check": "npm run l10n:export && git diff --exit-code -- l10n/bundle.l10n.json",
     "pretest": "npm run build:all",
-    "test": "vscode-test",
+    "test": "vscode-test && npm run test:workspace-trust",
     "test:web": "node test/web/run.mjs",
+    "test:workspace-trust": "node test/workspace-trust/run.mjs",
     "posttest": "npm run lint && npm run format:check && npm run spell && installed-check --ignore-dev",
     "release": "semantic-release"
   },

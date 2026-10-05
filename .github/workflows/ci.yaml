@@ -53,7 +53,7 @@ jobs:
           name: test-logs-${{ matrix.os }}-${{ matrix.vscode-version }}
           path: |
             ~/Library/Logs/DiagnosticReports/
-            .vscode-test/user-data/logs/
+            .vscode-test/user-data*/logs/
           if-no-files-found: ignore
 
   test-web:
