@@ -63,8 +63,9 @@ export default defineConfig([
   {
     label: "integration",
     // Everything except the suites that need the workspace folders or the
-    // display language the entries below set up.
-    files: "out/test/**/!(parity|rc-watch|l10n).test.js",
+    // display language the entries below set up, and the Workspace Trust
+    // suite, which `npm run test:workspace-trust` runs.
+    files: "out/test/**/!(parity|rc-watch|l10n|workspace-trust).test.js",
     version,
     launchArgs,
     mocha: {

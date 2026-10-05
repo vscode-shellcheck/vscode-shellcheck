@@ -35,6 +35,7 @@ From a terminal:
 | `src/platform/`              | Desktop and web variants of platform-specific code                     |
 | `test/`                      | Integration tests, run inside VS Code                                  |
 | `test/web/`                  | The VS Code for the Web suite                                          |
+| `test/workspace-trust/`      | The runner for the Restricted Mode suite                               |
 | `l10n/`, `package.nls*.json` | Translations; see [`l10n/README.md`](l10n/README.md)                   |
 | `doc/API.md`                 | The API offered to other extensions                                    |
 | `docs/plans/`                | Design notes and spike reports behind larger features                  |
@@ -57,12 +58,18 @@ npm run build:all
 npx vscode-test --label integration --grep "<suite name>"
 ```
 
-`npm test` builds, runs every label, then lints, checks formatting, spell-checks, and checks that installed dependencies satisfy `engines`. `VSCODE_TEST_VERSION` picks the VS Code version (default `stable`).
+`npm test` builds, runs every label and the Workspace Trust suite, then lints, checks formatting, spell-checks, and checks that installed dependencies satisfy `engines`. `VSCODE_TEST_VERSION` picks the VS Code version (default `stable`).
 
 The localization label installs the Simplified Chinese language pack into its own user data under `.vscode-test/`, so the other labels keep the English UI:
 
 ```sh
 VSCODE_TEST_L10N=1 npx vscode-test --label l10n-zh-cn
+```
+
+The Workspace Trust suite opens `test/fixtures/workspace-trust` in Restricted Mode and checks that the workspace's `restrictedConfigurations` values are ignored. `@vscode/test-electron` always passes `--disable-workspace-trust`, so `test/workspace-trust/run.mjs` launches VS Code itself, with its own user data under `.vscode-test/`. It writes what it linted to `out/workspace-trust-e2e/diagnostics.json`:
+
+```sh
+npm run build:all && npm run test:workspace-trust
 ```
 
 The web suite runs the extension in headless Chromium through `@vscode/test-web` and writes the diagnostics it produced to `out/web-e2e/diagnostics.json`:
