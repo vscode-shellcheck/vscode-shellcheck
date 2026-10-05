@@ -1,3 +1,15 @@
+## [0.45.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.44.0...v0.45.0) (2026-10-05)
+
+### Features
+
+* localize the extension UI into Brazilian Portuguese ([9e38db7](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/9e38db7a86976ce03018de285670844fbdce4f4e))
+* localize the extension UI into French ([166d56d](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/166d56d98895f6660d951d94439bf9689aea1e0d))
+* localize the extension UI into German ([853c255](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/853c25566f5a08df407ec2ca1a9c62819aa7f04a))
+* localize the extension UI into Japanese ([c542f03](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/c542f032bbbd4656cc937d17f951c0def64af671))
+* localize the extension UI into Korean ([6e75d3a](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/6e75d3abcd41bf2b90669ac47bcaf818905efc99))
+* localize the extension UI into Spanish ([3380fb2](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/3380fb2bda5c74926d9ba10b000db95126a89197))
+* localize the extension UI into Traditional Chinese ([cd65406](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/cd65406a27f0b5ebcdf6e3579e93f6ee2a6f1498))
+
 ## [0.44.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.43.1...v0.44.0) (2026-10-04)
 
 ### Features
