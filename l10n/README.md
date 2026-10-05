@@ -129,6 +129,28 @@ Address the user as "vous"; setting descriptions start with "Indique si…" or a
 
 Write sentences in polite です/ます; commands, buttons, and menu items are short phrases without it ("設定を開く"), and boolean settings read "〜かどうかを制御します". Use full-width 。、「」（）？ but a half-width `: ` after labels ("ランタイム: {0}"), and put a half-width space between Japanese and Latin words, numbers, or code. Split katakana compounds as VS Code does (ステータス バー).
 
+### Korean (`ko`)
+
+| English         | ko              |
+| --------------- | --------------- |
+| lint            | 검사            |
+| runtime         | 런타임          |
+| Settings        | 설정            |
+| Command Palette | 명령 팔레트     |
+| workspace       | 작업 영역       |
+| status bar      | 상태 표시줄     |
+| Quick Fix       | 빠른 수정       |
+| Output          | 출력            |
+| Problems view   | 문제 보기       |
+| hover           | 가리키기        |
+| config file     | 구성 파일       |
+| binary          | 이진 파일       |
+| bundled         | 번들로 제공되는 |
+| experimental    | 실험적          |
+| enable/disable  | 사용/사용 안 함 |
+
+Use 합니다체; labels and commands end with a noun ("현재 문서 검사"). No space before a parenthesis that follows a word ("native(번들)"), ranges take a tilde ("3~4배"), and the particle after a Latin word follows its Korean reading ("ShellCheck를").
+
 ### Simplified Chinese (`zh-cn`)
 
 | English         | zh-cn    |
