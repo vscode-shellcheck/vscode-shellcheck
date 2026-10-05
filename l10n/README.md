@@ -28,8 +28,9 @@ When you cannot translate a language, delete its stale key and say so in the PR;
 ## Adding a language
 
 1. Copy `package.nls.json` to `package.nls.<locale>.json` and `l10n/bundle.l10n.json` to `l10n/bundle.l10n.<locale>.json`, keep the keys, and translate the values.
-2. Add the language's glossary below.
-3. Check the result with VS Code's display language set to the locale (**Configure Display Language**, with the matching language pack installed): Settings, the Command Palette, the status bar menu, a failure notification, and the diagnostic hover.
+2. Add the locale to `LOCALES` in `test/translations.test.ts`, which checks that every translation holds only English keys and keeps their placeholders, code, and links.
+3. Add the language's glossary below.
+4. Check the result with VS Code's display language set to the locale (**Configure Display Language**, with the matching language pack installed): Settings, the Command Palette, the status bar menu, a failure notification, and the diagnostic hover.
 
 The language is done when both files hold every English key and nothing else, and the glossary is in place. Ship it as one `feat:` commit, such as `feat: localize the extension UI into Japanese`.
 
