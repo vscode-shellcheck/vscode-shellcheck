@@ -6,7 +6,7 @@ import * as vscode from "vscode";
 type Catalog = Record<string, string | { message: string }>;
 
 /** The VS Code locale ID of each display language, sorted. */
-const LOCALES = ["zh-cn"];
+const LOCALES = ["de", "zh-cn"];
 
 const root = vscode.extensions.getExtension(
   "timonwong.shellcheck",

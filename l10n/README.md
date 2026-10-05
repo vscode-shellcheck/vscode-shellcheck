@@ -38,6 +38,31 @@ Packaging, spell-checking, and Prettier already cover every locale through globs
 
 ## Glossaries
 
+<!-- cspell:disable -->
+
+### German (`de`)
+
+| English         | de                           |
+| --------------- | ---------------------------- |
+| lint            | prüfen / Prüfung             |
+| runtime         | Laufzeit                     |
+| Settings        | Einstellungen                |
+| Command Palette | Befehlspalette               |
+| workspace       | Arbeitsbereich               |
+| status bar      | Statusleiste                 |
+| Quick Fix       | Schnelle Problembehebung     |
+| Output          | Ausgabe                      |
+| Problems view   | Ansicht „Probleme“           |
+| walkthrough     | exemplarische Vorgehensweise |
+| config file     | Konfigurationsdatei          |
+| executable      | ausführbare Datei            |
+| binary          | Binärdatei                   |
+| bundled         | mitgeliefert                 |
+| lint trigger    | Prüfauslöser                 |
+| log             | Protokoll                    |
+
+Address the user as "Sie". Use German quotation marks („…“) and a spaced en dash (–) where English has an em dash. Before a noun, the runtime name keeps its base form: "die native Laufzeit".
+
 ### Simplified Chinese (`zh-cn`)
 
 | English         | zh-cn    |
