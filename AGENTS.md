@@ -13,6 +13,16 @@ Read [`DEVELOP.md`](DEVELOP.md) before building, testing, or touching CI and rel
 - Logging is inline `logging.*` calls at the event site. Keep state, timers, and test hooks that exist only to feed logs out of the code; log output has no tests.
 - A comment states the non-obvious reason. The code already says what it does.
 
+## Workspace Trust
+
+The extension keeps working in Restricted Mode (`untrustedWorkspaces.supported` is `"limited"`), so an untrusted workspace must never decide what runs on the user's machine:
+
+- A setting that picks a program to run, or a file to load as code, is listed in `capabilities.untrustedWorkspaces.restrictedConfigurations`, and VS Code then gives the extension only the user's value. Today that is `shellcheck.executablePath`.
+- Workspace files are data: the document's text, `.shellcheckrc` and `source`d scripts are read, never executed, imported or `require`d.
+- The native runtime spawns ShellCheck through `execa` without a shell, so a setting's values stay arguments. `shellcheck.customArgs` is unrestricted only because no ShellCheck flag runs a program or writes a file; restrict it if one ever does.
+- Anything else that needs trust checks `vscode.workspace.isTrusted` before running and hides its UI behind the `isWorkspaceTrusted` context key, and the `untrustedWorkspaces` description says what Restricted Mode turns off.
+- Every restricted setting has a case in `test/workspace-trust.test.ts`, which runs in Restricted Mode; [`DEVELOP.md`](DEVELOP.md) explains its runner.
+
 ## Docs
 
 - `README.md` is the Marketplace page: user-facing features and settings only. Contributor material goes in `DEVELOP.md`, and the extension API in `doc/API.md`.
