@@ -85,6 +85,28 @@ Address the user as "Sie". Use German quotation marks („…“) and a spaced e
 
 Use VS Code's impersonal style without "usted": commands and buttons take the infinitive ("Abrir configuración"), descriptions the third person or a "se" construction ("Controla si…"). Use sentence case, opening ¿ and ¡, and straight double quotes.
 
+### French (`fr`)
+
+| English         | fr                    |
+| --------------- | --------------------- |
+| lint            | analyser / analyse    |
+| runtime         | runtime (masc.)       |
+| Settings        | Paramètres            |
+| Command Palette | Palette de commandes  |
+| workspace       | espace de travail     |
+| status bar      | barre d'état          |
+| Quick Fix       | Correctif rapide      |
+| Output          | Sortie                |
+| Problems view   | vue Problèmes         |
+| hover           | pointage              |
+| walkthrough     | procédure pas à pas   |
+| bundled         | intégré               |
+| build (noun)    | version               |
+| sandbox         | bac à sable           |
+| lint trigger    | déclencheur d'analyse |
+
+Address the user as "vous"; setting descriptions start with "Indique si…" or a third-person verb, and commands use the infinitive. Put a space before `:` `;` `?` `!` and inside « », except in the "ShellCheck: …" command prefix VS Code renders. Use the straight apostrophe.
+
 ### Simplified Chinese (`zh-cn`)
 
 | English         | zh-cn    |
