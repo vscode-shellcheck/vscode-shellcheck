@@ -1,17 +1,39 @@
 # Translations
 
-Each display language has two files, named after its VS Code locale ID:
+Each display language has two files, named after its VS Code locale ID in lowercase (`zh-cn`, `ja`, `pt-br`):
 
 - `package.nls.<locale>.json` in the repository root translates `package.nls.json`: settings, commands, and the walkthrough.
-- `l10n/bundle.l10n.<locale>.json` translates `l10n/bundle.l10n.json`: everything the extension shows while it runs.
+- `l10n/bundle.l10n.<locale>.json` translates `l10n/bundle.l10n.json`: everything the extension shows while it runs. Its keys are the English strings themselves.
 
-To add a language, copy both English files, keep the keys, and translate the values. A key left out shows the English text.
+The English files are the source of truth. A key missing from a translation shows the English text; a key the English file no longer has is dead and never shown.
 
-## Every language
+## Rules for every language
 
-- Keep `{0}` placeholders, Markdown, backticks, `$(codicon)` tokens, and `command:` links exactly as they are.
+- Keep `{0}` placeholders, Markdown, backticks, `$(codicon)` tokens, and `command:` links exactly as they are. Each translation carries the same placeholders as its English string; their order may change to suit the grammar.
 - Keep identifiers in English: setting keys and values (such as `native` and `wasm`), command IDs, `SC####` codes, file names such as `.shellcheckrc`, and the names ShellCheck, shellcheck (the program), WebAssembly, and WASM.
 - Use the terms of VS Code's own language pack for the language, so the extension reads like the rest of the editor.
+- Follow the language's glossary below. Each language has one before its first translation lands: the recurring terms and any typography rules (spacing, punctuation width, quotation marks).
+- Translate only these two files. `README.md`, `CHANGELOG.md`, the walkthrough SVGs, logs, the Collect Diagnostics report, and `Error.message` strings stay English.
+
+## Changing an English string
+
+Every translation follows the English file in the same change:
+
+- A reworded runtime string gets a new key in `bundle.l10n.json` after `npm run l10n:export`. In each `bundle.l10n.<locale>.json`, move the translation to the new key and update it, or delete the old key to fall back to English.
+- A `package.nls.json` value whose meaning changes keeps its key, so a translation silently goes stale. Update or delete that key in each `package.nls.<locale>.json`.
+- A removed string is deleted from every translation.
+
+When you cannot translate a language, delete its stale key and say so in the PR; English is a better fallback than a wrong translation.
+
+## Adding a language
+
+1. Copy `package.nls.json` to `package.nls.<locale>.json` and `l10n/bundle.l10n.json` to `l10n/bundle.l10n.<locale>.json`, keep the keys, and translate the values.
+2. Add the language's glossary below.
+3. Check the result with VS Code's display language set to the locale (**Configure Display Language**, with the matching language pack installed): Settings, the Command Palette, the status bar menu, a failure notification, and the diagnostic hover.
+
+The language is done when both files hold every English key and nothing else, and the glossary is in place. Ship it as one `feat:` commit, such as `feat: localize the extension UI into Japanese`.
+
+Packaging, spell-checking, and Prettier already cover every locale through globs. The `l10n-zh-cn` test label proves that translations load at all; a new language does not need its own label.
 
 ## Glossaries
 
