@@ -151,6 +151,28 @@ Write sentences in polite です/ます; commands, buttons, and menu items are s
 
 Use 합니다체; labels and commands end with a noun ("현재 문서 검사"). No space before a parenthesis that follows a word ("native(번들)"), ranges take a tilde ("3~4배"), and the particle after a Latin word follows its Korean reading ("ShellCheck를").
 
+### Portuguese (Brazil) (`pt-br`)
+
+| English         | pt-br                   |
+| --------------- | ----------------------- |
+| lint            | verificar / verificação |
+| runtime         | runtime (masc.)         |
+| Settings        | Configurações           |
+| Command Palette | Paleta de Comandos      |
+| workspace       | workspace (masc.)       |
+| status bar      | barra de status         |
+| Quick Fix       | Correção Rápida         |
+| Output          | Saída                   |
+| Problems view   | exibição Problemas      |
+| hover           | foco                    |
+| walkthrough     | passo a passo           |
+| bundled         | incluído                |
+| build (noun)    | build (masc.)           |
+| sandbox         | área restrita           |
+| lint trigger    | Gatilho de Verificação  |
+
+Brazilian Portuguese, addressing the user as "você" (arquivo, tela, salvar). Command titles, buttons, and menu labels use Title Case with lowercase articles and prepositions, as VS Code's pack does ("Não Mostrar Novamente"); running text uses straight double quotes.
+
 ### Simplified Chinese (`zh-cn`)
 
 | English         | zh-cn    |
