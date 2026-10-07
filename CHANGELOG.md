@@ -1,3 +1,9 @@
+## [0.46.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.46.0...v0.46.1) (2026-10-07)
+
+### Dependencies
+
+* **deps:** update dependency execa to ^10.1.0 ([c1ad486](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/c1ad486a8bf0f60eb3730101efd4d61ce148d543))
+
 ## [0.46.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.45.0...v0.46.0) (2026-10-05)
 
 ### Features
