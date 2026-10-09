@@ -276,6 +276,6 @@ This extension is licensed under the [MIT license](./LICENSE).
 
 The bundled [ShellCheck] binaries are licensed under [GPLv3](https://github.com/koalaman/shellcheck/blob/master/LICENSE).
 
-The WebAssembly build of [ShellCheck] ships as the separate [`@vscode-shellcheck/shellcheck-wasm`](https://github.com/vscode-shellcheck/shellcheck-wasm) package, also under GPLv3. See [its licensing](https://github.com/vscode-shellcheck/shellcheck-wasm#licensing) for details.
+The WebAssembly build of [ShellCheck] ships as the separate [`@vscode-shellcheck/shellcheck-wasm`](https://github.com/vscode-shellcheck/shellcheck-wasm) package under GPL-3.0-or-later, except for its `client` entry, which is MIT. See [the package's licensing](https://github.com/vscode-shellcheck/shellcheck-wasm#licensing).
 
 [ShellCheck]: https://github.com/koalaman/shellcheck
