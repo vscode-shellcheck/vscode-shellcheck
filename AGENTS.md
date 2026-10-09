@@ -1,6 +1,6 @@
 # Agent guide
 
-Read [`DEVELOP.md`](DEVELOP.md) before building, testing, or touching CI and releases: setup, test labels, and the project layout are there. Read [`l10n/README.md`](l10n/README.md) before adding or editing a translation.
+Read [`CONTRIBUTING.md`](CONTRIBUTING.md) before building, testing, or touching CI and releases: setup, test labels, and the project layout are there. Read [`l10n/README.md`](l10n/README.md) before adding or editing a translation.
 
 ## Commits and PRs
 
@@ -21,11 +21,11 @@ The extension keeps working in Restricted Mode (`untrustedWorkspaces.supported` 
 - Workspace files are data: the document's text, `.shellcheckrc` and `source`d scripts are read, never executed, imported or `require`d.
 - The native runtime spawns ShellCheck through `execa` without a shell, so a setting's values stay arguments. `shellcheck.customArgs` is unrestricted only because no ShellCheck flag runs a program or writes a file; restrict it if one ever does.
 - Anything else that needs trust checks `vscode.workspace.isTrusted` before running and hides its UI behind the `isWorkspaceTrusted` context key, and the `untrustedWorkspaces` description says what Restricted Mode turns off.
-- Every restricted setting has a case in `test/workspace-trust.test.ts`, which runs in Restricted Mode; [`DEVELOP.md`](DEVELOP.md) explains its runner.
+- Every restricted setting has a case in `test/workspace-trust.test.ts`, which runs in Restricted Mode; [`CONTRIBUTING.md`](CONTRIBUTING.md) explains its runner.
 
 ## Docs
 
-- `README.md` is the Marketplace page: user-facing features and settings only. Contributor material goes in `DEVELOP.md`, and the extension API in `doc/API.md`.
+- `README.md` is the Marketplace page: user-facing features and settings only. Contributor material goes in `CONTRIBUTING.md`, and the extension API in `doc/API.md`.
 
 ## Localization
 
@@ -35,7 +35,7 @@ The extension keeps working in Restricted Mode (`untrustedWorkspaces.supported` 
 
 ## Tests
 
-While iterating, build once and run only the affected suite; [`DEVELOP.md`](DEVELOP.md) lists the labels:
+While iterating, build once and run only the affected suite; [`CONTRIBUTING.md`](CONTRIBUTING.md) lists the labels:
 
 ```sh
 npm run build:all
