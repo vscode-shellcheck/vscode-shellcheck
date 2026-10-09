@@ -35,6 +35,7 @@
     "deps",
     "dirflags",
     "execa",
+    "extglob",
     "fdstat",
     "felipecrs",
     "filemanager",

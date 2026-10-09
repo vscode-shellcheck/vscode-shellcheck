@@ -22,7 +22,7 @@
   "config.exclude.markdownDescription": "排除特定的錯誤代碼。例如，若要排除 [SC1017](https://shellcheck.net/wiki/SC1017)，請輸入 _1017_。錯誤代碼清單請參閱[此 gist](https://gist.github.com/nicerobot/53cee11ee0abbdc997661e65b348f375)。建議一律優先使用 `.shellcheckrc` 檔案，而非此設定。",
   "config.exclude.items.patternErrorMessage": "有效的 shellcheck 錯誤代碼應為 4 位數字，例如 1017。\n",
   "config.customArgs.markdownDescription": "要傳遞給 ShellCheck 的自訂引數。建議一律優先使用 `.shellcheckrc` 檔案，而非此設定。當 `#shellcheck.runtime#` 為 `wasm` 時（在 VS Code for the Web 中一律如此），這些引數中指向您電腦上的路徑將無法解析。",
-  "config.ignorePatterns.markdownDescription": "設定 ShellCheck 用來排除檔案和資料夾的 Glob 模式。Glob 模式會相對於工作區的根資料夾來解譯。若要深入了解 Glob 模式，請參閱[這裡](https://code.visualstudio.com/docs/editor/glob-patterns)。",
+  "config.ignorePatterns.markdownDescription": "設定 ShellCheck 用來排除檔案和資料夾的 Glob 模式。Glob 模式會相對於工作區的根資料夾來解譯，並使用 [minimatch](https://github.com/isaacs/minimatch#readme) 語法，也支援 `!(*.*)` 這類 extglob 模式。",
   "config.ignorePatterns.additionalProperties.description": "要比對檔案路徑的 Glob 模式。設為 true 或 false 可啟用或停用該模式。",
   "config.ignoreFileSchemes.description": "shellcheck 會忽略符合的檔案配置。預設值也涵蓋 GitHub Pull Requests 延伸模組的虛擬文件。",
   "config.useWorkspaceRootAsCwd.markdownDescription": "啟動 `shellcheck` 時，是否使用工作區根目錄作為目前的工作目錄。否則會使用受檢查檔案所在的目錄。",
