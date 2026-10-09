@@ -1,3 +1,9 @@
+## [0.46.4](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.46.3...v0.46.4) (2026-10-09)
+
+### Dependencies
+
+* **deps:** remove remeda ([#2011](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/2011)) ([9a38a55](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/9a38a550d7fca6d11b25ab0b09865a8179f35d16))
+
 ## [0.46.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.46.2...v0.46.3) (2026-10-09)
 
 ### Dependencies
