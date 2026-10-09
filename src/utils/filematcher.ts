@@ -1,7 +1,6 @@
 // Originally stolen from vscode-jshint:
 // https://github.com/Microsoft/vscode-jshint/blob/ab784c08de7bbc6bac5b5c3fe1c1fbaa3fea110f/jshint-server/src/server.ts#L258
 import picomatch from "picomatch";
-import { keys, pickBy } from "remeda";
 
 export interface FileSettings {
   readonly [pattern: string]: boolean;
@@ -25,11 +24,7 @@ export class FileMatcher {
   }
 
   private pickTrueKeys(obj: FileSettings): string[] {
-    return keys(
-      pickBy(obj, (value) => {
-        return value === true;
-      }),
-    );
+    return Object.keys(obj).filter((pattern) => obj[pattern] === true);
   }
 
   public configure(exclude: FileSettings): void {
