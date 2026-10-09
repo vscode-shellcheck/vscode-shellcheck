@@ -432,7 +432,7 @@
     "release": "semantic-release"
   },
   "dependencies": {
-    "@vscode-shellcheck/shellcheck-wasm": "0.3.0",
+    "@vscode-shellcheck/shellcheck-wasm": "0.3.1",
     "execa": "^10.1.0",
     "minimatch": "^10.2.6",
     "remeda": "^2.51.0",
