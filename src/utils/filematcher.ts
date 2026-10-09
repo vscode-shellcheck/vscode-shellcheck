@@ -1,18 +1,26 @@
 // Originally stolen from vscode-jshint:
 // https://github.com/Microsoft/vscode-jshint/blob/ab784c08de7bbc6bac5b5c3fe1c1fbaa3fea110f/jshint-server/src/server.ts#L258
-import { minimatch } from "minimatch";
+import picomatch from "picomatch";
 import { keys, pickBy } from "remeda";
 
 export interface FileSettings {
   readonly [pattern: string]: boolean;
 }
 
+// picomatch treats `\` as an escape unless `windows` is on, so paths from
+// `fsPath` have to be compared in POSIX form.
+function toPosixPath(fsPath: string): string {
+  return fsPath.replace(/\\/g, "/");
+}
+
+const MATCH_OPTIONS = { dot: true, windows: false } as const;
+
 export class FileMatcher {
-  private excludePatterns: string[];
-  private excludeCache: { [key: string]: any };
+  private isExcluded: picomatch.Matcher;
+  private excludeCache: Record<string, boolean>;
 
   constructor() {
-    this.excludePatterns = [];
+    this.isExcluded = picomatch([], MATCH_OPTIONS);
     this.excludeCache = {};
   }
 
@@ -26,11 +34,7 @@ export class FileMatcher {
 
   public configure(exclude: FileSettings): void {
     this.excludeCache = {};
-    this.excludePatterns = this.pickTrueKeys(exclude);
-  }
-
-  public clear(exclude?: FileSettings): void {
-    this.excludeCache = {};
+    this.isExcluded = picomatch(this.pickTrueKeys(exclude), MATCH_OPTIONS);
   }
 
   private relativeTo(fsPath: string, folder?: string): string {
@@ -44,28 +48,20 @@ export class FileMatcher {
     return fsPath;
   }
 
-  private match(
-    excludePatterns: string[],
-    path: string,
-    root?: string,
-  ): boolean {
-    const relativePath = this.relativeTo(path, root);
-    return excludePatterns.some((pattern) => {
-      return minimatch(relativePath, pattern, { dot: true });
-    });
-  }
-
   public excludes(fsPath: string, root?: string): boolean {
-    if (fsPath) {
-      if (Object.prototype.hasOwnProperty.call(this.excludeCache, fsPath)) {
-        return this.excludeCache[fsPath];
-      }
-
-      const shouldBeExcluded = this.match(this.excludePatterns, fsPath, root);
-      this.excludeCache[fsPath] = shouldBeExcluded;
-      return shouldBeExcluded;
+    if (!fsPath) {
+      return true;
     }
-
-    return true;
+    if (Object.prototype.hasOwnProperty.call(this.excludeCache, fsPath)) {
+      return this.excludeCache[fsPath];
+    }
+    const shouldBeExcluded = this.isExcluded(
+      this.relativeTo(
+        toPosixPath(fsPath),
+        root ? toPosixPath(root) : undefined,
+      ),
+    );
+    this.excludeCache[fsPath] = shouldBeExcluded;
+    return shouldBeExcluded;
   }
 }

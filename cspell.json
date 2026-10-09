@@ -75,6 +75,7 @@
     "osarch",
     "outputchannel",
     "overridable",
+    "picomatch",
     "posttest",
     "pread",
     "precompiled",

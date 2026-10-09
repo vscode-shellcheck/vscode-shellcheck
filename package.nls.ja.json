@@ -22,7 +22,7 @@
   "config.exclude.markdownDescription": "特定のエラー コードを除外します。たとえば、[SC1017](https://shellcheck.net/wiki/SC1017) を除外するには _1017_ と入力します。エラー コードの一覧は[こちらの gist](https://gist.github.com/nicerobot/53cee11ee0abbdc997661e65b348f375) で確認できます。この設定よりも、常に `.shellcheckrc` ファイルを使用することをお勧めします。",
   "config.exclude.items.patternErrorMessage": "有効な shellcheck エラー コードは 4 桁の数字です（例: 1017）。\n",
   "config.customArgs.markdownDescription": "ShellCheck に渡すカスタム引数。この設定よりも、常に `.shellcheckrc` ファイルを使用することをお勧めします。`#shellcheck.runtime#` が `wasm` の場合（VS Code for the Web では常にそうなります）、これらの引数に含まれるお使いのコンピューター上のパスは解決されません。",
-  "config.ignorePatterns.markdownDescription": "ShellCheck の対象からファイルとフォルダーを除外する glob パターンを構成します。glob パターンはワークスペースのルート フォルダーからの相対パスとして解釈され、[minimatch](https://github.com/isaacs/minimatch#readme) の構文に従います。`!(*.*)` のような extglob パターンも使用できます。",
+  "config.ignorePatterns.markdownDescription": "ShellCheck の対象からファイルとフォルダーを除外する glob パターンを構成します。glob パターンはワークスペースのルート フォルダーからの相対パスとして解釈され、[picomatch](https://github.com/micromatch/picomatch#readme) の構文に従います。`!(*.*)` のような extglob パターンも使用できます。",
   "config.ignorePatterns.additionalProperties.description": "ファイル パスと照合する glob パターン。true または false に設定して、パターンを有効または無効にします。",
   "config.ignoreFileSchemes.description": "一致するファイル スキームは shellcheck によって無視されます。既定値には GitHub Pull Requests 拡張機能の仮想ドキュメントも含まれます。",
   "config.useWorkspaceRootAsCwd.markdownDescription": "`shellcheck` の起動時に、ワークスペースのルート ディレクトリを現在の作業ディレクトリとして使用するかどうかを制御します。使用しない場合は、チェック対象のファイルがあるディレクトリが使用されます。",

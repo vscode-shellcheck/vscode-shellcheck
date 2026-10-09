@@ -22,7 +22,7 @@
   "config.exclude.markdownDescription": "排除特定的错误代码。例如，要排除 [SC1017](https://shellcheck.net/wiki/SC1017)，请输入 _1017_。错误代码列表见[此 gist](https://gist.github.com/nicerobot/53cee11ee0abbdc997661e65b348f375)。应始终优先使用 `.shellcheckrc` 文件，而不是此设置。",
   "config.exclude.items.patternErrorMessage": "有效的 shellcheck 错误代码应为 4 位数字，例如 1017。\n",
   "config.customArgs.markdownDescription": "传递给 ShellCheck 的自定义参数。应始终优先使用 `.shellcheckrc` 文件，而不是此设置。当 `#shellcheck.runtime#` 为 `wasm` 时（在 VS Code for the Web 中始终如此），这些参数中指向你本机的路径无法解析。",
-  "config.ignorePatterns.markdownDescription": "配置 ShellCheck 用于排除文件和文件夹的 glob 模式。glob 模式相对于工作区的根文件夹进行解析，使用 [minimatch](https://github.com/isaacs/minimatch#readme) 语法，也支持 `!(*.*)` 这样的 extglob 模式。",
+  "config.ignorePatterns.markdownDescription": "配置 ShellCheck 用于排除文件和文件夹的 glob 模式。glob 模式相对于工作区的根文件夹进行解析，使用 [picomatch](https://github.com/micromatch/picomatch#readme) 语法，也支持 `!(*.*)` 这样的 extglob 模式。",
   "config.ignorePatterns.additionalProperties.description": "用于匹配文件路径的 glob 模式。设置为 true 或 false 以启用或禁用该模式。",
   "config.ignoreFileSchemes.description": "shellcheck 会忽略匹配的文件方案。默认值还涵盖 GitHub Pull Requests 扩展的虚拟文档。",
   "config.useWorkspaceRootAsCwd.markdownDescription": "启动 `shellcheck` 时是否使用工作区根目录作为当前工作目录。否则，将使用被检查文件所在的目录。",

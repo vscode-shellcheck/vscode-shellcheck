@@ -102,7 +102,7 @@ Messages are formatted only when you hover, and not at all while the setting is 
 
 ### `shellcheck.ignorePatterns`
 
-Each key of `shellcheck.ignorePatterns` is a [minimatch](https://github.com/isaacs/minimatch#readme) glob pattern, matched against the file's path relative to its workspace folder. Files outside every workspace folder are matched by their absolute path, so start patterns with `**/`. Wildcards also match dot files, and extglob patterns such as `!(…)` are supported.
+Each key of `shellcheck.ignorePatterns` is a [picomatch](https://github.com/micromatch/picomatch#readme) glob pattern, matched against the file's path relative to its workspace folder. Files outside every workspace folder are matched by their absolute path, so start patterns with `**/`. Wildcards also match dot files, and extglob patterns such as `!(…)` are supported.
 
 For example:
 
