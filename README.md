@@ -42,7 +42,7 @@ To do it on demand instead, run _Fix All_ from the Command Palette.
 
 ## Installation
 
-Install [ShellCheck](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck) from the Visual Studio Marketplace, or from [Open VSX](https://open-vsx.org/extension/timonwong/shellcheck) in VSCodium and other editors that use it. From the Command Palette:
+Install ShellCheck from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck), or from [Open VSX](https://open-vsx.org/extension/timonwong/shellcheck) in VSCodium and other editors that use it. From the Command Palette:
 
 ```text
 ext install timonwong.shellcheck
