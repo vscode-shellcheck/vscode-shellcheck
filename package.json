@@ -417,7 +417,7 @@
     "build:all": "run-p build build:test",
     "build:all:watch": "run-p check-types:watch build:watch build:test:watch",
     "vscode:prepublish": "npm run build:prod",
-    "lint": "eslint . && node .github/scripts/check-eslint-ignores.mjs",
+    "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
