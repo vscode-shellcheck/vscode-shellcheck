@@ -1,3 +1,9 @@
+## [0.46.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.46.1...v0.46.2) (2026-10-09)
+
+### Dependencies
+
+* **deps:** update dependency @vscode-shellcheck/shellcheck-wasm to v0.3.1 ([#1966](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1966)) ([374d227](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/374d227602378a5083d10a8e13dec7c30bc4fe9b))
+
 ## [0.46.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.46.0...v0.46.1) (2026-10-07)
 
 ### Dependencies
