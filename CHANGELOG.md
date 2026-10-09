@@ -1,3 +1,9 @@
+## [0.46.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.46.2...v0.46.3) (2026-10-09)
+
+### Dependencies
+
+* **deps:** replace minimatch with picomatch ([#2010](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/2010)) ([cdc27a3](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/cdc27a332282f11ea323c06de8190a523f3e99f5))
+
 ## [0.46.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.46.1...v0.46.2) (2026-10-09)
 
 ### Dependencies
