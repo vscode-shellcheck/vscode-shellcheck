@@ -264,7 +264,7 @@ This extension provides a small API, which allows other VS Code extensions to in
 
 ## Contributing
 
-To build, test, or translate the extension, see [DEVELOP.md](./DEVELOP.md).
+To build, test, or translate the extension, see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Acknowledgements
 

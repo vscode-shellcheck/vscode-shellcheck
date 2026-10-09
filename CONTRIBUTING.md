@@ -1,4 +1,4 @@
-# Developing ShellCheck for Visual Studio Code
+# Contributing to ShellCheck for Visual Studio Code
 
 ## Setup
 
