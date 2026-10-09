@@ -117,7 +117,16 @@ For example:
 }
 ```
 
-To add additional ignore patterns atop the default patterns, you have to copy the default ignore patterns and then add yours to the end of the list ([#1196](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1196)).
+Your patterns are merged with the defaults, so list only the ones you add or change. Set a default pattern to `false` to lint those files again:
+
+```jsonc
+{
+  "shellcheck.ignorePatterns": {
+    "**/bin/**": true,
+    "**/*.fish": false
+  }
+}
+```
 
 ### Fix all errors on save
 
