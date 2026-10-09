@@ -274,6 +274,8 @@ This extension was originally based on [@hoovercj](https://github.com/hoovercj)'
 
 This extension is licensed under the [MIT license](./LICENSE).
 
-The bundled [ShellCheck] binaries are licensed under [GPLv3](https://github.com/koalaman/shellcheck/blob/master/LICENSE). The WebAssembly build of [ShellCheck] ships as the separate [`@vscode-shellcheck/shellcheck-wasm`](https://www.npmjs.com/package/@vscode-shellcheck/shellcheck-wasm) package, also under GPLv3, with its own `LICENSE` inside `node_modules/@vscode-shellcheck/shellcheck-wasm`.
+The bundled [ShellCheck] binaries are licensed under [GPLv3](https://github.com/koalaman/shellcheck/blob/master/LICENSE).
+
+The WebAssembly build of [ShellCheck] ships as the separate [`@vscode-shellcheck/shellcheck-wasm`](https://github.com/vscode-shellcheck/shellcheck-wasm) package, also under GPLv3. See [its licensing](https://github.com/vscode-shellcheck/shellcheck-wasm#licensing) for details.
 
 [ShellCheck]: https://github.com/koalaman/shellcheck
