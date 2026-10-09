@@ -1,4 +1,5 @@
 import assert from "node:assert";
+import path from "node:path";
 import * as vscode from "vscode";
 import {
   closeAllEditors,
@@ -6,8 +7,34 @@ import {
   resetRuntime,
   RUNTIMES,
   setRuntime,
+  updateShellCheckSetting,
   waitForDiagnostics,
 } from "./helpers.js";
+
+function hasUnusedVariable(diagnostics: readonly vscode.Diagnostic[]) {
+  return diagnostics.some(
+    (diagnostic) =>
+      typeof diagnostic.code === "object" && diagnostic.code.value === "SC2034",
+  );
+}
+
+function waitForNoDiagnostics(document: vscode.TextDocument) {
+  return waitForDiagnostics(document, 5000, (items) => items.length === 0, {
+    acceptCurrent: true,
+  });
+}
+
+/**
+ * Lints a fresh document and waits for its findings. Triggered after the
+ * document under test, so by then any lint still pending for that document
+ * would have published too.
+ */
+async function lintSentinel() {
+  const sentinel = await openDocument("#!/bin/bash\ny=1", "shellscript");
+  await waitForDiagnostics(sentinel, 5000, hasUnusedVariable, {
+    acceptCurrent: true,
+  });
+}
 
 for (const runtime of RUNTIMES) {
   suite(`Shellcheck extension (${runtime} runtime)`, () => {
@@ -21,6 +48,7 @@ for (const runtime of RUNTIMES) {
 
     teardown(async () => {
       await closeAllEditors();
+      await updateShellCheckSetting("ignorePatterns", undefined);
     });
 
     test("Extension should be activated on shell script files", async () => {
@@ -79,6 +107,34 @@ for (const runtime of RUNTIMES) {
         code.target.toString(),
         "https://www.shellcheck.net/wiki/SC2034",
       );
+    });
+
+    test("clears diagnostics when the document starts matching ignorePatterns", async () => {
+      const document = await openDocument("#!/bin/bash\nx=1", "shellscript");
+      await waitForDiagnostics(document, 5000, hasUnusedVariable, {
+        acceptCurrent: true,
+      });
+
+      await updateShellCheckSetting("ignorePatterns", {
+        [`**/${path.basename(document.fileName)}`]: true,
+      });
+      await waitForNoDiagnostics(document);
+      await lintSentinel();
+
+      assert.deepStrictEqual(vscode.languages.getDiagnostics(document.uri), []);
+    });
+
+    test("clears diagnostics when the document is no longer a shell script", async () => {
+      const document = await openDocument("#!/bin/bash\nx=1", "shellscript");
+      await waitForDiagnostics(document, 5000, hasUnusedVariable, {
+        acceptCurrent: true,
+      });
+
+      await vscode.languages.setTextDocumentLanguage(document, "plaintext");
+      await waitForNoDiagnostics(document);
+      await lintSentinel();
+
+      assert.deepStrictEqual(vscode.languages.getDiagnostics(document.uri), []);
     });
   });
 }
