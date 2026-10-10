@@ -56,6 +56,11 @@
       "enabled": false
     },
     {
+      "description": "v10 presets need conventional-changelog-writer 9; @semantic-release/release-notes-generator still ships writer 8",
+      "matchPackageNames": ["conventional-changelog-conventionalcommits"],
+      "allowedVersions": "<10"
+    },
+    {
       "description": "Disable major updates for @types/node",
       "matchPackageNames": ["@types/node"],
       "matchUpdateTypes": ["major"],
