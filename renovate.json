@@ -60,6 +60,12 @@
       "matchPackageNames": ["@types/node"],
       "matchUpdateTypes": ["major"],
       "enabled": false
+    },
+    {
+      "description": "TypeScript 7 has no compiler API; keep 6.x under the typescript name",
+      "matchPackageNames": ["@typescript/typescript6"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     }
   ]
 }
