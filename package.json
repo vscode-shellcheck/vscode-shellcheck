@@ -458,7 +458,7 @@
     "mocha": "^12.0.3",
     "neostandard": "^0.14.0",
     "npm-run-all2": "^9.0.3",
-    "prettier": "^3.9.9",
+    "prettier": "^3.9.10",
     "semantic-release": "^25.0.9",
     "semantic-release-stop-before-publish": "^2.0.0",
     "semantic-release-vsce": "^6.1.8",
