@@ -13,7 +13,8 @@
     "noUnusedLocals": true,
     "noImplicitReturns": true,
     "noImplicitAny": true,
-    "noImplicitThis": true
+    "noImplicitThis": true,
+    "types": ["*"]
   },
   "include": ["src"]
 }
