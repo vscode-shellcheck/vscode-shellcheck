@@ -450,7 +450,7 @@
     "@vscode/test-electron": "^3.1.0",
     "@vscode/test-web": "^0.0.81",
     "bindl": "^7.1.6",
-    "conventional-changelog-conventionalcommits": "^9.3.1",
+    "conventional-changelog-conventionalcommits": "^10.4.1",
     "cspell": "^10.3.6",
     "esbuild": "^0.28.2",
     "eslint": "^9.39.4",
