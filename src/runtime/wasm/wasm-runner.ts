@@ -7,12 +7,16 @@ import {
   LintRequest,
   LintResult,
   RunSupersededError,
+  RunTimeoutError,
   RunnerDisposedError,
   ShellCheckRunner,
   WasmRuntimeError,
 } from "../types.js";
 
-/** Watchdog budget for a single lint, deliberately not a setting. */
+/**
+ * Budget for a lint that asks for none. Unlike a native process, a stuck worker
+ * would otherwise hold its slot until the window closes.
+ */
 export const DEFAULT_RUN_TIMEOUT_MS = 30_000;
 
 /**
@@ -27,7 +31,6 @@ export interface WasmRunnerOptions {
   readonly logger: Logger;
   /** Key of the document the user is looking at, whose lint goes first. */
   activeDocumentKey(): string | undefined;
-  readonly runTimeoutMs?: number;
 }
 
 interface PendingRun {
@@ -51,7 +54,6 @@ export class WasmRunner implements ShellCheckRunner {
 
   private readonly shellcheck: ShellCheck;
   private readonly logger: Logger;
-  private readonly runTimeoutMs: number;
   /** Insertion ordered, so a re-typed document replaces its own pending run
    * without losing its place behind other documents. */
   private readonly pending = new Map<string, PendingRun>();
@@ -62,7 +64,6 @@ export class WasmRunner implements ShellCheckRunner {
   public constructor(private readonly options: WasmRunnerOptions) {
     this.shellcheck = options.shellcheck;
     this.logger = options.logger;
-    this.runTimeoutMs = options.runTimeoutMs ?? DEFAULT_RUN_TIMEOUT_MS;
   }
 
   public run(request: LintRequest): Promise<LintResult> {
@@ -131,7 +132,8 @@ export class WasmRunner implements ShellCheckRunner {
 
     const id = ++this.nextRunId;
     const controller = new AbortController();
-    const watchdog = AbortSignal.timeout(this.runTimeoutMs);
+    const timeoutMs = run.request.timeoutMs || DEFAULT_RUN_TIMEOUT_MS;
+    const watchdog = AbortSignal.timeout(timeoutMs);
     this.running = { documentKey, controller };
     this.logger.debug(
       "ShellCheck (wasm): run %d started for %s",
@@ -155,7 +157,9 @@ export class WasmRunner implements ShellCheckRunner {
       .then(
         (result) => this.settle(run, result),
         (error: unknown) => {
-          run.reject(this.failureOf(error, watchdog, id, run.request));
+          run.reject(
+            this.failureOf(error, watchdog, timeoutMs, id, run.request),
+          );
         },
       )
       .finally(() => {
@@ -192,6 +196,7 @@ export class WasmRunner implements ShellCheckRunner {
   private failureOf(
     error: unknown,
     watchdog: AbortSignal,
+    timeoutMs: number,
     id: number,
     request: LintRequest,
   ): Error {
@@ -210,13 +215,10 @@ export class WasmRunner implements ShellCheckRunner {
         "ShellCheck (wasm): run %d for %s exceeded %d ms, terminating the worker (args: %s)",
         id,
         request.documentKey,
-        this.runTimeoutMs,
+        timeoutMs,
         request.args.join(" "),
       );
-      return new WasmRuntimeError(
-        `ShellCheck (wasm) timed out after ${this.runTimeoutMs} ms`,
-        request.documentKey,
-      );
+      return new RunTimeoutError(timeoutMs / 1000);
     }
     return new WasmRuntimeError(
       "The ShellCheck wasm runtime failed",

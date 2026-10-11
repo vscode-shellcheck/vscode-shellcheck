@@ -29,8 +29,8 @@ export interface LintRequest {
    */
   readonly mount?: LintMount;
   /**
-   * Milliseconds before a native run is killed; 0 or undefined for no limit.
-   * The wasm runtime ignores it in favour of its own watchdog.
+   * Milliseconds before the run is stopped; 0 or undefined for the runtime's
+   * own default.
    */
   readonly timeoutMs?: number;
 }
@@ -101,15 +101,15 @@ export class RunSupersededError extends Error {
   }
 }
 
-/** A native run killed for taking too long. Fails that run only. */
-export class NativeRunTimeoutError extends Error {
+/** A run stopped for taking too long. Fails that run only. */
+export class RunTimeoutError extends Error {
   public constructor(seconds: number) {
     super(`ShellCheck timed out after ${seconds} s`);
-    this.name = "NativeRunTimeoutError";
+    this.name = "RunTimeoutError";
   }
 }
 
-/** The wasm runtime itself failed: load, trap, unexpected exit or watchdog. */
+/** The wasm runtime itself failed: load, trap or unexpected exit. */
 export class WasmRuntimeError extends Error {
   public constructor(
     message: string,

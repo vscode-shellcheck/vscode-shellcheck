@@ -4,7 +4,7 @@ import { Semaphore } from "../utils/semaphore.js";
 import {
   LintRequest,
   LintResult,
-  NativeRunTimeoutError,
+  RunTimeoutError,
   RunnerDisposedError,
   RunSupersededError,
   ShellCheckRunner,
@@ -72,7 +72,7 @@ export class NativeRunner implements ShellCheckRunner {
           // release them, and settle now rather than wait for that.
           childProcess.stdout?.destroy();
           childProcess.stderr?.destroy();
-          reject(new NativeRunTimeoutError(timeoutMs / 1000));
+          reject(new RunTimeoutError(timeoutMs / 1000));
         }, timeoutMs);
       }
 

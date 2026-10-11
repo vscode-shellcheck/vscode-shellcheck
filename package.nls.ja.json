@@ -27,7 +27,7 @@
   "config.ignorePatterns.additionalProperties.description": "ファイル パスと照合する glob パターン。true または false に設定して、パターンを有効または無効にします。",
   "config.ignoreFileSchemes.description": "一致するファイル スキームは shellcheck によって無視されます。既定値には GitHub Pull Requests 拡張機能の仮想ドキュメントも含まれます。",
   "config.useWorkspaceRootAsCwd.markdownDescription": "`shellcheck` の起動時に、ワークスペースのルート ディレクトリを現在の作業ディレクトリとして使用するかどうかを制御します。使用しない場合は、チェック対象のファイルがあるディレクトリが使用されます。",
-  "config.runTimeout.markdownDescription": "`shellcheck` の実行を停止するまでの秒数。`0` の場合は無制限です。停止された実行では、ドキュメントの問題は以前のまま残ります。停止されるのは変更後に開始された実行のみです。実行がすでにハングしているドキュメントは、いったん閉じて再度開くと再びチェックされます。`#shellcheck.runtime#` が `native` の場合にのみ使用されるため、VS Code for the Web では効果がありません。`wasm` ランタイムは常に 30 秒後に実行を停止します。",
+  "config.runTimeout.markdownDescription": "`shellcheck` の実行を停止するまでの秒数。`0` の場合はランタイムの既定値を使用します。`native` では無制限、`wasm` では 30 秒です。停止された実行では、ドキュメントの問題は以前のまま残ります。停止されるのは変更後に開始された実行のみです。実行がすでにハングしているドキュメントは、いったん閉じて再度開くと再びチェックされます。",
   "config.maxConcurrentRuns.markdownDescription": "同時に実行する `shellcheck` プロセスの最大数。`0` の場合は無制限です。上限を超えたチェックは、実行中のチェックが完了するまで待機します。`#shellcheck.runtime#` が `native` の場合にのみ使用されるため、VS Code for the Web では効果がありません。`wasm` ランタイムは常に一度に 1 つのドキュメントをチェックします。",
   "config.logLevel.description": "拡張機能がログを記録するトレース レベル。既定値は 'info' です。",
   "config.disableVersionCheck.markdownDescription": "shellcheck バイナリのバージョン チェックを無効にするかどうかを制御します。このチェックは、古いバージョンが見つかった場合に更新を促します。チェックは `#shellcheck.runtime#` が `native` の場合にのみ実行されるため、VS Code for the Web では効果がありません。",

@@ -16,7 +16,7 @@ export interface ShellCheckSettings {
   fileMatcher: FileMatcher;
   runtime: RuntimeKind;
   runtimeSetting: RuntimeSetting;
-  /** Seconds; 0 for no limit. */
+  /** Seconds; 0 for the runtime's default. */
   runTimeout: number;
 }
 

@@ -16,6 +16,7 @@ import {
   LintRequest,
   LintResult,
   RunSupersededError,
+  RunTimeoutError,
   RunnerDisposedError,
   WasmRuntimeError,
 } from "../src/runtime/types.js";
@@ -172,20 +173,15 @@ suite("WASM Runner scheduling", () => {
     return run;
   }
 
-  function createRunner(runTimeoutMs?: number): WasmRunner {
-    return new WasmRunner({
-      shellcheck,
-      logger,
-      runTimeoutMs,
-      activeDocumentKey: () => activeDocumentKey,
-    });
-  }
-
   setup(() => {
     shellcheck = new FakeShellCheck();
     logger = new RecordingLogger();
     activeDocumentKey = undefined;
-    runner = createRunner();
+    runner = new WasmRunner({
+      shellcheck,
+      logger,
+      activeDocumentKey: () => activeDocumentKey,
+    });
   });
 
   teardown(() => {
@@ -296,23 +292,27 @@ suite("WASM Runner scheduling", () => {
     runner.cancel("file:///unknown.sh");
   });
 
-  test("aborts a lint that overruns the watchdog and moves on", async () => {
-    runner.dispose();
-    runner = createRunner(20);
-    const overrun = start(documentRequest("a"));
+  test("aborts a lint that overruns its timeout and moves on", async () => {
+    const overrun = start({ ...documentRequest("a"), timeoutMs: 20 });
     const next = start(documentRequest("b"));
 
     await assert.rejects(
       overrun,
       (error: unknown) =>
-        error instanceof WasmRuntimeError &&
-        error.message === "ShellCheck (wasm) timed out after 20 ms",
+        error instanceof RunTimeoutError &&
+        error.message === "ShellCheck timed out after 0.02 s",
     );
     assert.strictEqual(logger.matching(/exceeded 20 ms/).length, 1);
     await settled();
     assert.deepStrictEqual(shellcheck.submitted(), ["a", "b"]);
     shellcheck.last().resolve(clean);
     await next;
+  });
+
+  test("does not stop a lint whose timeout is 0", async () => {
+    start({ ...documentRequest("a"), timeoutMs: 0 });
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    assert.strictEqual(shellcheck.last().signal.aborted, false);
   });
 
   test("reports a failed lint as a runtime failure and moves on", async () => {
@@ -452,7 +452,7 @@ suite("WASM Runner on the packaged module", function () {
     started.splice(0).forEach((runner) => runner.dispose());
   });
 
-  async function createRunner(runTimeoutMs?: number): Promise<{
+  async function createRunner(): Promise<{
     runner: WasmRunner;
     logger: RecordingLogger;
     loads: () => number;
@@ -469,7 +469,6 @@ suite("WASM Runner on the packaged module", function () {
         },
       }),
       logger,
-      runTimeoutMs,
       activeDocumentKey: () => undefined,
     });
     started.push(runner);
@@ -537,7 +536,7 @@ suite("WASM Runner on the packaged module", function () {
     assert.strictEqual(loads(), 1, "the module was loaded more than once");
   });
 
-  test("terminates a lint that exceeds its watchdog budget", async () => {
+  test("terminates a lint that exceeds its timeout", async () => {
     const baseline = await createRunner();
     const startedAt = Date.now();
     await baseline.runner.run(fixtureRequest());
@@ -545,12 +544,10 @@ suite("WASM Runner on the packaged module", function () {
     baseline.runner.dispose();
 
     const budget = Math.max(1000, baselineMs * 4);
-    const { runner, logger } = await createRunner(budget);
+    const { runner, logger } = await createRunner();
     await assert.rejects(
-      runner.run(fixtureRequest({ stdin: slowScript })),
-      (error: unknown) =>
-        error instanceof WasmRuntimeError &&
-        /timed out after \d+ ms/.test(error.message),
+      runner.run(fixtureRequest({ stdin: slowScript, timeoutMs: budget })),
+      RunTimeoutError,
     );
     assert.strictEqual(logger.matching(/exceeded \d+ ms/).length, 1);
 
@@ -562,7 +559,7 @@ suite("WASM Runner on the packaged module", function () {
     assert.strictEqual(workerThreadIds(logger).length, 2);
   });
 
-  test("does not count loading the module against the watchdog", async () => {
+  test("does not count loading the module against the timeout", async () => {
     const baseline = await createRunner();
     const startedAt = Date.now();
     await baseline.runner.run(fixtureRequest());
@@ -582,13 +579,12 @@ suite("WASM Runner on the packaged module", function () {
           ),
       }),
       logger,
-      runTimeoutMs: budget,
       activeDocumentKey: () => undefined,
     });
     started.push(runner);
 
     assert.strictEqual(
-      (await runner.run(fixtureRequest())).stdout,
+      (await runner.run(fixtureRequest({ timeoutMs: budget }))).stdout,
       nativeOutput().stdout,
     );
   });

@@ -81,7 +81,7 @@ A WebAssembly build of ShellCheck is bundled for every platform as well; see [Ex
 | `shellcheck.runtime`                    | `"native"`                        | `"native"` or the experimental `"wasm"`.                                                          |
 | `shellcheck.executablePath`             | bundled                           | Path to the `shellcheck` executable.                                                              |
 | `shellcheck.useWorkspaceRootAsCwd`      | `false`                           | Runs ShellCheck from the workspace root instead of the script's directory.                        |
-| `shellcheck.runTimeout`                 | `0`                               | Seconds before a native run is stopped; `0` for no limit.                                         |
+| `shellcheck.runTimeout`                 | `0`                               | Seconds before a run is stopped; `0` for no limit on native and 30 on WebAssembly.                |
 | `shellcheck.maxConcurrentRuns`          | `0`                               | Most native runs at once; `0` for no limit.                                                       |
 | `shellcheck.disableVersionCheck`        | `false`                           | Stops prompting to update an outdated `shellcheck` binary.                                        |
 | `shellcheck.logLevel`                   | `"info"`                          | Level of the extension's log.                                                                     |
