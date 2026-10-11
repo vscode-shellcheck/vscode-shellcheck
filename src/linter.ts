@@ -606,6 +606,7 @@ export default class ShellCheckProvider
     }
     return {
       runtime: settings.runtime,
+      runtimeSetting: settings.runtimeSetting,
       canSwitchRuntime: nativeRuntime !== undefined,
       enabled: settings.enabled,
       trigger: settings.trigger,

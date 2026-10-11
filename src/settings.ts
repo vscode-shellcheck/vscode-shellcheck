@@ -15,6 +15,7 @@ export interface ShellCheckSettings {
   useWorkspaceRootAsCwd: boolean;
   fileMatcher: FileMatcher;
   runtime: RuntimeKind;
+  runtimeSetting: RuntimeSetting;
   /** Seconds; 0 for no limit. */
   runTimeout: number;
 }
@@ -35,6 +36,8 @@ export namespace ShellCheckSettings {
     watchConfigFiles: "watchConfigFiles",
   };
 }
+
+export type RuntimeSetting = "auto" | RuntimeKind;
 
 export enum RunTrigger {
   onSave,
@@ -61,7 +64,8 @@ export namespace RunTrigger {
   }
 }
 
-/** Where there is no native runtime (the web), wasm whatever the setting says. */
+/** Where there is no native runtime (the web), wasm whatever the setting says;
+ * elsewhere `auto` is native. */
 export function getRuntimeKind(
   section: vscode.WorkspaceConfiguration,
 ): RuntimeKind {
@@ -93,6 +97,7 @@ export async function getWorkspaceSettings(
     trigger: RunTrigger.from(section.get(keys.run, RunTrigger.strings.onType)),
     exclude: section.get(keys.exclude, []),
     runtime,
+    runtimeSetting: section.get(keys.runtime, "auto"),
     // The wasm runtime has no executable, and looking one up would probe the
     // bundled binaries for nothing.
     executable:

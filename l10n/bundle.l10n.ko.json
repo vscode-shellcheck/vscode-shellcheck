@@ -27,6 +27,7 @@
   "Collect Diagnostics": "진단 정보 수집",
   "Open a report on how ShellCheck sees this document": "ShellCheck가 이 문서를 인식하는 방식에 대한 보고서 열기",
   "current/Marks the value a setting has now in a picker.": "현재",
+  "Run the shellcheck executable on desktop and WebAssembly in VS Code for the Web": "데스크톱에서는 shellcheck 실행 파일, VS Code for the Web에서는 WebAssembly 빌드 실행",
   "Run the bundled or user-provided shellcheck executable": "번들로 제공되거나 사용자가 지정한 shellcheck 실행 파일 실행",
   "Run the bundled WebAssembly build of ShellCheck (experimental, slower)": "번들로 제공되는 ShellCheck의 WebAssembly 빌드 실행(실험적, 더 느림)",
   "Lint as you type": "입력하는 동안 검사",

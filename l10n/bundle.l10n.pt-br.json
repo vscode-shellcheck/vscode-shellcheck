@@ -27,6 +27,7 @@
   "Collect Diagnostics": "Coletar Diagnósticos",
   "Open a report on how ShellCheck sees this document": "Abrir um relatório sobre como o ShellCheck vê este documento",
   "current/Marks the value a setting has now in a picker.": "atual",
+  "Run the shellcheck executable on desktop and WebAssembly in VS Code for the Web": "Executa o executável shellcheck no desktop e o build WebAssembly no VS Code for the Web",
   "Run the bundled or user-provided shellcheck executable": "Usa o executável shellcheck incluído ou fornecido pelo usuário",
   "Run the bundled WebAssembly build of ShellCheck (experimental, slower)": "Executa o build WebAssembly do ShellCheck incluído na extensão (experimental, mais lento)",
   "Lint as you type": "Verifica enquanto você digita",

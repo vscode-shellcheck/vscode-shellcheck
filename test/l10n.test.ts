@@ -14,6 +14,7 @@ interface Command {
 
 const snapshot: StatusSnapshot = {
   runtime: "native",
+  runtimeSetting: "auto",
   canSwitchRuntime: true,
   enabled: true,
   trigger: RunTrigger.onType,

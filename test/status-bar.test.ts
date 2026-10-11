@@ -14,6 +14,7 @@ import {
 
 const nativeBundled: StatusSnapshot = {
   runtime: "native",
+  runtimeSetting: "auto",
   canSwitchRuntime: true,
   enabled: true,
   trigger: RunTrigger.onType,
@@ -24,6 +25,7 @@ const nativeBundled: StatusSnapshot = {
 const wasm: StatusSnapshot = {
   ...nativeBundled,
   runtime: "wasm",
+  runtimeSetting: "wasm",
   bundled: false,
   tool: { ok: true, version: new SemVer("0.11.0"), ghcVersion: "9.12.2" },
 };
@@ -91,7 +93,8 @@ suite("Status menu", () => {
 
   test("labels the settings with their current values", () => {
     const labels = menuItems(nativeBundled).map((item) => item.label);
-    assert.ok(labels.includes("$(server-process) Runtime: native"));
+    // The setting, not the runtime it resolves to, which the tooltip shows.
+    assert.ok(labels.includes("$(server-process) Runtime: auto"));
     assert.ok(labels.includes("$(zap) Lint Trigger: On Type"));
     assert.ok(
       menuItems({ ...wasm, trigger: RunTrigger.manual })
@@ -125,11 +128,11 @@ suite("Status menu pickers", () => {
     const choices = runtimeChoices("wasm");
     assert.deepStrictEqual(
       choices.map((choice) => choice.value),
-      ["native", "wasm"],
+      ["auto", "native", "wasm"],
     );
     assert.deepStrictEqual(
       choices.map((choice) => choice.current),
-      [false, true],
+      [false, false, true],
     );
   });
 
