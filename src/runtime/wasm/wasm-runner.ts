@@ -4,6 +4,7 @@ import type {
 } from "@vscode-shellcheck/shellcheck-wasm/client";
 import { Logger } from "../../utils/logging/types.js";
 import {
+  DEFAULT_RUN_TIMEOUT_MS,
   LintRequest,
   LintResult,
   RunSupersededError,
@@ -12,12 +13,6 @@ import {
   ShellCheckRunner,
   WasmRuntimeError,
 } from "../types.js";
-
-/**
- * Budget for a lint that asks for none. Unlike a native process, a stuck worker
- * would otherwise hold its slot until the window closes.
- */
-export const DEFAULT_RUN_TIMEOUT_MS = 30_000;
 
 /**
  * Lints at once when `shellcheck.maxConcurrentRuns` is 0. Each one holds a

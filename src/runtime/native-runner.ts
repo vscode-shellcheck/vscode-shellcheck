@@ -2,6 +2,7 @@ import { execa } from "execa";
 import * as logging from "../utils/logging/index.js";
 import { Semaphore } from "../utils/semaphore.js";
 import {
+  DEFAULT_RUN_TIMEOUT_MS,
   LintRequest,
   LintResult,
   RunTimeoutError,
@@ -40,7 +41,8 @@ export class NativeRunner implements ShellCheckRunner {
 
   /** Runs once admitted, so the timeout never counts time spent queued. */
   private spawn(request: LintRequest): Promise<LintResult> {
-    const { executablePath, args, cwd, timeoutMs = 0 } = request;
+    const { executablePath, args, cwd } = request;
+    const timeoutMs = request.timeoutMs || DEFAULT_RUN_TIMEOUT_MS;
 
     return new Promise<LintResult>((resolve, reject) => {
       logging.debug("Spawn: (cwd=%s) %s %s", cwd, executablePath, args);
@@ -63,18 +65,15 @@ export class NativeRunner implements ShellCheckRunner {
       const stdout: string[] = [];
       const stderr: string[] = [];
 
-      let timer: NodeJS.Timeout | undefined;
-      if (timeoutMs > 0) {
-        timer = setTimeout(() => {
-          childProcess.kill();
-          // A grandchild, say of a wrapper script, can survive the kill with
-          // both pipes inherited, and execa only settles once they close:
-          // release them, and settle now rather than wait for that.
-          childProcess.stdout?.destroy();
-          childProcess.stderr?.destroy();
-          reject(new RunTimeoutError(timeoutMs / 1000));
-        }, timeoutMs);
-      }
+      const timer = setTimeout(() => {
+        childProcess.kill();
+        // A grandchild, say of a wrapper script, can survive the kill with
+        // both pipes inherited, and execa only settles once they close:
+        // release them, and settle now rather than wait for that.
+        childProcess.stdout?.destroy();
+        childProcess.stderr?.destroy();
+        reject(new RunTimeoutError(timeoutMs / 1000));
+      }, timeoutMs);
 
       childProcess.stderr?.on("data", (chunk: Buffer) => {
         stderr.push(chunk.toString());

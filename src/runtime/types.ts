@@ -11,6 +11,12 @@ export interface LintMount {
   readonly pwd: string;
 }
 
+/**
+ * Budget for a lint that asks for none. A stuck run would otherwise hold its
+ * slot under `shellcheck.maxConcurrentRuns` until the window closes.
+ */
+export const DEFAULT_RUN_TIMEOUT_MS = 30_000;
+
 /** Everything the linter has already computed; no vscode types cross this line. */
 export interface LintRequest {
   /** Dedupe/cancellation key. Always `textDocument.uri.toString()`. */
@@ -28,10 +34,7 @@ export interface LintRequest {
    * runtime, which has the whole local filesystem, ignores it.
    */
   readonly mount?: LintMount;
-  /**
-   * Milliseconds before the run is stopped; 0 or undefined for the runtime's
-   * own default.
-   */
+  /** Milliseconds before the run is stopped; 0 or undefined for the default. */
   readonly timeoutMs?: number;
 }
 
