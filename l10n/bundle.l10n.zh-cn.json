@@ -29,7 +29,7 @@
   "current/Marks the value a setting has now in a picker.": "当前",
   "Run the shellcheck executable on desktop and WebAssembly in VS Code for the Web": "在桌面版运行 shellcheck 可执行文件，在 VS Code for the Web 中运行 wasm 版本",
   "Run the bundled or user-provided shellcheck executable": "运行内置或用户提供的 shellcheck 可执行文件",
-  "Run the bundled WebAssembly build of ShellCheck (experimental, slower)": "运行内置的 ShellCheck WebAssembly 构建（实验性，较慢）",
+  "Run the bundled WebAssembly build of ShellCheck (experimental, slower)": "运行内置的 ShellCheck wasm 版本（实验性，较慢）",
   "Lint as you type": "键入时检查",
   "Lint when the document is saved": "保存文档时检查",
   "Lint only when you run \"ShellCheck: Lint Current Document\"": "仅在运行“ShellCheck: 检查当前文档”命令时检查",

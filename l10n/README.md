@@ -186,6 +186,7 @@ Brazilian Portuguese, addressing the user as "você" (arquivo, tela, salvar). Co
 | status bar      | 状态栏   |
 | Quick Fix       | 快速修复 |
 | Output          | 输出     |
+| build (noun)    | 版本     |
 
 Put a half-width space between Chinese and Latin words or numbers.
 
@@ -208,7 +209,7 @@ Put a half-width space between Chinese and Latin words or numbers.
 | config file     | 設定檔       |
 | script          | 指令碼       |
 | executable      | 可執行檔     |
-| build (noun)    | 組建         |
+| build (noun)    | 版本         |
 | extension       | 延伸模組     |
 | menu            | 功能表       |
 
