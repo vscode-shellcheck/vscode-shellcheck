@@ -1,4 +1,3 @@
-import * as vscode from "vscode";
 import {
   closeAllEditors,
   lintActiveDocument,
@@ -29,11 +28,7 @@ suite("VS Code for the Web", () => {
 
   suiteSetup(async () => {
     // Asking for native proves the setting is ignored where there is none.
-    // Not awaited through updateShellCheckSetting: writing the default raises
-    // no configuration change to wait for.
-    await vscode.workspace
-      .getConfiguration("shellcheck")
-      .update("runtime", "native", vscode.ConfigurationTarget.Global);
+    await updateShellCheckSetting("runtime", "native");
   });
 
   suiteTeardown(async () => {

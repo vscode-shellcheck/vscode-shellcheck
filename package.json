@@ -170,15 +170,17 @@
             "markdownDescription": "%config.runtime.markdownDescription%",
             "type": "string",
             "enum": [
+              "auto",
               "native",
               "wasm"
             ],
             "enumDescriptions": [
               "%config.runtime.enumDescriptions.0%",
-              "%config.runtime.enumDescriptions.1%"
+              "%config.runtime.enumDescriptions.1%",
+              "%config.runtime.enumDescriptions.2%"
             ],
             "scope": "window",
-            "default": "native",
+            "default": "auto",
             "tags": [
               "experimental"
             ]

@@ -189,9 +189,10 @@ export async function updateShellCheckSetting(
 /**
  * Switch the extension to `runtime` and wait until it has taken effect.
  *
- * `native` is cleared rather than written, because it is the contributed
- * default: that keeps every transition a real change of the effective value,
- * which is what raises the configuration event this waits on.
+ * `native` is cleared rather than written, because the contributed default
+ * `auto` resolves to it on desktop: that keeps every transition a real change
+ * of the effective value, which is what raises the configuration event this
+ * waits on.
  */
 export function setRuntime(runtime: RuntimeKind): Promise<void> {
   return updateShellCheckSetting(

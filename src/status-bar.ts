@@ -1,13 +1,14 @@
 import * as vscode from "vscode";
 import type { ToolStatus } from "./linter.js";
 import { RuntimeKind } from "./runtime/types.js";
-import { RunTrigger, ShellCheckSettings } from "./settings.js";
+import { RunTrigger, RuntimeSetting, ShellCheckSettings } from "./settings.js";
 
 const SHOW_MENU_COMMAND = "shellcheck.showMenu";
 
 /** What the status bar and its menu show for the active document. */
 export interface StatusSnapshot {
   readonly runtime: RuntimeKind;
+  readonly runtimeSetting: RuntimeSetting;
   /** False on the web, which only has the wasm runtime. */
   readonly canSwitchRuntime: boolean;
   readonly enabled: boolean;
@@ -114,7 +115,7 @@ export function menuItems(snapshot: StatusSnapshot): MenuItem[] {
   items.push(separator(vscode.l10n.t("Settings")));
   if (snapshot.canSwitchRuntime) {
     items.push({
-      label: `$(server-process) ${vscode.l10n.t("Runtime: {0}", snapshot.runtime)}`,
+      label: `$(server-process) ${vscode.l10n.t("Runtime: {0}", snapshot.runtimeSetting)}`,
       description: vscode.l10n.t("Change how ShellCheck runs"),
       action: { kind: "pickRuntime" },
     });
@@ -203,15 +204,25 @@ function choice<T>(
   };
 }
 
-export function runtimeChoices(current: RuntimeKind): Choice<RuntimeKind>[] {
+export function runtimeChoices(
+  current: RuntimeSetting,
+): Choice<RuntimeSetting>[] {
   return [
-    choice<RuntimeKind>(
+    choice<RuntimeSetting>(
+      "auto",
+      current,
+      "auto",
+      vscode.l10n.t(
+        "Run the shellcheck executable on desktop and WebAssembly in VS Code for the Web",
+      ),
+    ),
+    choice<RuntimeSetting>(
       "native",
       current,
       "native",
       vscode.l10n.t("Run the bundled or user-provided shellcheck executable"),
     ),
-    choice<RuntimeKind>(
+    choice<RuntimeSetting>(
       "wasm",
       current,
       "wasm",
@@ -343,7 +354,7 @@ export class StatusBar implements vscode.Disposable {
         break;
       case "pickRuntime": {
         const runtime = await pickChange(
-          runtimeChoices(snapshot.runtime),
+          runtimeChoices(snapshot.runtimeSetting),
           vscode.l10n.t("ShellCheck Runtime"),
         );
         if (runtime !== undefined) {
