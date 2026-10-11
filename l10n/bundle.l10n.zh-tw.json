@@ -27,7 +27,7 @@
   "Collect Diagnostics": "收集診斷資訊",
   "Open a report on how ShellCheck sees this document": "開啟報告，查看 ShellCheck 如何解讀此文件",
   "current/Marks the value a setting has now in a picker.": "目前",
-  "Run the shellcheck executable on desktop and WebAssembly in VS Code for the Web": "在桌面版執行 shellcheck 可執行檔，在 VS Code for the Web 中執行 WebAssembly 組建",
+  "Run the shellcheck executable on desktop and WebAssembly in VS Code for the Web": "在桌面版執行 shellcheck 可執行檔，在 VS Code for the Web 中執行 wasm 版本",
   "Run the bundled or user-provided shellcheck executable": "執行內建或使用者提供的 shellcheck 可執行檔",
   "Run the bundled WebAssembly build of ShellCheck (experimental, slower)": "執行內建的 ShellCheck WebAssembly 組建（實驗性，速度較慢）",
   "Lint as you type": "輸入時檢查",
