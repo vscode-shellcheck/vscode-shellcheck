@@ -87,18 +87,19 @@ export class RuntimeManager implements vscode.Disposable {
     try {
       // Imported on demand: a native session must never evaluate the wasm
       // module graph, let alone read the 9.9 MiB module.
-      const [{ WasmRunner }, { createPackagedShellCheck }] = await Promise.all([
+      const [{ WasmRunner }, { loadPackagedShellCheck }] = await Promise.all([
         import("./wasm/wasm-runner.js"),
         import("./wasm/packaged.js"),
       ]);
       return new WasmRunner({
-        shellcheck: await createPackagedShellCheck({
+        createShellCheck: await loadPackagedShellCheck({
           extensionUri: this.context.extensionUri,
           logger: logging.logger,
         }),
         logger: logging.logger,
         activeDocumentKey: () =>
           vscode.window.activeTextEditor?.document.uri.toString(),
+        maxConcurrentRuns: getMaxConcurrentRuns,
       });
     } catch (error) {
       throw new WasmRuntimeError(

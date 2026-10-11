@@ -11,6 +11,12 @@ export interface LintMount {
   readonly pwd: string;
 }
 
+/**
+ * Budget for a lint that asks for none. A stuck run would otherwise hold its
+ * slot under `shellcheck.maxConcurrentRuns` until the window closes.
+ */
+export const DEFAULT_RUN_TIMEOUT_MS = 30_000;
+
 /** Everything the linter has already computed; no vscode types cross this line. */
 export interface LintRequest {
   /** Dedupe/cancellation key. Always `textDocument.uri.toString()`. */
@@ -28,10 +34,7 @@ export interface LintRequest {
    * runtime, which has the whole local filesystem, ignores it.
    */
   readonly mount?: LintMount;
-  /**
-   * Milliseconds before a native run is killed; 0 or undefined for no limit.
-   * The wasm runtime ignores it in favour of its own watchdog.
-   */
+  /** Milliseconds before the run is stopped; 0 or undefined for the default. */
   readonly timeoutMs?: number;
 }
 
@@ -101,15 +104,15 @@ export class RunSupersededError extends Error {
   }
 }
 
-/** A native run killed for taking too long. Fails that run only. */
-export class NativeRunTimeoutError extends Error {
+/** A run stopped for taking too long. Fails that run only. */
+export class RunTimeoutError extends Error {
   public constructor(seconds: number) {
     super(`ShellCheck timed out after ${seconds} s`);
-    this.name = "NativeRunTimeoutError";
+    this.name = "RunTimeoutError";
   }
 }
 
-/** The wasm runtime itself failed: load, trap, unexpected exit or watchdog. */
+/** The wasm runtime itself failed: load, trap or unexpected exit. */
 export class WasmRuntimeError extends Error {
   public constructor(
     message: string,

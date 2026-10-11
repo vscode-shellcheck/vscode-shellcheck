@@ -21,7 +21,7 @@ import { RuntimeManager } from "./runtime/manager.js";
 import { nativeRuntime } from "./runtime/native.js";
 import {
   LintResult,
-  NativeRunTimeoutError,
+  RunTimeoutError,
   RunnerDisposedError,
   RunSupersededError,
   RuntimeKind,
@@ -849,7 +849,7 @@ export default class ShellCheckProvider
         // A newer run, or a newer runtime, owns this document now.
         return;
       }
-      if (error instanceof NativeRunTimeoutError) {
+      if (error instanceof RunTimeoutError) {
         // Says nothing about the executable, so its tool status stays.
         logging.warn("%s: %s", textDocument.uri.toString(), error.message);
         return;

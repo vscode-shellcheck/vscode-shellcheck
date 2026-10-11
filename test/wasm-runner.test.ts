@@ -16,12 +16,13 @@ import {
   LintRequest,
   LintResult,
   RunSupersededError,
+  RunTimeoutError,
   RunnerDisposedError,
   WasmRuntimeError,
 } from "../src/runtime/types.js";
 import {
   compilePackagedModule,
-  createPackagedShellCheck,
+  loadPackagedShellCheck,
 } from "../src/runtime/wasm/packaged.js";
 import { WasmRunner } from "../src/runtime/wasm/wasm-runner.js";
 import { createWorkspaceFileSystem } from "../src/runtime/wasm/workspace-fs.js";
@@ -97,18 +98,37 @@ class RecordingLogger implements Logger {
 }
 
 interface FakeLint {
+  /** Which package instance it was handed to, counting from 1. */
+  readonly instance: number;
   readonly request: PackageLintRequest;
   readonly signal: AbortSignal;
   resolve(result: PackageLintResult): void;
   reject(error: unknown): void;
 }
 
-/** Stands in for the package: records what it is handed, settles on demand. */
-class FakeShellCheck implements ShellCheck {
+/**
+ * Stands in for the package: records what each of its instances is handed,
+ * settles on demand.
+ */
+class FakePackage {
   public readonly lints: FakeLint[] = [];
-  public disposals = 0;
+  public instances = 0;
+  /** Instances disposed, by number. */
+  public readonly disposed: number[] = [];
 
-  public lint(
+  public create(): ShellCheck {
+    const instance = ++this.instances;
+    return {
+      lint: (request, options) => this.lint(instance, request, options),
+      dispose: () => {
+        this.disposed.push(instance);
+        return Promise.resolve();
+      },
+    };
+  }
+
+  private lint(
+    instance: number,
     request: PackageLintRequest,
     options: LintOptions = {},
   ): Promise<PackageLintResult> {
@@ -118,13 +138,8 @@ class FakeShellCheck implements ShellCheck {
       signal.addEventListener("abort", () => reject(signal.reason), {
         once: true,
       });
-      this.lints.push({ request, signal, resolve, reject });
+      this.lints.push({ instance, request, signal, resolve, reject });
     });
-  }
-
-  public dispose(): Promise<void> {
-    this.disposals++;
-    return Promise.resolve();
   }
 
   /** The stdin of every lint submitted so far, in order. */
@@ -134,6 +149,10 @@ class FakeShellCheck implements ShellCheck {
 
   public last(): FakeLint {
     return this.lints[this.lints.length - 1];
+  }
+
+  public lintOf(stdin: string): FakeLint {
+    return this.lints.find((lint) => lint.request.stdin === stdin)!;
   }
 }
 
@@ -160,9 +179,10 @@ function documentRequest(key: string, stdin = key): LintRequest {
 }
 
 suite("WASM Runner scheduling", () => {
-  let shellcheck: FakeShellCheck;
+  let shellcheck: FakePackage;
   let logger: RecordingLogger;
   let activeDocumentKey: string | undefined;
+  let maxConcurrentRuns: number;
   let runner: WasmRunner;
 
   /** Every run is observed: a dropped one rejects, and only some tests care. */
@@ -172,27 +192,25 @@ suite("WASM Runner scheduling", () => {
     return run;
   }
 
-  function createRunner(runTimeoutMs?: number): WasmRunner {
-    return new WasmRunner({
-      shellcheck,
-      logger,
-      runTimeoutMs,
-      activeDocumentKey: () => activeDocumentKey,
-    });
-  }
-
   setup(() => {
-    shellcheck = new FakeShellCheck();
+    shellcheck = new FakePackage();
     logger = new RecordingLogger();
     activeDocumentKey = undefined;
-    runner = createRunner();
+    // Most of the order below is only observable one lint at a time.
+    maxConcurrentRuns = 1;
+    runner = new WasmRunner({
+      createShellCheck: () => shellcheck.create(),
+      logger,
+      activeDocumentKey: () => activeDocumentKey,
+      maxConcurrentRuns: () => maxConcurrentRuns,
+    });
   });
 
   teardown(() => {
     runner.dispose();
   });
 
-  test("hands the package one lint at a time", async () => {
+  test("with a limit of 1, hands the package one lint at a time", async () => {
     const a = start(documentRequest("a"));
     const b = start(documentRequest("b"));
     assert.deepStrictEqual(shellcheck.submitted(), ["a"]);
@@ -203,6 +221,60 @@ suite("WASM Runner scheduling", () => {
     assert.deepStrictEqual(shellcheck.submitted(), ["a", "b"]);
     shellcheck.last().resolve(clean);
     await b;
+  });
+
+  test("0 runs two lints at once, each on an instance of its own", async () => {
+    maxConcurrentRuns = 0;
+    start(documentRequest("a"));
+    start(documentRequest("b"));
+    start(documentRequest("c"));
+    assert.deepStrictEqual(shellcheck.submitted(), ["a", "b"]);
+    assert.notStrictEqual(
+      shellcheck.lintOf("a").instance,
+      shellcheck.lintOf("b").instance,
+    );
+
+    // The next lint reuses the instance that came free.
+    shellcheck.lintOf("b").resolve(clean);
+    await settled();
+    assert.deepStrictEqual(shellcheck.submitted(), ["a", "b", "c"]);
+    assert.strictEqual(
+      shellcheck.lintOf("c").instance,
+      shellcheck.lintOf("b").instance,
+    );
+    assert.strictEqual(shellcheck.instances, 2);
+  });
+
+  test("a raised limit starts waiting lints with the next request", () => {
+    start(documentRequest("a"));
+    start(documentRequest("b"));
+    start(documentRequest("c"));
+    maxConcurrentRuns = 3;
+    start(documentRequest("d"));
+    assert.deepStrictEqual(shellcheck.submitted(), ["a", "b", "c"]);
+  });
+
+  test("a lowered limit shuts down the instances it no longer needs", async () => {
+    maxConcurrentRuns = 2;
+    start(documentRequest("a"));
+    start(documentRequest("b"));
+    maxConcurrentRuns = 1;
+    start(documentRequest("c"));
+
+    shellcheck.lintOf("a").resolve(clean);
+    await settled();
+    assert.deepStrictEqual(shellcheck.disposed, [
+      shellcheck.lintOf("a").instance,
+    ]);
+    assert.deepStrictEqual(shellcheck.submitted(), ["a", "b"]);
+
+    shellcheck.lintOf("b").resolve(clean);
+    await settled();
+    assert.deepStrictEqual(shellcheck.submitted(), ["a", "b", "c"]);
+    assert.strictEqual(
+      shellcheck.lintOf("c").instance,
+      shellcheck.lintOf("b").instance,
+    );
   });
 
   test("keeps only the newest pending request per document", async () => {
@@ -296,23 +368,27 @@ suite("WASM Runner scheduling", () => {
     runner.cancel("file:///unknown.sh");
   });
 
-  test("aborts a lint that overruns the watchdog and moves on", async () => {
-    runner.dispose();
-    runner = createRunner(20);
-    const overrun = start(documentRequest("a"));
+  test("aborts a lint that overruns its timeout and moves on", async () => {
+    const overrun = start({ ...documentRequest("a"), timeoutMs: 20 });
     const next = start(documentRequest("b"));
 
     await assert.rejects(
       overrun,
       (error: unknown) =>
-        error instanceof WasmRuntimeError &&
-        error.message === "ShellCheck (wasm) timed out after 20 ms",
+        error instanceof RunTimeoutError &&
+        error.message === "ShellCheck timed out after 0.02 s",
     );
     assert.strictEqual(logger.matching(/exceeded 20 ms/).length, 1);
     await settled();
     assert.deepStrictEqual(shellcheck.submitted(), ["a", "b"]);
     shellcheck.last().resolve(clean);
     await next;
+  });
+
+  test("does not stop a lint whose timeout is 0", async () => {
+    start({ ...documentRequest("a"), timeoutMs: 0 });
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    assert.strictEqual(shellcheck.last().signal.aborted, false);
   });
 
   test("reports a failed lint as a runtime failure and moves on", async () => {
@@ -386,19 +462,27 @@ suite("WASM Runner scheduling", () => {
   });
 
   test("rejects running and pending lints when disposed", async () => {
-    const running = start(documentRequest("a"));
-    const pending = start(documentRequest("b"));
-    const inPackage = shellcheck.last();
+    maxConcurrentRuns = 2;
+    const finished = start(documentRequest("a"));
+    const running = start(documentRequest("b"));
+    shellcheck.lintOf("a").resolve(clean);
+    await finished;
+    await settled();
+    maxConcurrentRuns = 1;
+    const pending = start(documentRequest("c"));
+    const inPackage = shellcheck.lintOf("b");
 
     runner.dispose();
     await assert.rejects(running, RunnerDisposedError);
     await assert.rejects(pending, RunnerDisposedError);
-    await assert.rejects(start(documentRequest("c")), RunnerDisposedError);
+    await assert.rejects(start(documentRequest("d")), RunnerDisposedError);
     assert.ok(inPackage.signal.aborted);
-    assert.strictEqual(shellcheck.disposals, 1);
+    assert.deepStrictEqual(shellcheck.submitted(), ["a", "b"]);
+    // The idle instance and the running one.
+    assert.deepStrictEqual([...shellcheck.disposed].sort(), [1, 2]);
 
     runner.dispose();
-    assert.strictEqual(shellcheck.disposals, 1);
+    assert.strictEqual(shellcheck.disposed.length, 2);
   });
 });
 
@@ -452,7 +536,7 @@ suite("WASM Runner on the packaged module", function () {
     started.splice(0).forEach((runner) => runner.dispose());
   });
 
-  async function createRunner(runTimeoutMs?: number): Promise<{
+  async function createRunner(): Promise<{
     runner: WasmRunner;
     logger: RecordingLogger;
     loads: () => number;
@@ -460,7 +544,7 @@ suite("WASM Runner on the packaged module", function () {
     const logger = new RecordingLogger();
     let loads = 0;
     const runner = new WasmRunner({
-      shellcheck: await createPackagedShellCheck({
+      createShellCheck: await loadPackagedShellCheck({
         extensionUri,
         logger,
         loadModule: () => {
@@ -469,8 +553,8 @@ suite("WASM Runner on the packaged module", function () {
         },
       }),
       logger,
-      runTimeoutMs,
       activeDocumentKey: () => undefined,
+      maxConcurrentRuns: () => 0,
     });
     started.push(runner);
     return { runner, logger, loads: () => loads };
@@ -520,6 +604,26 @@ suite("WASM Runner on the packaged module", function () {
     assert.strictEqual(result.stderr, "");
   });
 
+  test("runs two lints at once on workers of their own", async () => {
+    const { runner, logger, loads } = await createRunner();
+    const slow = runner.run(fixtureRequest({ stdin: slowScript }));
+    slow.catch(() => undefined);
+    const quick = runner.run(
+      fixtureRequest({ documentKey: "file:///fixture/src/quick.sh" }),
+    );
+
+    const first = await Promise.race([
+      slow.then(() => "slow"),
+      quick.then(() => "quick"),
+    ]);
+    assert.strictEqual(first, "quick");
+    assert.strictEqual((await quick).stdout, nativeOutput().stdout);
+    const threadIds = workerThreadIds(logger);
+    assert.strictEqual(threadIds.length, 2, logger.lines.join("\n"));
+    assert.notStrictEqual(threadIds[0], threadIds[1]);
+    assert.strictEqual(loads(), 1, "the module was loaded more than once");
+  });
+
   test("replaces the worker of a superseded lint without recompiling", async () => {
     const { runner, logger, loads } = await createRunner();
     const { mount, reading } = watchedMount();
@@ -537,7 +641,7 @@ suite("WASM Runner on the packaged module", function () {
     assert.strictEqual(loads(), 1, "the module was loaded more than once");
   });
 
-  test("terminates a lint that exceeds its watchdog budget", async () => {
+  test("terminates a lint that exceeds its timeout", async () => {
     const baseline = await createRunner();
     const startedAt = Date.now();
     await baseline.runner.run(fixtureRequest());
@@ -545,12 +649,10 @@ suite("WASM Runner on the packaged module", function () {
     baseline.runner.dispose();
 
     const budget = Math.max(1000, baselineMs * 4);
-    const { runner, logger } = await createRunner(budget);
+    const { runner, logger } = await createRunner();
     await assert.rejects(
-      runner.run(fixtureRequest({ stdin: slowScript })),
-      (error: unknown) =>
-        error instanceof WasmRuntimeError &&
-        /timed out after \d+ ms/.test(error.message),
+      runner.run(fixtureRequest({ stdin: slowScript, timeoutMs: budget })),
+      RunTimeoutError,
     );
     assert.strictEqual(logger.matching(/exceeded \d+ ms/).length, 1);
 
@@ -562,7 +664,7 @@ suite("WASM Runner on the packaged module", function () {
     assert.strictEqual(workerThreadIds(logger).length, 2);
   });
 
-  test("does not count loading the module against the watchdog", async () => {
+  test("does not count loading the module against the timeout", async () => {
     const baseline = await createRunner();
     const startedAt = Date.now();
     await baseline.runner.run(fixtureRequest());
@@ -573,7 +675,7 @@ suite("WASM Runner on the packaged module", function () {
     // download on the web would.
     const logger = new RecordingLogger();
     const runner = new WasmRunner({
-      shellcheck: await createPackagedShellCheck({
+      createShellCheck: await loadPackagedShellCheck({
         extensionUri,
         logger,
         loadModule: () =>
@@ -582,13 +684,13 @@ suite("WASM Runner on the packaged module", function () {
           ),
       }),
       logger,
-      runTimeoutMs: budget,
       activeDocumentKey: () => undefined,
+      maxConcurrentRuns: () => 0,
     });
     started.push(runner);
 
     assert.strictEqual(
-      (await runner.run(fixtureRequest())).stdout,
+      (await runner.run(fixtureRequest({ timeoutMs: budget }))).stdout,
       nativeOutput().stdout,
     );
   });
@@ -620,12 +722,13 @@ suite("WASM Runner on the packaged module", function () {
   test("reports a module that cannot be loaded on every lint", async () => {
     const logger = new RecordingLogger();
     const runner = new WasmRunner({
-      shellcheck: await createPackagedShellCheck({
+      createShellCheck: await loadPackagedShellCheck({
         extensionUri: vscode.Uri.file(path.join(repoRoot, "no-such-dir")),
         logger,
       }),
       logger,
       activeDocumentKey: () => undefined,
+      maxConcurrentRuns: () => 0,
     });
     started.push(runner);
     for (let i = 0; i < 2; i++) {

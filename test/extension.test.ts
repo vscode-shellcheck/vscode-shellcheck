@@ -140,16 +140,18 @@ for (const runtime of RUNTIMES) {
 }
 
 suite("Shellcheck extension (wasm runtime, closed documents)", function () {
-  // The wasm runtime lints one document at a time, and the first document is
-  // deliberately slow so that the closed one is still waiting behind it.
+  // One lint at a time, and the first document is deliberately slow so that
+  // the closed one is still waiting behind it.
   this.timeout(60000);
 
   suiteSetup(async () => {
+    await updateShellCheckSetting("maxConcurrentRuns", 1);
     await setRuntime("wasm");
   });
 
   suiteTeardown(async () => {
     await resetRuntime();
+    await updateShellCheckSetting("maxConcurrentRuns", undefined);
   });
 
   teardown(async () => {

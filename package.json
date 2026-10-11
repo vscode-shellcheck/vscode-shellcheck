@@ -185,6 +185,21 @@
               "experimental"
             ]
           },
+          "shellcheck.runTimeout": {
+            "markdownDescription": "%config.runTimeout.markdownDescription%",
+            "type": "number",
+            "scope": "window",
+            "minimum": 0,
+            "maximum": 3600,
+            "default": 0
+          },
+          "shellcheck.maxConcurrentRuns": {
+            "markdownDescription": "%config.maxConcurrentRuns.markdownDescription%",
+            "type": "integer",
+            "minimum": 0,
+            "scope": "window",
+            "default": 0
+          },
           "shellcheck.run": {
             "description": "%config.run.description%",
             "type": "string",
@@ -316,21 +331,6 @@
             ],
             "type": "string",
             "scope": "machine-overridable"
-          },
-          "shellcheck.runTimeout": {
-            "markdownDescription": "%config.runTimeout.markdownDescription%",
-            "type": "number",
-            "scope": "window",
-            "minimum": 0,
-            "maximum": 3600,
-            "default": 0
-          },
-          "shellcheck.maxConcurrentRuns": {
-            "markdownDescription": "%config.maxConcurrentRuns.markdownDescription%",
-            "type": "integer",
-            "minimum": 0,
-            "scope": "window",
-            "default": 0
           },
           "shellcheck.disableVersionCheck": {
             "markdownDescription": "%config.disableVersionCheck.markdownDescription%",

@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { NativeRunner } from "../src/runtime/native-runner.js";
 import {
   LintRequest,
-  NativeRunTimeoutError,
+  RunTimeoutError,
   RunnerDisposedError,
   RunSupersededError,
 } from "../src/runtime/types.js";
@@ -96,7 +96,7 @@ suite("Native runner slots", function () {
     // Queued for longer than its own timeout, which only starts on admission.
     const next = runner.run({ ...slowEcho("next", 0), timeoutMs: 200 });
 
-    await assert.rejects(hung, NativeRunTimeoutError);
+    await assert.rejects(hung, RunTimeoutError);
     assert.strictEqual((await next).stdout, "next\n");
   });
 
