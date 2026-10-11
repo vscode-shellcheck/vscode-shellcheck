@@ -1,3 +1,9 @@
+## [0.48.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.47.0...v0.48.0) (2026-10-11)
+
+### Features
+
+* let runTimeout and maxConcurrentRuns apply to the wasm runtime ([#2021](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/2021)) ([34f89c1](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/34f89c1a84a75dad8a676aeee47aa28dfda589e1)), closes [#2020](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/2020)
+
 ## [0.47.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.46.4...v0.47.0) (2026-10-11)
 
 ### Features
