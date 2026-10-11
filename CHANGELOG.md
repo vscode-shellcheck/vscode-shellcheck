@@ -1,3 +1,9 @@
+## [0.47.0](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.46.4...v0.47.0) (2026-10-11)
+
+### Features
+
+* add a default auto runtime: native on desktop, wasm on the web ([#2020](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/2020)) ([933102f](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/933102f06c8175f76be34c319b00973c9a7540dd))
+
 ## [0.46.4](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.46.3...v0.46.4) (2026-10-09)
 
 ### Dependencies
