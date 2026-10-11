@@ -2,14 +2,16 @@
 // always launches with `--disable-workspace-trust`, which trusts every
 // workspace, so this launches VS Code itself.
 import { spawn } from "node:child_process";
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import { downloadAndUnzipVSCode } from "@vscode/test-electron";
 
 const root = path.resolve(import.meta.dirname, "../..");
-// Fresh each run: the user data remembers the folders a user trusted.
-const userDataDir = path.join(root, ".vscode-test/user-data-trust");
-await rm(userDataDir, { recursive: true, force: true });
+// Fresh each run: the user data remembers the folders a user trusted. It lives
+// in tmp because VS Code puts its IPC socket here, and a socket path over ~103
+// characters (macOS) fails with EINVAL in a long checkout path.
+const userDataDir = await mkdtemp(path.join(os.tmpdir(), "sc-trust-"));
 await mkdir(path.join(userDataDir, "User"), { recursive: true });
 await writeFile(
   path.join(userDataDir, "User/settings.json"),
@@ -21,6 +23,9 @@ await writeFile(
 const executable = await downloadAndUnzipVSCode(
   process.env.VSCODE_TEST_VERSION ?? "stable",
 );
+// Agent shells export ELECTRON_RUN_AS_NODE, which starts VS Code as plain Node
+// and makes it reject every flag.
+const { ELECTRON_RUN_AS_NODE: _, ...env } = process.env;
 const child = spawn(
   executable,
   [
@@ -40,7 +45,8 @@ const child = spawn(
     `--extensionTestsPath=${path.join(root, "test/workspace-trust/index.cjs")}`,
     path.join(root, "test/fixtures/workspace-trust"),
   ],
-  { stdio: "inherit" },
+  { stdio: "inherit", env },
 );
 const exitCode = await new Promise((resolve) => child.on("close", resolve));
+await rm(userDataDir, { recursive: true, force: true });
 process.exit(exitCode ?? 1);

@@ -66,7 +66,7 @@ The localization label installs the Simplified Chinese language pack into its ow
 VSCODE_TEST_L10N=1 npx vscode-test --label l10n-zh-cn
 ```
 
-The Workspace Trust suite opens `test/fixtures/workspace-trust` in Restricted Mode and checks that the workspace's `restrictedConfigurations` values are ignored. `@vscode/test-electron` always passes `--disable-workspace-trust`, so `test/workspace-trust/run.mjs` launches VS Code itself, with its own user data under `.vscode-test/`. It writes what it linted to `out/workspace-trust-e2e/diagnostics.json`:
+The Workspace Trust suite opens `test/fixtures/workspace-trust` in Restricted Mode and checks that the workspace's `restrictedConfigurations` values are ignored. `@vscode/test-electron` always passes `--disable-workspace-trust`, so `test/workspace-trust/run.mjs` launches VS Code itself, with its own user data in a temporary directory. It writes what it linted to `out/workspace-trust-e2e/diagnostics.json`:
 
 ```sh
 npm run build:all && npm run test:workspace-trust
