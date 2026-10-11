@@ -28,13 +28,14 @@ export interface PackagedShellCheckOptions {
 }
 
 /**
- * The package's runner over the bundled worker entry, `dist/wasm-worker.js`.
- * The module is compiled once, here, and the package hands that same Module to
- * every worker it starts, so a respawn never compiles it again.
+ * Starts package instances over the bundled worker entry,
+ * `dist/wasm-worker.js`. The module is compiled once, here, and every instance
+ * hands that same Module to each worker it starts, so neither another instance
+ * nor a respawn compiles it again.
  */
-export async function createPackagedShellCheck(
+export async function loadPackagedShellCheck(
   options: PackagedShellCheckOptions,
-): Promise<ShellCheck> {
+): Promise<() => ShellCheck> {
   // Imported on demand: esbuild hoists a static import of an external package
   // to the top of the extension bundle, where every native session would
   // evaluate it at activation.
@@ -53,8 +54,9 @@ export async function createPackagedShellCheck(
   // the download and compile. A failure surfaces on every lint instead.
   await module.catch(() => undefined);
 
-  return createShellCheck({
-    module,
-    createWorker: () => startWasmWorker(extensionUri, logger),
-  });
+  return () =>
+    createShellCheck({
+      module,
+      createWorker: () => startWasmWorker(extensionUri, logger),
+    });
 }

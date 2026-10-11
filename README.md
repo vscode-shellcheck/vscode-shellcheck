@@ -82,7 +82,7 @@ A WebAssembly build of ShellCheck is bundled for every platform as well; see [Ex
 | `shellcheck.executablePath`             | bundled                           | Path to the `shellcheck` executable.                                                              |
 | `shellcheck.useWorkspaceRootAsCwd`      | `false`                           | Runs ShellCheck from the workspace root instead of the script's directory.                        |
 | `shellcheck.runTimeout`                 | `0`                               | Seconds before a run is stopped; `0` for no limit on native and 30 on WebAssembly.                |
-| `shellcheck.maxConcurrentRuns`          | `0`                               | Most native runs at once; `0` for no limit.                                                       |
+| `shellcheck.maxConcurrentRuns`          | `0`                               | Most runs at once; `0` for no limit on native and 2 on WebAssembly.                               |
 | `shellcheck.disableVersionCheck`        | `false`                           | Stops prompting to update an outdated `shellcheck` binary.                                        |
 | `shellcheck.logLevel`                   | `"info"`                          | Level of the extension's log.                                                                     |
 
@@ -184,9 +184,9 @@ VS Code currently does not expose an extension API for ordering hover providers 
 
 Messages are formatted only when you hover, and not at all while the setting is off.
 
-### Limiting concurrent ShellCheck processes
+### Limiting concurrent ShellCheck runs
 
-Changing a setting or a `.shellcheckrc` lints every open script again, which starts one `shellcheck` process per script. With many scripts open, set `shellcheck.maxConcurrentRuns` to cap how many run at once; the others wait their turn. The default, `0`, sets no limit. A run that never finishes keeps its slot, so pair this with `shellcheck.runTimeout`. Only the native runtime is affected: the WebAssembly runtime always lints one script at a time.
+Changing a setting or a `.shellcheckrc` lints every open script again. With many scripts open, set `shellcheck.maxConcurrentRuns` to cap how many run at once; the others wait their turn. The default, `0`, sets no limit for the native runtime, which starts one `shellcheck` process per script, and runs 2 at a time on the WebAssembly runtime, where each run takes a worker that can use over 100 MiB of memory. A native run that never finishes keeps its slot, so pair this with `shellcheck.runTimeout`.
 
 ```jsonc
 {

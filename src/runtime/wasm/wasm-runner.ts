@@ -20,6 +20,13 @@ import {
 export const DEFAULT_RUN_TIMEOUT_MS = 30_000;
 
 /**
+ * Lints at once when `shellcheck.maxConcurrentRuns` is 0. Each one holds a
+ * worker of its own, well over 100 MiB while it runs, so unlike native
+ * processes they are never left unlimited.
+ */
+export const DEFAULT_MAX_CONCURRENT_RUNS = 2;
+
+/**
  * The GHC runtime cannot enter `PWD` and gives up before ShellCheck runs,
  * leaving stdout empty. Indistinguishable from a clean file at the parse
  * layer, so it has to be caught here.
@@ -27,10 +34,14 @@ export const DEFAULT_RUN_TIMEOUT_MS = 30_000;
 const CHDIR_FAILURE = "hs_init_ghc";
 
 export interface WasmRunnerOptions {
-  readonly shellcheck: ShellCheck;
+  /** A package instance runs one lint at a time on a worker of its own. */
+  createShellCheck(): ShellCheck;
   readonly logger: Logger;
   /** Key of the document the user is looking at, whose lint goes first. */
   activeDocumentKey(): string | undefined;
+  /** The setting, 0 for the default. Read whenever a lint could start, so a
+   * new limit applies from the next one on. */
+  maxConcurrentRuns(): number;
 }
 
 interface PendingRun {
@@ -42,27 +53,28 @@ interface PendingRun {
 interface RunningRun {
   readonly documentKey: string;
   readonly controller: AbortController;
+  readonly shellcheck: ShellCheck;
 }
 
 /**
- * Feeds the package one lint at a time, so that which lint runs next stays
- * decided here: only the newest request per document, the active editor's
- * document first, and a running lint aborted as soon as it is stale.
+ * Hands each package instance one lint at a time, so that which lints run
+ * next stays decided here: only the newest request per document, the active
+ * editor's document first, and a running lint aborted as soon as it is stale.
  */
 export class WasmRunner implements ShellCheckRunner {
   public readonly kind = "wasm";
 
-  private readonly shellcheck: ShellCheck;
   private readonly logger: Logger;
   /** Insertion ordered, so a re-typed document replaces its own pending run
    * without losing its place behind other documents. */
   private readonly pending = new Map<string, PendingRun>();
-  private running: RunningRun | undefined;
+  private readonly running = new Set<RunningRun>();
+  /** Instances whose worker, once started, is kept for the next lint. */
+  private readonly idle: ShellCheck[] = [];
   private nextRunId = 0;
   private disposed = false;
 
   public constructor(private readonly options: WasmRunnerOptions) {
-    this.shellcheck = options.shellcheck;
     this.logger = options.logger;
   }
 
@@ -74,10 +86,12 @@ export class WasmRunner implements ShellCheckRunner {
       const key = request.documentKey;
       this.pending.get(key)?.reject(new RunSupersededError());
       this.pending.set(key, { request, resolve, reject });
-      if (this.running?.documentKey === key) {
-        // The package terminates the worker for this; nothing else stops a
-        // wasm command mid-run.
-        this.running.controller.abort(new RunSupersededError());
+      for (const running of this.running) {
+        if (running.documentKey === key) {
+          // The package terminates the worker for this; nothing else stops a
+          // wasm command mid-run.
+          running.controller.abort(new RunSupersededError());
+        }
       }
       this.pump();
     });
@@ -102,13 +116,24 @@ export class WasmRunner implements ShellCheckRunner {
       run.reject(new RunnerDisposedError());
     }
     this.pending.clear();
-    this.running?.controller.abort(new RunnerDisposedError());
-    this.shellcheck.dispose().catch((error: unknown) => {
+    for (const running of this.running) {
+      running.controller.abort(new RunnerDisposedError());
+      this.shutDown(running.shellcheck);
+    }
+    this.idle.splice(0).forEach((shellcheck) => this.shutDown(shellcheck));
+  }
+
+  private shutDown(shellcheck: ShellCheck): void {
+    shellcheck.dispose().catch((error: unknown) => {
       this.logger.error(
         "ShellCheck (wasm): the runtime could not be shut down: %s",
         detailOf(error),
       );
     });
+  }
+
+  private limit(): number {
+    return this.options.maxConcurrentRuns() || DEFAULT_MAX_CONCURRENT_RUNS;
   }
 
   private nextDocumentKey(): string | undefined {
@@ -120,21 +145,25 @@ export class WasmRunner implements ShellCheckRunner {
   }
 
   private pump(): void {
-    if (this.running || this.disposed) {
-      return;
+    while (!this.disposed && this.running.size < this.limit()) {
+      const documentKey = this.nextDocumentKey();
+      if (documentKey === undefined) {
+        return;
+      }
+      const run = this.pending.get(documentKey)!;
+      this.pending.delete(documentKey);
+      this.start(run, this.idle.pop() ?? this.options.createShellCheck());
     }
-    const documentKey = this.nextDocumentKey();
-    if (documentKey === undefined) {
-      return;
-    }
-    const run = this.pending.get(documentKey)!;
-    this.pending.delete(documentKey);
+  }
 
+  private start(run: PendingRun, shellcheck: ShellCheck): void {
+    const { documentKey } = run.request;
     const id = ++this.nextRunId;
     const controller = new AbortController();
     const timeoutMs = run.request.timeoutMs || DEFAULT_RUN_TIMEOUT_MS;
     const watchdog = AbortSignal.timeout(timeoutMs);
-    this.running = { documentKey, controller };
+    const running: RunningRun = { documentKey, controller, shellcheck };
+    this.running.add(running);
     this.logger.debug(
       "ShellCheck (wasm): run %d started for %s",
       id,
@@ -142,7 +171,7 @@ export class WasmRunner implements ShellCheckRunner {
     );
 
     const { args, stdin, mount } = run.request;
-    this.shellcheck
+    shellcheck
       .lint(
         {
           args,
@@ -163,8 +192,16 @@ export class WasmRunner implements ShellCheckRunner {
         },
       )
       .finally(() => {
-        if (this.running?.controller === controller) {
-          this.running = undefined;
+        this.running.delete(running);
+        if (this.disposed) {
+          // dispose() has shut this instance down already.
+          return;
+        }
+        // Keeps no more workers than a lowered limit allows.
+        if (this.running.size + this.idle.length < this.limit()) {
+          this.idle.push(shellcheck);
+        } else {
+          this.shutDown(shellcheck);
         }
         this.pump();
       });

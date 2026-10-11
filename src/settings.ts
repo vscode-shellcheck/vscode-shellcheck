@@ -75,7 +75,7 @@ export function getRuntimeKind(
     : "wasm";
 }
 
-/** Window scoped; 0 means no limit. */
+/** Window scoped; 0 for the runtime's default. */
 export function getMaxConcurrentRuns(): number {
   const value = vscode.workspace
     .getConfiguration("shellcheck")
