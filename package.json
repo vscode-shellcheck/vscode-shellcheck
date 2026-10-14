@@ -453,7 +453,7 @@
     "@vscode/test-web": "^0.0.81",
     "bindl": "^7.1.6",
     "conventional-changelog-conventionalcommits": "^9.3.1",
-    "cspell": "^10.3.6",
+    "cspell": "^10.4.0",
     "esbuild": "^0.28.2",
     "eslint": "^10.12.0",
     "installed-check": "^11.0.0",
