@@ -6,7 +6,6 @@ import { RuntimeManager } from "./runtime/manager.js";
 import { registerLogger, setLoggingLevel } from "./utils/logging/index.js";
 import { OutputChannelLogger } from "./utils/logging/logger-outputchannel.js";
 import { LogLevelNameType } from "./utils/logging/types.js";
-import { MarkdownDiagnosticProvider } from "./markdown-diagnostics.js";
 import { StatusBar } from "./status-bar.js";
 import { registerWhatsNew } from "./whats-new.js";
 
@@ -43,13 +42,6 @@ export function activate(
 
   context.subscriptions.push(
     new StatusBar(linter, () => outputChannel.show(true)),
-  );
-
-  context.subscriptions.push(
-    vscode.languages.registerHoverProvider(
-      ShellCheckProvider.LANGUAGES,
-      new MarkdownDiagnosticProvider((uri) => linter.getDiagnostics(uri)),
-    ),
   );
 
   // link provider

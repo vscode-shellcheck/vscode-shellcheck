@@ -4,6 +4,7 @@
   "capabilities.untrustedWorkspaces.description": "En mode restreint, seul l'exécutable `shellcheck` défini par l'utilisateur est pris en compte. Le runtime WebAssembly expérimental s'exécute dans un bac à sable et n'est pas concerné.",
   "capabilities.virtualWorkspaces.description": "Seul le runtime WebAssembly expérimental (`shellcheck.runtime` : `wasm`) peut analyser les documents d'un espace de travail virtuel. Le runtime native nécessite un binaire `shellcheck` local et des fichiers sur le disque local. VS Code for the Web utilise toujours le runtime WebAssembly.",
   "command.runLint.title": "Analyser le document actuel",
+  "command.runLintAnyLanguage.title": "Analyser le document actuel comme script Shell",
   "command.collectDiagnostics.title": "Collecter les diagnostics du document actuel",
   "command.showMenu.title": "Afficher le menu",
   "command.useWasmRuntime.title": "Utiliser le runtime WebAssembly expérimental",

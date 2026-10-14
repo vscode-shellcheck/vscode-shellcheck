@@ -24,6 +24,7 @@ The ShellCheck icon on the right of the status bar opens a menu to lint the curr
 | Command                                                | What it does                                                              |
 | ------------------------------------------------------ | ------------------------------------------------------------------------- |
 | _ShellCheck: Lint Current Document_                    | Lints the active script now.                                              |
+| _ShellCheck: Lint Current Document as Shell Script_    | Lints the active document now, whatever its language.                     |
 | _ShellCheck: Show Menu_                                | Opens the status bar menu.                                                |
 | _ShellCheck: Collect Diagnostics For Current Document_ | Opens a troubleshooting report for the active script.                     |
 | _ShellCheck: Use the Experimental WebAssembly Runtime_ | Switches to the [WebAssembly runtime](#experimental-webassembly-runtime). |
@@ -39,6 +40,10 @@ To apply every automatic fix on save:
 ```
 
 To do it on demand instead, run _Fix All_ from the Command Palette.
+
+### Linting other files
+
+To lint a file that isn't a shell script, such as a Jinja template `deploy.sh.j2`, run _ShellCheck: Lint Current Document as Shell Script_. See [Advanced usage](https://github.com/vscode-shellcheck/vscode-shellcheck/blob/master/doc/advanced-usage.md#linting-other-files) for template limits and linting on save.
 
 ## Installation
 

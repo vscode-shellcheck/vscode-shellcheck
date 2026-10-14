@@ -108,6 +108,11 @@
         "category": "ShellCheck"
       },
       {
+        "command": "shellcheck.runLintAnyLanguage",
+        "title": "%command.runLintAnyLanguage.title%",
+        "category": "ShellCheck"
+      },
+      {
         "command": "shellcheck.collectDiagnostics",
         "title": "%command.collectDiagnostics.title%",
         "category": "ShellCheck"

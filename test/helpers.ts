@@ -18,13 +18,16 @@ function rejectAfter(timeout: number, what: string): Promise<never> {
 
 /**
  * Open a new untitled document with the given content and language,
- * then show it in an editor.
+ * then show it in an editor. `suffix` ends its file name, such as `.sh.j2`.
  */
 export async function openDocument(
   content: string,
   language: string,
+  suffix = "",
 ): Promise<vscode.TextDocument> {
-  const uri = vscode.Uri.parse(`untitled:/document-${++_documentIndex}`);
+  const uri = vscode.Uri.parse(
+    `untitled:/document-${++_documentIndex}${suffix}`,
+  );
 
   let document = await vscode.workspace.openTextDocument(uri);
   document = await vscode.languages.setTextDocumentLanguage(document, language);

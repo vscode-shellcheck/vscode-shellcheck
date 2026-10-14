@@ -4,6 +4,7 @@
   "capabilities.untrustedWorkspaces.description": "在受限模式下執行時，只會使用使用者定義的 `shellcheck` 可執行檔。實驗性的 WebAssembly 執行階段在沙箱中執行，因此不受影響。",
   "capabilities.virtualWorkspaces.description": "只有實驗性的 WebAssembly 執行階段（`shellcheck.runtime`: `wasm`）能檢查虛擬工作區中的文件。native 執行階段需要本機的 `shellcheck` 二進位檔，且檔案必須位於本機磁碟上。VS Code for the Web 一律使用 WebAssembly 執行階段。",
   "command.runLint.title": "檢查目前的文件",
+  "command.runLintAnyLanguage.title": "將目前的文件當作 Shell 指令碼檢查",
   "command.collectDiagnostics.title": "收集目前文件的診斷資訊",
   "command.showMenu.title": "顯示功能表",
   "command.useWasmRuntime.title": "使用實驗性的 WebAssembly 執行階段",

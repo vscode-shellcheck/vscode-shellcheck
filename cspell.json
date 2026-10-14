@@ -51,6 +51,7 @@
     "inlines",
     "inval",
     "isdir",
+    "Jinja",
     "keytar",
     "koalaman",
     "languagepacks",

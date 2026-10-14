@@ -16,6 +16,7 @@ import {
   parseRcArgs,
 } from "./config-files.js";
 import { FixAllProvider } from "./fix-all.js";
+import { MarkdownDiagnosticProvider } from "./markdown-diagnostics.js";
 import { createParser, ParseResult } from "./parser.js";
 import { RuntimeManager } from "./runtime/manager.js";
 import { nativeRuntime } from "./runtime/native.js";
@@ -44,6 +45,7 @@ import type { StatusSnapshot, StatusSource } from "./status-bar.js";
 
 namespace CommandIds {
   export const runLint: string = "shellcheck.runLint";
+  export const runLintAnyLanguage: string = "shellcheck.runLintAnyLanguage";
   export const disableCheckForLine: string = "shellcheck.disableCheckForLine";
   export const openRuleDoc: string = "shellcheck.openRuleDoc";
   export const collectDiagnostics: string = "shellcheck.collectDiagnostics";
@@ -140,6 +142,10 @@ export default class ShellCheckProvider
   private readonly configFileWatcher: ConfigFileWatcher;
   private readonly statusEmitter = new vscode.EventEmitter<vscode.Uri>();
   public readonly onDidChangeStatus = this.statusEmitter.event;
+  /** Languages of documents linted through Lint Current Document as Shell
+   * Script, kept until the window reloads. */
+  private readonly manualLanguages = new Set<string>();
+  private providers: vscode.Disposable;
 
   constructor(
     private readonly context: vscode.ExtensionContext,
@@ -160,23 +166,7 @@ export default class ShellCheckProvider
       nativeRuntime !== undefined,
     );
 
-    // code actions
-    for (const language of ShellCheckProvider.LANGUAGES) {
-      context.subscriptions.push(
-        vscode.languages.registerCodeActionsProvider(
-          language,
-          this,
-          ShellCheckProvider.metadata,
-        ),
-      );
-      context.subscriptions.push(
-        vscode.languages.registerCodeActionsProvider(
-          language,
-          new FixAllProvider((document) => this.freshResults(document)),
-          FixAllProvider.metadata,
-        ),
-      );
-    }
+    this.providers = this.registerProviders();
 
     // commands
     context.subscriptions.push(
@@ -203,6 +193,16 @@ export default class ShellCheckProvider
         CommandIds.runLint,
         async (editor) => {
           return await this.triggerLint(editor.document);
+        },
+      ),
+      // Not Lint Current Document's default: extensions run that over many
+      // documents, and each of another language would start a ShellCheck run.
+      vscode.commands.registerTextEditorCommand(
+        CommandIds.runLintAnyLanguage,
+        async (editor) => {
+          return await this.triggerLint(editor.document, {
+            anyLanguage: true,
+          });
         },
       ),
       vscode.commands.registerTextEditorCommand(
@@ -314,10 +314,9 @@ export default class ShellCheckProvider
       return;
     }
     try {
-      await this.triggerLint(
-        textDocumentChangeEvent.document,
-        (settings) => settings.trigger === RunTrigger.onType,
-      );
+      await this.triggerLint(textDocumentChangeEvent.document, {
+        when: (settings) => settings.trigger === RunTrigger.onType,
+      });
     } catch (error) {
       logging.error(`onDidChangeTextDocument: ${error}`);
     }
@@ -325,10 +324,9 @@ export default class ShellCheckProvider
 
   private async onDidSaveTextDocument(textDocument: vscode.TextDocument) {
     try {
-      await this.triggerLint(
-        textDocument,
-        (settings) => settings.trigger === RunTrigger.onSave,
-      );
+      await this.triggerLint(textDocument, {
+        when: (settings) => settings.trigger === RunTrigger.onSave,
+      });
     } catch (error) {
       logging.error(`onDidSaveTextDocument ${error}`);
     }
@@ -344,7 +342,43 @@ export default class ShellCheckProvider
     }
   }
 
+  /** Only the languages ShellCheck has linted: VS Code asks code action
+   * providers on every cursor move in each matching document, so `"*"` would
+   * cost a round trip per move in every editor. */
+  private registerProviders(): vscode.Disposable {
+    const selector = [...ShellCheckProvider.LANGUAGES, ...this.manualLanguages];
+    return vscode.Disposable.from(
+      vscode.languages.registerCodeActionsProvider(
+        selector,
+        this,
+        ShellCheckProvider.metadata,
+      ),
+      vscode.languages.registerCodeActionsProvider(
+        selector,
+        new FixAllProvider((document) => this.freshResults(document)),
+        FixAllProvider.metadata,
+      ),
+      vscode.languages.registerHoverProvider(
+        selector,
+        new MarkdownDiagnosticProvider((uri) => this.getDiagnostics(uri)),
+      ),
+    );
+  }
+
+  private coverLanguage(languageId: string) {
+    if (
+      ShellCheckProvider.LANGUAGES.includes(languageId) ||
+      this.manualLanguages.has(languageId)
+    ) {
+      return;
+    }
+    this.manualLanguages.add(languageId);
+    this.providers.dispose();
+    this.providers = this.registerProviders();
+  }
+
   public dispose(): void {
+    this.providers.dispose();
     for (const delayer of Object.values(this.delayers)) {
       delayer.cancel();
     }
@@ -498,6 +532,14 @@ export default class ShellCheckProvider
     token: vscode.CancellationToken,
   ): vscode.ProviderResult<(vscode.Command | vscode.CodeAction)[]> {
     const actions: vscode.CodeAction[] = [];
+    // Other extensions report under the "shellcheck" source too, so a
+    // document this extension never linted gets no actions.
+    if (
+      !this.isAllowedTextDocument(document) &&
+      !this.diagnosticCollection.has(document.uri)
+    ) {
+      return actions;
+    }
 
     for (const diagnostic of context.diagnostics) {
       if (diagnostic.source !== "shellcheck") {
@@ -656,7 +698,9 @@ export default class ShellCheckProvider
 
     const warnings: string[] = [];
     if (!this.isAllowedTextDocument(textDocument)) {
-      warnings.push("- Document is not a shell script or is filtered out");
+      warnings.push(
+        "- Document is not a shell script or is filtered out, so only `ShellCheck: Lint Current Document as Shell Script` lints it",
+      );
     }
 
     if (settings.ignoreFileSchemes.has(textDocument.uri.scheme)) {
@@ -703,9 +747,6 @@ export default class ShellCheckProvider
     ruleId: string,
     range: vscode.Range,
   ) {
-    if (!this.isAllowedTextDocument(textDocument)) {
-      return;
-    }
     const targetLine = textDocument.lineAt(range.start.line);
     const indent = targetLine.text.substring(
       0,
@@ -728,15 +769,21 @@ export default class ShellCheckProvider
 
   private async triggerLint(
     textDocument: vscode.TextDocument,
-    extraCondition: (settings: ShellCheckSettings) => boolean = (_) => true,
+    {
+      when = (_) => true,
+      anyLanguage = false,
+    }: {
+      when?: (settings: ShellCheckSettings) => boolean;
+      anyLanguage?: boolean;
+    } = {},
   ) {
-    if (!this.isAllowedTextDocument(textDocument)) {
+    if (!anyLanguage && !this.isAllowedTextDocument(textDocument)) {
       return;
     }
 
     const settings: ShellCheckSettings = await this.getSettings(textDocument);
     if (
-      !extraCondition(settings) ||
+      !when(settings) ||
       isOutOfNativeReach(textDocument, settings) ||
       !this.toolStatusByPath.get(toolStatusKey(settings))?.ok ||
       settings.ignoreFileSchemes.has(textDocument.uri.scheme)
@@ -756,6 +803,10 @@ export default class ShellCheckProvider
       )
     ) {
       return;
+    }
+
+    if (anyLanguage) {
+      this.coverLanguage(textDocument.languageId);
     }
 
     const key = textDocument.uri.toString();

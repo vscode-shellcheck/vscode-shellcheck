@@ -4,6 +4,7 @@
   "capabilities.untrustedWorkspaces.description": "Only the user defined `shellcheck` executable will be taken into account when running in untrusted mode. The experimental WebAssembly runtime is sandboxed and is unaffected.",
   "capabilities.virtualWorkspaces.description": "Only the experimental WebAssembly runtime (`shellcheck.runtime`: `wasm`) can lint documents of a virtual workspace. The native runtime needs a local `shellcheck` binary and files on the local disk. VS Code for the Web always uses the WebAssembly runtime.",
   "command.runLint.title": "Lint Current Document",
+  "command.runLintAnyLanguage.title": "Lint Current Document as Shell Script",
   "command.collectDiagnostics.title": "Collect Diagnostics For Current Document",
   "command.showMenu.title": "Show Menu",
   "command.useWasmRuntime.title": "Use the Experimental WebAssembly Runtime",
