@@ -1,8 +1,6 @@
 {
   "displayName": "ShellCheck",
   "description": "셸 스크립트 검사 도구인 ShellCheck를 VS Code에 통합합니다.",
-  "capabilities.untrustedWorkspaces.description": "제한 모드에서 실행할 때는 사용자가 정의한 `shellcheck` 실행 파일만 사용됩니다. 실험적 WebAssembly 런타임은 샌드박스에서 실행되므로 영향을 받지 않습니다.",
-  "capabilities.virtualWorkspaces.description": "실험적 WebAssembly 런타임(`shellcheck.runtime`: `wasm`)만 가상 작업 영역의 문서를 검사할 수 있습니다. native 런타임에는 로컬 `shellcheck` 이진 파일과 로컬 디스크에 있는 파일이 필요합니다. VS Code for the Web은 항상 WebAssembly 런타임을 사용합니다.",
   "command.runLint.title": "현재 문서 검사",
   "command.collectDiagnostics.title": "현재 문서의 진단 정보 수집",
   "command.showMenu.title": "메뉴 표시",

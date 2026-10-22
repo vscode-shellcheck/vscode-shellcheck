@@ -78,3 +78,34 @@ suite("Translations", () => {
     });
   }
 });
+
+suite("Marketplace Manifest", () => {
+  test("capability descriptions are not nls placeholders", () => {
+    // vscode.dev's install dialog reads Microsoft.VisualStudio.Code.Manifest
+    // without applying package.nls, so a %key% here is shown verbatim.
+    const manifest = JSON.parse(
+      fs.readFileSync(path.join(root, "package.json"), "utf8"),
+    ) as {
+      capabilities: {
+        untrustedWorkspaces: { description?: string };
+        virtualWorkspaces: { description?: string };
+      };
+    };
+    const nlsPlaceholder = /^%[\w.-]+%$/;
+    for (const [name, description] of [
+      [
+        "untrustedWorkspaces",
+        manifest.capabilities.untrustedWorkspaces.description,
+      ],
+      [
+        "virtualWorkspaces",
+        manifest.capabilities.virtualWorkspaces.description,
+      ],
+    ] as const) {
+      if (typeof description !== "string" || !description.trim()) {
+        assert.fail(`${name} description is missing`);
+      }
+      assert.doesNotMatch(description, nlsPlaceholder, name);
+    }
+  });
+});

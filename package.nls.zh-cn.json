@@ -1,8 +1,6 @@
 {
   "displayName": "ShellCheck",
   "description": "将 Shell 脚本检查工具 ShellCheck 集成到 VS Code 中。",
-  "capabilities.untrustedWorkspaces.description": "在受限模式下运行时，仅会使用用户定义的 `shellcheck` 可执行文件。实验性的 WebAssembly 运行时运行在沙盒中，不受影响。",
-  "capabilities.virtualWorkspaces.description": "只有实验性的 WebAssembly 运行时（`shellcheck.runtime`: `wasm`）能够检查虚拟工作区中的文档。native 运行时需要本地的 `shellcheck` 二进制文件和本地磁盘上的文件。VS Code for the Web 始终使用 WebAssembly 运行时。",
   "command.runLint.title": "检查当前文档",
   "command.collectDiagnostics.title": "收集当前文档的诊断信息",
   "command.showMenu.title": "显示菜单",

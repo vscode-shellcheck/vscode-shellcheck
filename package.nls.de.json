@@ -1,8 +1,6 @@
 {
   "displayName": "ShellCheck",
   "description": "Integriert ShellCheck, einen Linter für Shell-Skripts, in VS Code.",
-  "capabilities.untrustedWorkspaces.description": "Im eingeschränkten Modus wird nur die vom Benutzer definierte ausführbare `shellcheck`-Datei berücksichtigt. Die experimentelle WebAssembly-Laufzeit wird in einer Sandbox ausgeführt und ist davon nicht betroffen.",
-  "capabilities.virtualWorkspaces.description": "Nur die experimentelle WebAssembly-Laufzeit (`shellcheck.runtime`: `wasm`) kann Dokumente in einem virtuellen Arbeitsbereich prüfen. Die native Laufzeit benötigt eine lokale `shellcheck`-Binärdatei und Dateien auf dem lokalen Datenträger. VS Code for the Web verwendet immer die WebAssembly-Laufzeit.",
   "command.runLint.title": "Aktuelles Dokument prüfen",
   "command.collectDiagnostics.title": "Diagnoseinformationen für aktuelles Dokument sammeln",
   "command.showMenu.title": "Menü anzeigen",
