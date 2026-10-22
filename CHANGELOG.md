@@ -1,3 +1,9 @@
+## [0.48.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.48.1...v0.48.2) (2026-10-22)
+
+### Bug Fixes
+
+* stop showing a translation placeholder when installing on vscode.dev ([#2045](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/2045)) ([83dd250](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/83dd2506852b33aaaff9615153c5a7fc66e5869a))
+
 ## [0.48.1](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.48.0...v0.48.1) (2026-10-13)
 
 ### Dependencies
