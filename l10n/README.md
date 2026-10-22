@@ -14,6 +14,7 @@ The English files are the source of truth. A key missing from a translation show
 - Use the terms of VS Code's own language pack for the language, so the extension reads like the rest of the editor.
 - Follow the language's glossary below. Each language has one before its first translation lands: the recurring terms and any typography rules (spacing, punctuation width, quotation marks).
 - Translate only these two files. `README.md`, `CHANGELOG.md`, the walkthrough SVGs, logs, the Collect Diagnostics report, and `Error.message` strings stay English.
+- Keep `capabilities.untrustedWorkspaces.description` and `capabilities.virtualWorkspaces.description` as inline English in `package.json`. vscode.dev's install dialog reads the Marketplace Manifest without applying `package.nls`, so a `%key%` there is shown verbatim.
 
 ## Changing an English string
 

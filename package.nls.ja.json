@@ -1,8 +1,6 @@
 {
   "displayName": "ShellCheck",
   "description": "Shell スクリプト用のリンターである ShellCheck を VS Code に統合します。",
-  "capabilities.untrustedWorkspaces.description": "制限モードで実行している場合は、ユーザーが定義した `shellcheck` 実行可能ファイルのみが考慮されます。試験段階の WebAssembly ランタイムはサンドボックス化されているため、影響を受けません。",
-  "capabilities.virtualWorkspaces.description": "仮想ワークスペースのドキュメントをチェックできるのは、試験段階の WebAssembly ランタイム（`shellcheck.runtime`: `wasm`）のみです。native ランタイムには、ローカルの `shellcheck` バイナリとローカル ディスク上のファイルが必要です。VS Code for the Web では常に WebAssembly ランタイムが使用されます。",
   "command.runLint.title": "現在のドキュメントをチェック",
   "command.collectDiagnostics.title": "現在のドキュメントの診断情報を収集",
   "command.showMenu.title": "メニューを表示",
