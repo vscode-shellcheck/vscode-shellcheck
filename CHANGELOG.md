@@ -1,3 +1,10 @@
+## [0.48.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.48.2...v0.48.3) (2026-10-22)
+
+### Dependencies
+
+* **deps:** bump markdown-it from 14.3.2 to 14.3.3 ([#2040](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/2040)) ([8d6d29e](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/8d6d29e1ff05a539afad43ea5630a176f5578c6a))
+* **deps:** update dependency execa to ^10.2.0 ([#2035](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/2035)) ([8e5c37e](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/8e5c37e8c11b7c4fc1016fb7b7821b4a6b7e60c2))
+
 ## [0.48.2](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.48.1...v0.48.2) (2026-10-22)
 
 ### Bug Fixes
