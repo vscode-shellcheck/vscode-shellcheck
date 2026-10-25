@@ -1,3 +1,10 @@
+## [0.48.4](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.48.3...v0.48.4) (2026-10-25)
+
+### Dependencies
+
+* **deps:** bump undici ([#2049](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/2049)) ([71934a4](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/71934a4ce5adf2ff7933f2413210f37bc2ba92a6))
+* **deps:** update dependency execa to ^10.2.1 ([#2046](https://github.com/vscode-shellcheck/vscode-shellcheck/issues/2046)) ([824577b](https://github.com/vscode-shellcheck/vscode-shellcheck/commit/824577b46d89b651a00d9736a35d6d540fa5e5f9))
+
 ## [0.48.3](https://github.com/vscode-shellcheck/vscode-shellcheck/compare/v0.48.2...v0.48.3) (2026-10-22)
 
 ### Dependencies
