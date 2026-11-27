@@ -461,7 +461,7 @@
     "neostandard": "^0.14.1",
     "npm-run-all2": "^9.1.0",
     "prettier": "^3.10.1",
-    "semantic-release": "^25.0.9",
+    "semantic-release": "^26.0.1",
     "semantic-release-stop-before-publish": "^2.0.0",
     "semantic-release-vsce": "^6.1.8",
     "svg2ttf": "^6.1.0",
